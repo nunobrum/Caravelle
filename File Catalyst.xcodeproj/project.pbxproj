@@ -7,6 +7,54 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C29460C18F9B570002B633C /* Accounts.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E718F9B570002B633C /* Accounts.icns */; };
+		3C29460D18F9B570002B633C /* AlertStopIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E818F9B570002B633C /* AlertStopIcon.icns */; };
+		3C29460E18F9B570002B633C /* BackwardArrowIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */; };
+		3C29460F18F9B570002B633C /* BurningIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945EA18F9B570002B633C /* BurningIcon.icns */; };
+		3C29461018F9B570002B633C /* DocumentsFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945EB18F9B570002B633C /* DocumentsFolderIcon.icns */; };
+		3C29461118F9B570002B633C /* DownloadsFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945EC18F9B570002B633C /* DownloadsFolder.icns */; };
+		3C29461218F9B570002B633C /* EjectMediaIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945ED18F9B570002B633C /* EjectMediaIcon.icns */; };
+		3C29461318F9B570002B633C /* FavoriteItemsIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945EE18F9B570002B633C /* FavoriteItemsIcon.icns */; };
+		3C29461418F9B570002B633C /* FinderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945EF18F9B570002B633C /* FinderIcon.icns */; };
+		3C29461518F9B570002B633C /* ForwardArrowIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F018F9B570002B633C /* ForwardArrowIcon.icns */; };
+		3C29461618F9B570002B633C /* FullTrashIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F118F9B570002B633C /* FullTrashIcon.icns */; };
+		3C29461718F9B570002B633C /* GenericAirDiskIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F218F9B570002B633C /* GenericAirDiskIcon.icns */; };
+		3C29461818F9B570002B633C /* GenericApplicationIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F318F9B570002B633C /* GenericApplicationIcon.icns */; };
+		3C29461918F9B570002B633C /* GenericDocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F418F9B570002B633C /* GenericDocumentIcon.icns */; };
+		3C29461A18F9B570002B633C /* GenericSharepoint.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F518F9B570002B633C /* GenericSharepoint.icns */; };
+		3C29461B18F9B570002B633C /* GenericTimeMachineDiskIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F618F9B570002B633C /* GenericTimeMachineDiskIcon.icns */; };
+		3C29461C18F9B570002B633C /* KeepArrangedIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F718F9B570002B633C /* KeepArrangedIcon.icns */; };
+		3C29461D18F9B570002B633C /* MovieFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F818F9B570002B633C /* MovieFolderIcon.icns */; };
+		3C29461E18F9B570002B633C /* MusicFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945F918F9B570002B633C /* MusicFolderIcon.icns */; };
+		3C29461F18F9B570002B633C /* SystemFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FA18F9B570002B633C /* SystemFolderIcon.icns */; };
+		3C29462018F9B570002B633C /* ToolbarAdvanced.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FB18F9B570002B633C /* ToolbarAdvanced.icns */; };
+		3C29462118F9B570002B633C /* ToolbarAppsFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FC18F9B570002B633C /* ToolbarAppsFolderIcon.icns */; };
+		3C29462218F9B570002B633C /* ToolbarCustomizeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FD18F9B570002B633C /* ToolbarCustomizeIcon.icns */; };
+		3C29462318F9B570002B633C /* ToolbarDeleteIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FE18F9B570002B633C /* ToolbarDeleteIcon.icns */; };
+		3C29462418F9B570002B633C /* ToolbarDesktopFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945FF18F9B570002B633C /* ToolbarDesktopFolderIcon.icns */; };
+		3C29462518F9B570002B633C /* ToolbarDocumentsFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460018F9B570002B633C /* ToolbarDocumentsFolderIcon.icns */; };
+		3C29462618F9B570002B633C /* ToolbarDownloadsFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460118F9B570002B633C /* ToolbarDownloadsFolderIcon.icns */; };
+		3C29462718F9B570002B633C /* ToolbarFavoritesIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460218F9B570002B633C /* ToolbarFavoritesIcon.icns */; };
+		3C29462818F9B570002B633C /* ToolbarInfo.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460318F9B570002B633C /* ToolbarInfo.icns */; };
+		3C29462918F9B570002B633C /* ToolbarLabels.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460418F9B570002B633C /* ToolbarLabels.icns */; };
+		3C29462A18F9B570002B633C /* ToolbarLibraryFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460518F9B570002B633C /* ToolbarLibraryFolderIcon.icns */; };
+		3C29462B18F9B570002B633C /* ToolbarMovieFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460618F9B570002B633C /* ToolbarMovieFolderIcon.icns */; };
+		3C29462C18F9B570002B633C /* ToolbarMusicFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460718F9B570002B633C /* ToolbarMusicFolderIcon.icns */; };
+		3C29462D18F9B570002B633C /* ToolbarPicturesFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460818F9B570002B633C /* ToolbarPicturesFolderIcon.icns */; };
+		3C29462E18F9B570002B633C /* ToolbarPublicFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460918F9B570002B633C /* ToolbarPublicFolderIcon.icns */; };
+		3C29462F18F9B570002B633C /* ToolbarSitesFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460A18F9B570002B633C /* ToolbarSitesFolderIcon.icns */; };
+		3C29463018F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C29460B18F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns */; };
+		3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463418F9B86A002B633C /* TreeBranch.m */; };
+		3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463618F9B86A002B633C /* TreeLeaf.m */; };
+		3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463818F9B86A002B633C /* TreeRoot.m */; };
+		3C29463E18F9B86A002B633C /* TreeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463A18F9B86A002B633C /* TreeItem.m */; };
+		3C29464918F9B87C002B633C /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463F18F9B87C002B633C /* FileCollection.m */; };
+		3C29464A18F9B87C002B633C /* FileInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464018F9B87C002B633C /* FileInformation.m */; };
+		3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464218F9B87C002B633C /* FolderCellView.m */; };
+		3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464318F9B87C002B633C /* ImagePreviewCell.m */; };
+		3C29464D18F9B87C002B633C /* MD5.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464418F9B87C002B633C /* MD5.c */; };
+		3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464E18F9B8E1002B633C /* LeftDataSource.m */; };
+		3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465018F9B8E1002B633C /* LeftViewController.m */; };
 		3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA674F18F87C2F0080C4FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
@@ -31,6 +79,65 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C2945E718F9B570002B633C /* Accounts.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Accounts.icns; sourceTree = "<group>"; };
+		3C2945E818F9B570002B633C /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
+		3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BackwardArrowIcon.icns; sourceTree = "<group>"; };
+		3C2945EA18F9B570002B633C /* BurningIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BurningIcon.icns; sourceTree = "<group>"; };
+		3C2945EB18F9B570002B633C /* DocumentsFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DocumentsFolderIcon.icns; sourceTree = "<group>"; };
+		3C2945EC18F9B570002B633C /* DownloadsFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DownloadsFolder.icns; sourceTree = "<group>"; };
+		3C2945ED18F9B570002B633C /* EjectMediaIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = EjectMediaIcon.icns; sourceTree = "<group>"; };
+		3C2945EE18F9B570002B633C /* FavoriteItemsIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FavoriteItemsIcon.icns; sourceTree = "<group>"; };
+		3C2945EF18F9B570002B633C /* FinderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FinderIcon.icns; sourceTree = "<group>"; };
+		3C2945F018F9B570002B633C /* ForwardArrowIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ForwardArrowIcon.icns; sourceTree = "<group>"; };
+		3C2945F118F9B570002B633C /* FullTrashIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FullTrashIcon.icns; sourceTree = "<group>"; };
+		3C2945F218F9B570002B633C /* GenericAirDiskIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericAirDiskIcon.icns; sourceTree = "<group>"; };
+		3C2945F318F9B570002B633C /* GenericApplicationIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericApplicationIcon.icns; sourceTree = "<group>"; };
+		3C2945F418F9B570002B633C /* GenericDocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericDocumentIcon.icns; sourceTree = "<group>"; };
+		3C2945F518F9B570002B633C /* GenericSharepoint.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericSharepoint.icns; sourceTree = "<group>"; };
+		3C2945F618F9B570002B633C /* GenericTimeMachineDiskIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericTimeMachineDiskIcon.icns; sourceTree = "<group>"; };
+		3C2945F718F9B570002B633C /* KeepArrangedIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = KeepArrangedIcon.icns; sourceTree = "<group>"; };
+		3C2945F818F9B570002B633C /* MovieFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MovieFolderIcon.icns; sourceTree = "<group>"; };
+		3C2945F918F9B570002B633C /* MusicFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MusicFolderIcon.icns; sourceTree = "<group>"; };
+		3C2945FA18F9B570002B633C /* SystemFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SystemFolderIcon.icns; sourceTree = "<group>"; };
+		3C2945FB18F9B570002B633C /* ToolbarAdvanced.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarAdvanced.icns; sourceTree = "<group>"; };
+		3C2945FC18F9B570002B633C /* ToolbarAppsFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarAppsFolderIcon.icns; sourceTree = "<group>"; };
+		3C2945FD18F9B570002B633C /* ToolbarCustomizeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarCustomizeIcon.icns; sourceTree = "<group>"; };
+		3C2945FE18F9B570002B633C /* ToolbarDeleteIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarDeleteIcon.icns; sourceTree = "<group>"; };
+		3C2945FF18F9B570002B633C /* ToolbarDesktopFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarDesktopFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460018F9B570002B633C /* ToolbarDocumentsFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarDocumentsFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460118F9B570002B633C /* ToolbarDownloadsFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarDownloadsFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460218F9B570002B633C /* ToolbarFavoritesIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarFavoritesIcon.icns; sourceTree = "<group>"; };
+		3C29460318F9B570002B633C /* ToolbarInfo.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarInfo.icns; sourceTree = "<group>"; };
+		3C29460418F9B570002B633C /* ToolbarLabels.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarLabels.icns; sourceTree = "<group>"; };
+		3C29460518F9B570002B633C /* ToolbarLibraryFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarLibraryFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460618F9B570002B633C /* ToolbarMovieFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarMovieFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460718F9B570002B633C /* ToolbarMusicFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarMusicFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460818F9B570002B633C /* ToolbarPicturesFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarPicturesFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460918F9B570002B633C /* ToolbarPublicFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarPublicFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460A18F9B570002B633C /* ToolbarSitesFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarSitesFolderIcon.icns; sourceTree = "<group>"; };
+		3C29460B18F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ToolbarUtilitiesFolderIcon.icns; sourceTree = "<group>"; };
+		3C29463318F9B86A002B633C /* TreeBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeBranch.h; sourceTree = "<group>"; };
+		3C29463418F9B86A002B633C /* TreeBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeBranch.m; sourceTree = "<group>"; };
+		3C29463518F9B86A002B633C /* TreeLeaf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeLeaf.h; sourceTree = "<group>"; };
+		3C29463618F9B86A002B633C /* TreeLeaf.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeLeaf.m; sourceTree = "<group>"; };
+		3C29463718F9B86A002B633C /* TreeRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeRoot.h; sourceTree = "<group>"; };
+		3C29463818F9B86A002B633C /* TreeRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeRoot.m; sourceTree = "<group>"; };
+		3C29463918F9B86A002B633C /* TreeItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeItem.h; sourceTree = "<group>"; };
+		3C29463A18F9B86A002B633C /* TreeItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeItem.m; sourceTree = "<group>"; };
+		3C29463F18F9B87C002B633C /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
+		3C29464018F9B87C002B633C /* FileInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileInformation.m; sourceTree = "<group>"; };
+		3C29464118F9B87C002B633C /* FolderCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderCellView.h; sourceTree = "<group>"; };
+		3C29464218F9B87C002B633C /* FolderCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderCellView.m; sourceTree = "<group>"; };
+		3C29464318F9B87C002B633C /* ImagePreviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePreviewCell.m; sourceTree = "<group>"; };
+		3C29464418F9B87C002B633C /* MD5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MD5.c; sourceTree = "<group>"; };
+		3C29464518F9B87C002B633C /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
+		3C29464618F9B87C002B633C /* FileCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCollection.h; sourceTree = "<group>"; };
+		3C29464718F9B87C002B633C /* FileInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInformation.h; sourceTree = "<group>"; };
+		3C29464818F9B87C002B633C /* ImagePreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePreviewCell.h; sourceTree = "<group>"; };
+		3C29464E18F9B8E1002B633C /* LeftDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftDataSource.m; sourceTree = "<group>"; };
+		3C29464F18F9B8E1002B633C /* LeftViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftViewController.h; sourceTree = "<group>"; };
+		3C29465018F9B8E1002B633C /* LeftViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftViewController.m; sourceTree = "<group>"; };
+		3C29465118F9B8E1002B633C /* LeftDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftDataSource.h; sourceTree = "<group>"; };
 		3CEA673F18F87C2F0080C4FC /* File Catalyst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Catalyst.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -73,6 +180,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3C29463118F9B81C002B633C /* FileClasses */ = {
+			isa = PBXGroup;
+			children = (
+				3C29463F18F9B87C002B633C /* FileCollection.m */,
+				3C29464018F9B87C002B633C /* FileInformation.m */,
+				3C29464118F9B87C002B633C /* FolderCellView.h */,
+				3C29464218F9B87C002B633C /* FolderCellView.m */,
+				3C29464318F9B87C002B633C /* ImagePreviewCell.m */,
+				3C29464418F9B87C002B633C /* MD5.c */,
+				3C29464518F9B87C002B633C /* MD5.h */,
+				3C29464618F9B87C002B633C /* FileCollection.h */,
+				3C29464718F9B87C002B633C /* FileInformation.h */,
+				3C29464818F9B87C002B633C /* ImagePreviewCell.h */,
+			);
+			path = FileClasses;
+			sourceTree = "<group>";
+		};
+		3C29463218F9B833002B633C /* TreeClasses */ = {
+			isa = PBXGroup;
+			children = (
+				3C29463318F9B86A002B633C /* TreeBranch.h */,
+				3C29463418F9B86A002B633C /* TreeBranch.m */,
+				3C29463518F9B86A002B633C /* TreeLeaf.h */,
+				3C29463618F9B86A002B633C /* TreeLeaf.m */,
+				3C29463718F9B86A002B633C /* TreeRoot.h */,
+				3C29463818F9B86A002B633C /* TreeRoot.m */,
+				3C29463918F9B86A002B633C /* TreeItem.h */,
+				3C29463A18F9B86A002B633C /* TreeItem.m */,
+			);
+			path = TreeClasses;
+			sourceTree = "<group>";
+		};
 		3CEA673618F87C2F0080C4FC = {
 			isa = PBXGroup;
 			children = (
@@ -115,6 +254,13 @@
 		3CEA674818F87C2F0080C4FC /* File Catalyst */ = {
 			isa = PBXGroup;
 			children = (
+				3C29464E18F9B8E1002B633C /* LeftDataSource.m */,
+				3C29464F18F9B8E1002B633C /* LeftViewController.h */,
+				3C29465018F9B8E1002B633C /* LeftViewController.m */,
+				3C29465118F9B8E1002B633C /* LeftDataSource.h */,
+				3C29463218F9B833002B633C /* TreeClasses */,
+				3C29463118F9B81C002B633C /* FileClasses */,
+				3CEA677618F87CE50080C4FC /* IconResources */,
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
 				3CEA675718F87C2F0080C4FC /* MainMenu.xib */,
@@ -152,6 +298,50 @@
 				3CEA676918F87C2F0080C4FC /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		3CEA677618F87CE50080C4FC /* IconResources */ = {
+			isa = PBXGroup;
+			children = (
+				3C2945E718F9B570002B633C /* Accounts.icns */,
+				3C2945E818F9B570002B633C /* AlertStopIcon.icns */,
+				3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */,
+				3C2945EA18F9B570002B633C /* BurningIcon.icns */,
+				3C2945EB18F9B570002B633C /* DocumentsFolderIcon.icns */,
+				3C2945EC18F9B570002B633C /* DownloadsFolder.icns */,
+				3C2945ED18F9B570002B633C /* EjectMediaIcon.icns */,
+				3C2945EE18F9B570002B633C /* FavoriteItemsIcon.icns */,
+				3C2945EF18F9B570002B633C /* FinderIcon.icns */,
+				3C2945F018F9B570002B633C /* ForwardArrowIcon.icns */,
+				3C2945F118F9B570002B633C /* FullTrashIcon.icns */,
+				3C2945F218F9B570002B633C /* GenericAirDiskIcon.icns */,
+				3C2945F318F9B570002B633C /* GenericApplicationIcon.icns */,
+				3C2945F418F9B570002B633C /* GenericDocumentIcon.icns */,
+				3C2945F518F9B570002B633C /* GenericSharepoint.icns */,
+				3C2945F618F9B570002B633C /* GenericTimeMachineDiskIcon.icns */,
+				3C2945F718F9B570002B633C /* KeepArrangedIcon.icns */,
+				3C2945F818F9B570002B633C /* MovieFolderIcon.icns */,
+				3C2945F918F9B570002B633C /* MusicFolderIcon.icns */,
+				3C2945FA18F9B570002B633C /* SystemFolderIcon.icns */,
+				3C2945FB18F9B570002B633C /* ToolbarAdvanced.icns */,
+				3C2945FC18F9B570002B633C /* ToolbarAppsFolderIcon.icns */,
+				3C2945FD18F9B570002B633C /* ToolbarCustomizeIcon.icns */,
+				3C2945FE18F9B570002B633C /* ToolbarDeleteIcon.icns */,
+				3C2945FF18F9B570002B633C /* ToolbarDesktopFolderIcon.icns */,
+				3C29460018F9B570002B633C /* ToolbarDocumentsFolderIcon.icns */,
+				3C29460118F9B570002B633C /* ToolbarDownloadsFolderIcon.icns */,
+				3C29460218F9B570002B633C /* ToolbarFavoritesIcon.icns */,
+				3C29460318F9B570002B633C /* ToolbarInfo.icns */,
+				3C29460418F9B570002B633C /* ToolbarLabels.icns */,
+				3C29460518F9B570002B633C /* ToolbarLibraryFolderIcon.icns */,
+				3C29460618F9B570002B633C /* ToolbarMovieFolderIcon.icns */,
+				3C29460718F9B570002B633C /* ToolbarMusicFolderIcon.icns */,
+				3C29460818F9B570002B633C /* ToolbarPicturesFolderIcon.icns */,
+				3C29460918F9B570002B633C /* ToolbarPublicFolderIcon.icns */,
+				3C29460A18F9B570002B633C /* ToolbarSitesFolderIcon.icns */,
+				3C29460B18F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns */,
+			);
+			path = IconResources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -230,10 +420,47 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C29462318F9B570002B633C /* ToolbarDeleteIcon.icns in Resources */,
+				3C29462A18F9B570002B633C /* ToolbarLibraryFolderIcon.icns in Resources */,
+				3C29460C18F9B570002B633C /* Accounts.icns in Resources */,
+				3C29460F18F9B570002B633C /* BurningIcon.icns in Resources */,
+				3C29462718F9B570002B633C /* ToolbarFavoritesIcon.icns in Resources */,
+				3C29463018F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns in Resources */,
 				3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */,
+				3C29462618F9B570002B633C /* ToolbarDownloadsFolderIcon.icns in Resources */,
+				3C29460D18F9B570002B633C /* AlertStopIcon.icns in Resources */,
+				3C29461318F9B570002B633C /* FavoriteItemsIcon.icns in Resources */,
+				3C29461118F9B570002B633C /* DownloadsFolder.icns in Resources */,
+				3C29461918F9B570002B633C /* GenericDocumentIcon.icns in Resources */,
+				3C29460E18F9B570002B633C /* BackwardArrowIcon.icns in Resources */,
+				3C29461618F9B570002B633C /* FullTrashIcon.icns in Resources */,
+				3C29461518F9B570002B633C /* ForwardArrowIcon.icns in Resources */,
+				3C29462E18F9B570002B633C /* ToolbarPublicFolderIcon.icns in Resources */,
+				3C29461F18F9B570002B633C /* SystemFolderIcon.icns in Resources */,
+				3C29461C18F9B570002B633C /* KeepArrangedIcon.icns in Resources */,
+				3C29462918F9B570002B633C /* ToolbarLabels.icns in Resources */,
+				3C29461418F9B570002B633C /* FinderIcon.icns in Resources */,
+				3C29462D18F9B570002B633C /* ToolbarPicturesFolderIcon.icns in Resources */,
+				3C29462118F9B570002B633C /* ToolbarAppsFolderIcon.icns in Resources */,
+				3C29461B18F9B570002B633C /* GenericTimeMachineDiskIcon.icns in Resources */,
+				3C29462F18F9B570002B633C /* ToolbarSitesFolderIcon.icns in Resources */,
+				3C29461A18F9B570002B633C /* GenericSharepoint.icns in Resources */,
+				3C29461D18F9B570002B633C /* MovieFolderIcon.icns in Resources */,
+				3C29462B18F9B570002B633C /* ToolbarMovieFolderIcon.icns in Resources */,
+				3C29462418F9B570002B633C /* ToolbarDesktopFolderIcon.icns in Resources */,
+				3C29462018F9B570002B633C /* ToolbarAdvanced.icns in Resources */,
+				3C29461218F9B570002B633C /* EjectMediaIcon.icns in Resources */,
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
+				3C29462218F9B570002B633C /* ToolbarCustomizeIcon.icns in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
+				3C29462518F9B570002B633C /* ToolbarDocumentsFolderIcon.icns in Resources */,
+				3C29461018F9B570002B633C /* DocumentsFolderIcon.icns in Resources */,
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
+				3C29461718F9B570002B633C /* GenericAirDiskIcon.icns in Resources */,
+				3C29461E18F9B570002B633C /* MusicFolderIcon.icns in Resources */,
+				3C29461818F9B570002B633C /* GenericApplicationIcon.icns in Resources */,
+				3C29462C18F9B570002B633C /* ToolbarMusicFolderIcon.icns in Resources */,
+				3C29462818F9B570002B633C /* ToolbarInfo.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -252,7 +479,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C29464D18F9B87C002B633C /* MD5.c in Sources */,
+				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,
+				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
+				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
+				3C29464A18F9B87C002B633C /* FileInformation.m in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
+				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
+				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
+				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
+				3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */,
+				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
+				3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -466,6 +704,7 @@
 				3CEA677218F87C2F0080C4FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "File CatalystTests" */ = {
 			isa = XCConfigurationList;
@@ -474,6 +713,7 @@
 				3CEA677518F87C300080C4FC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
