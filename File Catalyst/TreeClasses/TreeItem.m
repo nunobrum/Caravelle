@@ -14,7 +14,7 @@
     self = [super init];
     if (self) {
         [self setByteSize: 0];
-        [self setDateModified: nil];
+        //[self setDateModified: nil];
     }
     return self;
 }
@@ -24,4 +24,31 @@
     return NO;
 }
 
+-(NSString*) name {
+    NSString *filename;
+    NSError *error;
+    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
+    if (filename==nil) {
+        return [_theURL absoluteString];
+    }
+    return filename;
+}
+
+-(NSDate*) dateModified {
+    NSDate *date;
+    [_theURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:NULL];
+    return date;
+}
+
+-(NSString*) path {
+    NSString *path;
+    [_theURL getResourceValue:&path     forKey:NSURLPathKey error:NULL];
+    return path;
+}
+
+-(NSNumber*) filesize {
+    NSNumber *filesize;
+    [_theURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
+    return filesize;
+}
 @end

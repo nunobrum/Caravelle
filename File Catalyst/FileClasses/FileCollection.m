@@ -49,6 +49,7 @@
                                                                               nil]
                                                                      options:NSDirectoryEnumerationSkipsHiddenFiles
                                                                 errorHandler:nil];
+    // NSDirectoryEnumerationSkipsSubdirectoryDescendants
     
     // An array to store the all the enumerated file names in
     
@@ -128,6 +129,7 @@
     return [fileArray count];
 }
 
+/* Computes the common path between all files in the collection */
 -(NSString*) rootPath {
     if (rootDirectory==nil) {
         NSArray *common_path = nil;
@@ -136,12 +138,8 @@
         for (FileInformation *fi in fileArray) {
             if (common_path==nil)
             {
-                //NSInteger i;
                 common_path = [fi getPathComponents];
                 ci = [common_path count];
-                //for (i=0; i<ci; i++) {
-                //    NSLog(@"common %li %@",i, [common_path objectAtIndex:i]);
-                //}
             }
             else
             {

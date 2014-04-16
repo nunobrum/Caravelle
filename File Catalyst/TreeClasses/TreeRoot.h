@@ -12,13 +12,14 @@
 
 @interface TreeRoot : TreeBranch <TreeProtocol> {
     FileCollection *_fileCollection;
-    //NSString *rootDirectory;
+    NSString *rootDirectory;
 }
 
+@property bool isCollectionSet;
 
 -(void) setFileCollection:(FileCollection*)collection;
 -(FileCollection *) fileCollection;
 -(NSString*) rootPath;
--(void) refreshTree;
+-(void) refreshTreeFromCollection;
 
 @end

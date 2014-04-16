@@ -22,6 +22,7 @@
 
 @property (weak) IBOutlet NSOutlineView *LeftOutlineView;
 @property (weak) IBOutlet NSTableView *LeftTableView;
+@property (weak) IBOutlet NSSearchField *LeftFilter;
 
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 
@@ -40,19 +41,17 @@
 - (IBAction)RemoveDirectory:(id)sender; // Remove Directories from Left View
 
 - (IBAction)FindDuplicates:(id)sender;
-- (IBAction)TableClickEvent:(id)sender;
-- (IBAction)RightViewSelector:(id)sender;
-
-- (IBAction)RightOutlineCellSelector:(id)sender;
+- (IBAction)TableSelector:(id)sender;
 
 - (IBAction)LeftOutlineCellSelector:(id)sender;
 
-
+// Binding is done manually
 - (IBAction)TableDoubleClickEvent:(id)sender;
 
 - (void) DirectoryScan:(NSString*)rootPath;
 
 - (IBAction)toolbarDelete:(id)sender;
+- (IBAction)toolbarCatalystSwitch:(id)sender;
 
 
 @end

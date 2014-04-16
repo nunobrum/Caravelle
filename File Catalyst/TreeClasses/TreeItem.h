@@ -10,20 +10,28 @@
 #import "FileInformation.h"
 
 
+
 @protocol TreeProtocol <NSObject>
 
 -(BOOL) isBranch;
 
 @end
 
-@interface TreeItem : NSObject 
+
+@interface TreeItem : NSObject
 
 @property (retain) TreeItem      *parent;
-@property (retain) NSString       *name;
+//@property (retain) NSString       *name;
+@property NSURL                   *theURL;
 @property long long               byteSize;
-@property (retain) NSDate         *dateModified;
+//@property (retain) NSDate         *dateModified;
 
 -(TreeItem*) init;
 -(BOOL) isBranch;
+-(NSString*) name;
+-(NSDate*)   dateModified;
+-(NSString*) path ;
+-(NSNumber*) filesize ;
+
 
 @end

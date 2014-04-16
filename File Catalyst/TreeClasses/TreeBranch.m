@@ -8,6 +8,7 @@
 
 #import "TreeBranch.h"
 #import "TreeLeaf.h"
+#import "MyDirectoryEnumerator.h"
 
 @interface TreeBranch( PrivateMethods )
 
@@ -34,9 +35,10 @@
             [(TreeBranch*)item removeBranch];
     }
     [[self children] removeAllObjects];
-    [self setDateModified:nil];
+    //[self setDateModified:nil];
     [self setByteSize:0];
 }
+
 
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
@@ -77,18 +79,7 @@
 }
 
 -(NSString*) path {
-    NSString *answer=nil;
-    if (self.parent==nil) {
-        answer = [NSString stringWithString: self.name];
-    }
-    else if ([self.parent isKindOfClass:[TreeBranch class]])
-    {
-        answer = [(TreeBranch*)self.parent path];
-        answer = [answer stringByAppendingPathComponent:self.name];
-    }
-    else
-        NSAssert(NO,@"Ooops. This is not supposed to happen");
-    return answer;
+    return [self.theURL path];
 }
 
 -(NSInteger) numberOfFileDuplicatesInBranch {
@@ -189,6 +180,18 @@
     return answer; // Pending Implementation
 }
 
+-(NSMutableArray*) branchesInNode {
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    for (TreeItem *item in _children) {
+        if ([item isKindOfClass:[TreeBranch class]]==YES) {
+            [answer addObject:item];
+        }
+    }
+    return answer;
+
+}
+
+
 -(FileCollection*) duplicatesInNode {
     FileCollection *answer = [[FileCollection new] init];
     for (TreeItem *item in _children) {
@@ -211,5 +214,87 @@
     }
     return answer;
 }
+
+/* This is not to be used with Catalyst Mode */
+-(void) refreshTreeFromURLs {
+    // Will get the first level of the tree
+    TreeBranch *cursor, *currdir;
+    long oldByteSize = 0;
+
+    if ([self children]==nil)
+        [self setChildren: [[NSMutableArray new] init]];
+
+    oldByteSize = self.byteSize;
+    /* Subtract existing files before updating */
+
+    for (TreeItem *item in _children) {
+        if ([item isKindOfClass:[TreeLeaf class]]==YES) {
+            self.byteSize -= [item byteSize];
+            //oldNumberOfFiles++;
+            [_children removeObject:item];
+        }
+    }
+    NSURL *directoryToScan = [NSURL fileURLWithPath:self.path];
+    NSInteger level0 = [[directoryToScan pathComponents] count];
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:directoryToScan WithMode:NO];
+
+
+    for (NSURL *theURL in dirEnumerator) {
+
+        NSArray *pathComponents = [theURL pathComponents];
+        NSInteger level;
+
+        // Retrieve the file name. From NSURLNameKey, cached during the enumeration.
+        NSNumber *fileSize;
+        [theURL getResourceValue:&fileSize     forKey:NSURLFileSizeKey error:NULL];
+
+
+        self.byteSize += [fileSize longLongValue];; // Add the size of the file to the directory
+        currdir = (TreeBranch*)self;
+        for (level=level0; level < [pathComponents count]-1; level++) { //last path component is the file name
+            NSString *dirName = [pathComponents objectAtIndex:level];
+            //NSLog(@"<%@>",dirName);
+            cursor = nil;
+            for (TreeBranch *subdir in [currdir children]){
+                // If the two are the same
+                if ([[[subdir theURL] lastPathComponent]compare: dirName]==NSOrderedSame) {
+                    cursor = subdir;
+                    cursor.byteSize += [fileSize longLongValue];;
+                    break;
+                }
+            }
+            if (cursor==nil) { // the directory doesn't exit
+                TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
+                newDir.theURL = theURL;
+                newDir.parent = currdir;
+                newDir.children = [[NSMutableArray new] init];
+                newDir.byteSize = [fileSize longLongValue];;
+                [[currdir children] addObject: newDir]; // Adds the created file or directory to the current directory
+                currdir = newDir;
+
+            } // if
+            else
+                currdir = cursor;
+
+        } //for
+        // Now adding the File
+        TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
+        FileInformation *finfo = [FileInformation createWithURL:theURL];
+        newFile.theURL = theURL;
+        newFile.parent = currdir;
+        newFile.byteSize = [fileSize longLongValue];
+        [newFile SetFileInformation: finfo];
+        [[currdir children] addObject: newFile]; // Adds the created file or directory to the current director
+
+    } // for
+
+    /* Now will propagate new totals to parent directories */
+    currdir = (TreeBranch*)self;
+    while (currdir!=nil) {
+        currdir.byteSize+= self.byteSize - oldByteSize;
+        currdir = (TreeBranch*)[currdir parent];
+    }
+}
+
 
 @end

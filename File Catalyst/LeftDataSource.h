@@ -27,11 +27,12 @@ enum enumInRootSet {
 }
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
-@property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
+@property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
 @property NSMutableArray *LeftBaseDirectories;
 
+@property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
 
 -(LeftDataSource*) init;
 
@@ -54,6 +55,7 @@ enum enumInRootSet {
 
 -(void) refreshTrees;
 -(void) addWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler;
+-(void) addWithRootPath:(NSURL*) rootPath;
 //-(void) addBaseDirectory:(NSString*)rootpath fileCollection:(FileCollection*)collection callback:(void (^)(NSInteger fileno))callbackhandler;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;

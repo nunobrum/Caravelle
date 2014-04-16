@@ -29,9 +29,9 @@
     // Insert code here to initialize your application
     //NSWindowController *startupWindow = [[[StartupWindowController class] alloc] init];
     //[startupWindow showWindow:self];
-    NSLog(@"Está feito");
     fileCollection = [[FileCollection new] init];
     _LeftDataSrc = [[LeftDataSource new] init];
+    [_LeftDataSrc setCatalystMode:YES];
     // Sets the Outline view so that the File display can work
     [_LeftDataSrc setTreeOutlineView:_LeftOutlineView];
     //[_RightDataSrc setTreeOutlineView:_RightOutlineView];
@@ -62,15 +62,22 @@
     
     if (rootCanBeInserted==canAdd) {
         [_LeftPathRoot setURL:[NSURL URLWithString:rootPath]];
-        if (nil==fileCollection_inst)
-            fileCollection_inst = [[FileCollection new] init];
+        if ([_LeftDataSrc getCatalystMode ]==YES) {
+            if (nil==fileCollection_inst)
+                fileCollection_inst = [[FileCollection new] init];
         
-        [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
+            [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
             //[[self StatusText] setIntegerValue:fileno];
-        }];
-        [_LeftDataSrc addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
+            }];
+            [_LeftDataSrc addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
             //[[self StatusText] setIntegerValue:fileno];
-        }];
+            }];
+        }
+        else { // Will only add the Root
+
+            [_LeftDataSrc addWithRootPath:[NSURL URLWithString: rootPath]];
+        }
+        [_LeftDataSrc refreshTrees];
         // This is important so that the Table is correctly refreshed
         [_LeftOutlineView reloadItem:nil reloadChildren:YES];
         [_toolbarDeleteButton setEnabled:NO];
@@ -80,6 +87,9 @@
 
 - (IBAction)toolbarDelete:(id)sender {
     NSLog(@"Menu Delete clicked");
+}
+
+- (IBAction)toolbarCatalystSwitch:(id)sender {
 }
 
 - (IBAction)RemoveDirectory:(id)sender {
@@ -159,19 +169,12 @@
 //    options.photo_exif = [_chkPhotoEXIF state];
     
     duplicates = [collection findDuplicates:options];
-    if (0) {
-    for (TreeRoot *tree in [_LeftDataSrc LeftBaseDirectories]) {
-        FileCollection *col = [tree fileCollection] ;
-        [col streamFilesWithDuplicates];
-        [tree refreshTree];
-    }
-    }
-    else {
-        [_LeftDataSrc addWithFileCollection:duplicates callback:^(NSInteger fileno) {
-            //[[self StatusText] setIntegerValue:fileno];
-        }];
-    }
-    
+
+    [_LeftDataSrc addWithFileCollection:duplicates callback:^(NSInteger fileno) {
+        //[[self StatusText] setIntegerValue:fileno];
+    }];
+
+
     [_LeftOutlineView setDataSource:_LeftDataSrc];
     [_LeftOutlineView reloadItem:nil reloadChildren:YES];
     [_toolbarDeleteButton setEnabled:NO];
@@ -181,7 +184,8 @@
 }
 
 
-- (IBAction)TableClickEvent:(id)sender {
+- (IBAction)TableSelector:(id)sender {
+    NSLog(@"Table Selector");
     if (sender==_LeftOutlineView) {
 /*        NSInteger fileSelected = [_LeftOutlineView selectedRow];
         NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
@@ -212,8 +216,8 @@
         NSIndexSet *rowsSelected = [_LeftTableView selectedRowIndexes];
         if ([rowsSelected count]==0) {// No file is selected
             // Update toolbar
-            
             [_toolbarDeleteButton setEnabled:NO];
+            [_StatusBar setTitle: @"No File Selected"];
         }
         else {
             NSInteger index = [rowsSelected firstIndex];
@@ -242,14 +246,6 @@
     }
 }
 
-- (IBAction)RightViewSelector:(id)sender {
-    NSLog(@"Right Outline View Selector");
-    //[_RightTableView reloadData];
-}
-
-- (IBAction)RightOutlineCellSelector:(id)sender {
-    NSLog(@"Right Outline Cell Selector");
-}
 
 - (IBAction)LeftOutlineCellSelector:(id)sender {
     NSLog(@"Left Outline Cell Selector");
@@ -264,7 +260,7 @@
         while (index!=NSNotFound) {
             /* Do something here */
             id node =[_LeftDataSrc getFileAtIndex:index];
-            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file
+            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
                 [[node getFileInformation] openFile];
             }
             else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory

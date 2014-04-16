@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment version="1080" defaultVersion="1080" identifier="macosx"/>
+        <deployment version="1080" defaultVersion="1090" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5053"/>
     </dependencies>
     <objects>
@@ -670,8 +670,8 @@ CA
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" animationBehavior="default" id="2037">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="283" y="305" width="983" height="571"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <rect key="contentRect" x="95" y="99" width="983" height="571"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="983" height="571"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -807,7 +807,7 @@ CA
                                                                                             </tableColumn>
                                                                                         </tableColumns>
                                                                                         <connections>
-                                                                                            <action selector="TableClickEvent:" target="494" id="mI8-Bj-ax2"/>
+                                                                                            <action selector="TableSelector:" target="494" id="mI8-Bj-ax2"/>
                                                                                         </connections>
                                                                                     </outlineView>
                                                                                 </subviews>
@@ -978,7 +978,7 @@ CA
                                                                                             </tableColumn>
                                                                                         </tableColumns>
                                                                                         <connections>
-                                                                                            <action selector="TableClickEvent:" target="494" id="6oG-sp-R9e"/>
+                                                                                            <action selector="TableSelector:" target="494" id="6oG-sp-R9e"/>
                                                                                         </connections>
                                                                                     </tableView>
                                                                                 </subviews>

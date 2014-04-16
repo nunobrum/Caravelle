@@ -37,9 +37,13 @@
 -(NSMutableArray*) itemsInBranch;
 -(NSMutableArray*) leafsInNode;
 -(NSMutableArray*) leafsInBranch;
+-(NSMutableArray*) branchesInNode;
+//-(NSMutableArray*) branchesInBranch;
 
 -(FileCollection*) duplicatesInNode;
 -(FileCollection*) duplicatesInBranch;
+
+-(void) refreshTreeFromURLs;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

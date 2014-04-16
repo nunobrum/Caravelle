@@ -19,21 +19,6 @@
 #define COL_DATE     @"ModifiedID"
 #define COL_SIZE     @"SizeID"
 
-//void fileSizeFormater(NSInteger value, NSString **str) {
-//    int exp=0;
-//    const char *suffixes = "kMGT##";
-//    float _value = value;
-//    while (_value>1000) {
-//        _value/=1000;
-//        exp+=1;
-//    }
-//    if (exp==0)
-//        *str = [NSString stringWithFormat:@"%lu",value];
-//    else
-//        *str = [NSString stringWithFormat:@"%3.1f%c",_value,suffixes[exp-1]];
-//    //return str;
-//    
-//}
 
 void DateFormatter(NSDate *date, NSString **output) {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -73,6 +58,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->tableData = [[NSMutableArray new] init];
     self->tableDataValid = NO;
     self->_foldersInTable = YES;
+    self->_catalystMode = YES;
     return self;
 }
 
@@ -263,13 +249,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSTableCellView *cellView = [aTableView makeViewWithIdentifier:identifier owner:self];
 
     if ([identifier isEqualToString:COL_FILENAME]) {
-        NSString *path = nil;
-        if ([theFile isKindOfClass:[TreeLeaf class]]) {
-            path = [[(TreeLeaf*)theFile getFileInformation] getPath];
-        }
-        else if ([theFile isKindOfClass:[TreeBranch class]]) {
-            path = [(TreeBranch*)theFile path];
-        }
+        NSString *path = [theFile path];
         if (path) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
@@ -296,27 +276,47 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) refreshTrees {
-    for (TreeRoot *tree in _LeftBaseDirectories) {
-        [tree refreshTree];
+    if (_catalystMode) {
+        for (TreeRoot *tree in _LeftBaseDirectories) {
+            [tree refreshTreeFromCollection];
+        }
+    }
+    else {
+        for (TreeRoot *tree in _LeftBaseDirectories) {
+            [tree refreshTreeFromURLs];
+        }
     }
 }
 
 -(void) addWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
     TreeRoot *rootDir = [[TreeRoot new] init];
-    NSString *rootpath = [fileCollection rootPath];
+    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
     
     // assigns the name to the root directory
-    [rootDir setName: rootpath];
+    [rootDir setTheURL: rootpath];
     [rootDir setFileCollection: fileCollection];
+    [rootDir setIsCollectionSet:YES];
     
-    [rootDir refreshTree];
     
     if(_LeftBaseDirectories==nil) {
         _LeftBaseDirectories = [[NSMutableArray new] init];
     }
     [_LeftBaseDirectories addObject: rootDir];
 }
+-(void) addWithRootPath:(NSURL*) rootPath {
+    TreeRoot *rootDir = [[TreeRoot new] init];
+    // assigns the name to the root directory
+    [rootDir setTheURL: rootPath];
+    [rootDir setFileCollection: NULL];
+    [rootDir setIsCollectionSet:NO];
+    [rootDir refreshTreeFromURLs];
 
+    if(_LeftBaseDirectories==nil) {
+        _LeftBaseDirectories = [[NSMutableArray new] init];
+    }
+    [_LeftBaseDirectories addObject: rootDir];
+
+}
 
 
 -(void) removeRootWithIndex:(NSInteger)index {

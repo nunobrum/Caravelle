@@ -55,6 +55,8 @@
 		3C29464D18F9B87C002B633C /* MD5.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464418F9B87C002B633C /* MD5.c */; };
 		3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464E18F9B8E1002B633C /* LeftDataSource.m */; };
 		3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465018F9B8E1002B633C /* LeftViewController.m */; };
+		3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */; };
+		3C6A0D9C18FEA92E00550AED /* GenericFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */; };
 		3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA674F18F87C2F0080C4FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
@@ -138,6 +140,9 @@
 		3C29464F18F9B8E1002B633C /* LeftViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftViewController.h; sourceTree = "<group>"; };
 		3C29465018F9B8E1002B633C /* LeftViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftViewController.m; sourceTree = "<group>"; };
 		3C29465118F9B8E1002B633C /* LeftDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftDataSource.h; sourceTree = "<group>"; };
+		3C29465418FD8ABE002B633C /* MyDirectoryEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyDirectoryEnumerator.h; sourceTree = "<group>"; };
+		3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyDirectoryEnumerator.m; sourceTree = "<group>"; };
+		3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericFolderIcon.icns; sourceTree = "<group>"; };
 		3CEA673F18F87C2F0080C4FC /* File Catalyst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Catalyst.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -183,16 +188,18 @@
 		3C29463118F9B81C002B633C /* FileClasses */ = {
 			isa = PBXGroup;
 			children = (
+				3C29464618F9B87C002B633C /* FileCollection.h */,
 				3C29463F18F9B87C002B633C /* FileCollection.m */,
+				3C29464718F9B87C002B633C /* FileInformation.h */,
 				3C29464018F9B87C002B633C /* FileInformation.m */,
 				3C29464118F9B87C002B633C /* FolderCellView.h */,
 				3C29464218F9B87C002B633C /* FolderCellView.m */,
 				3C29464318F9B87C002B633C /* ImagePreviewCell.m */,
 				3C29464418F9B87C002B633C /* MD5.c */,
 				3C29464518F9B87C002B633C /* MD5.h */,
-				3C29464618F9B87C002B633C /* FileCollection.h */,
-				3C29464718F9B87C002B633C /* FileInformation.h */,
 				3C29464818F9B87C002B633C /* ImagePreviewCell.h */,
+				3C29465418FD8ABE002B633C /* MyDirectoryEnumerator.h */,
+				3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */,
 			);
 			path = FileClasses;
 			sourceTree = "<group>";
@@ -254,16 +261,16 @@
 		3CEA674818F87C2F0080C4FC /* File Catalyst */ = {
 			isa = PBXGroup;
 			children = (
+				3C29465118F9B8E1002B633C /* LeftDataSource.h */,
 				3C29464E18F9B8E1002B633C /* LeftDataSource.m */,
 				3C29464F18F9B8E1002B633C /* LeftViewController.h */,
 				3C29465018F9B8E1002B633C /* LeftViewController.m */,
-				3C29465118F9B8E1002B633C /* LeftDataSource.h */,
-				3C29463218F9B833002B633C /* TreeClasses */,
-				3C29463118F9B81C002B633C /* FileClasses */,
-				3CEA677618F87CE50080C4FC /* IconResources */,
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
 				3CEA675718F87C2F0080C4FC /* MainMenu.xib */,
+				3C29463218F9B833002B633C /* TreeClasses */,
+				3C29463118F9B81C002B633C /* FileClasses */,
+				3CEA677618F87CE50080C4FC /* IconResources */,
 				3CEA675A18F87C2F0080C4FC /* Images.xcassets */,
 				3CEA674918F87C2F0080C4FC /* Supporting Files */,
 			);
@@ -303,6 +310,7 @@
 		3CEA677618F87CE50080C4FC /* IconResources */ = {
 			isa = PBXGroup;
 			children = (
+				3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */,
 				3C2945E718F9B570002B633C /* Accounts.icns */,
 				3C2945E818F9B570002B633C /* AlertStopIcon.icns */,
 				3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */,
@@ -441,6 +449,7 @@
 				3C29462918F9B570002B633C /* ToolbarLabels.icns in Resources */,
 				3C29461418F9B570002B633C /* FinderIcon.icns in Resources */,
 				3C29462D18F9B570002B633C /* ToolbarPicturesFolderIcon.icns in Resources */,
+				3C6A0D9C18FEA92E00550AED /* GenericFolderIcon.icns in Resources */,
 				3C29462118F9B570002B633C /* ToolbarAppsFolderIcon.icns in Resources */,
 				3C29461B18F9B570002B633C /* GenericTimeMachineDiskIcon.icns in Resources */,
 				3C29462F18F9B570002B633C /* ToolbarSitesFolderIcon.icns in Resources */,
@@ -488,6 +497,7 @@
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
+				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
 				3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */,
