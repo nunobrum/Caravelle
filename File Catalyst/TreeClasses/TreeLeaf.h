@@ -9,9 +9,9 @@
 #import "TreeItem.h"
 
 @interface TreeLeaf : TreeItem <TreeProtocol> {
-    FileInformation *fileInformation;
+//    FileInformation *fileInformation;
 }
--(void)       SetFileInformation: (FileInformation *) fileInfo;
+//-(void)       SetFileInformation: (FileInformation *) fileInfo;
 -(FileInformation*) getFileInformation;
 -(BOOL) isBranch;
 

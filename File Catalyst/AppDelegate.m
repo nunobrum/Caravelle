@@ -31,7 +31,7 @@
     //[startupWindow showWindow:self];
     fileCollection = [[FileCollection new] init];
     _LeftDataSrc = [[LeftDataSource new] init];
-    [_LeftDataSrc setCatalystMode:YES];
+    [_LeftDataSrc setCatalystMode:NO];
     // Sets the Outline view so that the File display can work
     [_LeftDataSrc setTreeOutlineView:_LeftOutlineView];
     //[_RightDataSrc setTreeOutlineView:_RightOutlineView];

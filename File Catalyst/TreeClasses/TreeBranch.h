@@ -24,7 +24,7 @@
 
 -(NSInteger) numberOfLeafsInBranch;
 
--(NSInteger) numberOfFileDuplicatesInBranch;
+//-(NSInteger) numberOfFileDuplicatesInBranch;
 
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
 -(TreeLeaf*) leafAtIndex:(NSUInteger)index;
@@ -40,8 +40,8 @@
 -(NSMutableArray*) branchesInNode;
 //-(NSMutableArray*) branchesInBranch;
 
--(FileCollection*) duplicatesInNode;
--(FileCollection*) duplicatesInBranch;
+//-(FileCollection*) duplicatesInNode;
+//-(FileCollection*) duplicatesInBranch;
 
 -(void) refreshTreeFromURLs;
 

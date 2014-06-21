@@ -10,12 +10,12 @@
 
 @implementation TreeLeaf
 
--(void) SetFileInformation: (FileInformation *) fileInfo {
-    fileInformation = fileInfo;
-}
-
+//-(void) SetFileInformation: (FileInformation *) fileInfo {
+//    fileInformation = fileInfo;
+//}
+//
 -(FileInformation*)getFileInformation {
-    return fileInformation;
+    return [FileInformation createWithURL: self.theURL];
 }
 -(BOOL) isBranch {
     return NO;

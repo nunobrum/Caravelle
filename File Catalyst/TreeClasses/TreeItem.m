@@ -25,13 +25,13 @@
 }
 
 -(NSString*) name {
-    NSString *filename;
-    NSError *error;
-    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
-    if (filename==nil) {
-        return [_theURL absoluteString];
-    }
-    return filename;
+//    NSString *filename;
+//    NSError *error;
+//    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
+//    if (filename==nil) {
+        return [_theURL lastPathComponent];
+//    }
+//    return filename;
 }
 
 -(NSDate*) dateModified {

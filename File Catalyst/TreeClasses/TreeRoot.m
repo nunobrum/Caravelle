@@ -53,20 +53,20 @@
 
             // Retrieve the file name. From NSURLNameKey, cached during the enumeration.
             NSNumber *fileSize = [finfo getFileSize];
-            NSLog(@"%@--->",[finfo getName]);
+            //NSLog(@"%@--->",[finfo getName]);
 
             self.byteSize += [fileSize longLongValue]; // Add the size of the file to the directory
             currdir = (TreeBranch*)self;
             NSURL *currURL = [self theURL];
             for (level=level0; level < [pathComponents count]-1; level++) { //last path component is the file name
                 NSString *dirName = [pathComponents objectAtIndex:level];
-                NSLog(@"<%@>",dirName);
+                //NSLog(@"<%@>",dirName);
                 NSURL *newdir;// = [NSURL new];
                 newdir = [currURL URLByAppendingPathComponent:dirName isDirectory:YES];
                 cursor = nil;
                 for (TreeBranch *subdir in [currdir branchesInNode]){
                     // If the two are the same
-                    NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
+                    //NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
                     if ([newdir isEqualTo:[subdir theURL]]) {
                         cursor = subdir;
                         cursor.byteSize += [fileSize longLongValue];
@@ -77,7 +77,7 @@
                     TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
                     newDir.theURL = newdir ;
                     newDir.parent = currdir;
-                    newDir.children = [[NSMutableArray new] init];
+                    newDir.children = nil; //[[NSMutableArray new] init];
                     newDir.byteSize = [fileSize longLongValue];
                     [[currdir children] addObject: newDir]; // Adds the created file or directory to the current directory
                     currdir = newDir;
@@ -94,7 +94,10 @@
             newFile.theURL = [finfo getURL];
             newFile.parent = currdir;
             newFile.byteSize = [fileSize longLongValue];
-            [newFile SetFileInformation: finfo];
+            //[newFile SetFileInformation: finfo];
+            if (currdir.children==nil) {
+                currdir.children =[[NSMutableArray new] init];
+            }
             [[currdir children] addObject: newFile]; // Adds the created file or directory to the current director
             
         } // for

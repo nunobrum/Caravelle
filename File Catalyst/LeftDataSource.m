@@ -67,6 +67,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+    //NSLog(@"number of children %@", item);
     if(item==nil) {
         return [_LeftBaseDirectories count];
     }
@@ -77,21 +78,29 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
+    //NSLog(@"child # %ld of %@", (long)index, item);
+    id ret;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
-        return [_LeftBaseDirectories objectAtIndex:index];
+        ret = [_LeftBaseDirectories objectAtIndex:index];
     else {
-        return [item branchAtIndex:index];
+        ret = [item branchAtIndex:index];
     }
+    if ([ret isBranch] && _catalystMode==NO)
+        [ret refreshTreeFromURLs];
+    return ret;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+    //NSLog(@"Is expandable: %@", item);
     if ([item isKindOfClass:[NSMutableArray class]])
         return [item count]>1 ? YES : NO;
-    else
-        return ([item isBranch] && [item numberOfBranchesInNode]!=0) ? YES : NO;
+    else {
+            return ([item isBranch] && [item numberOfBranchesInNode]!=0) ? YES : NO;
+    }
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
+    //NSLog(@"Object of %@", item);
     return item;
 //    id result = nil;
 //
@@ -142,7 +151,16 @@ void DateFormatter(NSDate *date, NSString **output) {
                 NSString *path = [(TreeBranch*)item path];
                 NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
                 
-                NSString *subTitle = [NSString stringWithFormat:@"%ld Files %@", (long)[(TreeBranch*)item numberOfLeafsInBranch], [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile]];
+                NSString *subTitle;
+                if (self->_catalystMode==YES) {
+                    subTitle = [NSString stringWithFormat:@"%ld Files %@",
+                                (long)[(TreeBranch*)item numberOfLeafsInBranch],
+                                [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile]];
+                }
+                else {
+                    subTitle = [NSString stringWithFormat:@"%ld Files here",
+                                (long)[(TreeBranch*)item numberOfLeafsInBranch]];
+                }
                 [cellView setSubTitle:subTitle];
                 [[cellView imageView] setImage:icon];
                 [cellView setTitle:[item name]];
@@ -309,7 +327,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     [rootDir setTheURL: rootPath];
     [rootDir setFileCollection: NULL];
     [rootDir setIsCollectionSet:NO];
-    [rootDir refreshTreeFromURLs];
+    //[rootDir refreshTreeFromURLs];
 
     if(_LeftBaseDirectories==nil) {
         _LeftBaseDirectories = [[NSMutableArray new] init];
