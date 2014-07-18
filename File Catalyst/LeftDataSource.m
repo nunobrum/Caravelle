@@ -48,6 +48,14 @@ void DateFormatter(NSDate *date, NSString **output) {
     [outlineView setDelegate:self];
 }
 
+-(void)setTableView:(NSTableView*) tableView {
+    _TableView = tableView;
+    [tableView setDataSource:self];
+    [tableView setDelegate:self];
+}
+
+
+
 -(NSOutlineView*) treeOutlineView {
     return _TreeOutlineView;
 }
@@ -158,8 +166,8 @@ void DateFormatter(NSDate *date, NSString **output) {
                                 [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile]];
                 }
                 else {
-                    subTitle = [NSString stringWithFormat:@"%ld Files here",
-                                (long)[(TreeBranch*)item numberOfLeafsInBranch]];
+                    subTitle = @""; //[NSString stringWithFormat:@"%ld Files here",
+                                //(long)[(TreeBranch*)item numberOfLeafsInBranch]];
                 }
                 [cellView setSubTitle:subTitle];
                 [[cellView imageView] setImage:icon];
@@ -231,23 +239,35 @@ void DateFormatter(NSDate *date, NSString **output) {
 //        NSLog(@"Cell Class %@ Table Column %@ Item %@",[(NSObject*)cell class], tableColumn.identifier, [item name]);
 //}
 
+
+/* Called before the outline is selected. */
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
+    NSLog(@"should select item");
+    [_PathBar setURL: [item theURL]];
+    _treeNodeSelected = item;
+    //[self refreshDataView];
+    [_TableView reloadData];
+    return YES;
+}
+
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
 -(void) refreshDataView {
     // Finds the selected item on the tree
-    TreeItem *treeNodeSelected = [_TreeOutlineView itemAtRow:[_TreeOutlineView selectedRow]];
-    if ([treeNodeSelected isKindOfClass:[TreeBranch class]]){
+    //TreeItem *treeNodeSelected = [_TreeOutlineView itemAtRow:[_TreeOutlineView selectedRow]];
+    
+    if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
         if (self->_extendToSubdirectories==YES && self->_foldersInTable==YES) {
-            tableData = [(TreeBranch*)treeNodeSelected itemsInBranch];
+            tableData = [(TreeBranch*)_treeNodeSelected itemsInBranch];
         }
         else if (self->_extendToSubdirectories==YES && self->_foldersInTable==NO) {
-            tableData = [(TreeBranch*)treeNodeSelected leafsInBranch];
+            tableData = [(TreeBranch*)_treeNodeSelected leafsInBranch];
         }
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==YES) {
-            tableData = [(TreeBranch*)treeNodeSelected itemsInNode];
+            tableData = [(TreeBranch*)_treeNodeSelected itemsInNode];
         }
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==NO) {
-            tableData = [(TreeBranch*)treeNodeSelected leafsInNode];
+            tableData = [(TreeBranch*)_treeNodeSelected leafsInNode];
         }
         tableDataValid = YES;
     }
@@ -336,6 +356,55 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 }
 
+-(TreeBranch*) selectFolderByURL:(NSURL*)theURL {
+    NSRange result;
+    BOOL found = false;
+    TreeBranch *cursor = NULL;
+    for(TreeRoot *root in _LeftBaseDirectories) {
+        /* Checks if rootPath in root */
+        NSString *path = [theURL path];
+        result = [path rangeOfString:[root path]];
+        if (NSNotFound!=result.location) {
+            /* The URL is already contained in this tree */
+            /* Start climbing tree */
+            cursor = root;
+            do {
+                /* Test if the current directory is already a match */
+                NSComparisonResult res = [[cursor path] compare:path];
+                if (res==NSOrderedSame) { /* Matches the directory. Maybe there is a more clever way to do this. */
+                    found = true;
+                    break;
+                }
+                else {
+                    found=FALSE;
+                    for (TreeBranch *child in [cursor children]) {
+                        result = [path rangeOfString:[child path]];
+                        //NSLog(@"Cursor=%@ Child=%@, result=%lu", [cursor path], [child path], (unsigned long)result.location);
+                        if (NSNotFound!=result.location) { /* Matches the directory. Maybe there is a more clever way to do this. */
+                            cursor = child;
+                            found = true;
+                            break;
+                        }
+                        
+                    }
+                }
+            } while (found);
+        }
+        if (found)
+            break;
+    }
+    if (found) {/* Exited by the break */
+        /* Select the node in the outline View */
+        NSInteger row = [_TreeOutlineView rowForItem:cursor];
+        if (row!=-1) {
+            [_TreeOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+            /* Update data in the Table */
+            [self refreshDataView];
+        }
+        return cursor;
+    }
+    return NULL;
+}
 
 -(void) removeRootWithIndex:(NSInteger)index {
     TreeRoot *itemToBeDeleted = [_LeftBaseDirectories objectAtIndex:index];
@@ -352,19 +421,26 @@ void DateFormatter(NSDate *date, NSString **output) {
 // This method checks if a root can be added to existing set.
 -(NSInteger) canAddRoot: (NSString*) rootPath {
     NSInteger answer = rootCanBeInserted;
+    NSRange result;
     for(TreeRoot *root in _LeftBaseDirectories) {
-        if (YES==[[root fileCollection] isRootContainedInPath:rootPath]) {
+        /* Checks if rootPath in root */
+        result = [rootPath rangeOfString:[root path]];
+        if (NSNotFound!=result.location) {
             // The new root is already contained in the existing trees
             answer = rootAlreadyContained;
             NSLog(@"The added path is contained in existing roots.");
             
         }
-        else if (YES==[[root fileCollection] rootContainsPath:rootPath]) {
+        else {
+            /* The new contains exiting */
+            result = [[root path] rangeOfString:rootPath];
+            if (NSNotFound!=result.location) {
             // Will need to replace current position
-            answer = rootContainsExisting;
-            NSLog(@"The added path contains already existing roots, please delete them.");
+                answer = rootContainsExisting;
+                NSLog(@"The added path contains already existing roots, please delete them.");
             //[root removeBranch];
             //fileCollection_inst = [root fileCollection];
+            }
         }
     }
     return answer;

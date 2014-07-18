@@ -22,9 +22,11 @@ enum enumInRootSet {
     BOOL tableDataValid;
     NSMutableArray *tableData;
     NSOutlineView *_TreeOutlineView;
+    NSTableView *_TableView;
     NSSize iconSize;
 
 }
+
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 
@@ -34,9 +36,15 @@ enum enumInRootSet {
 
 @property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
 
+@property (setter = setPathBar:) NSPathCell *PathBar;
+
+@property TreeItem *treeNodeSelected;
+
 -(LeftDataSource*) init;
 
 -(void)setTreeOutlineView:(NSOutlineView*) outlineView;
+-(void)setTableView:(NSTableView*) tableView;
+
 -(NSOutlineView*) treeOutlineView;
 
 // Tree Outline View Data Source Protocol
@@ -47,7 +55,7 @@ enum enumInRootSet {
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item ;
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item;
 //- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item;
-
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
 
 // Table Data Source Protocol
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
@@ -60,6 +68,8 @@ enum enumInRootSet {
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 -(NSInteger) canAddRoot: (NSString*) rootPath;
+
+-(TreeBranch*) selectFolderByURL:(NSURL*)theURL;
 
 -(FileCollection *) concatenateAllCollections;
 
