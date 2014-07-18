@@ -21,7 +21,7 @@
 }
 
 -(NSString*) rootPath {
-    return rootDirectory; //[_fileCollection rootPath];
+    return self.path; //rootDirectory; //[_fileCollection rootPath];
 }
 
 -(void) setFileCollection:(FileCollection*)collection {

@@ -12,7 +12,7 @@
 
 @interface TreeRoot : TreeBranch <TreeProtocol> {
     FileCollection *_fileCollection;
-    NSString *rootDirectory;
+    //NSString *rootDirectory;
 }
 
 @property bool isCollectionSet;
