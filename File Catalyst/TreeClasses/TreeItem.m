@@ -7,6 +7,7 @@
 //
 
 #import "TreeItem.h"
+//#import "MyDirectoryEnumerator.h"
 
 @implementation TreeItem
 
@@ -35,8 +36,20 @@
 }
 
 -(NSDate*) dateModified {
-    NSDate *date;
-    [_theURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:NULL];
+    NSDate *date=nil;
+    NSError *errorCode;
+    if ([_theURL isFileURL]) {
+        [_theURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
+        if (errorCode || date==nil) {
+            [_theURL getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
+            
+        }
+    }
+    else {
+        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_theURL path] error:NULL];
+        date = [dirAttributes fileModificationDate];
+
+    }
     return date;
 }
 
