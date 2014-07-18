@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" defaultVersion="1090" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -653,7 +653,7 @@ CA
         <customObject id="494" customClass="AppDelegate">
             <connections>
                 <outlet property="LeftOutlineView" destination="0jB-di-sRp" id="lln-wl-TG0"/>
-                <outlet property="LeftPathRoot" destination="2vV-gl-kKE" id="7x4-Bs-3W7"/>
+                <outlet property="LeftPathBar" destination="2vV-gl-kKE" id="24j-y2-hAn"/>
                 <outlet property="LeftTableView" destination="Un7-lH-rIY" id="ckg-A9-pkR"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
                 <outlet property="toolbarDeleteButton" destination="j6M-5a-ig4" id="Z4A-cd-9jc"/>
@@ -681,7 +681,7 @@ CA
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <customView misplaced="YES" id="1VC-PM-Zle">
-                                <rect key="frame" x="0.0" y="0.0" width="390" height="628"/>
+                                <rect key="frame" x="0.0" y="0.0" width="517" height="628"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <searchField verticalHuggingPriority="750" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="JW5-tj-MoM">
@@ -702,6 +702,9 @@ CA
                                         <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" pathStyle="navigationBar" id="2vV-gl-kKE">
                                             <font key="font" metaFont="smallSystem"/>
                                             <url key="url" string="file://localhost/Applications/"/>
+                                            <connections>
+                                                <action selector="PathSelect:" target="494" id="723-cJ-DBX"/>
+                                            </connections>
                                         </pathCell>
                                     </pathControl>
                                     <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCm-RX-zKw">
@@ -1055,7 +1058,7 @@ CA
                                 </constraints>
                             </customView>
                             <customView fixedFrame="YES" id="zLH-AN-dQY">
-                                <rect key="frame" x="400" y="0.0" width="710" height="628"/>
+                                <rect key="frame" x="527" y="0.0" width="583" height="628"/>
                                 <autoresizingMask key="autoresizingMask"/>
                             </customView>
                         </subviews>
