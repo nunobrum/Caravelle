@@ -35,9 +35,9 @@
 
 @property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
 
-@property (weak) IBOutlet NSPathCell *LeftPathRoot;
+@property (weak) IBOutlet NSPathCell *LeftPathBar;
 
-- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
+//- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
 - (IBAction)RemoveDirectory:(id)sender; // Remove Directories from Left View
 
 - (IBAction)FindDuplicates:(id)sender;
@@ -52,6 +52,7 @@
 
 - (IBAction)toolbarDelete:(id)sender;
 - (IBAction)toolbarCatalystSwitch:(id)sender;
+- (IBAction)PathSelect:(id)sender;
 
 
 @end

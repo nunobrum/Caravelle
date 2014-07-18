@@ -32,12 +32,13 @@
     fileCollection = [[FileCollection new] init];
     _LeftDataSrc = [[LeftDataSource new] init];
     [_LeftDataSrc setCatalystMode:NO];
+    [_LeftDataSrc setPathBar: _LeftPathBar];
     // Sets the Outline view so that the File display can work
     [_LeftDataSrc setTreeOutlineView:_LeftOutlineView];
+    [_LeftDataSrc setTableView:_LeftTableView];
     //[_RightDataSrc setTreeOutlineView:_RightOutlineView];
 
-    [_LeftTableView setDataSource:_LeftDataSrc];
-    [_LeftTableView setDelegate:_LeftDataSrc];
+    
     
     //[_RightDataSrc setTreeOutlineView:_RightOutlineView];
     //[_RightDataSrc setDisplayFilesInSubdirs:YES];
@@ -50,7 +51,8 @@
     //[_pbRemove setEnabled:NO];
     [_LeftTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
 
-    [self DirectoryScan: @"/Users/vika/Documents"];
+    [self DirectoryScan: @"/Users/vika"];
+    //[self DirectoryScan: @"/"];
     
 }
 
@@ -61,7 +63,7 @@
     NSInteger canAdd = [_LeftDataSrc canAddRoot:rootPath];
     
     if (rootCanBeInserted==canAdd) {
-        [_LeftPathRoot setURL:[NSURL URLWithString:rootPath]];
+        [_LeftPathBar setURL:[NSURL URLWithString:rootPath]];
         if ([_LeftDataSrc getCatalystMode ]==YES) {
             if (nil==fileCollection_inst)
                 fileCollection_inst = [[FileCollection new] init];
@@ -92,6 +94,30 @@
 - (IBAction)toolbarCatalystSwitch:(id)sender {
 }
 
+- (IBAction)PathSelect:(id)sender {
+    /* Gets the clicked Cell */
+    NSPathComponentCell *selectedPath =[_LeftPathBar clickedPathComponentCell];
+    /* Discovers the position of the Cell in the Path */
+    NSRange r;
+    r.location = 0;
+    /* + 2 for counting with root and the index range is to index - 1 */
+    r.length = [[_LeftPathBar pathComponentCells] indexOfObject:selectedPath]+2;
+    /* Gets the URL components*/
+    NSArray *components = [[_LeftPathBar URL] pathComponents];
+    /* Creates the new Path */
+    NSURL *newURL = [NSURL fileURLWithPathComponents: [components subarrayWithRange:r]];
+    TreeBranch *node = [_LeftDataSrc selectFolderByURL: newURL];
+    if (node != NULL) {
+        /* Set the path bar */
+        [_LeftPathBar setURL: [node theURL]];
+        /* Update file table */
+        [_LeftTableView reloadData];
+    }
+    else { /* The path is not contained existing roots */
+        [self DirectoryScan:[newURL path]];
+    }
+}
+
 - (IBAction)RemoveDirectory:(id)sender {
     // gets the selected item
     NSInteger fileSelected = [_LeftOutlineView selectedRow];
@@ -117,20 +143,20 @@
 }
 
 
-- (IBAction)LeftRootBrowse:(id)sender {
-    
-    //NSString *    extensions = @"tiff/tif/TIFF/TIF/jpg/jpeg/JPG/JPEG";
-    //NSArray *     types = [extensions pathComponents];
-    
-	// Let the user choose an output file, then start the process of writing samples
-	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    //[openPanel setAllowedFileTypes:types];
-	//[openPanel setCanSelectHiddenExtension:NO];
-    [openPanel setCanChooseDirectories:YES];
-    [openPanel setCanChooseFiles:NO];
-    [openPanel setPrompt:@"Add"];
-
-    
+//- (IBAction)LeftRootBrowse:(id)sender {
+//
+//    //NSString *    extensions = @"tiff/tif/TIFF/TIF/jpg/jpeg/JPG/JPEG";
+//    //NSArray *     types = [extensions pathComponents];
+//    
+//	// Let the user choose an output file, then start the process of writing samples
+//	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+//    //[openPanel setAllowedFileTypes:types];
+//	//[openPanel setCanSelectHiddenExtension:NO];
+//    [openPanel setCanChooseDirectories:YES];
+//    [openPanel setCanChooseFiles:NO];
+//    [openPanel setPrompt:@"Add"];
+//
+//
 //	[openPanel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger result) {
 //        if (result == NSFileHandlingPanelOKButton)
 //        {
@@ -142,7 +168,7 @@
 //
 //        }
 //    }];
-}
+//}
 
 
 //- (IBAction)ScanStart:(id)sender {
@@ -187,26 +213,32 @@
 - (IBAction)TableSelector:(id)sender {
     NSLog(@"Table Selector");
     if (sender==_LeftOutlineView) {
-/*        NSInteger fileSelected = [_LeftOutlineView selectedRow];
-        NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
+        NSInteger fileSelected = [_LeftOutlineView selectedRow];
+        //NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
         // then finds the corresponding item
         id item = [_LeftOutlineView itemAtRow:fileSelected];
         if ([item isKindOfClass:[TreeBranch class]]==YES) {
-            FileCollection *duplicatesForSelected = [(TreeBranch*)item duplicatesInBranch];
+            /* Update the path on the Top */
+            [_LeftPathBar setURL: [item theURL]];
+            /*
+             TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
+             FileCollection *duplicatesForSelected = [(TreeBranch*)item duplicatesInBranch];
             [_RightDataSrc removeRootWithIndex:0];
-            [_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
+            //[_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
                 //[[self StatusText] setIntegerValue:fileno];
-            }];
+            }];*/
             
             
         }
         else if ([item isKindOfClass:[TreeLeaf class]]==YES){
-            FileCollection *duplicatesForSelected = [[FileCollection new] init];
+            /*
+             TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
+             FileCollection *duplicatesForSelected = [[FileCollection new] init];
             [duplicatesForSelected addFiles:[[(TreeLeaf*)item getFileInformation] duplicateList]];
             [_RightDataSrc removeRootWithIndex:0];
             [_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
                 //[[self StatusText] setIntegerValue:fileno];
-            }];
+            }];*/
         }
         //[_RightOutlineView reloadItem:nil reloadChildren:YES]; */
         [_LeftTableView reloadData];
@@ -264,13 +296,17 @@
                 [[node getFileInformation] openFile];
             }
             else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
-                // Going to open the Select That directory o	n the Outline View
+                // Going to open the Select That directory on the Outline View
                 int retries = 2;
                 while (retries) {
                     NSInteger row = [_LeftOutlineView rowForItem:node];
                     if (row!=-1) {
                         [_LeftOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-                        retries = 0; // Finished, dont need to retry any more.
+                        retries = 0; /* Finished, dont need to retry any more. */
+                        /* Set the path bar */
+                        [_LeftPathBar setURL: [node theURL]];
+                        /* Setting the node for Table Display */
+                        _LeftDataSrc.treeNodeSelected=node;
                     }
                     else {
                         // The object was not found, will need to force the expand
@@ -282,6 +318,7 @@
                 [_LeftTableView reloadData];
             }
             index = [rowsSelected indexGreaterThanIndex:index];
+            
         }
     }
 }
