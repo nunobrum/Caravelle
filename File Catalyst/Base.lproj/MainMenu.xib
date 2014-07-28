@@ -671,7 +671,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="95" y="99" width="1110" height="646"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1418"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="1110" height="646"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -684,7 +684,7 @@ CA
                                 <rect key="frame" x="0.0" y="0.0" width="517" height="628"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
-                                    <searchField verticalHuggingPriority="750" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="JW5-tj-MoM">
+                                    <searchField verticalHuggingPriority="750" misplaced="YES" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="JW5-tj-MoM">
                                         <rect key="frame" x="241" y="602" width="122" height="22"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <constraints>
@@ -707,14 +707,14 @@ CA
                                             </connections>
                                         </pathCell>
                                     </pathControl>
-                                    <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCm-RX-zKw">
+                                    <scrollView misplaced="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oCm-RX-zKw">
                                         <rect key="frame" x="0.0" y="0.0" width="385" height="599"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <clipView key="contentView" id="WNP-G8-c86">
+                                        <clipView key="contentView" misplaced="YES" id="WNP-G8-c86">
                                             <rect key="frame" x="1" y="1" width="383" height="597"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
-                                                <view placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" translatesAutoresizingMaskIntoConstraints="NO" id="5pl-J4-Rsn">
+                                                <view misplaced="YES" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" translatesAutoresizingMaskIntoConstraints="NO" id="5pl-J4-Rsn">
                                                     <rect key="frame" x="0.0" y="0.0" width="386" height="598"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
@@ -1039,7 +1039,7 @@ CA
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                         <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Jwk-DN-4d1">
-                                            <rect key="frame" x="368" y="1" width="16" height="597"/>
+                                            <rect key="frame" x="369" y="1" width="15" height="597"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </scroller>
                                     </scrollView>
