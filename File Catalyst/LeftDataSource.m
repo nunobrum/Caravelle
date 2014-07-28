@@ -110,39 +110,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
     //NSLog(@"Object of %@", item);
     return item;
-//    id result = nil;
-//
-//    if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-//        if ([item isKindOfClass:[TreeLeaf class]]) //if it is a file
-//            result = [item name];  // Display simply the name of the file
-//        else if ([item isKindOfClass:[TreeBranch class]]) // it is a directory
-//            // Display the directory name followed by the number of files inside
-//            result = [item name]; 
-//        if (result == nil) {
-//            result = NSLocalizedString(@"(Untitled)", @"Untitled title");
-//        }
-//    } else if ([[tableColumn identifier] isEqualToString:COL_SIZE]) {
-//        result = [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile];
-//
-//    } else if ([[tableColumn identifier] isEqualToString:COL_DATE]) {
-//        if ([item isKindOfClass:[TreeLeaf class]]) { //if it is a file
-//            //result = [item dateModified];
-//            DateFormatter([item dateModified], &result);
-//            if (result == nil) {
-//                result = NSLocalizedString(@"(Date)", @"Unknown Date");
-//            }
-//            else {
-//                result = [NSString stringWithFormat:@"%@",result]; // Shows the item size
-//            }
-//        }
-//        else
-//            result = @"--";
-//    }
-//    else {
-//        return [NSString stringWithFormat:@"%@ %@ %@",tableColumn.class, tableColumn.identifier, [item name]];
-//    }
-//    
-//    return result;
 }
 
 - (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
@@ -176,22 +143,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     return result;
-} //else if ([[tableColumn identifier] isEqualToString:COL_SIZE]) {
-//        result = [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile];
-//
-//    } else if ([[tableColumn identifier] isEqualToString:COL_DATE]) {
-//        if ([item isKindOfClass:[TreeLeaf class]]) { //if it is a file
-//            //result = [item dateModified];
-//            DateFormatter([item dateModified], &result);
-//            if (result == nil) {
-//                result = NSLocalizedString(@"(Date)", @"Unknown Date");
-//            }
-//            else {
-//                result = [NSString stringWithFormat:@"%@",result]; // Shows the item size
-//            }
-//        }
-//}
-
+}
 
 //- (NSCell *)outlineView:(NSOutlineView *)outlineView dataCellForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 //    
@@ -240,22 +192,19 @@ void DateFormatter(NSDate *date, NSString **output) {
 //}
 
 
-/* Called before the outline is selected. */
+/* Called before the outline is selected.
+ Workaround to make the path bar always updated.
+ Can be used later to block access to private directories */
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    NSLog(@"should select item");
     [_PathBar setURL: [item theURL]];
     _treeNodeSelected = item;
-    //[self refreshDataView];
-    [_TableView reloadData];
     return YES;
 }
 
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
 -(void) refreshDataView {
-    // Finds the selected item on the tree
-    //TreeItem *treeNodeSelected = [_TreeOutlineView itemAtRow:[_TreeOutlineView selectedRow]];
-    
+    /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
         if (self->_extendToSubdirectories==YES && self->_foldersInTable==YES) {
             tableData = [(TreeBranch*)_treeNodeSelected itemsInBranch];
@@ -295,12 +244,15 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
-        // We pass us as the owner so we can setup target/actions into this main controller object
-        cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile byteSize] countStyle:NSByteCountFormatterCountStyleFile];
+        if (_catalystMode==NO && [theFile isKindOfClass:[TreeBranch class]]){
+            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
+            cellView.textField.objectValue = @"--";
+        }
+        else
+            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile byteSize] countStyle:NSByteCountFormatterCountStyleFile];
 
     } else if ([identifier isEqualToString:COL_DATE]) {
         NSString *result=nil;
-        //result = [item dateModified];
         DateFormatter([theFile dateModified], &result);
         if (result == nil)
             cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
@@ -308,6 +260,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             cellView.textField.stringValue = result;
     }
     else {
+        /* Debug code for further implementation */
         cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
     }
     return cellView;
@@ -398,6 +351,8 @@ void DateFormatter(NSDate *date, NSString **output) {
         NSInteger row = [_TreeOutlineView rowForItem:cursor];
         if (row!=-1) {
             [_TreeOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+            /* Sets the directory to be Displayed */
+            _treeNodeSelected = cursor;
             /* Update data in the Table */
             [self refreshDataView];
         }
