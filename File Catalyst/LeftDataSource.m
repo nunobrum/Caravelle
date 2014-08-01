@@ -64,7 +64,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     self = [super init];
     self->_extendToSubdirectories = NO;
     self->tableData = [[NSMutableArray new] init];
-    self->tableDataValid = NO;
     self->_foldersInTable = YES;
     self->_catalystMode = YES;
     return self;
@@ -218,7 +217,6 @@ void DateFormatter(NSDate *date, NSString **output) {
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==NO) {
             tableData = [(TreeBranch*)_treeNodeSelected leafsInNode];
         }
-        tableDataValid = YES;
     }
 }
 
@@ -264,6 +262,10 @@ void DateFormatter(NSDate *date, NSString **output) {
         cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
     }
     return cellView;
+}
+
+-(void) setFilterText:(NSString *) filterText {
+    self->_filterText = filterText;
 }
 
 -(void) refreshTrees {

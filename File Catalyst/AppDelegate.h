@@ -53,6 +53,8 @@
 - (IBAction)toolbarDelete:(id)sender;
 - (IBAction)toolbarCatalystSwitch:(id)sender;
 - (IBAction)PathSelect:(id)sender;
+- (IBAction)LeftFilterChange:(id)sender;
+
 
 
 @end

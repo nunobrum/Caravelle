@@ -19,12 +19,11 @@ enum enumInRootSet {
 @interface LeftDataSource : NSObject <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate> {
     //TreeItem *_Duplicates;
     //BOOL extendToSubdirectories;
-    BOOL tableDataValid;
     NSMutableArray *tableData;
     NSOutlineView *_TreeOutlineView;
     NSTableView *_TableView;
     NSSize iconSize;
-
+    NSString *_filterText;
 }
 
 
@@ -75,5 +74,6 @@ enum enumInRootSet {
 
 -(id) getFileAtIndex:(NSUInteger)index;
 
+-(void) setFilterText:(NSString *) filterText;
 
 @end

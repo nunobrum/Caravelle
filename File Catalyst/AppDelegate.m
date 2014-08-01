@@ -282,6 +282,12 @@
     }
 }
 
+- (IBAction)LeftFilterChange:(id)sender {
+    NSLog(@"Filter Change %@", [sender stringValue]);
+    [_LeftDataSrc setFilterText:[sender stringValue]];
+
+}
+
 
 - (IBAction)LeftOutlineCellSelector:(id)sender {
     NSLog(@"Left Outline Cell Selector");
