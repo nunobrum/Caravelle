@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" defaultVersion="1090" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="5056"/>
@@ -652,6 +652,7 @@ CA
         </menu>
         <customObject id="494" customClass="AppDelegate">
             <connections>
+                <outlet property="LeftFilter" destination="JW5-tj-MoM" id="4MU-5d-nwm"/>
                 <outlet property="LeftOutlineView" destination="0jB-di-sRp" id="lln-wl-TG0"/>
                 <outlet property="LeftPathBar" destination="2vV-gl-kKE" id="24j-y2-hAn"/>
                 <outlet property="LeftTableView" destination="Un7-lH-rIY" id="ckg-A9-pkR"/>
@@ -694,10 +695,13 @@ CA
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <connections>
+                                                <action selector="LeftFilterChange:" target="494" id="bHo-rG-zU7"/>
+                                            </connections>
                                         </searchFieldCell>
                                     </searchField>
                                     <pathControl verticalHuggingPriority="750" misplaced="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5yJ-CS-p7M">
-                                        <rect key="frame" x="8" y="603" width="465" height="20"/>
+                                        <rect key="frame" x="8" y="603" width="237" height="20"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" pathStyle="navigationBar" id="2vV-gl-kKE">
                                             <font key="font" metaFont="smallSystem"/>
@@ -1097,7 +1101,7 @@ CA
                         <size key="maxSize" width="32" height="0.0"/>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="gy8-my-hX9"/>
-                    <toolbarItem implicitItemIdentifier="FCA2E997-6292-4DC4-8184-265C334D0A08" label="Delete" paletteLabel="Delete Item" tag="-1" image="ToolbarDeleteIcon" autovalidates="NO" id="j6M-5a-ig4">
+                    <toolbarItem implicitItemIdentifier="FCA2E997-6292-4DC4-8184-265C334D0A08" explicitItemIdentifier="NSToolbarDeleteItem" label="Delete" paletteLabel="Delete Item" tag="-1" image="ToolbarDeleteIcon" autovalidates="NO" id="j6M-5a-ig4">
                         <connections>
                             <action selector="toolbarDelete:" target="494" id="I1k-A0-JMV"/>
                         </connections>
