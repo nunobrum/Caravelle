@@ -139,7 +139,9 @@
     return nil; // Pending Implementation
 }
 -(NSMutableArray*) itemsInNode {
-    return self->_children;
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    [answer addObjectsFromArray:self->_children];
+    return answer;
 }
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector {
