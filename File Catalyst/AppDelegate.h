@@ -43,11 +43,6 @@
 - (IBAction)FindDuplicates:(id)sender;
 - (IBAction)TableSelector:(id)sender;
 
-- (IBAction)LeftOutlineCellSelector:(id)sender;
-
-// Binding is done manually
-- (IBAction)TableDoubleClickEvent:(id)sender;
-
 - (void) DirectoryScan:(NSString*)rootPath;
 
 - (IBAction)toolbarDelete:(id)sender;
@@ -55,6 +50,7 @@
 - (IBAction)PathSelect:(id)sender;
 - (IBAction)LeftFilterChange:(id)sender;
 
+- (void) statusUpdate:(NSNotification*)theNotification;
 
 
 @end

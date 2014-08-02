@@ -30,12 +30,14 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
     //NSWindowController *startupWindow = [[[StartupWindowController class] alloc] init];
     //[startupWindow showWindow:self];
     fileCollection = [[FileCollection new] init];
     _LeftDataSrc = [[LeftDataSource new] init];
-    [_LeftDataSrc setCatalystMode:NO];
+    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:_LeftDataSrc];
+    [_LeftDataSrc setCatalystMode:YES];
     [_LeftDataSrc setPathBar: _LeftPathBar];
     // Sets the Outline view so that the File display can work
     [_LeftDataSrc setTreeOutlineView:_LeftOutlineView];
@@ -53,8 +55,7 @@
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
-    [_LeftTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
-
+ 
     [self DirectoryScan: @"/Users/vika"];
     //[self DirectoryScan: @"/"];
     
@@ -217,13 +218,13 @@
 - (IBAction)TableSelector:(id)sender {
     NSLog(@"Table Selector");
     if (sender==_LeftOutlineView) {
-        NSInteger fileSelected = [_LeftOutlineView selectedRow];
+        //NSInteger fileSelected = [_LeftOutlineView selectedRow];
         //NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
         // then finds the corresponding item
-        id item = [_LeftOutlineView itemAtRow:fileSelected];
-        if ([item isKindOfClass:[TreeBranch class]]==YES) {
+        //id item = [_LeftOutlineView itemAtRow:fileSelected];
+        //if ([item isKindOfClass:[TreeBranch class]]==YES) {
             /* Update the path on the Top */
-            [_LeftPathBar setURL: [item theURL]];
+        //    [_LeftPathBar setURL: [item theURL]];
             /*
              TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
              FileCollection *duplicatesForSelected = [(TreeBranch*)item duplicatesInBranch];
@@ -233,8 +234,8 @@
             }];*/
             
             
-        }
-        else if ([item isKindOfClass:[TreeLeaf class]]==YES){
+        //}
+        //else if ([item isKindOfClass:[TreeLeaf class]]==YES){
             /*
              TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
              FileCollection *duplicatesForSelected = [[FileCollection new] init];
@@ -243,9 +244,9 @@
             [_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
                 //[[self StatusText] setIntegerValue:fileno];
             }];*/
-        }
+        //}
         //[_RightOutlineView reloadItem:nil reloadChildren:YES]; */
-        [_LeftTableView reloadData];
+        //[_LeftTableView reloadData];
         //[_RightTableView reloadData];
     }
     else if(sender == _LeftTableView) {
@@ -285,52 +286,12 @@
 - (IBAction)LeftFilterChange:(id)sender {
     NSLog(@"Filter Change %@", [sender stringValue]);
     [_LeftDataSrc setFilterText:[sender stringValue]];
-
+    [_LeftTableView reloadData];
 }
 
-
-- (IBAction)LeftOutlineCellSelector:(id)sender {
-    NSLog(@"Left Outline Cell Selector");
-
+- (void) statusUpdate:(NSNotification*)theNotification {
+    [_StatusBar setTitle: @"Received Notification"];
 }
 
-/* This action is associated manually with the setDoubleAction */
-- (IBAction)TableDoubleClickEvent:(id)sender {
-    if(sender == _LeftTableView) {
-        NSIndexSet *rowsSelected = [_LeftTableView selectedRowIndexes];
-        NSUInteger index = [rowsSelected firstIndex];
-        while (index!=NSNotFound) {
-            /* Do something here */
-            id node =[_LeftDataSrc getFileAtIndex:index];
-            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
-                [[node getFileInformation] openFile];
-            }
-            else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
-                // Going to open the Select That directory on the Outline View
-                int retries = 2;
-                while (retries) {
-                    NSInteger row = [_LeftOutlineView rowForItem:node];
-                    if (row!=-1) {
-                        [_LeftOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-                        retries = 0; /* Finished, dont need to retry any more. */
-                        /* Set the path bar */
-                        [_LeftPathBar setURL: [node theURL]];
-                        /* Setting the node for Table Display */
-                        _LeftDataSrc.treeNodeSelected=node;
-                    }
-                    else {
-                        // The object was not found, will need to force the expand
-                        [_LeftOutlineView expandItem:[_LeftOutlineView itemAtRow:[_LeftOutlineView selectedRow]]];
-                        [_LeftOutlineView reloadData];
-                        retries--;
-                    }
-                }
-                [_LeftTableView reloadData];
-            }
-            index = [rowsSelected indexGreaterThanIndex:index];
-            
-        }
-    }
-}
 
 @end
