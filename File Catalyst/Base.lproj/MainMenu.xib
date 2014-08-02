@@ -813,9 +813,6 @@ CA
                                                                                                 </prototypeCellViews>
                                                                                             </tableColumn>
                                                                                         </tableColumns>
-                                                                                        <connections>
-                                                                                            <action selector="TableSelector:" target="494" id="mI8-Bj-ax2"/>
-                                                                                        </connections>
                                                                                     </outlineView>
                                                                                 </subviews>
                                                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -986,9 +983,6 @@ CA
                                                                                                 </prototypeCellViews>
                                                                                             </tableColumn>
                                                                                         </tableColumns>
-                                                                                        <connections>
-                                                                                            <action selector="TableSelector:" target="494" id="6oG-sp-R9e"/>
-                                                                                        </connections>
                                                                                     </tableView>
                                                                                 </subviews>
                                                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
