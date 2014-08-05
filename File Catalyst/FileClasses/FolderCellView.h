@@ -25,6 +25,6 @@ BOOL _isSmallSize;
 //@property(assign) ATColorView *colorView;
 //@property(assign) NSProgressIndicator *progessIndicator;
 
-- (void)layoutViewsForSmallSize:(BOOL)smallSize animated:(BOOL)animated;
+//- (void)layoutViewsForSmallSize:(BOOL)smallSize animated:(BOOL)animated;
 
 @end
