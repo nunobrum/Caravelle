@@ -64,4 +64,31 @@
     [_theURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
     return filesize;
 }
+
+-(BOOL) sendToRecycleBin {
+    return [[NSFileManager defaultManager] removeItemAtPath:[self path] error:nil];
+}
+
+-(BOOL) eraseFile {
+    // !!! TODO
+    return NO;
+}
+
+-(BOOL) copyFileTo:(NSString *)path {
+    // !!! TODO : Missing implementation
+    NSLog(@"Copy File Method not implemented");
+    return NO;
+}
+-(BOOL) moveFileTo:(NSString *)path {
+    // !!! TODO : Missing implementation
+    NSLog(@"Move File Method not implemented");
+    return NO;
+}
+
+-(BOOL) openFile {
+    [[NSWorkspace sharedWorkspace] openFile:[self path]];
+    return YES;
+}
+
+
 @end

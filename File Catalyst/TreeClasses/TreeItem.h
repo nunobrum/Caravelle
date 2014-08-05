@@ -33,5 +33,13 @@
 -(NSString*) path ;
 -(NSNumber*) filesize ;
 
+/*
+ * File manipulation methods
+ */
+-(BOOL) sendToRecycleBin;
+-(BOOL) eraseFile;
+-(BOOL) copyFileTo:(NSString *)path;
+-(BOOL) moveFileTo:(NSString *)path;
+-(BOOL) openFile;
 
 @end
