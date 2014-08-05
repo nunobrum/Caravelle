@@ -9,6 +9,12 @@
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
+#import "BrowserController.h"
+
+#include "Definitions.h"
+
+NSString *notificationStatusUpdate=@"StatusUpdateNotification";
+
 
 @implementation AppDelegate
 
@@ -32,61 +38,57 @@
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
-    //NSWindowController *startupWindow = [[[StartupWindowController class] alloc] init];
-    //[startupWindow showWindow:self];
-    fileCollection = [[FileCollection new] init];
-    _LeftDataSrc = [[LeftDataSource new] init];
-    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:_LeftDataSrc];
-    [_LeftDataSrc setCatalystMode:YES];
-    [_LeftDataSrc setPathBar: _LeftPathBar];
-    // Sets the Outline view so that the File display can work
-    [_LeftDataSrc setTreeOutlineView:_LeftOutlineView];
-    [_LeftDataSrc setTableView:_LeftTableView];
-    //[_RightDataSrc setTreeOutlineView:_RightOutlineView];
+    myLeftView  = [[NSViewController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+    myRightView = [[NSViewController alloc] initWithNibName:@"BrowserView" bundle:nil ];
 
-    
-    
-    //[_RightDataSrc setTreeOutlineView:_RightOutlineView];
-    //[_RightDataSrc setDisplayFilesInSubdirs:YES];
-    //[_RightDataSrc setFoldersDisplayed:NO];
-    //[_RightOutlineView setDataSource:_RightDataSrc];
-    //[_RightTableView setDataSource:_RightDataSrc];
-    //[_RightTableView setDelegate:_RightDataSrc];
+    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
+
+    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
+
+
+    if ([myLeftView isKindOfClass:[BrowserController class]]) {
+        [(BrowserController*) myLeftView setCatalystMode:YES];
+    }
+
+    /*[_LeftDataSrc setPathBar: _LeftPathBar];
+    // Sets the Outline view so that the File display can work
+    */
+
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
  
-    [self DirectoryScan: @"/Users/vika"];
+    //[self DirectoryScan: @"/Users/vika"];
     //[self DirectoryScan: @"/"];
-    
+    [_ContentSplitView addSubview:myLeftView.view];
+    [_ContentSplitView addSubview:myRightView.view];
+
 }
 
 
 -(void)DirectoryScan:(NSString*)rootPath {
     //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Top-level pool
     FileCollection *fileCollection_inst = nil;
-    NSInteger canAdd = [_LeftDataSrc canAddRoot:rootPath];
+    NSInteger canAdd = [(BrowserController*)myLeftView canAddRoot:rootPath];
     
     if (rootCanBeInserted==canAdd) {
-        [_LeftPathBar setURL:[NSURL URLWithString:rootPath]];
-        if ([_LeftDataSrc getCatalystMode ]==YES) {
+        if ([(BrowserController*)myLeftView getCatalystMode ]==YES) {
             if (nil==fileCollection_inst)
                 fileCollection_inst = [[FileCollection new] init];
         
             [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
             //[[self StatusText] setIntegerValue:fileno];
             }];
-            [_LeftDataSrc addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
+            [(BrowserController*)myLeftView addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
             //[[self StatusText] setIntegerValue:fileno];
             }];
         }
         else { // Will only add the Root
 
-            [_LeftDataSrc addWithRootPath:[NSURL URLWithString: rootPath]];
+            [(BrowserController*)myLeftView addWithRootPath:[NSURL URLWithString: rootPath]];
         }
-        [_LeftDataSrc refreshTrees];
+        [(BrowserController*)myLeftView refreshTrees];
         // This is important so that the Table is correctly refreshed
-        [_LeftOutlineView reloadItem:nil reloadChildren:YES];
         [_toolbarDeleteButton setEnabled:NO];
     }
     //[pool release];
@@ -99,52 +101,10 @@
 - (IBAction)toolbarCatalystSwitch:(id)sender {
 }
 
-- (IBAction)PathSelect:(id)sender {
-    /* Gets the clicked Cell */
-    NSPathComponentCell *selectedPath =[_LeftPathBar clickedPathComponentCell];
-    /* Discovers the position of the Cell in the Path */
-    NSRange r;
-    r.location = 0;
-    /* + 2 for counting with root and the index range is to index - 1 */
-    r.length = [[_LeftPathBar pathComponentCells] indexOfObject:selectedPath]+2;
-    /* Gets the URL components*/
-    NSArray *components = [[_LeftPathBar URL] pathComponents];
-    /* Creates the new Path */
-    NSURL *newURL = [NSURL fileURLWithPathComponents: [components subarrayWithRange:r]];
-    TreeBranch *node = [_LeftDataSrc selectFolderByURL: newURL];
-    if (node != NULL) {
-        /* Set the path bar */
-        [_LeftPathBar setURL: [node theURL]];
-        /* Update file table */
-        [_LeftTableView reloadData];
-    }
-    else { /* The path is not contained existing roots */
-        [self DirectoryScan:[newURL path]];
-    }
-}
 
 - (IBAction)RemoveDirectory:(id)sender {
-    // gets the selected item
-    NSInteger fileSelected = [_LeftOutlineView selectedRow];
-    NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
-    // then finds the corresponding item
-    //id item = [_LeftOutlineView itemAtRow:fileSelected];
-     NSLog(@"Item Number %ld Level %ld", fileSelected, level);
-    //If it is a root 
-    if (level==0) {
-        // Will delete the tree Root and sub Directories
-        NSLog(@"Super !!!! This is the root class");
-        [_LeftDataSrc removeRootWithIndex:fileSelected];
-        // Redraws the outline view
-        [_LeftOutlineView reloadItem:nil reloadChildren:YES];
-        [_toolbarDeleteButton setEnabled:NO];
-    }
-    else {
-        // Will send the corresponding file to recycle bin
-        // To be implemented
-        
-    }
-    //NSLog(@"The class is %@", [item classDescription]);
+    [(BrowserController*)myLeftView removeSelectedDirectory];
+    [_toolbarDeleteButton setEnabled:NO];
 }
 
 
@@ -176,16 +136,11 @@
 //}
 
 
-//- (IBAction)ScanStart:(id)sender {
-//    NSLog(@"Scan Start was pushed");
-//   [_LeftDataSrc refreshTrees];
-//}
-
 
 - (IBAction)FindDuplicates:(id)sender {
     comparison_options_t options;
     FileCollection *duplicates;
-    FileCollection *collection = [_LeftDataSrc concatenateAllCollections];
+    FileCollection *collection = [(BrowserController*)myLeftView concatenateAllCollections];
     // This will eliminate any results from previous searches
     [collection resetDuplicateLists];
     
@@ -201,93 +156,17 @@
     
     duplicates = [collection findDuplicates:options];
 
-    [_LeftDataSrc addWithFileCollection:duplicates callback:^(NSInteger fileno) {
+    [(BrowserController*)myLeftView addWithFileCollection:duplicates callback:^(NSInteger fileno) {
         //[[self StatusText] setIntegerValue:fileno];
     }];
 
-
-    [_LeftOutlineView setDataSource:_LeftDataSrc];
-    [_LeftOutlineView reloadItem:nil reloadChildren:YES];
+    [(BrowserController*)myLeftView refreshTrees];
     [_toolbarDeleteButton setEnabled:NO];
     
     //[_LeftOutlineView setDataSource:_LeftDataSrc];
     //[_LeftOutlineView reloadItem:nil reloadChildren:YES];
 }
 
-
-- (IBAction)TableSelector:(id)sender {
-    NSLog(@"Table Selector");
-    if (sender==_LeftOutlineView) {
-        //NSInteger fileSelected = [_LeftOutlineView selectedRow];
-        //NSInteger level = [_LeftOutlineView levelForRow:fileSelected];
-        // then finds the corresponding item
-        //id item = [_LeftOutlineView itemAtRow:fileSelected];
-        //if ([item isKindOfClass:[TreeBranch class]]==YES) {
-            /* Update the path on the Top */
-        //    [_LeftPathBar setURL: [item theURL]];
-            /*
-             TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
-             FileCollection *duplicatesForSelected = [(TreeBranch*)item duplicatesInBranch];
-            [_RightDataSrc removeRootWithIndex:0];
-            //[_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
-                //[[self StatusText] setIntegerValue:fileno];
-            }];*/
-            
-            
-        //}
-        //else if ([item isKindOfClass:[TreeLeaf class]]==YES){
-            /*
-             TODO !!! This code was commented : It supports the File Duplicate Finder Mode. Must put it back later on
-             FileCollection *duplicatesForSelected = [[FileCollection new] init];
-            [duplicatesForSelected addFiles:[[(TreeLeaf*)item getFileInformation] duplicateList]];
-            [_RightDataSrc removeRootWithIndex:0];
-            [_RightDataSrc addWithFileCollection:duplicatesForSelected callback:^(NSInteger fileno) {
-                //[[self StatusText] setIntegerValue:fileno];
-            }];*/
-        //}
-        //[_RightOutlineView reloadItem:nil reloadChildren:YES]; */
-        //[_LeftTableView reloadData];
-        //[_RightTableView reloadData];
-    }
-    else if(sender == _LeftTableView) {
-        NSIndexSet *rowsSelected = [_LeftTableView selectedRowIndexes];
-        if ([rowsSelected count]==0) {// No file is selected
-            // Update toolbar
-            [_toolbarDeleteButton setEnabled:NO];
-            [_StatusBar setTitle: @"No File Selected"];
-        }
-        else {
-            NSInteger index = [rowsSelected firstIndex];
-            id node = [_LeftDataSrc getFileAtIndex:index];
-            if ([rowsSelected count]==1) {
-                // Will set a preview, if requested
-                if ([node isKindOfClass:[TreeBranch class]]) {
-                    // Its a directory
-                    
-                    [_StatusBar setTitle: @"One Directory"];
-                }
-                else if ([node isKindOfClass:[TreeLeaf class]]) {
-                
-                    [_StatusBar setTitle: @"One File"];
-                }
-            }
-            else { // Many Files are selected
-                //[_toolbarDeleteButton setEnabled:YES];
-                while (index!=NSNotFound) {
-                    /* Do something here */
-                    NSLog(@"Selected %lu", (unsigned long)index);
-                    index = [rowsSelected indexGreaterThanIndex:index];
-                }
-            }
-        }
-    }
-}
-
-- (IBAction)LeftFilterChange:(id)sender {
-    NSLog(@"Filter Change %@", [sender stringValue]);
-    [_LeftDataSrc setFilterText:[sender stringValue]];
-    [_LeftTableView reloadData];
-}
 
 - (void) statusUpdate:(NSNotification*)theNotification {
     [_StatusBar setTitle: @"Received Notification"];
