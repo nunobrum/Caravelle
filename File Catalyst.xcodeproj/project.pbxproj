@@ -53,10 +53,11 @@
 		3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464218F9B87C002B633C /* FolderCellView.m */; };
 		3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464318F9B87C002B633C /* ImagePreviewCell.m */; };
 		3C29464D18F9B87C002B633C /* MD5.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464418F9B87C002B633C /* MD5.c */; };
-		3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464E18F9B8E1002B633C /* LeftDataSource.m */; };
 		3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465018F9B8E1002B633C /* LeftViewController.m */; };
 		3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */; };
 		3C6A0D9C18FEA92E00550AED /* GenericFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */; };
+		3C717C06198D54720025E28A /* BrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C717C05198D54720025E28A /* BrowserView.xib */; };
+		3C717C09198D5B200025E28A /* BrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C717C08198D5B200025E28A /* BrowserController.m */; };
 		3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA674F18F87C2F0080C4FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
@@ -136,13 +137,15 @@
 		3C29464618F9B87C002B633C /* FileCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCollection.h; sourceTree = "<group>"; };
 		3C29464718F9B87C002B633C /* FileInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInformation.h; sourceTree = "<group>"; };
 		3C29464818F9B87C002B633C /* ImagePreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePreviewCell.h; sourceTree = "<group>"; };
-		3C29464E18F9B8E1002B633C /* LeftDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftDataSource.m; sourceTree = "<group>"; };
 		3C29464F18F9B8E1002B633C /* LeftViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftViewController.h; sourceTree = "<group>"; };
 		3C29465018F9B8E1002B633C /* LeftViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LeftViewController.m; sourceTree = "<group>"; };
-		3C29465118F9B8E1002B633C /* LeftDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LeftDataSource.h; sourceTree = "<group>"; };
 		3C29465418FD8ABE002B633C /* MyDirectoryEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyDirectoryEnumerator.h; sourceTree = "<group>"; };
 		3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyDirectoryEnumerator.m; sourceTree = "<group>"; };
 		3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = GenericFolderIcon.icns; sourceTree = "<group>"; };
+		3C717C05198D54720025E28A /* BrowserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserView.xib; sourceTree = "<group>"; };
+		3C717C07198D5B200025E28A /* BrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserController.h; sourceTree = "<group>"; };
+		3C717C08198D5B200025E28A /* BrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserController.m; sourceTree = "<group>"; };
+		3C717C0A198FB95F0025E28A /* Definitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Definitions.h; sourceTree = "<group>"; };
 		3CEA673F18F87C2F0080C4FC /* File Catalyst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Catalyst.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -261,13 +264,15 @@
 		3CEA674818F87C2F0080C4FC /* File Catalyst */ = {
 			isa = PBXGroup;
 			children = (
-				3C29465118F9B8E1002B633C /* LeftDataSource.h */,
-				3C29464E18F9B8E1002B633C /* LeftDataSource.m */,
+				3C717C0A198FB95F0025E28A /* Definitions.h */,
 				3C29464F18F9B8E1002B633C /* LeftViewController.h */,
 				3C29465018F9B8E1002B633C /* LeftViewController.m */,
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
 				3CEA675718F87C2F0080C4FC /* MainMenu.xib */,
+				3C717C05198D54720025E28A /* BrowserView.xib */,
+				3C717C07198D5B200025E28A /* BrowserController.h */,
+				3C717C08198D5B200025E28A /* BrowserController.m */,
 				3C29463218F9B833002B633C /* TreeClasses */,
 				3C29463118F9B81C002B633C /* FileClasses */,
 				3CEA677618F87CE50080C4FC /* IconResources */,
@@ -399,6 +404,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Nuno Brum";
 				TargetAttributes = {
+					3CEA673E18F87C2F0080C4FC = {
+						DevelopmentTeam = 8VR93E5FNL;
+					};
 					3CEA675F18F87C2F0080C4FC = {
 						TestTargetID = 3CEA673E18F87C2F0080C4FC;
 					};
@@ -464,6 +472,7 @@
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
 				3C29462518F9B570002B633C /* ToolbarDocumentsFolderIcon.icns in Resources */,
 				3C29461018F9B570002B633C /* DocumentsFolderIcon.icns in Resources */,
+				3C717C06198D54720025E28A /* BrowserView.xib in Resources */,
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
 				3C29461718F9B570002B633C /* GenericAirDiskIcon.icns in Resources */,
 				3C29461E18F9B570002B633C /* MusicFolderIcon.icns in Resources */,
@@ -498,7 +507,7 @@
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
-				3C29465218F9B8E1002B633C /* LeftDataSource.m in Sources */,
+				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3C29465318F9B8E1002B633C /* LeftViewController.m in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
@@ -633,11 +642,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
 				INFOPLIST_FILE = "File Catalyst/File Catalyst-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -646,11 +658,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
 				INFOPLIST_FILE = "File Catalyst/File Catalyst-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
