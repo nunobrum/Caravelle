@@ -41,20 +41,20 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 
 
--(BrowserController*) init {
-    self = [super init];
+-(void) initController {
+    //self = [super init];
+    //[_myTableView setTarget:self];
+    //[_myTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
     self->_extendToSubdirectories = NO;
-    self->tableData = [[NSMutableArray new] init];
     self->_foldersInTable = YES;
     self->_catalystMode = YES;
     self->_filterText = @"";
-    return self;
 }
 
-- (void)awakeFromNib {
-    [_myTableView setTarget:self];
-    [_myTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
-}
+/*- (void)awakeFromNib {
+    //[self setCatalystMode:YES];
+    [self setFoldersDisplayed:YES];
+}*/
 
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
@@ -249,48 +249,36 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
-        NSLog(@"Table Selection Changed");
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
+        //NSLog(@"Table Selection Changed");
+        NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
+        NSArray *objects = [tableData objectsAtIndexes:rowsSelected];
+        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:selectedFilesNotificationObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
     }
 }
 
 
 /* This action is associated manually with the setDoubleAction */
 - (IBAction)TableDoubleClickEvent:(id)sender {
-    if(sender == self->_myTableView) {
-        NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
-        NSUInteger index = [rowsSelected firstIndex];
-        while (index!=NSNotFound) {
-            /* Do something here */
-            id node =[self getFileAtIndex:index];
-            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
-                [[node getFileInformation] openFile];
-            }
-            else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
-                // Going to open the Select That directory on the Outline View
-                int retries = 2;
-                while (retries) {
-                    NSInteger row = [_myOutlineView rowForItem:node];
-                    if (row!=-1) {
-                        [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-                        retries = 0; /* Finished, dont need to retry any more. */
-                        /* Set the path bar */
-                        [_myPathBar setURL: [node theURL]];
-                        /* Setting the node for Table Display */
-                        self.treeNodeSelected=node;
-                    }
-                    else {
-                        // The object was not found, will need to force the expand
-                        [_myOutlineView expandItem:[_myOutlineView itemAtRow:[_myOutlineView selectedRow]]];
-                        [_myOutlineView reloadData];
-                        retries--;
-                    }
-                }
-                [_myTableView reloadData];
-            }
-            index = [rowsSelected indexGreaterThanIndex:index];
-
+    NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
+    NSUInteger index = [rowsSelected firstIndex];
+    while (index!=NSNotFound) {
+        /* Do something here */
+        id node =[self getFileAtIndex:index];
+        if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
+            [[node getFileInformation] openFile];
         }
+        else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
+            // Going to open the Select That directory on the Outline View
+            [self selectAndExpand:node];
+            /* Set the path bar */
+            [_myPathBar setURL: [node theURL]];
+            /* Setting the node for Table Display */
+            self.treeNodeSelected=node;
+            [_myTableView reloadData];
+        }
+        index = [rowsSelected indexGreaterThanIndex:index];
+
     }
 }
 
@@ -327,20 +315,25 @@ void DateFormatter(NSDate *date, NSString **output) {
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==NO) {
             tableData = [(TreeBranch*)_treeNodeSelected leafsInNode];
         }
-    }
-    /* if the filter is empty, doesn't filter anything */
-    if ([self->_filterText length]==0)
-        return;
-    /* Create the array of indexes to remove/hide/disable*/
-    NSInteger i = 0;
-    for (TreeItem *item in tableData){
-        NSRange result = [[item name] rangeOfString:_filterText];
-        if (NSNotFound==result.location)
-            [tohide addIndex:i];
-        i++;
-    }
-    [tableData removeObjectsAtIndexes: tohide];
 
+        /* if the filter is empty, doesn't filter anything */
+        if ([self->_filterText length]!=0) {
+            /* Create the array of indexes to remove/hide/disable*/
+            NSInteger i = 0;
+            for (TreeItem *item in tableData){
+                NSRange result = [[item name] rangeOfString:_filterText];
+                if (NSNotFound==result.location)
+                    [tohide addIndex:i];
+                i++;
+            }
+        }
+        [tableData removeObjectsAtIndexes: tohide];
+        [_myTableView reloadData];
+        /* Updates the Status Bar */
+        NSArray *objects = [NSArray arrayWithObject:_treeNodeSelected];
+        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:selectedFilesNotificationObject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
+    }
 }
 
 -(void) refreshTrees {
@@ -354,6 +347,9 @@ void DateFormatter(NSDate *date, NSString **output) {
             [tree refreshTreeFromURLs];
         }
     }
+    // !!! Todo Add condition : if number of roots = 1 then
+    // Expand the Root Node
+    [_myOutlineView reloadData];
     [self refreshDataView];
 }
 
@@ -464,6 +460,26 @@ void DateFormatter(NSDate *date, NSString **output) {
     return collection;
 }
 
+-(void) selectAndExpand:(TreeBranch*) cursor {
+    int retries = 2;
+    while (retries) {
+        NSInteger row = [_myOutlineView rowForItem:cursor];
+        if (row!=-1) {
+            [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+            retries = 0; /* Finished, dont need to retry any more. */
+        }
+        else {
+            // The object was not found, will need to force the expand
+            [_myOutlineView expandItem:[_myOutlineView itemAtRow:[_myOutlineView selectedRow]]];
+            [_myOutlineView reloadData];
+            retries--;
+        }
+    }
+    /* Sets the directory to be Displayed */
+    _treeNodeSelected = cursor;
+
+}
+
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL {
     NSRange result;
     BOOL found = false;
@@ -475,8 +491,10 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (NSNotFound!=result.location) {
             /* The URL is already contained in this tree */
             /* Start climbing tree */
+
             cursor = root;
             do {
+                [self selectAndExpand:cursor];
                 /* Test if the current directory is already a match */
                 NSComparisonResult res = [[cursor path] compare:path];
                 if (res==NSOrderedSame) { /* Matches the directory. Maybe there is a more clever way to do this. */
@@ -502,15 +520,18 @@ void DateFormatter(NSDate *date, NSString **output) {
             break;
     }
     if (found) {/* Exited by the break */
-        /* Select the node in the outline View */
-        NSInteger row = [_myOutlineView rowForItem:cursor];
-        if (row!=-1) {
-            [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-            /* Sets the directory to be Displayed */
-            _treeNodeSelected = cursor;
-            /* Update data in the Table */
-            [self refreshDataView];
-        }
+//        /* Select the node in the outline View */
+//        NSInteger row = [_myOutlineView rowForItem:cursor];
+//        if (row==-1) {
+//            [_myOutlineView reloadData];
+//            row = [_myOutlineView rowForItem:cursor];
+//        }
+//        [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+//        /* Sets the directory to be Displayed */
+//        _treeNodeSelected = cursor;
+        /* Update data in the Table */
+        [self selectAndExpand:cursor];
+        [self refreshDataView];
         return cursor;
     }
     return NULL;

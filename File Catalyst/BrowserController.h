@@ -28,24 +28,12 @@
 
 
 
-/*
-@interface LeftDataSource : NSObject <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate> {
-    //TreeItem *_Duplicates;
-    //BOOL extendToSubdirectories;
-    NSMutableArray *tableData;
-    NSOutlineView *_TreeOutlineView;
-    NSTableView *_TableView;
-    NSSize iconSize;
-    NSString *_filterText;
-}
- @property
-*/
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 @property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
 @property TreeItem *treeNodeSelected;
 
--(BrowserController*) init;
+-(void) initController;
 
 
 /*

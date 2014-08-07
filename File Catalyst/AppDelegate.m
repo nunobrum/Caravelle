@@ -9,11 +9,11 @@
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
-#import "BrowserController.h"
 
 #include "Definitions.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
+NSString *selectedFilesNotificationObject=@"FilesSelected";
 
 
 @implementation AppDelegate
@@ -38,30 +38,30 @@ NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
-    myLeftView  = [[NSViewController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-    myRightView = [[NSViewController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-
+    myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+    [myLeftView initController];
+    [myRightView initController];
+    
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
 
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [(BrowserController*) myLeftView setCatalystMode:YES];
+        [myLeftView setCatalystMode:YES];
+        [myLeftView setFoldersDisplayed:YES];
     }
 
-    /*[_LeftDataSrc setPathBar: _LeftPathBar];
-    // Sets the Outline view so that the File display can work
-    */
+    [_ContentSplitView addSubview:myLeftView.view];
+    [_ContentSplitView addSubview:myRightView.view];
 
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
  
-    //[self DirectoryScan: @"/Users/vika"];
+    [self DirectoryScan: @"/Users/vika"];
     //[self DirectoryScan: @"/"];
-    [_ContentSplitView addSubview:myLeftView.view];
-    [_ContentSplitView addSubview:myRightView.view];
 
 }
 
@@ -169,7 +169,15 @@ NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 
 
 - (void) statusUpdate:(NSNotification*)theNotification {
-    [_StatusBar setTitle: @"Received Notification"];
+    NSDictionary *receivedData = [theNotification userInfo];
+    NSArray *selectedFiles = [receivedData objectForKey:selectedFilesNotificationObject];
+    if (selectedFiles != nil) {
+        NSString *statusText = [NSString stringWithFormat:@"Selection Count %lu", (unsigned long)[selectedFiles count]];
+        [_StatusBar setTitle: statusText];
+    }
+    else {
+        [_StatusBar setTitle: @"Received Notification without User Info"];
+    }
 }
 
 

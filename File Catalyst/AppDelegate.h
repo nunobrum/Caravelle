@@ -8,11 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 #import "FileCollection.h"
+#import "BrowserController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
     //FileCollection *fileCollection;
-    NSViewController *myLeftView;
-    NSViewController *myRightView;
+    BrowserController *myLeftView;
+    BrowserController *myRightView;
     //__weak LeftDataSource *_RightDataSrc;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *window;

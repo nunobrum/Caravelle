@@ -17,6 +17,7 @@ enum enumInRootSet {
 
 
 extern NSString *notificationStatusUpdate;
+extern NSString *selectedFilesNotificationObject;
 
 
 #endif
