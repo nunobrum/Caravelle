@@ -184,16 +184,41 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 
 /* Called before the outline is selected.
- Workaround to make the path bar always updated.
  Can be used later to block access to private directories */
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    [_myPathBar setURL: [item theURL]];
-    _treeNodeSelected = item;
+    // !!! TOCONSIDER : Avoid selecting protected files
     return YES;
 }
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    [_myTableView reloadData];
+    if([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ]){
+        NSArray *object;
+        NSDictionary *answer=nil;
+        NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
+        NSInteger SelectedCount = [rowsSelected count];
+        if (SelectedCount ==0) {
+            /* Sends an Empty Array */
+            object = [[NSArray new] init];
+            answer = [NSDictionary dictionaryWithObject:object forKey:selectedFilesNotificationObject];
+        } else if (SelectedCount==1) {
+            /* Updates the _treeNodeSelected */
+            _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            [_myPathBar setURL: [_treeNodeSelected theURL]];
+            [_myTableView reloadData];
+            /* Sends an Array with one Object */
+            object = [NSArray arrayWithObject:_treeNodeSelected];
+            answer = [NSDictionary dictionaryWithObject:object forKey:selectedFilesNotificationObject];
+
+        }
+        else {
+            // !!! Houston we have a problem
+        }
+
+        if (answer != nil) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
+        }
+    }
+
 }
 
 
@@ -329,10 +354,6 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
         [tableData removeObjectsAtIndexes: tohide];
         [_myTableView reloadData];
-        /* Updates the Status Bar */
-        NSArray *objects = [NSArray arrayWithObject:_treeNodeSelected];
-        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:selectedFilesNotificationObject];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
     }
 }
 
