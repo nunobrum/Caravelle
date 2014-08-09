@@ -49,18 +49,27 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
 
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [myLeftView setCatalystMode:YES];
+        [myLeftView setCatalystMode:NO];
         [myLeftView setFoldersDisplayed:YES];
     }
 
     [_ContentSplitView addSubview:myLeftView.view];
     [_ContentSplitView addSubview:myRightView.view];
+    /* Ajust the subView window Sizes */
+    [_ContentSplitView adjustSubviews];
+    [_ContentSplitView setNeedsDisplay:YES];
+    [_myWindow display];
+
 
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
- 
-    [self DirectoryScan: @"/Users/vika"];
+
+}
+
+- (void)applicationDidBecomeActive:(NSNotification *)aNotification {
+    NSString *homeDir = NSHomeDirectory();
+    [self DirectoryScan: homeDir];
     //[self DirectoryScan: @"/"];
 
 }

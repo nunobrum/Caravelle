@@ -21,6 +21,7 @@
 @property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
 
+@property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 
 
 //- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
