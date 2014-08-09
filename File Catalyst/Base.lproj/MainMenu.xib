@@ -654,6 +654,7 @@ CA
             <connections>
                 <outlet property="ContentSplitView" destination="6MC-cR-BWB" id="70s-Di-Uy4"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
+                <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
                 <outlet property="toolbarDeleteButton" destination="j6M-5a-ig4" id="Z4A-cd-9jc"/>
                 <outlet property="window" destination="2037" id="2039"/>
             </connections>
@@ -668,18 +669,18 @@ CA
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" animationBehavior="default" id="2037">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="95" y="99" width="1110" height="646"/>
+            <rect key="contentRect" x="95" y="99" width="812" height="660"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="2038">
-                <rect key="frame" x="0.0" y="0.0" width="1110" height="646"/>
+                <rect key="frame" x="0.0" y="0.0" width="812" height="660"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB">
-                        <rect key="frame" x="0.0" y="18" width="1110" height="628"/>
+                        <rect key="frame" x="1" y="22" width="810" height="637"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="763" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
-                        <rect key="frame" x="18" y="0.0" width="1034" height="17"/>
+                        <rect key="frame" x="2" y="4" width="808" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="gJV-jD-cFn">
                             <font key="font" metaFont="system"/>
@@ -689,12 +690,12 @@ CA
                     </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="20" symbolic="YES" id="2W5-nP-iIb"/>
-                    <constraint firstAttribute="bottom" secondItem="L75-zs-bdV" secondAttribute="bottom" id="6Lf-rc-Z7M"/>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" id="VxC-qq-gvf"/>
-                    <constraint firstAttribute="trailing" secondItem="L75-zs-bdV" secondAttribute="trailing" constant="60" id="YSl-w5-AG0"/>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" id="cLY-j1-937"/>
-                    <constraint firstAttribute="trailing" secondItem="6MC-cR-BWB" secondAttribute="trailing" id="j4F-sV-0TP"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="906-0s-8Jl"/>
+                    <constraint firstAttribute="trailing" secondItem="6MC-cR-BWB" secondAttribute="trailing" constant="1" id="GE5-vo-iIl"/>
+                    <constraint firstAttribute="bottom" secondItem="L75-zs-bdV" secondAttribute="bottom" constant="4" id="LVw-L3-6uG"/>
+                    <constraint firstAttribute="trailing" secondItem="L75-zs-bdV" secondAttribute="trailing" constant="4" id="OLf-8U-4uF"/>
+                    <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="fwX-zR-Fkt"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="1" id="jcQ-N5-wMD"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="m0A-BY-371"/>
                 </constraints>
             </view>

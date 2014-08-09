@@ -66,21 +66,21 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="159" height="586"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <subviews>
-                                                    <scrollView misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
-                                                        <rect key="frame" x="0.0" y="0.0" width="141" height="586"/>
+                                                    <scrollView autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
+                                                        <rect key="frame" x="0.0" y="0.0" width="159" height="586"/>
                                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                                        <clipView key="contentView" misplaced="YES" id="Y6z-1n-4Bv">
-                                                            <rect key="frame" x="1" y="17" width="139" height="568"/>
+                                                        <clipView key="contentView" id="Y6z-1n-4Bv">
+                                                            <rect key="frame" x="1" y="17" width="157" height="568"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
                                                                 <outlineView verticalHuggingPriority="750" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI">
-                                                                    <rect key="frame" x="0.0" y="0.0" width="139" height="568"/>
+                                                                    <rect key="frame" x="0.0" y="0.0" width="157" height="568"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
                                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                                     <tableColumns>
-                                                                        <tableColumn identifier="NameID" width="135.77734375" minWidth="16" maxWidth="1000" id="y9F-Gr-UZs">
+                                                                        <tableColumn identifier="NameID" width="153.77734375" minWidth="16" maxWidth="1000" id="y9F-Gr-UZs">
                                                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Name">
                                                                                 <font key="font" metaFont="smallSystem"/>
                                                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -94,7 +94,7 @@
                                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                             <prototypeCellViews>
                                                                                 <tableCellView id="ixn-tP-krw" customClass="FolderCellView">
-                                                                                    <rect key="frame" x="1" y="1" width="136" height="34"/>
+                                                                                    <rect key="frame" x="1" y="1" width="154" height="34"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <subviews>
                                                                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="zpT-yC-x1m">
@@ -166,7 +166,7 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </scroller>
                                                         <tableHeaderView key="headerView" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" id="Jmn-sp-QjP">
-                                                            <rect key="frame" x="0.0" y="0.0" width="139" height="17"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="157" height="17"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </tableHeaderView>
                                                     </scrollView>
