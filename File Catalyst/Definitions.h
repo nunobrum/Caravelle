@@ -19,5 +19,7 @@ enum enumInRootSet {
 extern NSString *notificationStatusUpdate;
 extern NSString *selectedFilesNotificationObject;
 
+#define UPDATE_CADENCE_PER_FILE 100
+
 
 #endif

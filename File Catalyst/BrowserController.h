@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "FileCollection.h"
 #import "TreeRoot.h"
+#import "PathControlManager.h"
 #include "Definitions.h"
 
 @interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
@@ -23,7 +24,8 @@
 @property (strong) IBOutlet NSSearchField *myFilterText;
 @property (weak) IBOutlet NSOutlineView *myOutlineView;
 @property (weak) IBOutlet NSTableView *myTableView;
-@property (weak) IBOutlet NSPathCell *myPathBar;
+@property (weak) IBOutlet NSPathCell *myPathBarCell;
+@property (strong) IBOutlet PathControlManager *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
 
 
@@ -68,9 +70,9 @@
 /*
  * Selectors Binded in XIB
  */
-- (IBAction)PathSelect:(id)sender;
-- (IBAction)FilterChange:(id)sender;
-
+- (IBAction) PathSelect:(id)sender;
+- (IBAction) FilterChange:(id)sender;
+- (IBAction) ChooseDirectory:(id)sender;
 
 /*
  * Parent access routines

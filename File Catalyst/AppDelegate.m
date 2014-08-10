@@ -44,13 +44,18 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
     [myRightView initController];
     
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
-
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
 
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [myLeftView setCatalystMode:NO];
+        [myLeftView setCatalystMode:YES];
         [myLeftView setFoldersDisplayed:YES];
+        //[myLeftView setParent:self];
+    }
+    if ([myRightView isKindOfClass:[BrowserController class]]) {
+        [myRightView setCatalystMode:NO];
+        [myRightView setFoldersDisplayed:YES];
+        //[myRightView setParent:self];
     }
 
     [_ContentSplitView addSubview:myLeftView.view];
@@ -64,44 +69,33 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
+    firstAppActivation = YES;
 
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
-    NSString *homeDir = NSHomeDirectory();
-    [self DirectoryScan: homeDir];
-    //[self DirectoryScan: @"/"];
-
-}
-
-
--(void)DirectoryScan:(NSString*)rootPath {
-    //NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init]; // Top-level pool
-    FileCollection *fileCollection_inst = nil;
-    NSInteger canAdd = [(BrowserController*)myLeftView canAddRoot:rootPath];
-    
-    if (rootCanBeInserted==canAdd) {
-        if ([(BrowserController*)myLeftView getCatalystMode ]==YES) {
-            if (nil==fileCollection_inst)
-                fileCollection_inst = [[FileCollection new] init];
-        
-            [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
-            //[[self StatusText] setIntegerValue:fileno];
-            }];
-            [(BrowserController*)myLeftView addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
-            //[[self StatusText] setIntegerValue:fileno];
-            }];
-        }
-        else { // Will only add the Root
-
-            [(BrowserController*)myLeftView addWithRootPath:[NSURL URLWithString: rootPath]];
-        }
-        [(BrowserController*)myLeftView refreshTrees];
-        // This is important so that the Table is correctly refreshed
-        [_toolbarDeleteButton setEnabled:NO];
+    if (firstAppActivation == YES) {
+        NSString *homeDir = NSHomeDirectory();
+        [self DirectoryScan: homeDir to:myLeftView];
+        //[(BrowserController*)myRightView addWithRootPath:[NSURL URLWithString:homeDir]];
+        [_StatusBar setTitle:@"Done!"];
+        firstAppActivation = NO;
     }
-    //[pool release];
 }
+
+
+-(void) DirectoryScan:(NSString*)rootPath to:(BrowserController*) BrowserView {
+    FileCollection *fileCollection_inst = [[FileCollection new] init];
+    [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
+        [_StatusBar setTitle:@"Scanning..."];
+    }];
+    [BrowserView addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
+        [_StatusBar setTitle:@"Adding Files to Tree..."];
+    }];
+    [_StatusBar setTitle:@"Done!"];
+}
+
+
 
 - (IBAction)toolbarDelete:(id)sender {
     NSLog(@"Menu Delete clicked");

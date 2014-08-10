@@ -203,7 +203,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBar setURL: [_treeNodeSelected theURL]];
+            [_myPathBarControl setURL: [_treeNodeSelected theURL]];
             [_myTableView reloadData];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
@@ -297,7 +297,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Going to open the Select That directory on the Outline View
             [self selectAndExpand:node];
             /* Set the path bar */
-            [_myPathBar setURL: [node theURL]];
+            [_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
             self.treeNodeSelected=node;
             [_myTableView reloadData];
@@ -375,38 +375,56 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) addWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
-    TreeRoot *rootDir = [[TreeRoot new] init];
-    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+    /* Checks first if the root is not already existing on data */
+    //if ([self canAddRoot:[fileCollection rootPath]] == rootCanBeInserted) {
+    if (_catalystMode==YES) {
+        TreeRoot *rootDir = [[TreeRoot new] init];
+        NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
 
-    // assigns the name to the root directory
-    [rootDir setTheURL: rootpath];
-    [rootDir setFileCollection: fileCollection];
-    [rootDir setIsCollectionSet:YES];
+        // assigns the name to the root directory
+        [rootDir setTheURL: rootpath];
+        [rootDir setFileCollection: fileCollection];
+        [rootDir setIsCollectionSet:YES];
 
-
-    if(BaseDirectoriesArray==nil) {
-        BaseDirectoriesArray = [[NSMutableArray new] init];
+        if(BaseDirectoriesArray==nil) {
+            BaseDirectoriesArray = [[NSMutableArray new] init];
+        }
+        [BaseDirectoriesArray addObject: rootDir];
+        /* Refresh the Trees so that the trees are displayed */
+        [self refreshTrees];
+        /* Make the Root as selected */
+        [self selectFolderByURL:rootpath];
     }
-    [BaseDirectoriesArray addObject: rootDir];
-    /* Make the Root as selected */
-    [self selectFolderByURL:rootpath];
-
+    else {
+        NSLog(@"Cant Add a Collection when Catalyst mode is OFF");
+    }
 }
+
 -(void) addWithRootPath:(NSURL*) rootPath {
-    TreeRoot *rootDir = [[TreeRoot new] init];
-    // assigns the name to the root directory
-    [rootDir setTheURL: rootPath];
-    [rootDir setFileCollection: NULL];
-    [rootDir setIsCollectionSet:NO];
-    //[rootDir refreshTreeFromURLs];
+    /* Checks first if the root is not already existing on data */
+    if (_catalystMode==NO) {
+        if ([self canAddRoot:[rootPath path]] == rootCanBeInserted) {
+            TreeRoot *rootDir = [[TreeRoot new] init];
+            // assigns the name to the root directory
+            [rootDir setTheURL: rootPath];
+            [rootDir setFileCollection: NULL];
+            [rootDir setIsCollectionSet:NO];
+            //[rootDir refreshTreeFromURLs];
 
-    if(BaseDirectoriesArray==nil) {
-        BaseDirectoriesArray = [[NSMutableArray new] init];
+            if(BaseDirectoriesArray==nil) {
+                BaseDirectoriesArray = [[NSMutableArray new] init];
+            }
+            [BaseDirectoriesArray addObject: rootDir];
+            /* Make the Root as selected */
+            [self selectFolderByURL:rootPath];
+        }
+        else {
+            NSLog(@"The Root cant be added");
+        }
     }
-    [BaseDirectoriesArray addObject: rootDir];
-    /* Make the Root as selected */
-    [self selectFolderByURL:rootPath];
-
+    else {
+        NSLog(@"Can't add a just a root when Catalyst is ON");
+    }
 }
 
 -(void) removeRootWithIndex:(NSInteger)index {
@@ -512,7 +530,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (NSNotFound!=result.location) {
             /* The URL is already contained in this tree */
             /* Start climbing tree */
-
+            [_myPathBarControl setRootPath:[root rootPath] Catalyst:_catalystMode];
             cursor = root;
             do {
                 [self selectAndExpand:cursor];
@@ -541,45 +559,57 @@ void DateFormatter(NSDate *date, NSString **output) {
             break;
     }
     if (found) {/* Exited by the break */
-//        /* Select the node in the outline View */
-//        NSInteger row = [_myOutlineView rowForItem:cursor];
-//        if (row==-1) {
-//            [_myOutlineView reloadData];
-//            row = [_myOutlineView rowForItem:cursor];
-//        }
-//        [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-//        /* Sets the directory to be Displayed */
-//        _treeNodeSelected = cursor;
         /* Update data in the Table */
         [self selectAndExpand:cursor];
+        [_myPathBarControl setURL:[cursor theURL]];
         [self refreshDataView];
         return cursor;
     }
     return NULL;
 }
 
+- (IBAction) ChooseDirectory:(id)sender {
+    NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
+    NSURL *newURL = nil;
+    TreeRoot *node;
+    [SelectDirectoryDialog setTitle:@"Select a new Directory"];
+    [SelectDirectoryDialog setCanChooseFiles:NO];
+    [SelectDirectoryDialog setCanChooseDirectories:YES];
+    NSInteger returnOption =[SelectDirectoryDialog runModal];
+    if (returnOption == NSFileHandlingPanelOKButton) {
+        newURL = [SelectDirectoryDialog URL];
+
+        if (_catalystMode){
+
+        }
+        else {
+            [self removeRootWithIndex:0];
+            [self addWithRootPath:newURL];
+            node = [BaseDirectoriesArray objectAtIndex:0];
+        }
+        if (NULL != node){
+            [self selectFolderByURL:[node theURL]];
+        }
+    }
+}
+
 - (IBAction)PathSelect:(id)sender {
     /* Gets the clicked Cell */
-    NSPathComponentCell *selectedPath =[_myPathBar clickedPathComponentCell];
-    /* Discovers the position of the Cell in the Path */
-    NSRange r;
-    r.location = 0;
-    /* + 2 for counting with root and the index range is to index - 1 */
-    r.length = [[_myPathBar pathComponentCells] indexOfObject:selectedPath]+2;
-    /* Gets the URL components*/
-    NSArray *components = [[_myPathBar URL] pathComponents];
-    /* Creates the new Path */
-    NSURL *newURL = [NSURL fileURLWithPathComponents: [components subarrayWithRange:r]];
+    NSPathComponentCell *selectedPath =[_myPathBarControl clickedPathComponentCell];
+    NSURL *newURL = [selectedPath URL];
     TreeBranch *node = [self selectFolderByURL: newURL];
-    if (node != NULL) {
-        /* Set the path bar */
-        [_myPathBar setURL: [node theURL]];
-        /* Update file table */
-        [_myTableView reloadData];
+    if (NULL == node ) {
+        /* The path is not contained existing roots */
+        if (_catalystMode==NO) {
+            /* Instead of making a clever update of the tree
+             Just remove the existing one and creates one from scratch */
+            [self removeRootWithIndex:0];
+            [self addWithRootPath:newURL];
+            node = [BaseDirectoriesArray objectAtIndex:0];
+        }
     }
-    else { /* The path is not contained existing roots */
-        // !!! Todo : send message to AppDelegate
-        //[self DirectoryScan:[newURL path]];
+    if (NULL != node){
+        [self selectFolderByURL:[node theURL]];
     }
 }
 
