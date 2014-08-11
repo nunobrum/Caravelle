@@ -9,9 +9,10 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSValue.h>
 
+#import "MyURL.h"
 #include "MD5.h"
 
-@interface FileInformation : NSObject { /// !!! To Consider : Derive this class directly from NSURL : Memory footprint improvement
+@interface FileInformation : MyURL {
 @private
     //NSURL      *URL;
     NSString   *name;
@@ -29,8 +30,6 @@
 //@property NSDate *DateModified;
 //@property NSNumber *Size;
 
--(void)      setURL:(NSURL*)theURL;
--(NSURL*)    getURL;
 -(NSString*) getName;
 -(NSString*) getPath;
 -(NSArray*)  getPathComponents;
@@ -56,11 +55,5 @@
 -(NSMutableArray*) duplicateList;
 -(void) resetDuplicates;
 
-// File Operations
--(BOOL) sendToRecycleBin;
--(BOOL) eraseFile;
--(BOOL) copyFileTo:(NSString *)path;
--(BOOL) moveFileTo:(NSString *)path;
--(BOOL) openFile;
 
 @end
