@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "FileInformation.h"
-
+#import "MyURL.h"
 
 
 @protocol TreeProtocol <NSObject>
@@ -22,7 +22,7 @@
 
 @property (retain) TreeItem      *parent;
 //@property (retain) NSString       *name;
-@property NSURL                   *theURL;
+@property MyURL                   *myURL;
 @property long long               byteSize;
 //@property (retain) NSDate         *dateModified;
 

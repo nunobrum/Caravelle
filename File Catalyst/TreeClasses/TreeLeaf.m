@@ -15,7 +15,7 @@
 //}
 //
 -(FileInformation*)getFileInformation {
-    return [FileInformation createWithURL: self.theURL];
+    return [FileInformation createWithURL: self.myURL];
 }
 -(BOOL) isBranch {
     return NO;

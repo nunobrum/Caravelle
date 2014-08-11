@@ -60,17 +60,17 @@
 
             self.byteSize += [fileSize longLongValue]; // Add the size of the file to the directory
             currdir = (TreeBranch*)self;
-            NSURL *currURL = [self theURL];
+            MyURL *currURL = [self myURL];
             for (level=level0; level < [pathComponents count]-1; level++) { //last path component is the file name
                 NSString *dirName = [pathComponents objectAtIndex:level];
                 //NSLog(@"<%@>",dirName);
-                NSURL *newdir;// = [NSURL new];
-                newdir = [currURL URLByAppendingPathComponent:dirName isDirectory:YES];
+                MyURL *newdir;// = [NSURL new];
+                newdir = (MyURL*)[currURL URLByAppendingPathComponent:dirName isDirectory:YES];
                 cursor = nil;
                 for (TreeBranch *subdir in [currdir branchesInNode]){
                     // If the two are the same
                     //NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
-                    if ([newdir isEqualTo:[subdir theURL]]) {
+                    if ([newdir isEqualTo:[subdir myURL]]) {
                         cursor = subdir;
                         cursor.byteSize += [fileSize longLongValue];
                         break;
@@ -78,7 +78,7 @@
                 }
                 if (cursor==nil) { // the directory doesn't exit
                     TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
-                    newDir.theURL = newdir ;
+                    newDir.myURL = newdir ;
                     newDir.parent = currdir;
                     newDir.children = nil; //[[NSMutableArray new] init];
                     newDir.byteSize = [fileSize longLongValue];
@@ -89,12 +89,12 @@
                 } // if
                 else {
                     currdir = cursor;
-                    currURL = [cursor theURL];
+                    currURL = [cursor myURL];
                 }
             } //for
             // Now adding the File
             TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
-            newFile.theURL = [finfo getURL];
+            newFile.myURL = finfo;
             newFile.parent = currdir;
             newFile.byteSize = [fileSize longLongValue];
             //[newFile SetFileInformation: finfo];
@@ -114,10 +114,10 @@
 
 +(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
     TreeRoot *rootDir = [[TreeRoot new] init];
-    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+    MyURL *rootpath = [MyURL URLWithString:[fileCollection rootPath]];
 
     // assigns the name to the root directory
-    [rootDir setTheURL: rootpath];
+    [rootDir setMyURL: rootpath];
     [rootDir setFileCollection: fileCollection];
     [rootDir setIsCollectionSet:YES];
 
@@ -127,11 +127,11 @@
 }
 
 
-+(TreeRoot*) treeWithURL:(NSURL*) rootPath {
++(TreeRoot*) treeWithURL:(MyURL*) rootPath {
 
     TreeRoot *rootDir = [[TreeRoot new] init];
     // assigns the name to the root directory
-    [rootDir setTheURL: rootPath];
+    [rootDir setMyURL: rootPath];
     [rootDir setFileCollection: NULL];
     [rootDir setIsCollectionSet:NO];
     return rootDir;

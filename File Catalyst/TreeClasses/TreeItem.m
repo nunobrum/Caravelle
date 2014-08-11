@@ -30,7 +30,7 @@
 //    NSError *error;
 //    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
 //    if (filename==nil) {
-        return [_theURL lastPathComponent];
+        return [_myURL lastPathComponent];
 //    }
 //    return filename;
 }
@@ -38,15 +38,15 @@
 -(NSDate*) dateModified {
     NSDate *date=nil;
     NSError *errorCode;
-    if ([_theURL isFileURL]) {
-        [_theURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
+    if ([_myURL isFileURL]) {
+        [_myURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
         if (errorCode || date==nil) {
-            [_theURL getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
+            [_myURL getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
             
         }
     }
     else {
-        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_theURL path] error:NULL];
+        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_myURL path] error:NULL];
         date = [dirAttributes fileModificationDate];
 
     }
@@ -55,7 +55,7 @@
 
 -(NSString*) path {
     NSString *path;
-    [_theURL getResourceValue:&path     forKey:NSURLPathKey error:NULL];
+    [_myURL getResourceValue:&path     forKey:NSURLPathKey error:NULL];
     return path;
 }
 
@@ -69,7 +69,7 @@
 
 -(NSNumber*) filesize {
     NSNumber *filesize;
-    [_theURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
+    [_myURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
     return filesize;
 }
 

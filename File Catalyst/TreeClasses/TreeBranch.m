@@ -81,7 +81,7 @@
 }
 
 -(NSString*) path {
-    return [self.theURL path];
+    return [self.myURL path];
 }
 
 //-(NSInteger) numberOfFileDuplicatesInBranch {
@@ -130,7 +130,7 @@
     for (TreeItem *item in _children) {
         if ([item isKindOfClass:[TreeLeaf class]]==YES) {
             FileInformation *finfo;
-            finfo = [FileInformation createWithURL:[(TreeLeaf*)item theURL]];
+            finfo = [FileInformation createWithURL:[(TreeLeaf*)item myURL]];
             [answer AddFileInformation:finfo];
         }
     }
@@ -243,13 +243,13 @@
             }
         }
     }
-    NSURL *directoryToScan = [NSURL fileURLWithPath:self.path];
+    MyURL *directoryToScan = [MyURL fileURLWithPath:self.path];
     NSLog(@"Scanning directory %@", self.path);
     NSInteger level0 = [[directoryToScan pathComponents] count];
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:directoryToScan WithMode:NO];
 
 
-    for (NSURL *theURL in dirEnumerator) {
+    for (MyURL *theURL in dirEnumerator) {
 
         NSArray *pathComponents = [theURL pathComponents];
         NSInteger level;
@@ -269,18 +269,18 @@
             pathComponents2 = [pathComponents count];
 
         currdir = (TreeBranch*)self;
-        NSURL *currURL = [self theURL];
+        MyURL *currURL = [self myURL];
         
         for (level=level0; level < pathComponents2; level++) { //last path component is the file name
             NSString *dirName = [pathComponents objectAtIndex:level];
             //NSLog(@"<%@>",dirName);
-            NSURL *newdir;// = [NSURL new];
-            newdir = [currURL URLByAppendingPathComponent:dirName isDirectory:YES];
+            MyURL *newdir;// = [NSURL new];
+            newdir = (MyURL*)[currURL URLByAppendingPathComponent:dirName isDirectory:YES];
             cursor = nil;
             for (TreeBranch *subdir in [currdir branchesInNode]){
                 // If the two are the same
                 //NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
-                if ([newdir isEqualTo:[subdir theURL]]) {
+                if ([newdir isEqualTo:[subdir myURL]]) {
                     cursor = subdir;
                     cursor.byteSize += [fileSize longLongValue];
                     break;
@@ -288,7 +288,7 @@
             }
             if (cursor==nil) { // the directory doesn't exit
                 TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
-                newDir.theURL = newdir ;
+                newDir.myURL = newdir ;
                 newDir.parent = currdir;
                 newDir.children = nil; //[[NSMutableArray new] init];
                 newDir.byteSize = [fileSize longLongValue];
@@ -299,13 +299,13 @@
             } // if
             else {
                 currdir = cursor;
-                currURL = [cursor theURL];
+                currURL = [cursor myURL];
             }
         } //for
         if ([isDirectory boolValue]==NO) {
             // Its a file, Now adding the File
             TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
-            newFile.theURL = theURL;
+            newFile.myURL = theURL;
             newFile.parent = currdir;
             newFile.byteSize = [fileSize longLongValue];
             if (currdir.children==nil) {
