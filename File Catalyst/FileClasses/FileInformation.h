@@ -11,7 +11,7 @@
 
 #include "MD5.h"
 
-@interface FileInformation : NSObject {
+@interface FileInformation : NSObject { /// !!! To Consider : Derive this class directly from NSURL : Memory footprint improvement
 @private
     //NSURL      *URL;
     NSString   *name;

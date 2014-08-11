@@ -10,6 +10,8 @@
 #import "FileCollection.h"
 #import "FileInformation.h"
 
+#import "Definitions.h"
+
 
 @implementation FileCollection: NSObject
 
@@ -24,10 +26,10 @@
 -(void) addFilesInDirectory:(NSString *)rootpath callback:(void (^)(NSInteger fileno))callbackhandler
 {
 
-    NSInteger i=0;
+    NSInteger fileno=0;
     
     // Copies the rootpath to rootDirectory;
-    rootDirectory = [NSString stringWithString:rootpath];
+    self->rootDirectory = rootpath;
     
     // Create a local file manager instance
     NSFileManager *localFileManager=[[NSFileManager alloc] init];
@@ -83,9 +85,10 @@
         if ([isDirectory boolValue]==NO)
         {
             [self addFileByURL:theURL];
-            i+=1;
+            fileno+=1;
         }
-        callbackhandler(i);
+        if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
+            callbackhandler(fileno);
     }
     
     // Release the localFileManager.
