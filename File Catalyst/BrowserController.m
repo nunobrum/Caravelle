@@ -203,6 +203,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            [_myPathBarControl setRootPath:[[_treeNodeSelected root] theURL] Catalyst:_catalystMode];
             [_myPathBarControl setURL: [_treeNodeSelected theURL]];
             [_myTableView reloadData];
             /* Sends an Array with one Object */
@@ -297,7 +298,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Going to open the Select That directory on the Outline View
             [self selectAndExpand:node];
             /* Set the path bar */
-            [_myPathBarControl setURL: [node theURL]];
+            //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
             self.treeNodeSelected=node;
             [_myTableView reloadData];
@@ -360,7 +361,8 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(void) refreshTrees {
     if (_catalystMode) {
         for (TreeRoot *tree in BaseDirectoriesArray) {
-            [tree refreshTreeFromCollection];
+            NSLog(@"!!! Solve this below");
+            //[tree refreshTreeFromCollection:{}];
         }
     }
     else {
@@ -374,57 +376,20 @@ void DateFormatter(NSDate *date, NSString **output) {
     [self refreshDataView];
 }
 
--(void) addWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
-    /* Checks first if the root is not already existing on data */
-    //if ([self canAddRoot:[fileCollection rootPath]] == rootCanBeInserted) {
-    if (_catalystMode==YES) {
-        TreeRoot *rootDir = [[TreeRoot new] init];
-        NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
-
-        // assigns the name to the root directory
-        [rootDir setTheURL: rootpath];
-        [rootDir setFileCollection: fileCollection];
-        [rootDir setIsCollectionSet:YES];
-
-        if(BaseDirectoriesArray==nil) {
-            BaseDirectoriesArray = [[NSMutableArray new] init];
-        }
-        [BaseDirectoriesArray addObject: rootDir];
-        /* Refresh the Trees so that the trees are displayed */
-        [self refreshTrees];
-        /* Make the Root as selected */
-        [self selectFolderByURL:rootpath];
+-(void) addTreeRoot:(TreeRoot*)theRoot {
+    if(BaseDirectoriesArray==nil) {
+        BaseDirectoriesArray = [[NSMutableArray new] init];
     }
-    else {
-        NSLog(@"Cant Add a Collection when Catalyst mode is OFF");
-    }
-}
+    NSInteger answer = [self canAddRoot:[theRoot rootPath]];
+    if (answer == rootHasNoRelation) {
 
--(void) addWithRootPath:(NSURL*) rootPath {
-    /* Checks first if the root is not already existing on data */
-    if (_catalystMode==NO) {
-        if ([self canAddRoot:[rootPath path]] == rootCanBeInserted) {
-            TreeRoot *rootDir = [[TreeRoot new] init];
-            // assigns the name to the root directory
-            [rootDir setTheURL: rootPath];
-            [rootDir setFileCollection: NULL];
-            [rootDir setIsCollectionSet:NO];
-            //[rootDir refreshTreeFromURLs];
+        [BaseDirectoriesArray addObject: theRoot];
+    }
+    /* Refresh the Trees so that the trees are displayed */
+    [self refreshTrees];
+    /* Make the Root as selected */
+    [self selectFolderByURL:[theRoot theURL]];
 
-            if(BaseDirectoriesArray==nil) {
-                BaseDirectoriesArray = [[NSMutableArray new] init];
-            }
-            [BaseDirectoriesArray addObject: rootDir];
-            /* Make the Root as selected */
-            [self selectFolderByURL:rootPath];
-        }
-        else {
-            NSLog(@"The Root cant be added");
-        }
-    }
-    else {
-        NSLog(@"Can't add a just a root when Catalyst is ON");
-    }
 }
 
 -(void) removeRootWithIndex:(NSInteger)index {
@@ -464,28 +429,11 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 // This method checks if a root can be added to existing set.
 -(NSInteger) canAddRoot: (NSString*) rootPath {
-    NSInteger answer = rootCanBeInserted;
-    NSRange result;
+    NSInteger answer = rootHasNoRelation;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
-        result = [rootPath rangeOfString:[root path]];
-        if (NSNotFound!=result.location) {
-            // The new root is already contained in the existing trees
-            answer = rootAlreadyContained;
-            NSLog(@"The added path is contained in existing roots.");
-
-        }
-        else {
-            /* The new contains exiting */
-            result = [[root path] rangeOfString:rootPath];
-            if (NSNotFound!=result.location) {
-                // Will need to replace current position
-                answer = rootContainsExisting;
-                NSLog(@"The added path contains already existing roots, please delete them.");
-                //[root removeBranch];
-                //fileCollection_inst = [root fileCollection];
-            }
-        }
+        answer =[root relationTo: rootPath];
+        if (answer!=rootHasNoRelation) break;
     }
     return answer;
 }
@@ -530,7 +478,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (NSNotFound!=result.location) {
             /* The URL is already contained in this tree */
             /* Start climbing tree */
-            [_myPathBarControl setRootPath:[root rootPath] Catalyst:_catalystMode];
+            //[_myPathBarControl setRootPath:[root theURL] Catalyst:_catalystMode];
             cursor = root;
             do {
                 [self selectAndExpand:cursor];
@@ -561,7 +509,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (found) {/* Exited by the break */
         /* Update data in the Table */
         [self selectAndExpand:cursor];
-        [_myPathBarControl setURL:[cursor theURL]];
+        //[_myPathBarControl setURL:[cursor theURL]];
         [self refreshDataView];
         return cursor;
     }
@@ -580,11 +528,12 @@ void DateFormatter(NSDate *date, NSString **output) {
         newURL = [SelectDirectoryDialog URL];
 
         if (_catalystMode){
-
+            NSDictionary *answer = [NSDictionary dictionaryWithObject:newURL forKey:catalystRootUpdateNotificationPath];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationCatalystRootUpdate object:self userInfo:answer];
         }
         else {
             [self removeRootWithIndex:0];
-            [self addWithRootPath:newURL];
+            [self addTreeRoot:[TreeRoot treeWithURL:newURL]];
             node = [BaseDirectoriesArray objectAtIndex:0];
         }
         if (NULL != node){
@@ -604,7 +553,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Instead of making a clever update of the tree
              Just remove the existing one and creates one from scratch */
             [self removeRootWithIndex:0];
-            [self addWithRootPath:newURL];
+            [self addTreeRoot:[TreeRoot treeWithURL:newURL]];
             node = [BaseDirectoriesArray objectAtIndex:0];
         }
     }

@@ -15,6 +15,9 @@
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 NSString *selectedFilesNotificationObject=@"FilesSelected";
 
+NSString *notificationCatalystRootUpdate=@"RootUpdate";
+NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
+
 
 @implementation AppDelegate
 
@@ -45,7 +48,8 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
     
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
-
+    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myLeftView];
+    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
         [myLeftView setCatalystMode:YES];
@@ -81,6 +85,10 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
         [_StatusBar setTitle:@"Done!"];
         firstAppActivation = NO;
     }
+    [_ContentSplitView adjustSubviews];
+    [_ContentSplitView setNeedsDisplay:YES];
+    [_myWindow display];
+
 }
 
 
@@ -89,12 +97,22 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
     [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
         [_StatusBar setTitle:@"Scanning..."];
     }];
-    [BrowserView addWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
+    TreeRoot *root = [TreeRoot treeWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
+        // Put Code here
         [_StatusBar setTitle:@"Adding Files to Tree..."];
     }];
+    [BrowserView addTreeRoot:root];
     [_StatusBar setTitle:@"Done!"];
 }
 
+- (void) rootUpdate:(NSNotification*)theNotification {
+    NSDictionary *receivedData = [theNotification userInfo];
+    NSString *rootPath = [[receivedData objectForKey:catalystRootUpdateNotificationPath] path];
+    BrowserController *BrowserView = [theNotification object];
+    /* In a normal mode the Browser only has one Root */
+    [BrowserView removeRootWithIndex:0];
+    [self DirectoryScan:rootPath to:BrowserView];
+}
 
 
 - (IBAction)toolbarDelete:(id)sender {
@@ -109,35 +127,6 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
     [(BrowserController*)myLeftView removeSelectedDirectory];
     [_toolbarDeleteButton setEnabled:NO];
 }
-
-
-//- (IBAction)LeftRootBrowse:(id)sender {
-//
-//    //NSString *    extensions = @"tiff/tif/TIFF/TIF/jpg/jpeg/JPG/JPEG";
-//    //NSArray *     types = [extensions pathComponents];
-//    
-//	// Let the user choose an output file, then start the process of writing samples
-//	NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-//    //[openPanel setAllowedFileTypes:types];
-//	//[openPanel setCanSelectHiddenExtension:NO];
-//    [openPanel setCanChooseDirectories:YES];
-//    [openPanel setCanChooseFiles:NO];
-//    [openPanel setPrompt:@"Add"];
-//
-//
-//	[openPanel beginSheetModalForWindow:[self window] completionHandler:^(NSInteger result) {
-//        if (result == NSFileHandlingPanelOKButton)
-//        {
-//            // user did select an directory...
-//            NSString *RootPath = [[openPanel URL] path];
-//            [self performSelectorOnMainThread:@selector(DirectoryScan:) withObject:RootPath waitUntilDone:NO];
-//            //[NSThread detachNewThreadSelector:@selector(ButtonClick:) toTarget:self withObject:nil]
-//            
-//
-//        }
-//    }];
-//}
-
 
 
 - (IBAction)FindDuplicates:(id)sender {
@@ -158,10 +147,11 @@ NSString *selectedFilesNotificationObject=@"FilesSelected";
 //    options.photo_exif = [_chkPhotoEXIF state];
     
     duplicates = [collection findDuplicates:options];
-
-    [(BrowserController*)myLeftView addWithFileCollection:duplicates callback:^(NSInteger fileno) {
+    TreeRoot *root = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno) {
+        // Put Code here
         //[[self StatusText] setIntegerValue:fileno];
     }];
+    [(BrowserController*)myLeftView addTreeRoot:root];
 
     [(BrowserController*)myLeftView refreshTrees];
     [_toolbarDeleteButton setEnabled:NO];

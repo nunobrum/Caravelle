@@ -10,8 +10,8 @@
 
 @implementation PathControlManager
 
--(void) setRootPath:(NSString*) rootPath Catalyst:(BOOL) catalystMode {
-    _rootPath = rootPath;
+-(void) setRootPath:(NSURL*) rootPath Catalyst:(BOOL) catalystMode {
+    _rootPath = [rootPath path];
     if (catalystMode)
         _rootLevel = [[rootPath pathComponents] count];
     else

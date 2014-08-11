@@ -36,6 +36,7 @@
 - (IBAction)toolbarCatalystSwitch:(id)sender;
 
 - (void) statusUpdate:(NSNotification*)theNotification;
+- (void)   rootUpdate:(NSNotification*)theNotification;
 
 
 @end

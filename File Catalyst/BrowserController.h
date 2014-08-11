@@ -83,9 +83,7 @@
 -(void) set_filterText:(NSString *) filterText;
 -(void) refreshDataView;
 -(void) refreshTrees;
--(void) addWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler;
--(void) addWithRootPath:(NSURL*) rootPath;
-//-(void) addBaseDirectory:(NSString*)rootpath fileCollection:(FileCollection*)collection callback:(void (^)(NSInteger fileno))callbackhandler;
+-(void) addTreeRoot:(TreeRoot*)theRoot;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 -(void) removeSelectedDirectory;

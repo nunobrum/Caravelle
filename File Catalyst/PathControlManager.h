@@ -13,7 +13,7 @@
     NSInteger _rootLevel;
 }
 
--(void) setRootPath:(NSString*) rootPath Catalyst:(BOOL) catalystMode;
+-(void) setRootPath:(NSURL*) rootPath Catalyst:(BOOL) catalystMode;
 -(void) setURL:(NSURL*)aURL;
 -(NSURL*) URL;
 

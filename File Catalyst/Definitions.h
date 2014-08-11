@@ -10,7 +10,7 @@
 #define File_Catalyst_Definitions_h
 
 enum enumInRootSet {
-    rootCanBeInserted = 1,
+    rootHasNoRelation = 1,
     rootAlreadyContained = 0,
     rootContainsExisting = -1
 };
@@ -18,6 +18,10 @@ enum enumInRootSet {
 
 extern NSString *notificationStatusUpdate;
 extern NSString *selectedFilesNotificationObject;
+
+extern NSString *notificationCatalystRootUpdate;
+extern NSString *catalystRootUpdateNotificationPath;
+
 
 #define UPDATE_CADENCE_PER_FILE 100
 
