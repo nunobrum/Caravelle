@@ -32,7 +32,7 @@
 -(NSDate*)   dateModified;
 -(NSString*) path ;
 -(NSNumber*) filesize ;
-
+-(TreeItem*) root;
 /*
  * File manipulation methods
  */
@@ -41,5 +41,6 @@
 -(BOOL) copyFileTo:(NSString *)path;
 -(BOOL) moveFileTo:(NSString *)path;
 -(BOOL) openFile;
+
 
 @end

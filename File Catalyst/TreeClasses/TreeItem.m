@@ -59,6 +59,14 @@
     return path;
 }
 
+-(TreeItem*) root {
+    TreeItem *cursor = self;
+    while (cursor->_parent!=NULL) {
+        cursor=cursor->_parent;
+    }
+    return cursor;
+}
+
 -(NSNumber*) filesize {
     NSNumber *filesize;
     [_theURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
