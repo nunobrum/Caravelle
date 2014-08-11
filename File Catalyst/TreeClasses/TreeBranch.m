@@ -10,6 +10,8 @@
 #import "TreeLeaf.h"
 #import "MyDirectoryEnumerator.h"
 
+#import "definitions.h"
+
 @interface TreeBranch( PrivateMethods )
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector;
@@ -321,5 +323,28 @@
     }
 }
 
+-(NSInteger) relationTo:(NSString*) otherRoot {
+    NSRange result;
+    NSInteger answer = rootHasNoRelation;
+    result = [otherRoot rangeOfString:[self path]];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        answer = rootAlreadyContained;
+        NSLog(@"The added path is contained in existing roots.");
+
+    }
+    else {
+        /* The new contains exiting */
+        result = [[self path] rangeOfString:otherRoot];
+        if (NSNotFound!=result.location) {
+            // Will need to replace current position
+            answer = rootContainsExisting;
+            NSLog(@"The added path contains already existing roots, please delete them.");
+            //[root removeBranch];
+            //fileCollection_inst = [root fileCollection];
+        }
+    }
+    return answer;
+}
 
 @end

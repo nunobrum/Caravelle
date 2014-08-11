@@ -20,6 +20,9 @@
 -(void) setFileCollection:(FileCollection*)collection;
 -(FileCollection *) fileCollection;
 -(NSString*) rootPath;
--(void) refreshTreeFromCollection;
+
+-(void) refreshTreeFromCollection:(void (^)(NSInteger fileno))callbackhandler;
++(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler;
++(TreeRoot*) treeWithURL:(NSURL*) rootPath;
 
 @end

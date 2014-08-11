@@ -45,6 +45,8 @@
 
 -(void) refreshTreeFromURLs;
 
+-(NSInteger) relationTo:(NSString*) otherRoot;
+
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;
 

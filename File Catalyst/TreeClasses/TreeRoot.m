@@ -10,6 +10,8 @@
 #import "TreeLeaf.h"
 #import "FileCollection.h"
 
+#import "definitions.h"
+
 @implementation TreeRoot
 
 
@@ -29,10 +31,11 @@
     _isCollectionSet = YES;
 }
 
--(void) refreshTreeFromCollection {
+-(void) refreshTreeFromCollection:(void (^)(NSInteger fileno))callbackhandler {
     // Will get the first level of the tree
     TreeBranch *cursor, *currdir;
     //TreeRoot* rootDir = self;
+    NSInteger fileno=0;
 
     if (_isCollectionSet && _fileCollection!=nil) {
 
@@ -99,10 +102,42 @@
                 currdir.children =[[NSMutableArray new] init];
             }
             [[currdir children] addObject: newFile]; // Adds the created file or directory to the current director
-            
+            if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
+                callbackhandler(fileno);
+            fileno++;
+
         } // for
     }
     else
         NSLog(@"Ooops! This wasn't supposed to happen. File collection should have been set");
 }
+
++(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
+    TreeRoot *rootDir = [[TreeRoot new] init];
+    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+
+    // assigns the name to the root directory
+    [rootDir setTheURL: rootpath];
+    [rootDir setFileCollection: fileCollection];
+    [rootDir setIsCollectionSet:YES];
+
+    /* Refresh the Trees so that the trees are displayed */
+    [rootDir refreshTreeFromCollection:callbackhandler];
+    return rootDir;
+}
+
+
++(TreeRoot*) treeWithURL:(NSURL*) rootPath {
+
+    TreeRoot *rootDir = [[TreeRoot new] init];
+    // assigns the name to the root directory
+    [rootDir setTheURL: rootPath];
+    [rootDir setFileCollection: NULL];
+    [rootDir setIsCollectionSet:NO];
+    return rootDir;
+
+}
+
+
+
 @end
