@@ -56,6 +56,12 @@ void DateFormatter(NSDate *date, NSString **output) {
     [self setFoldersDisplayed:YES];
 }*/
 
+/* Method overriding the default for the NSView
+ This is done to accelerate the redrawing of the contents */
+-(BOOL) isOpaque {
+    return YES;
+}
+
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
 
@@ -203,8 +209,8 @@ void DateFormatter(NSDate *date, NSString **output) {
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBarControl setRootPath:[[_treeNodeSelected root] theURL] Catalyst:_catalystMode];
-            [_myPathBarControl setURL: [_treeNodeSelected theURL]];
+            [_myPathBarControl setRootPath:[[_treeNodeSelected root] myURL] Catalyst:_catalystMode];
+            [_myPathBarControl setURL: [_treeNodeSelected myURL]];
             [_myTableView reloadData];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
@@ -388,7 +394,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     /* Refresh the Trees so that the trees are displayed */
     [self refreshTrees];
     /* Make the Root as selected */
-    [self selectFolderByURL:[theRoot theURL]];
+    [self selectFolderByURL:[theRoot myURL]];
 
 }
 
@@ -537,7 +543,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             node = [BaseDirectoriesArray objectAtIndex:0];
         }
         if (NULL != node){
-            [self selectFolderByURL:[node theURL]];
+            [self selectFolderByURL:[node myURL]];
         }
     }
 }
@@ -558,7 +564,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     if (NULL != node){
-        [self selectFolderByURL:[node theURL]];
+        [self selectFolderByURL:[node myURL]];
     }
 }
 
