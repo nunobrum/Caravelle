@@ -19,7 +19,10 @@ NSString *notificationCatalystRootUpdate=@"RootUpdate";
 NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 
-@implementation AppDelegate
+@implementation AppDelegate {
+    NSArray *selectedFiles;
+    id  selectedView;
+}
 
 
 // -------------------------------------------------------------------------------
@@ -64,10 +67,6 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
     [_ContentSplitView addSubview:myLeftView.view];
     [_ContentSplitView addSubview:myRightView.view];
-    /* Ajust the subView window Sizes */
-    [_ContentSplitView adjustSubviews];
-    [_ContentSplitView setNeedsDisplay:YES];
-    [_myWindow display];
 
 
     //[_chkMP3_ID setEnabled:NO];
@@ -79,15 +78,16 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
     if (firstAppActivation == YES) {
+        firstAppActivation = NO;
         NSString *homeDir = NSHomeDirectory();
         [self DirectoryScan: homeDir to:myLeftView];
-        //[(BrowserController*)myRightView addWithRootPath:[NSURL URLWithString:homeDir]];
+        [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
         [_StatusBar setTitle:@"Done!"];
-        firstAppActivation = NO;
+
     }
+    /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
     [_ContentSplitView setNeedsDisplay:YES];
-    [_myWindow display];
 
 }
 
@@ -162,14 +162,35 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 
 - (void) statusUpdate:(NSNotification*)theNotification {
+    NSString *statusText;
     NSDictionary *receivedData = [theNotification userInfo];
-    NSArray *selectedFiles = [receivedData objectForKey:selectedFilesNotificationObject];
+    selectedFiles = [receivedData objectForKey:selectedFilesNotificationObject];
+    selectedView = [theNotification object];
     if (selectedFiles != nil) {
-        NSString *statusText = [NSString stringWithFormat:@"Selection Count %lu", (unsigned long)[selectedFiles count]];
+        NSInteger num_files=0;
+        NSInteger total_size=0;
+        NSInteger num_directories=0;
+        for (TreeItem *item in selectedFiles ) {
+            if ([item isKindOfClass:[TreeLeaf class]]) {
+                num_files++;
+                total_size += [(TreeLeaf*)item byteSize];
+            }
+            else if ([item isKindOfClass:[TreeBranch class]]) {
+                num_directories++;
+                total_size += [item byteSize];
+            }
+        }
+        if ([selectedFiles count]==0) {
+            statusText = [NSString stringWithFormat:@"Ready"];
+        }
+        else {
+            NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
+            statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@", num_files, num_directories, sizeText];
+        }
         [_StatusBar setTitle: statusText];
     }
     else {
-        [_StatusBar setTitle: @"Received Notification without User Info"];
+        [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
     }
 }
 
