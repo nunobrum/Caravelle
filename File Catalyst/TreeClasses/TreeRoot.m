@@ -94,7 +94,7 @@
             } //for
             // Now adding the File
             TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
-            newFile.myURL = finfo;
+            newFile.myURL = (MyURL*)[finfo getURL];
             newFile.parent = currdir;
             newFile.byteSize = [fileSize longLongValue];
             //[newFile SetFileInformation: finfo];
