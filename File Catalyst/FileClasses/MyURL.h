@@ -8,17 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-@interface MyURL : NSURL
 
 // File Information
-
+extern inline BOOL isDirectory(NSURL* url);
+extern inline NSString* name(NSURL*url);
+extern inline NSDate* dateModified(NSURL*url);
+extern inline NSString* path(NSURL*url);
+extern inline long long filesize(NSURL*url);
 
 // File Operations
--(BOOL) sendToRecycleBin;
--(BOOL) eraseFile;
--(BOOL) copyFileTo:(NSString *)path;
--(BOOL) moveFileTo:(NSString *)path;
--(BOOL) openFile;
+extern BOOL sendToRecycleBin(NSURL*url);
+extern BOOL eraseFile(NSURL*url);
+extern BOOL copyFileTo(NSURL*url, NSString *path);
+extern BOOL moveFileTo(NSURL*url, NSString *path);
+extern BOOL openFile(NSURL*url);
 
-
-@end
