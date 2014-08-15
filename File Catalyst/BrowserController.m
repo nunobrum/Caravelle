@@ -123,7 +123,7 @@ void DateFormatter(NSDate *date, NSString **output) {
                 if (self->_catalystMode==YES) {
                     subTitle = [NSString stringWithFormat:@"%ld Files %@",
                                 (long)[(TreeBranch*)item numberOfLeafsInBranch],
-                                [NSByteCountFormatter stringFromByteCount:[item byteSize] countStyle:NSByteCountFormatterCountStyleFile]];
+                                [NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
                 }
                 else {
                     subTitle = @""; //[NSString stringWithFormat:@"%ld Files here",
@@ -209,8 +209,8 @@ void DateFormatter(NSDate *date, NSString **output) {
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBarControl setRootPath:[[_treeNodeSelected root] myURL] Catalyst:_catalystMode];
-            [_myPathBarControl setURL: [_treeNodeSelected myURL]];
+            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] Catalyst:_catalystMode];
+            [_myPathBarControl setURL: [_treeNodeSelected url]];
             [_myTableView reloadData];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
@@ -245,7 +245,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSTableCellView *cellView = [aTableView makeViewWithIdentifier:identifier owner:self];
 
     if ([identifier isEqualToString:COL_FILENAME]) {
-        NSString *path = [theFile path];
+        NSString *path = [[theFile url] path];
         if (path) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
@@ -258,7 +258,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             cellView.textField.objectValue = @"--";
         }
         else
-            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile byteSize] countStyle:NSByteCountFormatterCountStyleFile];
+            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
 
     } else if ([identifier isEqualToString:COL_DATE]) {
         NSString *result=nil;
@@ -387,14 +387,14 @@ void DateFormatter(NSDate *date, NSString **output) {
         BaseDirectoriesArray = [[NSMutableArray new] init];
     }
     NSInteger answer = [self canAddRoot:[theRoot rootPath]];
-    if (answer == rootHasNoRelation) {
+    if (answer == pathsHaveNoRelation) {
 
         [BaseDirectoriesArray addObject: theRoot];
     }
     /* Refresh the Trees so that the trees are displayed */
     [self refreshTrees];
     /* Make the Root as selected */
-    [self selectFolderByURL:[theRoot myURL]];
+    [self selectFolderByURL:[theRoot url]];
 
 }
 
@@ -435,11 +435,11 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 // This method checks if a root can be added to existing set.
 -(NSInteger) canAddRoot: (NSString*) rootPath {
-    NSInteger answer = rootHasNoRelation;
+    NSInteger answer = pathsHaveNoRelation;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         answer =[root relationTo: rootPath];
-        if (answer!=rootHasNoRelation) break;
+        if (answer!=pathsHaveNoRelation) break;
     }
     return answer;
 }
@@ -543,7 +543,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             node = [BaseDirectoriesArray objectAtIndex:0];
         }
         if (NULL != node){
-            [self selectFolderByURL:[node myURL]];
+            [self selectFolderByURL:[node url]];
         }
     }
 }
@@ -564,7 +564,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     if (NULL != node){
-        [self selectFolderByURL:[node myURL]];
+        [self selectFolderByURL:[node url]];
     }
 }
 

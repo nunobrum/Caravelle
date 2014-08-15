@@ -33,7 +33,7 @@
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 @property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
-@property TreeItem *treeNodeSelected;
+@property TreeBranch *treeNodeSelected;
 
 -(void) initController;
 
