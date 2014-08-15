@@ -9,13 +9,6 @@
 #ifndef File_Catalyst_Definitions_h
 #define File_Catalyst_Definitions_h
 
-enum enumInRootSet {
-    rootHasNoRelation = 1,
-    rootAlreadyContained = 0,
-    rootContainsExisting = -1
-};
-
-
 extern NSString *notificationStatusUpdate;
 extern NSString *selectedFilesNotificationObject;
 

@@ -10,6 +10,14 @@
 #import "TreeLeaf.h"
 #import "FileCollection.h"
 
+/* Enumerate to be used on the result of the path relation compare method */
+enum enumPathCompare {
+    pathsHaveNoRelation = 1,
+    pathIsChild = 0,
+    pathIsParent = -1
+};
+
+
 @interface TreeBranch : TreeItem <TreeProtocol>
 
 @property (retain) TreeBranch     *parent;
