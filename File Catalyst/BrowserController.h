@@ -27,6 +27,8 @@
 @property (weak) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet PathControlManager *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
+@property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
+@property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
 
 
 
