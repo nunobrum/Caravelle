@@ -45,6 +45,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     //self = [super init];
     //[_myTableView setTarget:self];
     //[_myTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
+    self->BaseDirectoriesArray = [[NSMutableArray new] init];
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
     self->_catalystMode = YES;
@@ -366,8 +367,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(void) refreshTrees {
     if (_catalystMode) {
-        for (TreeRoot *tree in BaseDirectoriesArray) {
-            NSLog(@"!!! Solve this below");
+        //for (TreeRoot *tree in BaseDirectoriesArray)
+        {
+            NSLog(@"!!! Solve this");
             //[tree refreshTreeFromCollection:{}];
         }
     }
@@ -383,9 +385,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) addTreeRoot:(TreeRoot*)theRoot {
-    if(BaseDirectoriesArray==nil) {
-        BaseDirectoriesArray = [[NSMutableArray new] init];
-    }
     NSInteger answer = [self canAddRoot:[theRoot rootPath]];
     if (answer == pathsHaveNoRelation) {
 
@@ -399,9 +398,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) removeRootWithIndex:(NSInteger)index {
-    TreeRoot *itemToBeDeleted = [BaseDirectoriesArray objectAtIndex:index];
-    [itemToBeDeleted removeBranch];
-    [BaseDirectoriesArray removeObjectAtIndex:index];
+    if (index < [BaseDirectoriesArray count]) {
+        TreeRoot *itemToBeDeleted = [BaseDirectoriesArray objectAtIndex:index];
+        [itemToBeDeleted removeBranch];
+        [BaseDirectoriesArray removeObjectAtIndex:index];
+    }
+    [self refreshTrees];
 }
 
 -(void) removeRoot: (TreeRoot*) root {
@@ -419,7 +421,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (level==0) {
         /*If it is a root
          Will delete the tree Root and sub Directories */
-        [self removeRootWithIndex:fileSelected];
+        [self removeRoot: [_myOutlineView itemAtRow:fileSelected]];
         // Redraws the outline view
     }
     else {
@@ -524,26 +526,27 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (IBAction) ChooseDirectory:(id)sender {
     NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
-    NSURL *newURL = nil;
-    TreeRoot *node;
     [SelectDirectoryDialog setTitle:@"Select a new Directory"];
     [SelectDirectoryDialog setCanChooseFiles:NO];
     [SelectDirectoryDialog setCanChooseDirectories:YES];
     NSInteger returnOption =[SelectDirectoryDialog runModal];
     if (returnOption == NSFileHandlingPanelOKButton) {
-        newURL = [SelectDirectoryDialog URL];
-
         if (_catalystMode){
-            NSDictionary *answer = [NSDictionary dictionaryWithObject:newURL forKey:catalystRootUpdateNotificationPath];
+            NSString *rootPath = [[SelectDirectoryDialog URL] path];
+            NSDictionary *answer = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    rootPath,kRootPathKey,
+                                    self, kSenderKey,
+                                    [NSNumber numberWithBool:YES], kModeKey,
+                                    nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationCatalystRootUpdate object:self userInfo:answer];
         }
         else {
             [self removeRootWithIndex:0];
-            [self addTreeRoot:[TreeRoot treeWithURL:newURL]];
-            node = [BaseDirectoriesArray objectAtIndex:0];
-        }
-        if (NULL != node){
-            [self selectFolderByURL:[node url]];
+            [self addTreeRoot:[TreeRoot treeWithURL:[SelectDirectoryDialog URL]]];
+            TreeRoot *node = [BaseDirectoriesArray objectAtIndex:0];
+            if (NULL != node){
+                [self selectFolderByURL:[node url]];
+            }
         }
     }
 }
