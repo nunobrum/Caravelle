@@ -80,8 +80,9 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
         NSString *homeDir = NSHomeDirectory();
-        [self DirectoryScan: homeDir to:myLeftView];
+        //[self DirectoryScan: homeDir to:myLeftView];
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+        [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeFromPath: homeDir]];
         [_StatusBar setTitle:@"Done!"];
 
     }
@@ -173,11 +174,11 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
         for (TreeItem *item in selectedFiles ) {
             if ([item isKindOfClass:[TreeLeaf class]]) {
                 num_files++;
-                total_size += [(TreeLeaf*)item byteSize];
+                total_size += [(TreeLeaf*)item filesize];
             }
             else if ([item isKindOfClass:[TreeBranch class]]) {
                 num_directories++;
-                total_size += [item byteSize];
+                total_size += [(TreeBranch*)item filesize];
             }
         }
         if ([selectedFiles count]==0) {
