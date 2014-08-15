@@ -6,7 +6,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
             <connections>
+                <outlet property="myFileViewProgressIndicator" destination="6su-nb-W7F" id="2zq-4a-hzt"/>
                 <outlet property="myFilterText" destination="Lo2-4t-2Jl" id="ijU-KQ-eWf"/>
+                <outlet property="myOutlineProgressIndicator" destination="6Ay-z1-oxB" id="Mxj-3o-FRc"/>
                 <outlet property="myOutlineView" destination="wsk-IH-oFI" id="lFn-8S-m0w"/>
                 <outlet property="myPathBarCell" destination="VZQ-Zq-Xa7" id="YTe-cZ-0Ww"/>
                 <outlet property="myPathBarControl" destination="5Fc-gb-5JC" id="OIq-01-gag"/>
@@ -171,12 +173,18 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </tableHeaderView>
                                                     </scrollView>
+                                                    <progressIndicator autoresizesSubviews="NO" horizontalHuggingPriority="750" verticalHuggingPriority="750" placeholderIntrinsicWidth="154" placeholderIntrinsicHeight="154" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
+                                                        <rect key="frame" x="3" y="216" width="154" height="154"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    </progressIndicator>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="UOw-FQ-tmZ" firstAttribute="leading" secondItem="sH6-n1-nWT" secondAttribute="leading" id="Qnk-O3-FIE"/>
                                                     <constraint firstAttribute="bottom" secondItem="UOw-FQ-tmZ" secondAttribute="bottom" id="Yo5-zR-Nui"/>
                                                     <constraint firstAttribute="trailing" secondItem="UOw-FQ-tmZ" secondAttribute="trailing" id="gBY-5T-NtD"/>
+                                                    <constraint firstAttribute="centerY" secondItem="6Ay-z1-oxB" secondAttribute="centerY" id="huf-gI-w7d"/>
                                                     <constraint firstItem="UOw-FQ-tmZ" firstAttribute="top" secondItem="sH6-n1-nWT" secondAttribute="top" id="s6E-AM-IUe"/>
+                                                    <constraint firstAttribute="centerX" secondItem="6Ay-z1-oxB" secondAttribute="centerX" id="uUQ-tz-Y8b"/>
                                                 </constraints>
                                             </customView>
                                             <customView id="Uc5-cu-1Bc">
@@ -348,12 +356,18 @@
                                                             <autoresizingMask key="autoresizingMask"/>
                                                         </tableHeaderView>
                                                     </scrollView>
+                                                    <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6su-nb-W7F">
+                                                        <rect key="frame" x="113" y="277" width="32" height="32"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                    </progressIndicator>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="trailing" secondItem="G6N-YM-Dnh" secondAttribute="trailing" constant="-126" id="2EG-kO-wGk"/>
                                                     <constraint firstAttribute="bottom" secondItem="G6N-YM-Dnh" secondAttribute="bottom" id="Bac-3i-P49"/>
                                                     <constraint firstItem="G6N-YM-Dnh" firstAttribute="top" secondItem="Uc5-cu-1Bc" secondAttribute="top" id="QzA-bt-8XO"/>
+                                                    <constraint firstAttribute="centerY" secondItem="6su-nb-W7F" secondAttribute="centerY" id="anT-S8-8qq"/>
                                                     <constraint firstItem="G6N-YM-Dnh" firstAttribute="leading" secondItem="Uc5-cu-1Bc" secondAttribute="leading" id="blz-NM-yHT"/>
+                                                    <constraint firstAttribute="centerX" secondItem="6su-nb-W7F" secondAttribute="centerX" id="fxW-0H-XYh"/>
                                                 </constraints>
                                             </customView>
                                         </subviews>
@@ -383,7 +397,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="rRd-c6-Cab">
-                        <rect key="frame" x="404" y="1" width="15" height="597"/>
+                        <rect key="frame" x="403" y="1" width="16" height="597"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
