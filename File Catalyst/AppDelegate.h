@@ -26,11 +26,9 @@
 
 
 //- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
-- (IBAction)RemoveDirectory:(id)sender; // Remove Directories from Left View
+- (IBAction)RemoveSelected:(id)sender; // Remove Selected Items
 
 - (IBAction)FindDuplicates:(id)sender;
-
-- (void) DirectoryScan:(NSString*)rootPath to:(BrowserController*) BrowserView;
 
 - (IBAction)toolbarDelete:(id)sender;
 - (IBAction)toolbarCatalystSwitch:(id)sender;

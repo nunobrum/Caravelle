@@ -14,11 +14,13 @@
 #import "TreeBranch.h"
 #import "TreeRoot.h"
 #import "FileInformation.h"
-#import "LeftDataSource.h"
 
 #define COL_FILENAME @"NameID"
 #define COL_DATE     @"ModifiedID"
 #define COL_SIZE     @"SizeID"
+
+#define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE, COL_SIZE
+#define DEFAULT_COLUMNS  COL_FILENAME, COL_SIZE
 
 
 void DateFormatter(NSDate *date, NSString **output) {
@@ -38,24 +40,23 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 @implementation BrowserController
 
+#pragma mark - Initializers
 
-
-
--(void) initController {
-    //self = [super init];
-    //[_myTableView setTarget:self];
-    //[_myTableView setDoubleAction:@selector(TableDoubleClickEvent:)];
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
     self->_catalystMode = YES;
     self->_filterText = @"";
+    [self stopBusyAnimations];
+    self->visibleTableColumns = [NSMutableArray arrayWithObjects: DEFAULT_COLUMNS, nil];
+    return self;
 }
 
-/*- (void)awakeFromNib {
-    //[self setCatalystMode:YES];
-    [self setFoldersDisplayed:YES];
-}*/
+- (void)awakeFromNib {
+    NSLog(@"Browser Controller : awakeFromNib");
+}
 
 /* Method overriding the default for the NSView
  This is done to accelerate the redrawing of the contents */
@@ -66,6 +67,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
 
+#pragma mark - Tree Outline DataSource Protocol
 
 /*
  * Tree Outline View Data Source Protocol
@@ -151,6 +153,9 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
 }
 
+#pragma mark - Tree Outline View Delegate Protocol
+
+
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item {
     //    if ([item isKindOfClass:[TreeBranch class]]) {
     //        TreeItem *treeItem = item;
@@ -229,6 +234,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 }
 
+#pragma mark - TableView Datasource Protocol
 
 /*
  * Table Data Source Protocol
@@ -276,8 +282,22 @@ void DateFormatter(NSDate *date, NSString **output) {
     return cellView;
 }
 
+// -------------------------------------------------------------------------------
+//	sortWithDescriptor:descriptor
+// -------------------------------------------------------------------------------
+- (void)sortWithDescriptor:(id)descriptor
+{
+	NSMutableArray *sorted = [[NSMutableArray alloc] initWithCapacity:1];
+	[sorted addObjectsFromArray:[tableData sortedArrayUsingDescriptors:[NSArray arrayWithObject:descriptor]]];
+	[tableData removeAllObjects];
+	[tableData addObjectsFromArray:sorted];
+	[_myTableView reloadData];
+}
+
+#pragma mark - TableView View Delegate Protocol
+
 /*
- * Table Data Delegate Protocol
+ * Table Data View Delegate Protocol
  */
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
@@ -288,6 +308,37 @@ void DateFormatter(NSDate *date, NSString **output) {
         NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:selectedFilesNotificationObject];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
     }
+}
+
+// -------------------------------------------------------------------------------
+//	didClickTableColumn:tableColumn
+// -------------------------------------------------------------------------------
+- (void)tableView:(NSTableView *)inTableView didClickTableColumn:(NSTableColumn *)tableColumn
+{
+	NSArray *allColumns=[inTableView tableColumns];
+	NSInteger i;
+	for (i=0; i<[inTableView numberOfColumns]; i++)
+	{
+        /* Will delete all indicators from the remaining columns */
+		if ([allColumns objectAtIndex:i]!=tableColumn)
+		{
+			[inTableView setIndicatorImage:nil inTableColumn:[allColumns objectAtIndex:i]];
+		}
+	}
+	[inTableView setHighlightedTableColumn:tableColumn];
+
+	if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
+	{
+		[inTableView setIndicatorImage:[NSImage imageNamed:@"NSAscendingSortIndicator"] inTableColumn:tableColumn];
+		NSSortDescriptor *sortDesc = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:YES];
+        [self sortWithDescriptor:sortDesc];
+	}
+	else
+	{
+		[inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
+		NSSortDescriptor *sortDesc = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:NO];
+		[self sortWithDescriptor:sortDesc];
+	}
 }
 
 
@@ -314,6 +365,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 
     }
 }
+
+#pragma mark - Interface Methods
+
 
 /*
  * Parent access routines
@@ -523,6 +577,25 @@ void DateFormatter(NSDate *date, NSString **output) {
     }
     return NULL;
 }
+
+-(void) stopBusyAnimations {
+    [_myOutlineProgressIndicator setHidden:YES];
+    [_myFileViewProgressIndicator setHidden:YES];
+	[_myOutlineProgressIndicator stopAnimation:self];
+    [_myFileViewProgressIndicator stopAnimation:self];
+
+}
+
+-(void) startBusyAnimations {
+    [_myOutlineProgressIndicator setHidden:NO];
+    [_myFileViewProgressIndicator setHidden:NO];
+	[_myOutlineProgressIndicator startAnimation:self];
+    [_myFileViewProgressIndicator startAnimation:self];
+
+}
+
+#pragma mark - Action Outlets
+
 
 - (IBAction) ChooseDirectory:(id)sender {
     NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];

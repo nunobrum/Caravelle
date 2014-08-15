@@ -19,6 +19,7 @@
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
+    NSMutableArray *visibleTableColumns;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
@@ -37,7 +38,7 @@
 @property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
 @property TreeBranch *treeNodeSelected;
 
--(void) initController;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
 
 /*
@@ -92,5 +93,7 @@
 -(NSInteger) canAddRoot: (NSString*) rootPath;
 -(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL;
+-(void) startBusyAnimations;
+-(void) stopBusyAnimations;
 
 @end

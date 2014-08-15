@@ -13,8 +13,13 @@ extern NSString *notificationStatusUpdate;
 extern NSString *selectedFilesNotificationObject;
 
 extern NSString *notificationCatalystRootUpdate;
-extern NSString *catalystRootUpdateNotificationPath;
+extern NSString *kRootPathKey;
 
+extern NSString *notificationTreeConstructionFinished;
+extern NSString *kTreeRootKey;
+extern NSString *kSenderKey;
+extern NSString *kModeKey;
+extern NSString *kScanCountKey;
 
 #define UPDATE_CADENCE_PER_FILE 100
 

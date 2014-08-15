@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
+#import "TreeScanOperation.h"
 
 #include "Definitions.h"
 
@@ -22,6 +23,25 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 @implementation AppDelegate {
     NSArray *selectedFiles;
     id  selectedView;
+
+    NSOperationQueue *queue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
+	NSTimer	*timer;                  // update timer for progress indicator
+    NSNumber *scanCount;
+}
+
+// -------------------------------------------------------------------------------
+//	init
+// -------------------------------------------------------------------------------
+- (id)init
+{
+    NSLog(@"App Delegate: Init");
+	self = [super init];
+	if (self)
+    {
+        queue = [[NSOperationQueue alloc] init];
+        scanCount= [NSNumber numberWithInteger:0];
+	}
+	return self;
 }
 
 
@@ -36,9 +56,15 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 	return YES;
 }
 
-- (NSString *)windowNibName {
-    return @"File Catalyst";
+
+// -------------------------------------------------------------------------------
+//	awakeFromNib
+// -------------------------------------------------------------------------------
+- (void)awakeFromNib
+{
+    NSLog(@"App Delegate: awakeFromNib");
 }
+
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
@@ -46,9 +72,10 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
     // Insert code here to initialize your application
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
     myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-    [myLeftView initController];
-    [myRightView initController];
-    
+
+    // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
+	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
+
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myLeftView];
@@ -82,37 +109,102 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
         NSString *homeDir = NSHomeDirectory();
         //[self DirectoryScan: homeDir to:myLeftView];
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
-        [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeFromPath: homeDir]];
-        [_StatusBar setTitle:@"Done!"];
+        NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                homeDir,kRootPathKey,
+                                myLeftView, kSenderKey,
+                                scanCount, kScanCountKey,
+                                [NSNumber numberWithBool:YES], kModeKey,
+                                nil];
+        TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
+        [queue addOperation:Op];
+        [(BrowserController*)myLeftView startBusyAnimations];
 
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
     [_ContentSplitView setNeedsDisplay:YES];
-
 }
 
-
--(void) DirectoryScan:(NSString*)rootPath to:(BrowserController*) BrowserView {
-    FileCollection *fileCollection_inst = [[FileCollection new] init];
-    [fileCollection_inst addFilesInDirectory:rootPath callback:^(NSInteger fileno) {
-        [_StatusBar setTitle:@"Scanning..."];
-    }];
-    TreeRoot *root = [TreeRoot treeWithFileCollection:fileCollection_inst callback:^(NSInteger fileno) {
-        // Put Code here
-        [_StatusBar setTitle:@"Adding Files to Tree..."];
-    }];
-    [BrowserView addTreeRoot:root];
-    [_StatusBar setTitle:@"Done!"];
-}
-
+/* Receives the notification from the BrowserView to reload the Tree */
 - (void) rootUpdate:(NSNotification*)theNotification {
-    NSDictionary *receivedData = [theNotification userInfo];
-    NSString *rootPath = [[receivedData objectForKey:catalystRootUpdateNotificationPath] path];
+    NSMutableDictionary *notifInfo = [NSMutableDictionary dictionaryWithDictionary:[theNotification userInfo]];
     BrowserController *BrowserView = [theNotification object];
     /* In a normal mode the Browser only has one Root */
     [BrowserView removeRootWithIndex:0];
-    [self DirectoryScan:rootPath to:BrowserView];
+    /* Increment the Scan Count */
+    NSInteger aux = [scanCount integerValue]+1;
+    scanCount = [NSNumber numberWithInteger:aux];
+    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:scanCount forKey:kScanCountKey]];
+    /* Add the Job to the Queue */
+	//[queue cancelAllOperations];
+
+	// start the GetPathsOperation with the root path to start the search
+	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
+
+	[queue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
+
+}
+
+- (void)mainThread_handleTreeConstructor:(NSNotification *)note
+{
+    // Pending NSNotifications can possibly back up while waiting to be executed,
+	// and if the user stops the queue, we may have left-over pending
+	// notifications to process.
+	//
+	// So make sure we have "active" running NSOperations in the queue
+	// if we are to continuously add found image files to the table view.
+	// Otherwise, we let any remaining notifications drain out.
+	//
+	NSDictionary *notifData = [note userInfo];
+
+    NSNumber *loadScanCountNum = [notifData valueForKey:kScanCountKey];
+
+    // make sure the current scan matches the scan of our loaded image
+    if (scanCount == loadScanCountNum)
+    {
+        TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
+        BrowserController *BView =[notifData valueForKey: kSenderKey];
+        [BView addTreeRoot:receivedTree];
+        [(BrowserController*)myLeftView stopBusyAnimations];
+        // set the number of images found indicator string
+        [_StatusBar setTitle:@"Received data from Thread"];
+    }
+}
+
+// -------------------------------------------------------------------------------
+//	anyThread_handleLoadedImages:note
+//
+//	This method is called from any possible thread (any NSOperation) used to
+//	update our table view and its data source.
+//
+//	The notification contains the NSDictionary containing the image file's info
+//	to add to the table view.
+// -------------------------------------------------------------------------------
+- (void)anyThread_handleTreeConstructor:(NSNotification *)note
+{
+	// update our table view on the main thread
+	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
+}
+
+// -------------------------------------------------------------------------------
+//	windowShouldClose:sender
+// -------------------------------------------------------------------------------
+- (BOOL)windowShouldClose:(id)sender
+{
+	// are you sure you want to close, (threads running)
+	NSInteger numOperationsRunning = [[queue operations] count];
+
+	if (numOperationsRunning > 0)
+	{
+		NSAlert *alert = [NSAlert alertWithMessageText:@"Image files are currently loading."
+                                         defaultButton:@"OK"
+                                       alternateButton:nil
+                                           otherButton:nil
+                             informativeTextWithFormat:@"Please click the \"Stop\" button before closing."];
+		[alert beginSheetModalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+	}
+
+	return (numOperationsRunning == 0);
 }
 
 
@@ -124,8 +216,7 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 }
 
 
-- (IBAction)RemoveDirectory:(id)sender {
-    [(BrowserController*)myLeftView removeSelectedDirectory];
+- (IBAction)RemoveSelected:(id)sender {
     [_toolbarDeleteButton setEnabled:NO];
 }
 
