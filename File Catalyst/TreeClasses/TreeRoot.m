@@ -9,6 +9,7 @@
 #import "TreeRoot.h"
 #import "TreeLeaf.h"
 #import "FileCollection.h"
+#import "MyDirectoryEnumerator.h"
 
 #import "definitions.h"
 
@@ -30,6 +31,7 @@
     _fileCollection = collection;
     _isCollectionSet = YES;
 }
+
 
 -(void) refreshTreeFromCollection:(void (^)(NSInteger fileno))callbackhandler {
     // Will get the first level of the tree
@@ -55,48 +57,43 @@
             NSInteger level;
 
             // Retrieve the file name. From NSURLNameKey, cached during the enumeration.
-            NSNumber *fileSize = [finfo getFileSize];
+            //NSNumber *fileSize = [finfo getFileSize];
             //NSLog(@"%@--->",[finfo getName]);
 
-            self.byteSize += [fileSize longLongValue]; // Add the size of the file to the directory
             currdir = (TreeBranch*)self;
-            MyURL *currURL = [self myURL];
+            NSURL *currURL = [self url];
             for (level=level0; level < [pathComponents count]-1; level++) { //last path component is the file name
                 NSString *dirName = [pathComponents objectAtIndex:level];
                 //NSLog(@"<%@>",dirName);
-                MyURL *newdir;// = [NSURL new];
-                newdir = (MyURL*)[currURL URLByAppendingPathComponent:dirName isDirectory:YES];
+                NSURL *newdir;// = [NSURL new];
+                newdir = [currURL URLByAppendingPathComponent:dirName isDirectory:YES];
                 cursor = nil;
                 for (TreeBranch *subdir in [currdir branchesInNode]){
                     // If the two are the same
                     //NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
-                    if ([newdir isEqualTo:[subdir myURL]]) {
+                    if ([newdir isEqualTo:[subdir url]]) {
                         cursor = subdir;
-                        cursor.byteSize += [fileSize longLongValue];
                         break;
                     }
                 }
                 if (cursor==nil) { // the directory doesn't exit
                     TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
-                    newDir.myURL = newdir ;
+                    newDir.url = newdir ;
                     newDir.parent = currdir;
                     newDir.children = nil; //[[NSMutableArray new] init];
-                    newDir.byteSize = [fileSize longLongValue];
                     [[currdir children] addObject: newDir]; // Adds the created file or directory to the current directory
                     currdir = newDir;
-                    currURL = newdir;
+                    currURL = [newDir url];
 
                 } // if
                 else {
                     currdir = cursor;
-                    currURL = [cursor myURL];
+                    currURL = [cursor url];
                 }
             } //for
             // Now adding the File
             TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
-            newFile.myURL = (MyURL*)[finfo getURL];
-            newFile.parent = currdir;
-            newFile.byteSize = [fileSize longLongValue];
+            newFile.url = [finfo getURL];
             //[newFile SetFileInformation: finfo];
             if (currdir.children==nil) {
                 currdir.children =[[NSMutableArray new] init];
@@ -114,10 +111,10 @@
 
 +(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
     TreeRoot *rootDir = [[TreeRoot new] init];
-    MyURL *rootpath = [MyURL URLWithString:[fileCollection rootPath]];
+    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
 
     // assigns the name to the root directory
-    [rootDir setMyURL: rootpath];
+    [rootDir setUrl: rootpath];
     [rootDir setFileCollection: fileCollection];
     [rootDir setIsCollectionSet:YES];
 
@@ -127,17 +124,28 @@
 }
 
 
-+(TreeRoot*) treeWithURL:(MyURL*) rootPath {
++(TreeRoot*) treeWithURL:(NSURL*) rootURL {
 
     TreeRoot *rootDir = [[TreeRoot new] init];
     // assigns the name to the root directory
-    [rootDir setMyURL: rootPath];
+    [rootDir setUrl: rootURL];
     [rootDir setFileCollection: NULL];
     [rootDir setIsCollectionSet:NO];
     return rootDir;
 
 }
 
++(TreeRoot*) treeFromPath:(NSString*)rootPath {
+    TreeRoot *rootDir = [[TreeRoot new] init];
+    rootDir.children = [[NSMutableArray new] init];
+    rootDir.url = [NSURL URLWithString:rootPath];
+    NSLog(@"Scanning directory %@", rootDir.path);
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir->_url WithMode:YES];
+    for (NSURL *theURL in dirEnumerator) {
+        [rootDir addURL:theURL];
+    } // for
+    return rootDir;
+}
 
 
 @end

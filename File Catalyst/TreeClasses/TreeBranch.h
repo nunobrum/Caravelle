@@ -12,9 +12,17 @@
 
 @interface TreeBranch : TreeItem <TreeProtocol>
 
+@property (retain) TreeBranch     *parent;
+
+
 @property (retain) NSMutableArray *children;
 
 -(TreeBranch*) init;
+-(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
+
+-(void) dealloc;
+
+-(TreeItem*) root;
 
 -(BOOL)      isBranch;
 -(void)      removeBranch;
@@ -29,7 +37,8 @@
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
 -(TreeLeaf*) leafAtIndex:(NSUInteger)index;
 
--(NSString*) path;
+-(long long) sizeOfNode;
+-(long long) filesize;
 
 -(FileCollection*) filesInNode;
 -(FileCollection*) filesInBranch;
@@ -38,6 +47,10 @@
 -(NSMutableArray*) leafsInNode;
 -(NSMutableArray*) leafsInBranch;
 -(NSMutableArray*) branchesInNode;
+
+-(TreeItem*) itemWithName:(NSString*) name;
+-(BOOL) addURL:(NSURL*)theURL;
+
 //-(NSMutableArray*) branchesInBranch;
 
 //-(FileCollection*) duplicatesInNode;
@@ -45,7 +58,7 @@
 
 -(void) refreshTreeFromURLs;
 
--(NSInteger) relationTo:(NSString*) otherRoot;
+-(NSInteger) relationTo:(NSString*) otherPath;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

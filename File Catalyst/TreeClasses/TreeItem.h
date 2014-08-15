@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "FileInformation.h"
-#import "MyURL.h"
 
 
 @protocol TreeProtocol <NSObject>
@@ -18,21 +17,24 @@
 @end
 
 
-@interface TreeItem : NSObject
+@interface TreeItem : NSObject {
+    NSURL *_url;
+}
 
-@property (retain) TreeItem      *parent;
+//@property (retain) TreeItem      *parent;
 //@property (retain) NSString       *name;
-@property MyURL                   *myURL;
-@property long long               byteSize;
+@property NSURL                     *url;
+//@property long long               byteSize;
 //@property (retain) NSDate         *dateModified;
 
 -(TreeItem*) init;
+-(TreeItem*) initWithURL:(NSURL*)url;
+
 -(BOOL) isBranch;
 -(NSString*) name;
 -(NSDate*)   dateModified;
 -(NSString*) path ;
--(NSNumber*) filesize ;
--(TreeItem*) root;
+-(long long) filesize ;
 /*
  * File manipulation methods
  */

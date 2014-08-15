@@ -14,11 +14,23 @@
 -(TreeItem*) init {
     self = [super init];
     if (self) {
-        [self setByteSize: 0];
-        //[self setDateModified: nil];
+        //self->_byteSize = 0;
+        self->_url = nil;
+        //self->_parent = nil;
     }
     return self;
 }
+
+-(TreeItem*) initWithURL:(NSURL*)url {
+    self = [super init];
+    if (self) {
+        //self->_byteSize = filesize;
+        self->_url = url;
+        //self->_parent = nil;
+    }
+    return self;
+}
+
 
 -(BOOL) isBranch {
     NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
@@ -30,7 +42,7 @@
 //    NSError *error;
 //    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
 //    if (filename==nil) {
-        return [_myURL lastPathComponent];
+        return [_url lastPathComponent];
 //    }
 //    return filename;
 }
@@ -38,15 +50,15 @@
 -(NSDate*) dateModified {
     NSDate *date=nil;
     NSError *errorCode;
-    if ([_myURL isFileURL]) {
-        [_myURL getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
+    if ([_url isFileURL]) {
+        [_url getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
         if (errorCode || date==nil) {
-            [_myURL getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
+            [_url getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
             
         }
     }
     else {
-        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_myURL path] error:NULL];
+        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_url path] error:NULL];
         date = [dirAttributes fileModificationDate];
 
     }
@@ -54,23 +66,16 @@
 }
 
 -(NSString*) path {
-    NSString *path;
-    [_myURL getResourceValue:&path     forKey:NSURLPathKey error:NULL];
-    return path;
+    //NSString *path;
+    //[_url getResourceValue:&path     forKey:NSURLPathKey error:NULL];
+    return [_url path];
 }
 
--(TreeItem*) root {
-    TreeItem *cursor = self;
-    while (cursor->_parent!=NULL) {
-        cursor=cursor->_parent;
-    }
-    return cursor;
-}
 
--(NSNumber*) filesize {
+-(long long) filesize {
     NSNumber *filesize;
-    [_myURL getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
-    return filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
+    return [filesize longLongValue];
 }
 
 -(BOOL) sendToRecycleBin {
