@@ -239,43 +239,41 @@
 }
 
 -(BOOL) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pathComponents atLevel:(NSUInteger)level {
-    TreeItem *child=nil;
     if (_children==nil)
     {
         _children = [[NSMutableArray new] init];
     }
-    else {
-        child = [self itemWithName:[pathComponents objectAtIndex:level]];
-    }
 
-    if (child==nil || ![child isKindOfClass:[TreeBranch class]]) {/* Doesnt exist or if existing is not branch*/
-        if ([pathComponents count]==level+1) {
-            TreeItem *newObj;
-            if (isDirectory(theURL)) {
-                /* This is a Leaf Item */
-                newObj = [[TreeBranch new] initWithURL:theURL parent:self];
-            }
-            else {
-                /* This is a Branch Item */
-                newObj =[[TreeLeaf new] initWithURL:theURL];
-            }
-            [_children addObject:newObj];
-            return TRUE; /* Stops here Nothing More to Add */
+    if ([pathComponents count]==level+1) {
+        TreeItem *newObj;
+        if (isDirectory(theURL)) {
+            /* This is a Leaf Item */
+            newObj = [[TreeBranch new] initWithURL:theURL parent:self];
         }
         else {
+            /* This is a Branch Item */
+            newObj =[[TreeLeaf new] initWithURL:theURL];
+        }
+        [_children addObject:newObj];
+        return TRUE; /* Stops here Nothing More to Add */
+    }
+
+    else { /* The Branch exists. Recursive Add into it */
+        TreeItem *child = [self itemWithName:[pathComponents objectAtIndex:level] class:[TreeBranch class]];
+        if (child==nil) {/* Doesnt exist or if existing is not branch*/
+
             /* This is a new Branch Item that will contain the URL*/
             child = [[TreeBranch new] initWithURL:theURL parent:self];
         }
-    }
-    else { /* The Branch exists. Recursive Add into it */
         return [(TreeBranch*) child addURL:theURL withPathComponents:pathComponents atLevel:level+1];
+
     }
     return FALSE;
 }
 
--(TreeItem*) itemWithName:(NSString*) name  {
+-(TreeItem*) itemWithName:(NSString*) name class:(id)cls {
     for (TreeItem *item in _children) {
-        if ([[item name] isEqualToString: name]) {
+        if ([[item name] isEqualToString: name] && [item isKindOfClass:cls]) {
             return item;
         }
     }

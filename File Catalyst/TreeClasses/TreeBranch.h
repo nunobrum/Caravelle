@@ -56,7 +56,7 @@ enum enumPathCompare {
 -(NSMutableArray*) leafsInBranch;
 -(NSMutableArray*) branchesInNode;
 
--(TreeItem*) itemWithName:(NSString*) name;
+-(TreeItem*) itemWithName:(NSString*) name class:(id)cls;
 -(BOOL) addURL:(NSURL*)theURL;
 
 //-(NSMutableArray*) branchesInBranch;
