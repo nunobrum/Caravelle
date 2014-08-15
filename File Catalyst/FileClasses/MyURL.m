@@ -8,8 +8,7 @@
 
 #import "MyURL.h"
 
-
-inline BOOL isDirectory(NSURL* url) {
+BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;
     [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
     return [isDirectory boolValue];

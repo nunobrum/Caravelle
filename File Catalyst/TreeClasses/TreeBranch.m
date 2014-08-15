@@ -246,7 +246,7 @@
 
     if ([pathComponents count]==level+1) {
         TreeItem *newObj;
-        if (isDirectory(theURL)) {
+        if (isFolder(theURL)) {
             /* This is a Leaf Item */
             newObj = [[TreeBranch new] initWithURL:theURL parent:self];
         }

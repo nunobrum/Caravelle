@@ -10,7 +10,7 @@
 
 
 // File Information
-extern inline BOOL isDirectory(NSURL* url);
+extern BOOL isFolder(NSURL* url);
 extern inline NSString* name(NSURL*url);
 extern inline NSDate* dateModified(NSURL*url);
 extern inline NSString* path(NSURL*url);
