@@ -21,6 +21,9 @@
     NSMutableArray *BaseDirectoriesArray;
     NSMutableArray *tableInfo;
     NSSortDescriptor *TableSortDesc;
+    NSMutableArray *_observedVisibleItems;
+    NSOperationQueue *_sharedOperationQueue;
+
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
@@ -32,7 +35,7 @@
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 @property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
 
-
+@property NSOperationQueue *sharedOperationQueue;
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;

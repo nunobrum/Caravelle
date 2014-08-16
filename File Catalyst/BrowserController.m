@@ -55,8 +55,22 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->tableInfo = [NSMutableArray arrayWithObjects: SYSTEM_COLUMNS, nil];
     [self->tableInfo addObjectsFromArray:[NSArray arrayWithObjects: DEFAULT_COLUMNS, nil]];
     self->TableSortDesc = nil;
+    self->_observedVisibleItems = [[NSMutableArray new] init];
+    _sharedOperationQueue = [[NSOperationQueue alloc] init];
+    // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
+    [_sharedOperationQueue setMaxConcurrentOperationCount:2];
+
+
     return self;
 }
+
+//- (void)dealloc {
+//    // Stop any observations that we may have
+//    for (FolderCellView *imageEntity in _observedVisibleItems) {
+//        [imageEntity removeObserver:self forKeyPath:ATEntityPropertyNamedThumbnailImage];
+//    }
+//    [super dealloc];
+//}
 
 //- (void)awakeFromNib {
 //    NSLog(@"Browser Controller : awakeFromNib");
@@ -95,19 +109,28 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         ret = [item branchAtIndex:index];
     }
-    if ([ret isBranch] && _catalystMode==NO)
-        [ret refreshTreeFromURLs];
+    // Use KVO to observe for changes of its children Array
+    if (![_observedVisibleItems containsObject:ret]) {
+        if ([ret isKindOfClass:[TreeBranch class]]) {
+            [ret addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
+            //NSLog(@"Adding Observer to %@", [ret name]);
+            [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
+            [_observedVisibleItems addObject:ret];
+        }
+    }
+
     return ret;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
+    BOOL answer=NO;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
-        return [item count]>1 ? YES : NO;
+        answer = ([item count] > 1)  ? YES : NO;
     else if ([item isKindOfClass:[TreeBranch class]]) {
-        return ([item numberOfBranchesInNode]!=0) ? YES : NO;
-    } else {
-        return NO;
+        answer = ([(TreeBranch*)item isExpandable]);
     }
+    //NSLog(@"%@ is expandable %hhd", [item name], answer);
+    return answer;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
@@ -195,6 +218,20 @@ void DateFormatter(NSDate *date, NSString **output) {
 //    else
 //        NSLog(@"Cell Class %@ Table Column %@ Item %@",[(NSObject*)cell class], tableColumn.identifier, [item name]);
 //}
+
+
+- (void)outlineView:(NSOutlineView *)outlineView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row {
+    // Stop observing visible things
+    TreeItem *item = [[rowView viewAtColumn:0] objectValue];
+    //NSLog(@"Removing from observed '%@'", [item name]);
+    NSInteger index = item ? [_observedVisibleItems indexOfObject:item] : NSNotFound;
+    if (index != NSNotFound) {
+        [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
+        [_observedVisibleItems removeObjectAtIndex:index];
+    }
+    //else
+    //    NSLog(@"Didnt Find it");
+}
 
 /*
  * Tree Outline View Data Delegate Protocol
@@ -376,6 +413,45 @@ void DateFormatter(NSDate *date, NSString **output) {
 
     }
 }
+
+#pragma mark - KVO Methods
+
+- (void)_reloadRowForEntity:(id)object {
+    NSInteger row = [_myOutlineView rowForItem:object];
+    if (row != NSNotFound) {
+        [_myOutlineView reloadItem:object reloadChildren:YES];
+        NSLog(@"Reloading %@", [object name]);
+//        if (0) { // This is a very nice effect to consider later !!! TO CONSIDER
+//            FolderCellView *cellView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:NO];
+//            if (cellView) {
+//                // Fade the imageView in, and fade the progress indicator out
+//                [NSAnimationContext beginGrouping];
+//                [[NSAnimationContext currentContext] setDuration:0.8];
+//                [cellView.imageView setAlphaValue:0];
+//                //cellView.imageView.image = entity.thumbnailImage;
+//                [cellView.imageView setHidden:NO];
+//                [[cellView.imageView animator] setAlphaValue:1.0];
+//                //[cellView.progessIndicator setHidden:YES];
+//                [NSAnimationContext endGrouping];
+//            }
+//        }
+    }
+//    if ([_sharedOperationQueue operationCount]==0) {
+//        NSLog(@"Finished all operations launched. Reloading data");
+//        [_myOutlineView reloadData];
+//    }
+}
+
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:kvoTreeBranchPropertyChildren]) {
+        // Find the row and reload it.
+        // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
+        // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
+        [self performSelectorOnMainThread:@selector(_reloadRowForEntity:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    }
+}
+
 
 #pragma mark - Interface Methods
 
