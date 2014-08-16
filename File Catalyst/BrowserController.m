@@ -19,10 +19,9 @@
 #define COL_DATE_MOD @"ModifiedID"
 #define COL_SIZE     @"SizeID"
 #define COL_PATH     @"Path"
-#define SYS_ITEM     @"_Item"
 
 #define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE_MOD, COL_SIZE, COL_PATH
-#define SYSTEM_COLUMNS     COL_FILENAME, SYS_ITEM
+#define SYSTEM_COLUMNS     COL_FILENAME
 #define DEFAULT_COLUMNS    COL_SIZE, COL_DATE_MOD
 
 
@@ -288,39 +287,39 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    NSDictionary *rowInfo = [tableData objectAtIndex:rowIndex];
+    TreeItem *theFile = [tableData objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
     NSString *identifier = [aTableColumn identifier];
     // We pass us as the owner so we can setup target/actions into this main controller object
     NSTableCellView *cellView = [aTableView makeViewWithIdentifier:identifier owner:self];
 
     if ([identifier isEqualToString:COL_FILENAME]) {
-        cellView.textField.stringValue = [rowInfo objectForKey:COL_FILENAME];  // Display simply the name of the file;
-        NSString *path = [[rowInfo objectForKey:SYS_ITEM] path];
+        NSString *path = [[theFile url] path];
         if (path) {
             // Then setup properties on the cellView based on the column
+            cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
             cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
-        long long size = [[rowInfo objectForKey:COL_SIZE] longLongValue];
-        if (size < 0){
+        if (_catalystMode==NO && [theFile isKindOfClass:[TreeBranch class]]){
+            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
             cellView.textField.objectValue = @"--";
         }
         else
-            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile];
+            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
 
     } else if ([identifier isEqualToString:COL_DATE_MOD]) {
         NSString *result=nil;
-        DateFormatter([rowInfo objectForKey:COL_DATE_MOD], &result);
+        DateFormatter([theFile dateModified], &result);
         if (result == nil)
             cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
         else
             cellView.textField.stringValue = result;
     }
     else {
-        /* This handles everything else */
-        cellView.textField.stringValue = [rowInfo objectForKey:identifier];
+        /* Debug code for further implementation */
+        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
     }
     return cellView;
 }
@@ -370,17 +369,24 @@ void DateFormatter(NSDate *date, NSString **output) {
 		}
 	}
 	[inTableView setHighlightedTableColumn:tableColumn];
+    NSString *key;
+    if ([[tableColumn identifier] isEqualToString:COL_FILENAME])
+        key = @"name";
+    else if ([[tableColumn identifier] isEqualToString:COL_SIZE])
+        key = @"filesize";
+    else if ([[tableColumn identifier] isEqualToString:COL_DATE_MOD])
+        key = @"name";
 
 	if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
 	{
 		[inTableView setIndicatorImage:[NSImage imageNamed:@"NSAscendingSortIndicator"] inTableColumn:tableColumn];
-		TableSortDesc = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:YES];
+		TableSortDesc = [[NSSortDescriptor alloc] initWithKey:key ascending:YES];
         [self sortWithDescriptor];
 	}
 	else
 	{
 		[inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
-		TableSortDesc = [[NSSortDescriptor alloc] initWithKey:[tableColumn identifier] ascending:NO];
+		TableSortDesc = [[NSSortDescriptor alloc] initWithKey:key ascending:NO];
 		[self sortWithDescriptor];
 	}
 }
@@ -393,7 +399,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     while (index!=NSNotFound) {
         /* Do something here */
         NSDictionary *nodeInfo = [self getFileAtIndex:index];
-        id node = [nodeInfo objectForKey:SYS_ITEM];
+        id node = [nodeInfo objectForKey:COL_FILENAME];
         if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
             [[node getFileInformation] openFile];
         }
@@ -474,62 +480,34 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) refreshDataView {
-    NSMutableArray *nodeCollection;
-    if (tableData==nil)
-        tableData =[[NSMutableArray new] init];
-    [_myFileViewProgressIndicator setHidden:NO];
-    [_myFileViewProgressIndicator startAnimation:self];
-
+    NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
         if (self->_extendToSubdirectories==YES && self->_foldersInTable==YES) {
-            nodeCollection = [(TreeBranch*)_treeNodeSelected itemsInBranch];
+            tableData = [(TreeBranch*)_treeNodeSelected itemsInBranch];
         }
         else if (self->_extendToSubdirectories==YES && self->_foldersInTable==NO) {
-            nodeCollection = [(TreeBranch*)_treeNodeSelected leafsInBranch];
+            tableData = [(TreeBranch*)_treeNodeSelected leafsInBranch];
         }
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==YES) {
-            nodeCollection = [(TreeBranch*)_treeNodeSelected itemsInNode];
+            tableData = [(TreeBranch*)_treeNodeSelected itemsInNode];
         }
         else if (self->_extendToSubdirectories==NO && self->_foldersInTable==NO) {
-            nodeCollection = [(TreeBranch*)_treeNodeSelected leafsInNode];
+            tableData = [(TreeBranch*)_treeNodeSelected leafsInNode];
         }
-        [tableData removeAllObjects];
-        for (TreeItem *item in nodeCollection){
-            /* if the filter is empty, doesn't filter anything */
-            if ([self->_filterText length]!=0) {
-                /* Create the array of indexes to remove/hide/disable*/
-                NSRange result = [[item name] rangeOfString:_filterText];
-                if (NSNotFound==result.location) continue;
-            }
-            NSMutableArray *objects = [NSMutableArray arrayWithCapacity:[tableInfo count]];
 
-            for (NSString *column in tableInfo) {
-                id entry=nil;
-                if ([column isEqualToString:COL_FILENAME]) {
-                    entry = [item name];
-                }
-                else if ([column isEqualToString:COL_PATH]) {
-                    entry = [item path];
-                }
-                else if ([column isEqualToString:COL_SIZE]) {
-                    if (_catalystMode==NO && [item isKindOfClass:[TreeBranch class]])
-                        /* This is to avoid passing URL Information */
-                        entry = [NSNumber numberWithInt:-1];
-                    else
-                        entry = [NSNumber numberWithLongLong: [item filesize]];
-                }
-                else if ([column isEqualToString:COL_DATE_MOD]) {
-                    entry = [item dateModified];
-                }
-                else if ([column isEqualToString:SYS_ITEM]) {
-                    entry = item; /* This is needed not for display but for operations */
-                }
-                [objects addObject:entry];
+        /* if the filter is empty, doesn't filter anything */
+        if ([self->_filterText length]!=0) {
+            /* Create the array of indexes to remove/hide/disable*/
+            NSInteger i = 0;
+            for (TreeItem *item in tableData){
+                NSRange result = [[item name] rangeOfString:_filterText];
+                if (NSNotFound==result.location)
+                    [tohide addIndex:i];
+                i++;
             }
-            NSDictionary *tableEntry= [NSDictionary dictionaryWithObjects:objects forKeys:tableInfo];
-            [tableData addObject:tableEntry];
         }
+        [tableData removeObjectsAtIndexes: tohide];
         [self sortWithDescriptor];
         [self stopBusyAnimations];
         [_myTableView reloadData];
