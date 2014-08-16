@@ -17,7 +17,7 @@
 @end
 
 
-@interface TreeItem : NSObject {
+@interface TreeItem : NSObject <NSPasteboardWriting, NSPasteboardReading> {
     NSURL *_url;
 }
 

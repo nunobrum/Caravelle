@@ -8,6 +8,7 @@
 
 #import "TreeItem.h"
 //#import "MyDirectoryEnumerator.h"
+#import "TreeBranch.h"
 
 @implementation TreeItem
 
@@ -102,6 +103,62 @@
     [[NSWorkspace sharedWorkspace] openFile:[self path]];
     return YES;
 }
+
+#pragma mark -
+#pragma mark NSPasteboardWriting support
+
+- (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+    return [self.url writableTypesForPasteboard:pasteboard];
+}
+
+- (id)pasteboardPropertyListForType:(NSString *)type {
+    return [self.url pasteboardPropertyListForType:type];
+}
+
+- (NSPasteboardWritingOptions)writingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
+    if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
+        return [self.url writingOptionsForType:type pasteboard:pasteboard];
+    } else {
+        return 0;
+    }
+}
+
+#pragma mark -
+#pragma mark  NSPasteboardReading support
+
++ (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
+    // We allow creation from folder and image URLs only, but there is no way to specify just file URLs that contain images
+    return [NSArray arrayWithObjects:(id)kUTTypeFolder, (id)kUTTypeFileURL, nil];
+}
+
++ (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
+    return NSPasteboardReadingAsString;
+}
+
+- (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
+    // We recreate the appropriate object
+    //[self release];
+    self = nil;
+    // We only have URLs accepted. Create the URL
+    NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
+    // Now see what the data type is; if it isn't an image, we return nil
+    NSString *urlUTI;
+    if ([url getResourceValue:&urlUTI forKey:NSURLTypeIdentifierKey error:NULL]) {
+        // We could use UTTypeConformsTo((CFStringRef)type, kUTTypeImage), but we want to make sure it is an image UTI type that NSImage can handle
+        // TODO !!! TO BE Further Developped
+//        if ([[NSImage imageTypes] containsObject:urlUTI]) {
+//            // We can use it with NSImage
+//            self = [[TreeLeafImageFile alloc] initWithFileURL:url];
+//        } else if ([urlUTI isEqualToString:(id)kUTTypeFolder]) {
+//            // It is a folder
+//            self = [[TreeBranch alloc] initWithURL:url parent:nil];
+//        }
+    }
+    // We may return nil
+    return self;
+}
+
+#pragma mark -
 
 
 @end

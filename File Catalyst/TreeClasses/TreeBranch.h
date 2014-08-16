@@ -10,6 +10,8 @@
 #import "TreeLeaf.h"
 #import "FileCollection.h"
 
+extern NSString *const kvoTreeBranchPropertyChildren;
+
 /* Enumerate to be used on the result of the path relation compare method */
 enum enumPathCompare {
     pathsHaveNoRelation = 1,
@@ -18,7 +20,9 @@ enum enumPathCompare {
 };
 
 
-@interface TreeBranch : TreeItem <TreeProtocol>
+@interface TreeBranch : TreeItem <TreeProtocol> {
+    BOOL refreshing;
+}
 
 @property (retain) TreeBranch     *parent;
 
@@ -56,6 +60,8 @@ enum enumPathCompare {
 -(NSMutableArray*) leafsInBranch;
 -(NSMutableArray*) branchesInNode;
 
+-(BOOL) isExpandable;
+
 -(TreeItem*) itemWithName:(NSString*) name class:(id)cls;
 -(BOOL) addURL:(NSURL*)theURL;
 
@@ -65,6 +71,7 @@ enum enumPathCompare {
 //-(FileCollection*) duplicatesInBranch;
 
 -(void) refreshTreeFromURLs;
+-(void)refreshContentsOnQueue: (NSOperationQueue *) queue;
 
 -(NSInteger) relationTo:(NSString*) otherPath;
 

@@ -13,6 +13,28 @@
 #import "definitions.h"
 #include "MyURL.h"
 
+NSString *const kvoTreeBranchPropertyChildren = @"childrenArray";
+
+NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
+    NSMutableArray *children = [[NSMutableArray alloc] init];
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:NO];
+
+    for (NSURL *theURL in dirEnumerator) {
+        TreeItem *newObj;
+        if (isFolder(theURL)) {
+            /* This is a Leaf Item */
+            newObj = [[TreeBranch alloc] initWithURL:theURL parent:parent];
+        }
+        else {
+            /* This is a Branch Item */
+            newObj =[[TreeLeaf alloc] initWithURL:theURL];
+        }
+        [children addObject:newObj];
+    }
+
+    return children;
+}
+
 @interface TreeBranch( PrivateMethods )
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector;
@@ -44,6 +66,21 @@
     [self removeBranch];
 }
 
+
++ (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey {
+
+    BOOL automatic = NO;
+    if ([theKey isEqualToString:kvoTreeBranchPropertyChildren]) {
+        automatic = NO;
+    }
+    else {
+        automatic = [super automaticallyNotifiesObserversForKey:theKey];
+    }
+    return automatic;
+}
+
+
+
 -(TreeBranch*) root {
     TreeBranch *cursor = self;
     while (cursor->_parent!=NULL) {
@@ -63,6 +100,7 @@
     }
 }
 
+/* Computes the total of all the files in the current Branch */
 -(long long) sizeOfNode {
     long long total=0;
     if (_children!=nil) {
@@ -75,6 +113,7 @@
     return total;
 }
 
+/* Computes the total size of all the files contains in all subdirectories */
 -(long long) filesize {
     long long total=0;
     if (_children!=nil) {
@@ -128,6 +167,16 @@
             total++;
     }
     return total;
+}
+
+/* Returns if the node is expandable 
+ Note that if the _children is not populated it is assumed that the
+ node is expandable. It is preferable to assume as yes and later correct. */
+-(BOOL) isExpandable {
+    if ((_children==nil) || ([self numberOfBranchesInNode]!=0))
+        return YES;
+    else
+        return NO;
 }
 
 
@@ -261,11 +310,11 @@
         TreeItem *newObj;
         if (isFolder(theURL)) {
             /* This is a Leaf Item */
-            newObj = [[TreeBranch new] initWithURL:theURL parent:self];
+            newObj = [[TreeBranch alloc] initWithURL:theURL parent:self];
         }
         else {
             /* This is a Branch Item */
-            newObj =[[TreeLeaf new] initWithURL:theURL];
+            newObj =[[TreeLeaf alloc] initWithURL:theURL];
         }
         [_children addObject:newObj];
         return TRUE; /* Stops here Nothing More to Add */
@@ -366,5 +415,34 @@
     }
     return answer;
 }
+
+- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
+    @synchronized (self) {
+        if (self.children == nil && !self->refreshing) {
+            self->refreshing = YES;
+            // We would have to keep track of the block with an NSBlockOperation, if we wanted to later support cancelling operations that have scrolled offscreen and are no longer needed. That will be left as an exercise to the user.
+            [queue addOperationWithBlock:^(void) {
+                NSMutableArray *updated = folderContentsFromURL(self.url, self);
+                if (updated != nil) {
+                    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+                    // We synchronize access to the image/imageLoading pair of variables
+                    @synchronized (self) {
+                        self->refreshing = NO;
+                        self.children = updated;
+                        //NSLog(@"Modifying Observed Value %@", [self name]);
+                    }
+                    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+                }
+                /* We don't need this
+                else {
+                    @synchronized (self) {
+                        self.image = [NSImage imageNamed:NSImageNameTrashFull];
+                    }
+                }*/
+            }];
+        }
+    }
+}
+
 
 @end
