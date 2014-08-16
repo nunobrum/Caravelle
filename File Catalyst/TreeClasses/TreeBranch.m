@@ -51,6 +51,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(TreeBranch*) init {
     self = [super init];
     self->_children = nil;
+    self->refreshing = NO;
     return self;
 }
 
@@ -58,6 +59,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     self = [super initWithURL:url];
     self->_children = nil;
     self->_parent = parent;
+    self->refreshing = NO;
     return self;
 }
 
