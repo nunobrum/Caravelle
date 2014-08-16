@@ -19,7 +19,8 @@
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
-    NSMutableArray *visibleTableColumns;
+    NSMutableArray *tableInfo;
+    NSSortDescriptor *TableSortDesc;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
