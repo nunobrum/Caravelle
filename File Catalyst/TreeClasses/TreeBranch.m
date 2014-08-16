@@ -53,19 +53,23 @@
 }
 
 -(void) removeBranch {
-    for (TreeItem *item in _children) {
-        if ([item isBranch])
-            [(TreeBranch*)item removeBranch];
+    if (_children != nil) {
+        for (TreeItem *item in _children) {
+            if ([item isBranch])
+                [(TreeBranch*)item removeBranch];
+        }
+        [[self children] removeAllObjects];
+        //[self setDateModified:nil];
     }
-    [[self children] removeAllObjects];
-    //[self setDateModified:nil];
 }
 
 -(long long) sizeOfNode {
     long long total=0;
-    for (TreeItem *item in _children) {
-        if ([item isKindOfClass:[TreeLeaf class]]==YES) {
-            total+=[item filesize];
+    if (_children!=nil) {
+        for (TreeItem *item in _children) {
+            if ([item isKindOfClass:[TreeLeaf class]]==YES) {
+                total+=[item filesize];
+            }
         }
     }
     return total;
@@ -73,17 +77,21 @@
 
 -(long long) filesize {
     long long total=0;
-    for (TreeItem *item in _children) {
-        total+= [item filesize];
+    if (_children!=nil) {
+        for (TreeItem *item in _children) {
+            total+= [item filesize];
+        }
     }
     return total;
 }
 
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
-    for (TreeItem *item in _children) {
-        if ([item isKindOfClass:[TreeLeaf class]]==YES) {
-            total++;
+    if (_children!=nil) {
+        for (TreeItem *item in _children) {
+            if ([item isKindOfClass:[TreeLeaf class]]==YES) {
+                total++;
+            }
         }
     }
     return total;
@@ -91,16 +99,21 @@
 
 -(NSInteger) numberOfBranchesInNode {
     NSInteger total=0;
-    for (TreeItem *item in _children) {
-        if ([item isKindOfClass:[TreeBranch class]]==YES) {
-            total++;
+    if (_children!=nil) {
+        for (TreeItem *item in _children) {
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                total++;
+            }
         }
     }
     return total;
 }
 
 -(NSInteger) numberOfItemsInNode {
-    return [_children count];
+    if (_children==nil)
+        return 0; /* This is needed to invalidate and re-scan the node */
+    else
+        return [_children count];
 }
 
 // This returns the number of leafs in a branch
