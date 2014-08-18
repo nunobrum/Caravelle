@@ -7,6 +7,7 @@
 //
 
 #import "PathControlManager.h"
+#import "MyURL.h"
 
 @implementation PathControlManager
 
@@ -29,16 +30,26 @@
     iconSize.width = 12;
     rng.location=0;
     rng.length = 0;
+
+    NSURL *rootURL = [NSURL URLWithString:pathComponents[0]];
+    NSDictionary *diskInfo = getDiskInformation(rootURL);
+    NSString *volumeName = diskInfo[@"DAVolumeName"];
+
     for (NSString *dirname in pathComponents) {
         rng.length++;
         if (rng.length < _rootLevel) {
             continue;
         }
         else if (rng.length == _rootLevel) {
-            cell = [[NSPathComponentCell new] initTextCell:_rootPath];
+            cell = [[NSPathComponentCell new] initTextCell:[NSString stringWithFormat:@"%@/%@",volumeName, _rootPath]];
         }
         else {
-            cell = [[NSPathComponentCell new] initTextCell:dirname];
+            if (rng.length==1) {
+                cell = [[NSPathComponentCell new] initTextCell:volumeName];
+            }
+            else {
+                cell = [[NSPathComponentCell new] initTextCell:dirname];
+            }
         }
         NSURL *newURL = [NSURL fileURLWithPathComponents: [pathComponents subarrayWithRange:rng]];
         NSImage *icon =[[NSWorkspace sharedWorkspace] iconForFile:[newURL path]];
