@@ -74,3 +74,35 @@ BOOL openFile(NSURL*url) {
     return YES;
 }
 
+NSDictionary *getDiskInformation(NSURL *diskPath) {
+    static NSMutableDictionary *diskInfos = nil; /* Used to store all the queries */
+    DASessionRef session = nil;
+
+    if (diskInfos==nil)
+        diskInfos = [[NSMutableDictionary alloc] init];
+
+    if (![diskPath isKindOfClass:[NSURL class]]) {
+        NSLog(@"Houston we have a problem !!!");
+        return nil;
+    }
+
+    //if (session==NULL)
+    session = DASessionCreate(kCFAllocatorDefault);
+    NSDictionary *di = [diskInfos objectForKey:diskPath];
+
+    if(di==nil) {
+        if (session!=NULL) {
+                DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, (__bridge CFURLRef)(diskPath));
+                if (disk) {
+                    CFDictionaryRef descDict = DADiskCopyDescription(disk);
+                    if (descDict) {
+                        di = [NSDictionary dictionaryWithDictionary:CFBridgingRelease(descDict)];
+                        [diskInfos addEntriesFromDictionary:[NSDictionary dictionaryWithObject:di forKey:diskPath]];
+                    }
+                }
+            
+        }
+    }
+    return di;
+}
+

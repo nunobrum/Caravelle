@@ -23,3 +23,4 @@ extern BOOL copyFileTo(NSURL*url, NSString *path);
 extern BOOL moveFileTo(NSURL*url, NSString *path);
 extern BOOL openFile(NSURL*url);
 
+extern NSDictionary *getDiskInformation(NSURL *diskPath);
