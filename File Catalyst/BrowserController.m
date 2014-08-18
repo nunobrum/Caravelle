@@ -398,8 +398,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSUInteger index = [rowsSelected firstIndex];
     while (index!=NSNotFound) {
         /* Do something here */
-        NSDictionary *nodeInfo = [self getFileAtIndex:index];
-        id node = [nodeInfo objectForKey:COL_FILENAME];
+        id node = [self getFileAtIndex:index];
         if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
             [[node getFileInformation] openFile];
         }
