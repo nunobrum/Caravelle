@@ -1,5 +1,5 @@
 //
-//  MyURL.h
+//  FileUtils.h
 //  File Catalyst
 //
 //  Created by Viktoryia Labunets on 11/08/14.
@@ -24,3 +24,4 @@ extern BOOL moveFileTo(NSURL*srcURL, NSURL *destURL);
 extern BOOL openFile(NSURL*url);
 
 extern NSDictionary *getDiskInformation(NSURL *diskPath);
+extern NSString *mediaNameFromURL(NSURL *rootURL);

@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
-#import "MyURL.h"
+#import "FileUtils.h"
 
 BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;
@@ -106,5 +106,10 @@ NSDictionary *getDiskInformation(NSURL *diskPath) {
         }
     }
     return di;
+}
+
+NSString *mediaNameFromURL(NSURL *rootURL) {
+    NSDictionary *diskInfo = getDiskInformation(rootURL);
+    return diskInfo[@"DAVolumeName"];
 }
 
