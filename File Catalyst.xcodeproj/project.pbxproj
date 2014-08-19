@@ -69,6 +69,8 @@
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
+		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
+		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -165,6 +167,10 @@
 		3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File CatalystTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
+		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeScanOperation.h; sourceTree = "<group>"; };
+		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeScanOperation.m; sourceTree = "<group>"; };
+		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
+		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +209,8 @@
 				3C29464818F9B87C002B633C /* ImagePreviewCell.h */,
 				3C29465418FD8ABE002B633C /* MyDirectoryEnumerator.h */,
 				3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */,
+				3CFD4D541998E16C0074F08B /* FileUtils.h */,
+				3CFD4D551998E16C0074F08B /* FileUtils.m */,
 			);
 			path = FileClasses;
 			sourceTree = "<group>";
@@ -268,11 +276,7 @@
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
 				3CEA675718F87C2F0080C4FC /* MainMenu.xib */,
-				3C717C05198D54720025E28A /* BrowserView.xib */,
-				3C717C07198D5B200025E28A /* BrowserController.h */,
-				3C717C08198D5B200025E28A /* BrowserController.m */,
-				3CBA37C3199613460040307B /* PathControlManager.h */,
-				3CBA37C4199613460040307B /* PathControlManager.m */,
+				3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */,
 				3C29463218F9B833002B633C /* TreeClasses */,
 				3C29463118F9B81C002B633C /* FileClasses */,
 				3CEA677618F87CE50080C4FC /* IconResources */,
@@ -355,6 +359,20 @@
 				3C29460B18F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns */,
 			);
 			path = IconResources;
+			sourceTree = "<group>";
+		};
+		3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */ = {
+			isa = PBXGroup;
+			children = (
+				3C717C05198D54720025E28A /* BrowserView.xib */,
+				3C717C07198D5B200025E28A /* BrowserController.h */,
+				3C717C08198D5B200025E28A /* BrowserController.m */,
+				3CBA37C3199613460040307B /* PathControlManager.h */,
+				3CBA37C4199613460040307B /* PathControlManager.m */,
+				3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */,
+				3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */,
+			);
+			name = BrowserViewClasses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -501,11 +519,13 @@
 				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,
 				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
 				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
+				3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */,
 				3C29464A18F9B87C002B633C /* FileInformation.m in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3CBA37C5199613460040307B /* PathControlManager.m in Sources */,
+				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
