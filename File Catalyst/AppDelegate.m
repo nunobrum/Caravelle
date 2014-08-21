@@ -212,7 +212,8 @@ NSFileManager *appFileManager;
         copyFilesThreaded(files, [toDirectory path]);
 
     }
-
+    // TODO !!! Update the Status during the operation
+    // Hint : Use the Queue Manager count and a Timer to update the operation each second.
 }
 
 // -------------------------------------------------------------------------------

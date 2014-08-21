@@ -9,6 +9,7 @@
 #import "TreeItem.h"
 //#import "MyDirectoryEnumerator.h"
 #import "TreeBranch.h"
+#import "FileUtils.h"
 
 @implementation TreeItem
 
@@ -39,13 +40,11 @@
 }
 
 -(NSString*) name {
-//    NSString *filename;
-//    NSError *error;
-//    [_theURL getResourceValue:&filename forKey:NSURLNameKey error:&error];
-//    if (filename==nil) {
-        return [_url lastPathComponent];
-//    }
-//    return filename;
+    NSString *nameStr = [_url lastPathComponent];
+    if ([nameStr isEqualToString:@"/"]) {
+        nameStr = mediaNameFromURL(_url);
+    }
+    return nameStr;
 }
 
 -(NSDate*) dateModified {

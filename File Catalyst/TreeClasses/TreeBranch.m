@@ -11,7 +11,7 @@
 #import "MyDirectoryEnumerator.h"
 
 #import "definitions.h"
-#include "MyURL.h"
+#include "FileUtils.h"
 
 NSString *const kvoTreeBranchPropertyChildren = @"childrenArray";
 

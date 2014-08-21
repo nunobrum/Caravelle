@@ -59,6 +59,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_sharedOperationQueue setMaxConcurrentOperationCount:2];
 
+    /* Sign for receiving drops of files */
+    //[_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
 
     return self;
 }
@@ -163,6 +165,7 @@ void DateFormatter(NSDate *date, NSString **output) {
                 [cellView setSubTitle:subTitle];
                 [[cellView imageView] setImage:icon];
                 [cellView setTitle:[item name]];
+                [cellView setURL:[item url]];
             }
         }
     }
@@ -253,7 +256,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (SelectedCount ==0) {
             /* Sends an Empty Array */
             object = [[NSArray new] init];
-            answer = [NSDictionary dictionaryWithObject:object forKey:selectedFilesNotificationObject];
+            answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
@@ -262,7 +265,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             [self refreshDataView];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
-            answer = [NSDictionary dictionaryWithObject:object forKey:selectedFilesNotificationObject];
+            answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
 
         }
         else {
@@ -348,7 +351,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         //NSLog(@"Table Selection Changed");
         NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
         NSArray *objects = [tableData objectsAtIndexes:rowsSelected];
-        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:selectedFilesNotificationObject];
+        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:kSelectedFilesKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
     }
 }
@@ -418,6 +421,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 
     }
 }
+
+#pragma mark - Drag and Drop Support
+/*
+ * Drag and Drop Methods 
+ */
+
 
 #pragma mark - KVO Methods
 
