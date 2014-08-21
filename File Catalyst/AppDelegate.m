@@ -10,15 +10,25 @@
 #import "FileCollection.h"
 #import "TreeLeaf.h"
 #import "TreeScanOperation.h"
+#import "FileUtils.h"
 
 #include "Definitions.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
-NSString *selectedFilesNotificationObject=@"FilesSelected";
+NSString *kSelectedFilesKey=@"FilesSelected";
 
 NSString *notificationCatalystRootUpdate=@"RootUpdate";
 NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
+
+NSString *notificationDoFileOperation = @"DoOperation";
+NSString *kOperationKey =@"OperationKey";
+NSString *kDestinationKey =@"DestinationKey";
+
+NSString *opCopyOperation=@"CopyOperation";
+NSString *opMoveOperation =@"MoveOperation";
+
+NSFileManager *appFileManager;
 
 @implementation AppDelegate {
     NSArray *selectedFiles;
@@ -40,6 +50,9 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
     {
         queue = [[NSOperationQueue alloc] init];
         scanCount= [NSNumber numberWithInteger:0];
+        appFileManager = [[NSFileManager alloc] init];
+        [appFileManager setDelegate:self];
+        [appFileManager copyItemAtPath:@"/Users/Vika/teste.txt" toPath:@"/Users/vika/teste1.txt" error:nil];
 	}
 	return self;
 }
@@ -75,6 +88,7 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
+    [center addObserver:self selector:@selector(handleOperationRequest:) name:notificationDoFileOperation object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
@@ -107,8 +121,9 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
         NSString *homeDir = NSHomeDirectory();
-        //[self DirectoryScan: homeDir to:myLeftView];
+
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+        if (0) {
         NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 homeDir,kRootPathKey,
                                 myLeftView, kSenderKey,
@@ -118,7 +133,7 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
         TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
         [queue addOperation:Op];
         [(BrowserController*)myLeftView startBusyAnimations];
-
+        }
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
@@ -184,6 +199,20 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 {
 	// update our table view on the main thread
 	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
+}
+
+-(void) handleOperationRequest: (NSNotification*) note
+{
+    NSDictionary *notifData = [note userInfo];
+    NSString *operation = [notifData objectForKey:kOperationKey];
+    NSArray *files = [notifData objectForKey:kSelectedFilesKey];
+
+    if ([operation isEqualToString:opCopyOperation]) {
+        NSURL *toDirectory = [notifData objectForKey:kDestinationKey];
+        copyFilesThreaded(files, [toDirectory path]);
+
+    }
+
 }
 
 // -------------------------------------------------------------------------------
@@ -256,7 +285,7 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 - (void) statusUpdate:(NSNotification*)theNotification {
     NSString *statusText;
     NSDictionary *receivedData = [theNotification userInfo];
-    selectedFiles = [receivedData objectForKey:selectedFilesNotificationObject];
+    selectedFiles = [receivedData objectForKey:kSelectedFilesKey];
     selectedView = [theNotification object];
     if (selectedFiles != nil) {
         NSInteger num_files=0;
@@ -284,6 +313,25 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
     else {
         [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
     }
+}
+
+#pragma mark File Manager Delegate - Copy
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+    NSLog(@"shouldCopyItemAtURL");
+    return YES;
+}
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    NSLog(@"shouldCopyItemAtPath");
+    return YES;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+    return NO;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    return NO;
 }
 
 

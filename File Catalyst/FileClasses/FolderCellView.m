@@ -7,7 +7,7 @@
 //
 
 #import "FolderCellView.h"
-#import "FileUtils.h"
+#import "Definitions.h"
 
 @implementation FolderCellView
 
@@ -89,26 +89,35 @@
 
     if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
         NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+        NSString *operation=nil;
+
 
         // Depending on the dragging source and modifier keys,
         // the file data may be copied or linked
         if (sourceDragMask & NSDragOperationCopy) {
             NSLog(@"Going to copy the files");
-            copyFilesThreaded(files, [self->url path]);
+            //copyFilesThreaded(files, [self->url path]);
+            operation = opCopyOperation;
 
             //[self addLinkToFiles:files];
         } else if (sourceDragMask & NSDragOperationMove) {
             // implement the move here
             NSLog(@"Going to move the file");
             //[self addDataFromFiles:files];
+            operation = opMoveOperation;
         }
         else {
             NSLog(@"Unsuported Operation Something went wrong here");
             return NO;
         }
-        for (id obj in files) {
-            NSLog(@"file %@", obj);
-        }
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              files, kSelectedFilesKey,
+                              self, kSenderKey,  // pass back to check if user cancelled/started a new scan
+                              operation, kOperationKey,
+                              self->url, kDestinationKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
 
     }
 //    else if ( [[pboard types] containsObject:NSColorPboardType] ) {
