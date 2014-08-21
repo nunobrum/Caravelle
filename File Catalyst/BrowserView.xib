@@ -198,7 +198,7 @@
                                                             <rect key="frame" x="1" y="17" width="382" height="568"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1">
+                                                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1" customClass="MYTableView">
                                                                     <rect key="frame" x="0.0" y="0.0" width="441" height="568"/>
                                                                     <autoresizingMask key="autoresizingMask"/>
                                                                     <size key="intercellSpacing" width="3" height="2"/>
@@ -397,7 +397,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="rRd-c6-Cab">
-                        <rect key="frame" x="403" y="1" width="16" height="597"/>
+                        <rect key="frame" x="404" y="1" width="15" height="597"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>

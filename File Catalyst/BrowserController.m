@@ -60,7 +60,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     [_sharedOperationQueue setMaxConcurrentOperationCount:2];
 
     /* Sign for receiving drops of files */
-    //[_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+    [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
 
     return self;
 }
@@ -258,13 +258,14 @@ void DateFormatter(NSDate *date, NSString **output) {
             object = [[NSArray new] init];
             answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
         } else if (SelectedCount==1) {
+            TreeBranch *selectedNode = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             /* Updates the _treeNodeSelected */
-            _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] Catalyst:_catalystMode];
-            [_myPathBarControl setURL: [_treeNodeSelected url]];
+            [_myTableView setTreeNodeSelected: selectedNode];
+            [_myPathBarControl setRootPath:[[selectedNode root] url] Catalyst:_catalystMode];
+            [_myPathBarControl setURL: [selectedNode url]];
             [self refreshDataView];
             /* Sends an Array with one Object */
-            object = [NSArray arrayWithObject:_treeNodeSelected];
+            object = [NSArray arrayWithObject:selectedNode];
             answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
 
         }
@@ -411,7 +412,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Set the path bar */
             //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
-            self.treeNodeSelected=node;
+            [_myTableView setTreeNodeSelected:node];
             [_myTableView reloadData];
             break; /* Only one Folder can be Opened */
         }
@@ -434,7 +435,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSInteger row = [_myOutlineView rowForItem:object];
     if (row != NSNotFound) {
         [_myOutlineView reloadItem:object reloadChildren:YES];
-        NSLog(@"Reloading %@", [object name]);
+        //NSLog(@"Reloading %@", [object name]);
 //        if (0) { // This is a very nice effect to consider later !!! TO CONSIDER
 //            FolderCellView *cellView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:NO];
 //            if (cellView) {
@@ -490,6 +491,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(void) refreshDataView {
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
+    TreeBranch *_treeNodeSelected = [_myTableView treeNodeSelected];
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
         if (self->_extendToSubdirectories==YES && self->_foldersInTable==YES) {
             tableData = [(TreeBranch*)_treeNodeSelected itemsInBranch];
@@ -628,7 +630,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     /* Sets the directory to be Displayed */
-    _treeNodeSelected = cursor;
+    [_myTableView setTreeNodeSelected: cursor];
 
 }
 
