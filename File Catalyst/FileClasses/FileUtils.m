@@ -7,6 +7,14 @@
 //
 
 #import "FileUtils.h"
+#import "Definitions.h"
+
+static NSOperationQueue *localOperationsQueue() {
+    static NSOperationQueue *queue= nil;
+    if (queue==nil)
+        queue= [[NSOperationQueue alloc] init];
+    return queue;
+}
 
 BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;
@@ -61,18 +69,46 @@ BOOL eraseFile(NSURL*url) {
 
 BOOL copyFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
-    BOOL answer = [[NSFileManager defaultManager] copyItemAtURL:srcURL toURL:destURL error:&error];
+    BOOL answer = [appFileManager copyItemAtURL:srcURL toURL:destURL error:&error];
     return answer;
 }
 
 BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
-    BOOL answer = [[NSFileManager defaultManager] moveItemAtURL:srcURL toURL:destURL error:&error];
+    BOOL answer = [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
     return answer;
 }
 
 BOOL openFile(NSURL*url) {
     [[NSWorkspace sharedWorkspace] openFile:[url path]];
+    return YES;
+}
+
+BOOL copyFilesThreaded(NSArray *files, NSString *toDirectory) {
+    for (NSString *file in files) {
+        [localOperationsQueue() addOperationWithBlock:^(void) {
+            NSError *error=nil;
+            NSString *newFilePath = [toDirectory stringByAppendingPathComponent:[file lastPathComponent]];
+            //NSLog(@"Copying '%@' to '%@' ", file, newFilePath);
+            [appFileManager copyItemAtPath:file toPath:newFilePath error:&error];
+            if (error!=nil)
+                NSLog(@"Error %@", error);
+        }];
+    }
+    return YES;
+}
+
+BOOL moveFilesThreaded(NSArray *files, NSString *toDirectory) {
+    for (NSString *file in files) {
+        [localOperationsQueue() addOperationWithBlock:^(void) {
+            NSError *error=nil;
+            NSString *newFilePath = [toDirectory stringByAppendingPathComponent:[file lastPathComponent]];
+            //NSLog(@"Moving '%@' to '%@' ", file, newFilePath);
+            [appFileManager moveItemAtPath:file toPath:newFilePath error:&error];
+            if (error!=nil)
+                NSLog(@"Error %@", error);
+        }];
+    }
     return YES;
 }
 
