@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @interface FolderCellView : NSTableCellView {
+    NSURL *url;
 @private
 IBOutlet NSTextField *subTitleTextField;
 //IBOutlet ATColorView *colorView;
@@ -21,6 +22,8 @@ BOOL _isSmallSize;
 - (void)setTitle:(NSString *)subTitle;
 - (NSString *)subTitle;
 - (void)setSubTitle:(NSString *)subTitle;
+
+- (void)setURL:(NSURL*) folderURL;
 
 //@property(assign) ATColorView *colorView;
 //@property(assign) NSProgressIndicator *progessIndicator;
