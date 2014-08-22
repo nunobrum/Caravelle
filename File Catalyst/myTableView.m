@@ -27,9 +27,27 @@
     // Drawing code here.
 }
 
+
+-(TreeBranch *)treeNodeSelected {
+    return _treeNodeSelected;
+}
+
+-(void) setTreeNodeSelected:(TreeBranch*) node {
+    /* Sign for receiving drops of files */
+    if (node!=nil) {
+        //[self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+    }
+    else {
+        [self unregisterDraggedTypes];
+    }
+    _treeNodeSelected = node;
+}
+
+
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
+    NSDragOperation answer = NSDragOperationNone;
 
     sourceDragMask = [sender draggingSourceOperationMask];
     pboard = [sender draggingPasteboard];
@@ -41,19 +59,35 @@
     //    }
     if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
         if (sourceDragMask & NSDragOperationCopy) {
-            return NSDragOperationCopy;
+            answer = NSDragOperationCopy;
         }
         else if (sourceDragMask & NSDragOperationMove) {
-            return NSDragOperationMove;
+            answer = NSDragOperationMove;
         }
     }
-    return NSDragOperationNone;
+    else
+        answer = NSDragOperationNone;
+    return answer;
 }
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender /* if the destination responded to draggingEntered: but not to draggingUpdated: the return value from draggingEntered: is used */
+/* !!! This is actually not true for this Class in Particular */
+{
+    NSLog(@"update");
+    return [self draggingEntered:sender];
+}
+
 
 // TODO !!! Implement draggingUpdated to change the icon to reflect the operation
 // Consider also implementing draggingExited so that the icon is reverted to its original form.
 
+
 // prepareForDragOperation: message followed by performDragOperation: and concludeDragOperation:.
+
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender {
+    NSLog(@"prepareForDragOperation");
+    return YES;
+}
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
     NSPasteboard *pboard;
@@ -102,5 +136,21 @@
     //    }
     return YES;
 }
+
+
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender {
+    NSLog(@"conclude Drag Operation");
+    
+}
+/* draggingEnded: is implemented as of Mac OS 10.5 */
+- (void)draggingEnded:(id <NSDraggingInfo>)sender {
+    NSLog(@"OH! dragging ended");
+}
+
+/* the receiver of -wantsPeriodicDraggingUpdates should return NO if it does not require periodic -draggingUpdated messages (eg. not autoscrolling or otherwise dependent on draggingUpdated: sent while mouse is stationary) */
+- (BOOL)wantsPeriodicDraggingUpdates {
+    return NO;
+}
+
 
 @end

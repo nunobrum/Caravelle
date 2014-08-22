@@ -9,9 +9,13 @@
 #import <Cocoa/Cocoa.h>
 #import "TreeBranch.h"
 
-@interface MYTableView : NSTableView
+@interface MYTableView : NSTableView <NSDraggingDestination> {
+    TreeBranch *_treeNodeSelected;
+}
 
-@property TreeBranch *treeNodeSelected;
+-(TreeBranch *)treeNodeSelected;
+
+-(void) setTreeNodeSelected:(TreeBranch*) node;
 
 @end
 
