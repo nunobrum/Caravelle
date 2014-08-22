@@ -59,9 +59,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_sharedOperationQueue setMaxConcurrentOperationCount:2];
 
-    /* Sign for receiving drops of files */
-    [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
-
     return self;
 }
 
@@ -427,7 +424,14 @@ void DateFormatter(NSDate *date, NSString **output) {
 /*
  * Drag and Drop Methods 
  */
+//- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
+//    return YES;
+//}
 
+// !!! TODO use the method below for further control
+- (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
+}
 
 #pragma mark - KVO Methods
 
