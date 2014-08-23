@@ -20,15 +20,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:NO];
 
     for (NSURL *theURL in dirEnumerator) {
-        TreeItem *newObj;
-        if (isFolder(theURL)) {
-            /* This is a Leaf Item */
-            newObj = [[TreeBranch alloc] initWithURL:theURL parent:parent];
-        }
-        else {
-            /* This is a Branch Item */
-            newObj =[[TreeLeaf alloc] initWithURL:theURL];
-        }
+        TreeItem *newObj = [TreeItem treeItemForURL:theURL];
         [children addObject:newObj];
     }
 
