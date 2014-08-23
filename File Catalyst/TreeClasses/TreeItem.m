@@ -33,6 +33,25 @@
     return self;
 }
 
++ (TreeItem *)treeItemForURL:(NSURL *)url {
+    // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
+    NSString *typeIdentifier;
+    if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
+        if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder]) {
+            return [[TreeBranch alloc] initWithURL:url];
+        }
+        NSArray *imageUTIs = [NSImage imageTypes];
+        if ([imageUTIs containsObject:typeIdentifier]) {
+            // !!! TODO : Treat here other file types other than just not folders
+            return [[TreeLeaf alloc] initWithURL:url];
+        }
+        else {
+            return [[TreeLeaf alloc] initWithURL:url];
+        }
+    }
+    return nil;
+}
+
 
 -(BOOL) isBranch {
     NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
@@ -127,7 +146,7 @@
 
 + (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
     // We allow creation from folder and image URLs only, but there is no way to specify just file URLs that contain images
-    return [NSArray arrayWithObjects:(id)kUTTypeFolder, (id)kUTTypeFileURL, nil];
+    return [NSArray arrayWithObjects:(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem, nil];
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
@@ -136,25 +155,9 @@
 
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     // We recreate the appropriate object
-    //[self release];
-    self = nil;
     // We only have URLs accepted. Create the URL
     NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
-    // Now see what the data type is; if it isn't an image, we return nil
-    NSString *urlUTI;
-    if ([url getResourceValue:&urlUTI forKey:NSURLTypeIdentifierKey error:NULL]) {
-        // We could use UTTypeConformsTo((CFStringRef)type, kUTTypeImage), but we want to make sure it is an image UTI type that NSImage can handle
-        // TODO !!! TO BE Further Developped
-//        if ([[NSImage imageTypes] containsObject:urlUTI]) {
-//            // We can use it with NSImage
-//            self = [[TreeLeafImageFile alloc] initWithFileURL:url];
-//        } else if ([urlUTI isEqualToString:(id)kUTTypeFolder]) {
-//            // It is a folder
-//            self = [[TreeBranch alloc] initWithURL:url parent:nil];
-//        }
-    }
-    // We may return nil
-    return self;
+    return [TreeItem treeItemForURL:url];
 }
 
 #pragma mark -

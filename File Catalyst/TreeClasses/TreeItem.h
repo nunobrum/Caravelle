@@ -30,6 +30,8 @@
 -(TreeItem*) init;
 -(TreeItem*) initWithURL:(NSURL*)url;
 
++ (TreeItem *)treeItemForURL:(NSURL *)url;
+
 -(BOOL) isBranch;
 -(NSString*) name;
 -(NSDate*)   dateModified;
