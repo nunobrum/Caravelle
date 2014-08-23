@@ -23,8 +23,8 @@ extern BOOL copyFileTo(NSURL*srcURL, NSURL *destURL);
 extern BOOL moveFileTo(NSURL*srcURL, NSURL *destURL);
 extern BOOL openFile(NSURL*url);
 
-BOOL copyFilesThreaded(NSArray *files, NSString *toDirectory);
-BOOL moveFilesThreaded(NSArray *files, NSString *toDirectory);
+BOOL copyFilesThreaded(NSArray *files, id toDirectory);
+BOOL moveFilesThreaded(NSArray *files, id toDirectory);
 
 extern NSDictionary *getDiskInformation(NSURL *diskPath);
 extern NSString *mediaNameFromURL(NSURL *rootURL);
