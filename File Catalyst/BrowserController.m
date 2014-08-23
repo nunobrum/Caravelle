@@ -254,15 +254,16 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Sends an Empty Array */
             object = [[NSArray new] init];
             answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
+            [_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
-            TreeBranch *selectedNode = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             /* Updates the _treeNodeSelected */
-            [_myTableView setTreeNodeSelected: selectedNode];
-            [_myPathBarControl setRootPath:[[selectedNode root] url] Catalyst:_catalystMode];
-            [_myPathBarControl setURL: [selectedNode url]];
+            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, nil]];
+            _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] Catalyst:_catalystMode];
+            [_myPathBarControl setURL: [_treeNodeSelected url]];
             [self refreshDataView];
             /* Sends an Array with one Object */
-            object = [NSArray arrayWithObject:selectedNode];
+            object = [NSArray arrayWithObject:_treeNodeSelected];
             answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
 
         }
@@ -300,6 +301,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
             cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
+            //[cellView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFileURL, nil]];
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
@@ -409,7 +411,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Set the path bar */
             //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
-            [_myTableView setTreeNodeSelected:node];
+            self.treeNodeSelected=node;
             [_myTableView reloadData];
             break; /* Only one Folder can be Opened */
         }
@@ -424,15 +426,149 @@ void DateFormatter(NSDate *date, NSString **output) {
 /*
  * Drag and Drop Methods 
  */
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation {
+    NSPasteboard *pboard;
+    NSDragOperation sourceDragMask;
+    NSArray *ptypes;
+    TreeItem *targetItem;
+
+    sourceDragMask = [info draggingSourceOperationMask];
+    pboard = [info draggingPasteboard];
+    ptypes =[pboard types];
+
+    if (aTableView!=_myTableView) { /* Protection , just in case */
+        NSLog(@"Ooops! This isnt supposed to happen");
+        return NSDragOperationNone;
+    }
+    @try {
+        targetItem = [tableData objectAtIndex:row];
+    }
+    @catch (NSException *exception) {
+        targetItem = _treeNodeSelected;
+    }
+    @finally {
+        // Go away... nothing to see here
+    }
+    //NSLog(@"validate Drop %ld %lX", row, sourceDragMask);
+
+    /* Limit the Operations depending on the Item Class*/
+    if ([targetItem isKindOfClass:[TreeBranch class]]) {
+        sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
+    }
+    else if ([targetItem isKindOfClass:[TreeLeaf class]]) {
+        sourceDragMask &= (NSDragOperationGeneric);
+    }
+    else {
+        return NSDragOperationNone;
+    }
+
+    if ( [ptypes containsObject:NSFilenamesPboardType] ) {
+        if (sourceDragMask & NSDragOperationCopy) {
+            return NSDragOperationCopy;
+        }
+        else if (sourceDragMask & NSDragOperationMove) {
+            return NSDragOperationMove;
+        }
+        else if (sourceDragMask & NSDragOperationLink) {
+            return NSDragOperationLink;
+        }
+        else if (sourceDragMask & NSDragOperationGeneric) {
+            return NSDragOperationGeneric;
+        }
+    }
+    else if ( [ptypes containsObject:(id)kUTTypeFileURL] ) {
+        if (sourceDragMask & NSDragOperationCopy) {
+            return NSDragOperationCopy;
+        }
+        else if (sourceDragMask & NSDragOperationMove) {
+            return NSDragOperationMove;
+        }
+        else if (sourceDragMask & NSDragOperationLink) {
+            return NSDragOperationLink;
+        }
+    }
+    return NSDragOperationNone;
+}
+
+- (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id < NSDraggingInfo >)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)operation {
+    NSLog(@"accept row %ld", row);
+    BOOL answer = NO;
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSDragOperation sourceDragMask = [info draggingSourceOperationMask];
+    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+    NSString *opCommand=nil;
+    id destination;
+    // !!! TODO : Test the row is on the table itself.
+    if (operation == NSTableViewDropAbove) {
+        //Inserts the rows using the specified animation.
+        int i= 0;
+        for (NSURL *pastedItem in files) {
+            //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
+            TreeItem *newItem = [TreeItem treeItemForURL: pastedItem];
+            [tableData insertObject:newItem atIndex:row+i];
+            [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
+            //NSLog(@"Copy Item %@", [pastedItem lastPathComponent]);
+            i++;
+        }
+        destination = [_treeNodeSelected url];
+        answer= YES;
+        opCommand = opCopyOperation;
+    }
+    else if (operation == NSTableViewDropOn){
+        TreeItem *targetItem = [tableData objectAtIndex:row];
+        if ([targetItem isKindOfClass:[TreeBranch class]]) {
+            if (sourceDragMask & NSDragOperationCopy) {
+                opCommand = opCopyOperation;
+                destination = [targetItem url];
+                answer = YES;
+            }
+            else if (sourceDragMask & NSDragOperationMove) {
+                // TODO !!! Operation Move (Needs to delete the file from the source)
+                opCommand = opMoveOperation;
+            }
+            else if (sourceDragMask & NSDragOperationLink) {
+                // TODO !!! Operation Link
+            }
+            else {
+                // Unsupported !!!
+            }
+
+        }
+        else if ([targetItem isKindOfClass:[TreeLeaf class]]) {
+            // !!! TODO Dropping Application on top of file or File on top of Application
+            NSLog(@"Not impplemented open the file with the application");
+            // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
+        }
+    }
+    if (answer==YES) {
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              files, kSelectedFilesKey,
+                              self, kSenderKey,  // pass back to check if user cancelled/started a new scan
+                              opCommand, kOperationKey,
+                              destination, kDestinationKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
+    }
+    return answer;
+}
+
 //- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
 //    return YES;
-//}
-
-// !!! TODO use the method below for further control
+//} // !!! TODO use the method below for further control
 - (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    NSLog(@"write to paste board, passing handle to item at row %ld",row);
     return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
 }
 
+- (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forRowIndexes:(NSIndexSet *)rowIndexes {
+    NSLog(@"info: drag session will start %@",rowIndexes);
+}
+
+- (void)tableView:(NSTableView *)tableView updateDraggingItemsForDrag:(id < NSDraggingInfo >)draggingInfo {
+    NSLog(@"info : update dragging items");
+}
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
@@ -495,7 +631,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(void) refreshDataView {
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
-    TreeBranch *_treeNodeSelected = [_myTableView treeNodeSelected];
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
         if (self->_extendToSubdirectories==YES && self->_foldersInTable==YES) {
             tableData = [(TreeBranch*)_treeNodeSelected itemsInBranch];
@@ -634,7 +769,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     /* Sets the directory to be Displayed */
-    [_myTableView setTreeNodeSelected: cursor];
+    _treeNodeSelected = cursor;
 
 }
 

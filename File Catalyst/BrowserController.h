@@ -10,7 +10,6 @@
 #import "FileCollection.h"
 #import "TreeRoot.h"
 #import "PathControlManager.h"
-#import "MYTableView.h"
 #include "Definitions.h"
 
 @interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
@@ -29,7 +28,7 @@
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
 @property (weak) IBOutlet NSOutlineView *myOutlineView;
-@property (weak) IBOutlet MYTableView *myTableView;
+@property (weak) IBOutlet NSTableView *myTableView;
 @property (weak) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet PathControlManager *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
@@ -41,7 +40,7 @@
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 @property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
-
+@property TreeBranch *treeNodeSelected;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
