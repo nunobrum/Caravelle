@@ -20,10 +20,9 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:NO];
 
     for (NSURL *theURL in dirEnumerator) {
-        TreeItem *newObj = [TreeItem treeItemForURL:theURL];
+        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:parent];
         [children addObject:newObj];
     }
-
     return children;
 }
 
@@ -48,7 +47,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 }
 
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
-    self = [super initWithURL:url];
+    self = [super initWithURL:url parent:parent];
     self->_children = nil;
     self->_parent = parent;
     self->refreshing = NO;
@@ -287,46 +286,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 }
 
--(BOOL) addURL:(NSURL*)theURL {
-    /* Check first if base path is common */
-    if ([self relationTo:[theURL path]]!=pathIsChild)
-        return FALSE;
-    return [self addURL:theURL withPathComponents:[theURL pathComponents] atLevel:[[_url pathComponents] count]];
-}
-
--(BOOL) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pathComponents atLevel:(NSUInteger)level {
-    if (_children==nil)
-    {
-        _children = [[NSMutableArray new] init];
-    }
-
-    if ([pathComponents count]==level+1) {
-        TreeItem *newObj;
-        if (isFolder(theURL)) {
-            /* This is a Leaf Item */
-            newObj = [[TreeBranch alloc] initWithURL:theURL parent:self];
-        }
-        else {
-            /* This is a Branch Item */
-            newObj =[[TreeLeaf alloc] initWithURL:theURL];
-        }
-        [_children addObject:newObj];
-        return TRUE; /* Stops here Nothing More to Add */
-    }
-
-    else { /* The Branch exists. Recursive Add into it */
-        TreeItem *child = [self itemWithName:[pathComponents objectAtIndex:level] class:[TreeBranch class]];
-        if (child==nil) {/* Doesnt exist or if existing is not branch*/
-
-            /* This is a new Branch Item that will contain the URL*/
-            child = [[TreeBranch new] initWithURL:theURL parent:self];
-        }
-        return [(TreeBranch*) child addURL:theURL withPathComponents:pathComponents atLevel:level+1];
-
-    }
-    return FALSE;
-}
-
 -(TreeItem*) itemWithName:(NSString*) name class:(id)cls {
     for (TreeItem *item in _children) {
         if ([[item name] isEqualToString: name] && [item isKindOfClass:cls]) {
@@ -335,6 +294,48 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     }
     return nil;
 }
+
+-(TreeItem*) itemWithURL:(NSURL*) aURL {
+    for (TreeItem *item in _children) {
+        if ([[item url] isEqualTo: aURL]) {
+            return item;
+        }
+    }
+    return nil;
+}
+
+
+-(BOOL) addURL:(NSURL*)theURL {
+    /* Check first if base path is common */
+    NSRange result;
+    result = [[theURL path] rangeOfString:[self path]];
+    if (NSNotFound==result.location) {
+        // The new root is already contained in the existing trees
+        return FALSE;
+    }
+    TreeBranch *cursor = self;
+    if (self.children == nil)
+        self.children = [[NSMutableArray alloc] init];
+    NSArray *pcomps = [theURL pathComponents];
+    unsigned long level = [[_url pathComponents] count];
+    unsigned long leaf_level = [pcomps count]-1;
+    while (level < leaf_level) {
+        TreeItem *child = [self itemWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
+        if (child==nil) {/* Doesnt exist or if existing is not branch*/
+            /* This is a new Branch Item that will contain the URL*/
+            child = [[TreeBranch new] initWithURL:theURL parent:self];
+            [(TreeBranch*)child setChildren: [[NSMutableArray alloc] init]];
+        }
+        cursor = (TreeBranch*)child;
+        level++;
+    }
+    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
+    if ([newObj isKindOfClass:[TreeBranch class]])
+        [(TreeBranch*)newObj setParent:self];
+    [[cursor children] addObject:newObj];
+    return TRUE; /* Stops here Nothing More to Add */
+}
+
 
 //-(FileCollection*) duplicatesInNode {
 //    FileCollection *answer = [[FileCollection new] init];
@@ -367,23 +368,28 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         [self setChildren: [[NSMutableArray new] init]];
     else {
         /* Tree was already constructed */
-        /// !!! Think about doing an inteligent refresh here now just returning
-        return;
-        //[self removeBranch];
+        for (TreeItem *item in self.children)
+            item.tag |= tagTreeItemDirty; /* Mark all items as dirty so that at the end of the comparison ones dirty are deleted */
     }
-    NSLog(@"Scanning directory %@", self.path);
+    //NSLog(@"Scanning directory %@", self.path);
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:NO];
 
     for (NSURL *theURL in dirEnumerator) {
-        [self addURL:theURL];
+        TreeItem *item = [self itemWithURL:theURL];
+        if (item==nil) {
+            [self addURL:theURL];
+        }
+        else {
+            item.tag &= tagTreeItemDirty;
+        }
     } // for
-
-    /* Now will propagate new totals to parent directories */
-    /*TreeBranch *currdir = (TreeBranch*)[self parent];
-    while (currdir!=nil) {
-        currdir.byteSize+= self.byteSize - oldByteSize;
-        currdir = (TreeBranch*)[currdir parent];
-    }*/
+    int idx=0;
+    while (idx < [self.children count]) {
+        if ([[self.children objectAtIndex:idx] tag] & tagTreeItemDirty) {
+            [self.children removeObjectAtIndex:idx];
+        }
+        idx++;
+    }
 }
 
 -(NSInteger) relationTo:(NSString*) otherPath {
