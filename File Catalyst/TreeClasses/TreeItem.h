@@ -7,8 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "FileInformation.h"
+//#import "FileInformation.h"
 
+
+enum {
+    tagTreeItemDirty = (1UL << 0),
+    tagTreeItemMarked = (1UL << 1),
+    tagTreeItemDropped = (1UL << 2),
+    tagTreeItemToMove = (1UL << 2)
+};
+typedef NSUInteger TreeItemTagEnum;
 
 @protocol TreeProtocol <NSObject>
 
@@ -19,18 +27,17 @@
 
 @interface TreeItem : NSObject <NSPasteboardWriting, NSPasteboardReading> {
     NSURL *_url;
+    TreeItemTagEnum _tag;
 }
 
 //@property (retain) TreeItem      *parent;
-//@property (retain) NSString       *name;
 @property NSURL                     *url;
-//@property long long               byteSize;
-//@property (retain) NSDate         *dateModified;
+@property TreeItemTagEnum           tag;
 
 -(TreeItem*) init;
--(TreeItem*) initWithURL:(NSURL*)url;
+-(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 
-+ (TreeItem *)treeItemForURL:(NSURL *)url;
++ (TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent;
 
 -(BOOL) isBranch;
 -(NSString*) name;

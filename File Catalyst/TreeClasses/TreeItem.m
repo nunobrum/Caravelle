@@ -16,37 +16,36 @@
 -(TreeItem*) init {
     self = [super init];
     if (self) {
-        //self->_byteSize = 0;
         self->_url = nil;
-        //self->_parent = nil;
+        self.tag = 0;
     }
     return self;
 }
 
--(TreeItem*) initWithURL:(NSURL*)url {
+-(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
-        //self->_byteSize = filesize;
+        self.tag = 0;
         self->_url = url;
         //self->_parent = nil;
     }
     return self;
 }
 
-+ (TreeItem *)treeItemForURL:(NSURL *)url {
++ (TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
     NSString *typeIdentifier;
     if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
         if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder]) {
-            return [[TreeBranch alloc] initWithURL:url];
+            return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
         NSArray *imageUTIs = [NSImage imageTypes];
         if ([imageUTIs containsObject:typeIdentifier]) {
             // !!! TODO : Treat here other file types other than just not folders
-            return [[TreeLeaf alloc] initWithURL:url];
+            return [[TreeLeaf alloc] initWithURL:url parent:parent];
         }
         else {
-            return [[TreeLeaf alloc] initWithURL:url];
+            return [[TreeLeaf alloc] initWithURL:url parent:parent];
         }
     }
     return nil;
@@ -157,7 +156,7 @@
     // We recreate the appropriate object
     // We only have URLs accepted. Create the URL
     NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
-    return [TreeItem treeItemForURL:url];
+    return [TreeItem treeItemForURL:url parent:nil];
 }
 
 #pragma mark -
