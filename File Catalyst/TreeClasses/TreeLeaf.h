@@ -7,6 +7,7 @@
 //
 
 #import "TreeItem.h"
+#import "FileInformation.h"
 
 @interface TreeLeaf : TreeItem <TreeProtocol> {
 //    FileInformation *fileInformation;
