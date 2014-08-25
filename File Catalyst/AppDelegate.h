@@ -21,6 +21,8 @@
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 @property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
+@property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
+@property (weak) IBOutlet NSTextField *statusProgressLabel;
 
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 

@@ -52,7 +52,6 @@ NSFileManager *appFileManager;
         scanCount= [NSNumber numberWithInteger:0];
         appFileManager = [[NSFileManager alloc] init];
         [appFileManager setDelegate:self];
-        [appFileManager copyItemAtPath:@"/Users/Vika/teste.txt" toPath:@"/Users/vika/teste1.txt" error:nil];
 	}
 	return self;
 }
@@ -123,7 +122,7 @@ NSFileManager *appFileManager;
         NSString *homeDir = NSHomeDirectory();
 
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
-        if (0) {
+        if (1) {
         NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 homeDir,kRootPathKey,
                                 myLeftView, kSenderKey,
@@ -133,6 +132,10 @@ NSFileManager *appFileManager;
         TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
         [queue addOperation:Op];
         [(BrowserController*)myLeftView startBusyAnimations];
+        }
+        else {
+            [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+            [myLeftView setCatalystMode:NO];
         }
     }
     /* Ajust the subView window Sizes */
@@ -180,7 +183,7 @@ NSFileManager *appFileManager;
         TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
         BrowserController *BView =[notifData valueForKey: kSenderKey];
         [BView addTreeRoot:receivedTree];
-        [(BrowserController*)myLeftView stopBusyAnimations];
+        [BView stopBusyAnimations];
         // set the number of images found indicator string
         [_StatusBar setTitle:@"Received data from Thread"];
     }
