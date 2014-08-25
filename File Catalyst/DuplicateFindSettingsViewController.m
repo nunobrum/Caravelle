@@ -23,4 +23,12 @@
     return self;
 }
 
+- (IBAction)addRemoveFolderButton:(id)sender {
+}
+
+- (IBAction)pbOKAction:(id)sender {
+}
+
+- (IBAction)pbCancelAction:(id)sender {
+}
 @end
