@@ -166,7 +166,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
  Note that if the _children is not populated it is assumed that the
  node is expandable. It is preferable to assume as yes and later correct. */
 -(BOOL) isExpandable {
-    if ((_children==nil) || ([self numberOfBranchesInNode]!=0))
+    if ((_children!=nil) && ([self numberOfBranchesInNode]!=0))
         return YES;
     else
         return NO;
@@ -320,18 +320,18 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     unsigned long level = [[_url pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
-        TreeItem *child = [self itemWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
+        TreeItem *child = [cursor itemWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
-            child = [[TreeBranch new] initWithURL:theURL parent:self];
-            [(TreeBranch*)child setChildren: [[NSMutableArray alloc] init]];
+            child = [[TreeBranch new] initWithURL:theURL parent:cursor];
         }
         cursor = (TreeBranch*)child;
+        if (cursor.children==nil) {
+            cursor.children = [[NSMutableArray alloc] init];
+        }
         level++;
     }
-    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
-    if ([newObj isKindOfClass:[TreeBranch class]])
-        [(TreeBranch*)newObj setParent:self];
+    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
     [[cursor children] addObject:newObj];
     return TRUE; /* Stops here Nothing More to Add */
 }
