@@ -96,7 +96,7 @@
                                                                             </textFieldCell>
                                                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                                             <prototypeCellViews>
-                                                                                <tableCellView id="ixn-tP-krw" customClass="FolderCellView">
+                                                                                <tableCellView identifier="CatalystView" id="ixn-tP-krw" customClass="FolderCellView">
                                                                                     <rect key="frame" x="1" y="1" width="154" height="34"/>
                                                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                                     <subviews>
@@ -147,6 +147,30 @@
                                                                                         <outlet property="imageView" destination="CuD-33-wCt" id="IeF-RL-xhd"/>
                                                                                         <outlet property="subTitleTextField" destination="bZf-MO-Pdv" id="siV-eS-4Jm"/>
                                                                                         <outlet property="textField" destination="zpT-yC-x1m" id="mcD-SR-e0i"/>
+                                                                                    </connections>
+                                                                                </tableCellView>
+                                                                                <tableCellView id="bJm-ec-g32">
+                                                                                    <rect key="frame" x="1" y="37" width="154" height="17"/>
+                                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                                    <subviews>
+                                                                                        <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="p2w-XM-kPE">
+                                                                                            <rect key="frame" x="3" y="0.0" width="17" height="17"/>
+                                                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                                                            <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="hta-Aw-6Ip"/>
+                                                                                        </imageView>
+                                                                                        <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
+                                                                                            <rect key="frame" x="25" y="0.0" width="129" height="17"/>
+                                                                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                                                            <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
+                                                                                                <font key="font" metaFont="system"/>
+                                                                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                                                            </textFieldCell>
+                                                                                        </textField>
+                                                                                    </subviews>
+                                                                                    <connections>
+                                                                                        <outlet property="imageView" destination="p2w-XM-kPE" id="bEW-J0-eLH"/>
+                                                                                        <outlet property="textField" destination="llY-hV-wS7" id="0PZ-cJ-Q3T"/>
                                                                                     </connections>
                                                                                 </tableCellView>
                                                                             </prototypeCellViews>
@@ -397,7 +421,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="rRd-c6-Cab">
-                        <rect key="frame" x="403" y="1" width="16" height="597"/>
+                        <rect key="frame" x="404" y="1" width="15" height="597"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
@@ -429,6 +453,7 @@
     </objects>
     <resources>
         <image name="FinderIcon" width="512" height="512"/>
+        <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSApplicationIcon" width="128" height="128"/>
     </resources>
 </document>
