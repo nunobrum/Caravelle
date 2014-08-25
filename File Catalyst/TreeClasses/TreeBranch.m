@@ -362,8 +362,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 /* This is not to be used with Catalyst Mode */
 -(void) refreshTreeFromURLs {
-    // Will get the first level of the tree
-
     if ([self children]==nil)
         [self setChildren: [[NSMutableArray new] init]];
     else {
@@ -390,6 +388,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         }
         idx++;
     }
+
 }
 
 -(NSInteger) relationTo:(NSString*) otherPath {
@@ -422,23 +421,15 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             self->refreshing = YES;
             // We would have to keep track of the block with an NSBlockOperation, if we wanted to later support cancelling operations that have scrolled offscreen and are no longer needed. That will be left as an exercise to the user.
             [queue addOperationWithBlock:^(void) {
-                NSMutableArray *updated = folderContentsFromURL(self.url, self);
-                if (updated != nil) {
-                    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
                     // We synchronize access to the image/imageLoading pair of variables
                     @synchronized (self) {
+                        [self refreshTreeFromURLs];
                         self->refreshing = NO;
-                        self.children = updated;
                         //NSLog(@"Modifying Observed Value %@", [self name]);
                     }
                     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
-                }
-                /* We don't need this
-                else {
-                    @synchronized (self) {
-                        self.image = [NSImage imageNamed:NSImageNameTrashFull];
-                    }
-                }*/
+
             }];
         }
     }
