@@ -17,8 +17,6 @@
     if (self) {
         // Initialization code here.
         /* Sign for receiving drops of files */
-        NSLog(@"Registering the Drag capability %@", self.textField);
-        [self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
     }
     
     return self;
@@ -27,7 +25,7 @@
 -(void) setURL:(NSURL *)folderURL {
     self->url = folderURL;
     /* Sign for receiving drops of files */
-    NSLog(@"Registering the Drag capability %@", self.textField);
+    //NSLog(@"Registering the Drag capability %@", self.textField);
     [self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
 }
 
