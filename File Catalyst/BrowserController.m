@@ -232,7 +232,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     TreeItem *item = [[rowView viewAtColumn:0] objectValue];
     //NSLog(@"Removing from observed '%@'", [item name]);
     NSInteger index = item ? [_observedVisibleItems indexOfObject:item] : NSNotFound;
-    if (index != NSNotFound) {
+    if (index != NSNotFound && item!=_treeNodeSelected) { //keep observing the selected folder
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
         [_observedVisibleItems removeObjectAtIndex:index];
     }
@@ -581,6 +581,10 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (void)_reloadRowForEntity:(id)object {
     NSInteger row = [_myOutlineView rowForItem:object];
+    if (object == _treeNodeSelected) {
+        /*If it is the selected Folder make a refresh*/
+        [self refreshDataView];
+    }
     if (row != NSNotFound) {
         [_myOutlineView reloadItem:object reloadChildren:YES];
         //NSLog(@"Reloading %@", [object name]);
@@ -673,15 +677,11 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(void) refreshTrees {
     if (_catalystMode) {
-        //for (TreeRoot *tree in BaseDirectoriesArray)
-        {
-            NSLog(@"!!! Solve this");
-            //[tree refreshTreeFromCollection:{}];
-        }
+       // In catalyst Mode, there is no automatic Update
     }
     else {
         for (TreeRoot *tree in BaseDirectoriesArray) {
-            [tree refreshTreeFromURLs];
+            [tree refreshContentsOnQueue:_sharedOperationQueue];
         }
     }
     // !!! Todo Add condition : if number of roots = 1 then
