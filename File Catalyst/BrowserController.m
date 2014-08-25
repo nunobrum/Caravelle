@@ -107,16 +107,17 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         ret = [item branchAtIndex:index];
     }
-    // Use KVO to observe for changes of its children Array
-    if (![_observedVisibleItems containsObject:ret]) {
-        if ([ret isKindOfClass:[TreeBranch class]]) {
-            [ret addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
-            //NSLog(@"Adding Observer to %@", [ret name]);
-            [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
-            [_observedVisibleItems addObject:ret];
+    if (!_catalystMode) {
+        // Use KVO to observe for changes of its children Array
+        if (![_observedVisibleItems containsObject:ret]) {
+            if ([ret isKindOfClass:[TreeBranch class]]) {
+                [ret addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
+                //NSLog(@"Adding Observer to %@", [ret name]);
+                [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
+                [_observedVisibleItems addObject:ret];
+            }
         }
     }
-
     return ret;
 }
 
@@ -136,37 +137,37 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
-    NSView *result = [outlineView makeViewWithIdentifier:[tableColumn identifier] owner:self];
-    if ([result isKindOfClass:[FolderCellView class]]) {
-        FolderCellView *cellView = (FolderCellView *)result;
+    NSTableCellView *cellView=nil;
 
-        if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-            if ([item isKindOfClass:[TreeLeaf class]]) {//if it is a file
-                // This is not needed now since the Tree View is not displaying files in this application
-            }
-            else if ([item isKindOfClass:[TreeBranch class]]) { // it is a directory
-                // Display the directory name followed by the number of files inside
-                NSString *path = [(TreeBranch*)item path];
-                NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-
+    if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
+        if ([item isKindOfClass:[TreeLeaf class]]) {//if it is a file
+            // This is not needed now since the Tree View is not displaying files in this application
+        }
+        else if ([item isKindOfClass:[TreeBranch class]]) { // it is a directory
+            if (_catalystMode) {
                 NSString *subTitle;
-                if (self->_catalystMode==YES) {
-                    subTitle = [NSString stringWithFormat:@"%ld Files %@",
-                                (long)[(TreeBranch*)item numberOfLeafsInBranch],
-                                [NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
-                }
-                else {
-                    subTitle = @""; //[NSString stringWithFormat:@"%ld Files here",
-                    //(long)[(TreeBranch*)item numberOfLeafsInBranch]];
-                }
-                [cellView setSubTitle:subTitle];
-                [[cellView imageView] setImage:icon];
-                [cellView setTitle:[item name]];
-                [cellView setURL:[item url]];
+                cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
+                subTitle = [NSString stringWithFormat:@"%ld Files %@",
+                            (long)[(TreeBranch*)item numberOfLeafsInBranch],
+                            [NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
+                [(FolderCellView*)cellView setSubTitle:subTitle];
+                [(FolderCellView*)cellView setURL:[item url]];
+
             }
+            else {
+                cellView= [outlineView makeViewWithIdentifier:[tableColumn identifier] owner:self];
+            }
+
+            // Display the directory name followed by the number of files inside
+            NSString *path = [(TreeBranch*)item path];
+            NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
+
+            [[cellView imageView] setImage:icon];
+            [[cellView textField] setStringValue:[item name]];
+
         }
     }
-    return result;
+    return cellView;
 }
 
 //- (NSCell *)outlineView:(NSOutlineView *)outlineView dataCellForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
@@ -192,7 +193,14 @@ void DateFormatter(NSDate *date, NSString **output) {
     //            return IMAGE_SIZE + PADDING_AROUND_INFO_IMAGE; // The extra space is padding around the cell
     //        }
     //    }
-    return [outlineView rowHeight];
+    CGFloat answer;
+    if (_catalystMode) {
+         answer = [outlineView rowHeight];
+    }
+    else {
+        answer = 17;
+    }
+    return answer;
 }
 
 //- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
@@ -257,7 +265,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             [_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
-            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, nil]];
+            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] Catalyst:_catalystMode];
             [_myPathBarControl setURL: [_treeNodeSelected url]];
@@ -505,7 +513,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         int i= 0;
         for (NSURL *pastedItem in files) {
             //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
-            TreeItem *newItem = [TreeItem treeItemForURL: pastedItem];
+            TreeItem *newItem = [TreeItem treeItemForURL: pastedItem parent:_treeNodeSelected];
             [tableData insertObject:newItem atIndex:row+i];
             [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
             //NSLog(@"Copy Item %@", [pastedItem lastPathComponent]);
