@@ -6,6 +6,44 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
+#import "Definitions.h"
+
+@interface ValueToBoolean : NSValueTransformer
+
+@end
+
+@implementation ValueToBoolean
+
++ (Class)transformedValueClass
+{
+    return [NSNumber class];
+}
++ (BOOL)allowsReverseTransformation
+{
+    return NO;
+}
+- (id)transformedValue:(id)value
+{
+    NSNumber *output;
+    if (value == nil) return nil;
+
+    // Attempt to get a reasonable value from the
+    // value object.
+    if ([value respondsToSelector: @selector(intValue)]) {
+        // handles NSString and NSNumber
+        int test = [value intValue];
+        output = [NSNumber numberWithBool:(test!=0)];
+    } else {
+        [NSException raise: NSInternalInconsistencyException
+                    format: @"Value (%@) does not respond to -intValue.",
+         [value class]];
+    }
+
+    return output;
+}
+
+@end
+
 #import "DuplicateFindSettingsViewController.h"
 
 @interface DuplicateFindSettingsViewController ()
@@ -14,21 +52,58 @@
 
 @implementation DuplicateFindSettingsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithWindowNibName:(NSString *)windowNibName
 {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    // Use the identifier @"wndDuplicateFinderSettingsWindow"
+    if (windowNibName==nil)
+        windowNibName = @"DuplicatesFindSettings";
+    self = [super initWithWindowNibName:windowNibName];
     if (self) {
         // Initialization code here.
+        ValueToBoolean *fToCTransformer;
+
+        // create an autoreleased instance of our value transformer
+        fToCTransformer = [[ValueToBoolean alloc] init];
+
+        // register it with the name that we refer to it with
+        [NSValueTransformer setValueTransformer:fToCTransformer
+                                        forName:@"ValueToBoolean"];
     }
     return self;
 }
 
 - (IBAction)addRemoveFolderButton:(id)sender {
+    // Determine if + or -
+    NSInteger PlusOrMinus = [(NSSegmentedControl*)sender selectedSegment];
+    if (PlusOrMinus==0) {/* This is an Add */
+        NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
+        [SelectDirectoryDialog setTitle:@"Select a new Directory"];
+        [SelectDirectoryDialog setCanChooseFiles:NO];
+        [SelectDirectoryDialog setCanChooseDirectories:YES];
+        NSInteger returnOption =[SelectDirectoryDialog runModal];
+        if (returnOption == NSFileHandlingPanelOKButton) {
+            NSString *rootPath = [[SelectDirectoryDialog URL] path];
+            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootPath forKey:@"path"];
+            [_pathContents addObject:newItem];
+        }
+    }
+    else { /* This is a subtract */
+        //NSDictionary *dict = [_objectController content];
+        //NSIndexSet *selected = [dict objectForKey:@"selectedPaths"];
+        //NSArray *selectedObjs = [_pathContents selectedObjects];
+        NSIndexSet *selected = [_pathContents selectionIndexes];
+        [_pathContents removeObjectsAtArrangedObjectIndexes:selected];
+        [_pathContents commitEditing];
+
+    }
 }
 
 - (IBAction)pbOKAction:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:nil];
+    [self close];
 }
 
 - (IBAction)pbCancelAction:(id)sender {
+    [self close];
 }
 @end

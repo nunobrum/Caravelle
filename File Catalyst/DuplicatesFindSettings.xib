@@ -11,17 +11,22 @@
                 <outlet property="cbFileName" destination="WUj-X9-Dj9" id="1F4-wd-kaK"/>
                 <outlet property="cbFileSize" destination="SyL-or-fyH" id="YLa-l4-MOt"/>
                 <outlet property="folderList" destination="WUc-LE-lTE" id="is2-qT-Uqt"/>
+                <outlet property="objectController" destination="WyN-Pv-1ez" id="mVh-iV-jEb"/>
+                <outlet property="pathContents" destination="Hj2-tu-aZ1" id="O50-js-kVR"/>
                 <outlet property="rbGroupContents" destination="rSc-X1-VaG" id="8GL-R5-Xqh"/>
                 <outlet property="rbGroupDates" destination="Qwg-rO-vKG" id="zoS-F7-V2h"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="nqL-0f-SGg"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+        <window identifier="wndDuplicateFinderSettingsWindow" title="Duplicate Find Settings" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="505" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <value key="minSize" type="size" width="505" height="270"/>
+            <value key="maxSize" type="size" width="505" height="270"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="505" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -52,8 +57,14 @@
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                             <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                            <connections>
+                                                <binding destination="Hj2-tu-aZ1" name="value" keyPath="arrangedObjects.path" id="wNi-e1-IWw"/>
+                                            </connections>
                                         </tableColumn>
                                     </tableColumns>
+                                    <connections>
+                                        <binding destination="Hj2-tu-aZ1" name="content" keyPath="arrangedObjects" id="eBW-0Z-5hT"/>
+                                    </connections>
                                 </tableView>
                             </subviews>
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -85,7 +96,7 @@
                             <action selector="addRemoveFolderButton:" target="-2" id="0Hf-VY-MY8"/>
                         </connections>
                     </segmentedControl>
-                    <button verticalHuggingPriority="750" placeholderIntrinsicWidth="70" placeholderIntrinsicHeight="21" translatesAutoresizingMaskIntoConstraints="NO" id="18d-gO-oDa">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="18d-gO-oDa">
                         <rect key="frame" x="409" y="10" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QWc-UU-cEa">
@@ -99,7 +110,7 @@ Gw
                             <action selector="pbCancelAction:" target="-2" id="aag-Rz-Zlv"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" placeholderIntrinsicWidth="70" placeholderIntrinsicHeight="21" translatesAutoresizingMaskIntoConstraints="NO" id="lK6-6d-ysj">
+                    <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lK6-6d-ysj">
                         <rect key="frame" x="327" y="10" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MPf-h8-hHK">
@@ -120,11 +131,11 @@ DQ
                         <tabViewItems>
                             <tabViewItem label="Generic" identifier="1" id="cV2-yb-Enb">
                                 <view key="view" id="6YP-aF-WXK">
-                                    <rect key="frame" x="10" y="33" width="217" height="170"/>
+                                    <rect key="frame" x="10" y="33" width="217" height="174"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="WUj-X9-Dj9">
-                                            <rect key="frame" x="15" y="151" width="59" height="18"/>
+                                            <rect key="frame" x="15" y="155" width="59" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Name" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="64z-Px-J4O">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -132,7 +143,7 @@ DQ
                                             </buttonCell>
                                         </button>
                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="SyL-or-fyH">
-                                            <rect key="frame" x="15" y="131" width="131" height="18"/>
+                                            <rect key="frame" x="15" y="135" width="131" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="Size" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="J5D-UP-xJz">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -140,10 +151,10 @@ DQ
                                             </buttonCell>
                                         </button>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rSc-X1-VaG">
-                                            <rect key="frame" x="36" y="10" width="221" height="18"/>
+                                            <rect key="frame" x="36" y="14" width="221" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="108" height="18"/>
+                                            <size key="cellSize" width="52" height="18"/>
                                             <size key="intercellSpacing" width="4" height="2"/>
                                             <buttonCell key="prototype" type="radio" title="Created" imagePosition="left" alignment="left" inset="2" id="TSK-SA-LF0">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -163,12 +174,15 @@ DQ
                                                     </buttonCell>
                                                 </column>
                                             </cells>
+                                            <connections>
+                                                <binding destination="WyN-Pv-1ez" name="enabled" keyPath="selection.compareContents" id="PjL-CS-rQa"/>
+                                            </connections>
                                         </matrix>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qwg-rO-vKG">
-                                            <rect key="frame" x="36" y="52" width="130" height="58"/>
+                                            <rect key="frame" x="36" y="56" width="130" height="58"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="130" height="18"/>
+                                            <size key="cellSize" width="77" height="18"/>
                                             <size key="intercellSpacing" width="4" height="2"/>
                                             <buttonCell key="prototype" type="radio" title="Created" imagePosition="left" alignment="left" inset="2" id="RsM-Hs-M7b">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -187,25 +201,37 @@ DQ
                                                     <buttonCell type="radio" title="Added" imagePosition="left" alignment="left" inset="2" id="tne-JN-kld">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
+                                                        <connections>
+                                                            <binding destination="-2" name="enabled" keyPath="cbFileDate.intValue" id="vK9-VT-cdR"/>
+                                                        </connections>
                                                     </buttonCell>
                                                 </column>
                                             </cells>
+                                            <connections>
+                                                <binding destination="WyN-Pv-1ez" name="enabled" keyPath="selection.compareDate" id="TOf-l0-QGg"/>
+                                            </connections>
                                         </matrix>
                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="nKn-Lb-n9x">
-                                            <rect key="frame" x="15" y="30" width="153" height="18"/>
+                                            <rect key="frame" x="15" y="34" width="153" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                             <buttonCell key="cell" type="check" title="File Contents" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="hZz-z7-gAC">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
+                                            <connections>
+                                                <binding destination="WyN-Pv-1ez" name="value" keyPath="selection.compareContents" id="8tf-mq-gBg"/>
+                                            </connections>
                                         </button>
                                         <button translatesAutoresizingMaskIntoConstraints="NO" id="X53-fW-uEU">
-                                            <rect key="frame" x="15" y="111" width="141" height="18"/>
+                                            <rect key="frame" x="15" y="115" width="141" height="18"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                            <buttonCell key="cell" type="check" title="File Date" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="NAt-5y-XZJ">
+                                            <buttonCell key="cell" type="check" title="File Date" bezelStyle="regularSquare" imagePosition="left" alignment="left" state="on" inset="2" id="NAt-5y-XZJ">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
+                                            <connections>
+                                                <binding destination="WyN-Pv-1ez" name="value" keyPath="selection.compareDate" id="Kma-k4-Jmn"/>
+                                            </connections>
                                         </button>
                                     </subviews>
                                     <constraints>
@@ -231,13 +257,13 @@ DQ
                             </tabViewItem>
                             <tabViewItem label="Photos" identifier="2" id="sLc-0p-bPT">
                                 <view key="view" id="1I6-ZW-xqi">
-                                    <rect key="frame" x="10" y="33" width="217" height="169"/>
+                                    <rect key="frame" x="10" y="33" width="217" height="174"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
                             <tabViewItem label="Music" identifier="" id="17a-MB-JZv">
                                 <view key="view" id="Vun-Ye-0Dh">
-                                    <rect key="frame" x="10" y="33" width="217" height="169"/>
+                                    <rect key="frame" x="10" y="33" width="217" height="174"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 </view>
                             </tabViewItem>
@@ -261,6 +287,22 @@ DQ
                     <constraint firstAttribute="bottom" secondItem="sMo-3g-EA5" secondAttribute="bottom" constant="17" id="mkb-9V-yIz"/>
                 </constraints>
             </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="pWH-rF-2uX"/>
+            </connections>
         </window>
+        <objectController automaticallyPreparesContent="YES" id="WyN-Pv-1ez">
+            <declaredKeys>
+                <string>compareDate</string>
+                <string>compareContents</string>
+                <string>compareName</string>
+                <string>compareSize</string>
+            </declaredKeys>
+        </objectController>
+        <arrayController id="Hj2-tu-aZ1" userLabel="Path Array Controller">
+            <declaredKeys>
+                <string>path</string>
+            </declaredKeys>
+        </arrayController>
     </objects>
 </document>

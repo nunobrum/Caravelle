@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface DuplicateFindSettingsViewController : NSViewController
+@interface DuplicateFindSettingsViewController : NSWindowController
 @property (strong) IBOutlet NSTableView *folderList;
 
 @property (strong) IBOutlet NSButton *cbFileName;
@@ -18,7 +18,9 @@
 
 @property (strong) IBOutlet NSMatrix *rbGroupContents;
 @property (strong) IBOutlet NSMatrix *rbGroupDates;
+@property (strong) IBOutlet NSObjectController *objectController;
 
+@property (strong) IBOutlet NSArrayController *pathContents;
 
 - (IBAction)addRemoveFolderButton:(id)sender;
 - (IBAction)pbOKAction:(id)sender;
