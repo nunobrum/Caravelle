@@ -82,8 +82,8 @@
         [SelectDirectoryDialog setCanChooseDirectories:YES];
         NSInteger returnOption =[SelectDirectoryDialog runModal];
         if (returnOption == NSFileHandlingPanelOKButton) {
-            NSString *rootPath = [[SelectDirectoryDialog URL] path];
-            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootPath forKey:@"path"];
+            NSURL *rootURL = [SelectDirectoryDialog URL];
+            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL forKey:@"path"];
             [_pathContents addObject:newItem];
         }
     }
@@ -99,7 +99,36 @@
 }
 
 - (IBAction)pbOKAction:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:nil];
+    DuplicateOptions options = DupCompareNone;
+    options |= ([_cbFileName state]) ? DupCompareName : 0;
+    options |= ([_cbFileSize state]) ? DupCompareSize : 0;
+    if ([_cbFileDate state]) {
+        NSString *title = [[_rbGroupDates selectedCell] title];
+        if ([title isEqualToString:@"Modified"])
+            options |= DupCompareDateModified;
+        else if ([title isEqualToString:@"Added"])
+            options |= DupCompareDateAdded;
+        else if ([title isEqualToString:@"Created"])
+            options |= DupCompareDateCreated;
+    }
+    if ([_cbFileContents state]) {
+        NSString *title = [[_rbGroupContents selectedCell] title];
+        if ([title isEqualToString:@"MD5"])
+            options |= DupCompareContentsMD5;
+        else if ([title isEqualToString:@"Full"])
+            options |= DupCompareContentsFull;
+
+    }
+    NSNumber *Options = [NSNumber numberWithInteger:options];
+    NSMutableArray *pathList = [[NSMutableArray alloc] init];
+    for (NSDictionary *objdict in [_pathContents content]) {
+        [pathList addObject: [objdict objectForKey:@"path"]];
+    }
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          Options, kOptionsKey,
+                          pathList, kRootPathKey,
+                          nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:info];
     [self close];
 }
 
