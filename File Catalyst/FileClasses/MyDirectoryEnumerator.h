@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "Definitions.h"
 #import "TreeItem.h"
 
 @interface MyDirectoryEnumerator : NSDirectoryEnumerator
 
--(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BOOL) catalystMode;
+-(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode;
 
 @end

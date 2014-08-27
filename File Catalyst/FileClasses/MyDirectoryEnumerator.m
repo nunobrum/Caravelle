@@ -11,15 +11,19 @@
 
 @implementation MyDirectoryEnumerator
 
--(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BOOL) catalystMode {
-     NSDirectoryEnumerationOptions dirEnumOptions;
-    if (catalystMode == YES) {
+-(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode {
+     NSDirectoryEnumerationOptions dirEnumOptions = 0;
+    if (viewMode == BViewCatalystMode) {
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles;
     }
-    else {
+    else if (viewMode == BViewBrowserMode){
         dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles;
+    } else if (viewMode == BViewDuplicateMode){
+        dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
-
+    if (dirEnumOptions==0)  {
+        NSLog(@"Ooops! This should be happening. No options set in the Enumeration");
+    }
     NSFileManager *localFileManager=[[NSFileManager alloc] init];
 
 
@@ -34,7 +38,7 @@
                                                                               nil]
                                                                      options:dirEnumOptions
                                                                 errorHandler:nil];
-    
+
     //self = [super init];
     return self;
 }
