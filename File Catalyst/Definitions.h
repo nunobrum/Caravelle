@@ -12,6 +12,10 @@
 extern NSString *notificationStatusUpdate;
 extern NSString *kSelectedFilesKey;
 
+extern NSString *notificationStartDuplicateFind;
+extern NSString *notificationDuplicateFindFinish;
+extern NSString *kDuplicateList;
+
 extern NSString *notificationCatalystRootUpdate;
 extern NSString *kRootPathKey;
 
@@ -27,8 +31,26 @@ extern NSString *kTreeRootKey;
 extern NSString *kSenderKey;
 extern NSString *kModeKey;
 extern NSString *kScanCountKey;
+extern NSString *kOptionsKey;
 
 extern NSFileManager *appFileManager;
+
+typedef NS_ENUM(NSInteger, BViewMode) {
+    BViewBrowserMode = 1,
+    BViewCatalystMode,
+    BViewDuplicateMode
+};
+
+typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
+    DupCompareNone         = 0,
+    DupCompareName         = 1 << 0,
+    DupCompareSize         = 1 << 1,
+    DupCompareDateAdded    = 1 << 2,
+    DupCompareDateCreated  = 1 << 3,
+    DupCompareDateModified = 1 << 4,
+    DupCompareContentsFull = 1 << 5,
+    DupCompareContentsMD5  = 1 << 6
+};
 
 #define UPDATE_CADENCE_PER_FILE 100
 
