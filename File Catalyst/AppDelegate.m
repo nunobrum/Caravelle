@@ -6,16 +6,22 @@
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
+#include "Definitions.h"
+
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
 #import "TreeScanOperation.h"
 #import "FileUtils.h"
+#import "DuplicateFindOperation.h"
 
-#include "Definitions.h"
+#import "DuplicateFindSettingsViewController.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 NSString *kSelectedFilesKey=@"FilesSelected";
+
+NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
+NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 
 NSString *notificationCatalystRootUpdate=@"RootUpdate";
 NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
@@ -37,6 +43,8 @@ NSFileManager *appFileManager;
     NSOperationQueue *queue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 	NSTimer	*timer;                  // update timer for progress indicator
     NSNumber *scanCount;
+    DuplicateFindSettingsViewController *duplicateSettingsWindow;
+
 }
 
 // -------------------------------------------------------------------------------
@@ -88,6 +96,8 @@ NSFileManager *appFileManager;
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
     [center addObserver:self selector:@selector(handleOperationRequest:) name:notificationDoFileOperation object:nil];
+    [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
+    [center addObserver:self selector:@selector(duplicateFindFinish:) name:notificationDuplicateFindFinish object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
@@ -95,12 +105,12 @@ NSFileManager *appFileManager;
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [myLeftView setCatalystMode:YES];
+        [myLeftView setViewMode:BViewBrowserMode];
         [myLeftView setFoldersDisplayed:YES];
         //[myLeftView setParent:self];
     }
     if ([myRightView isKindOfClass:[BrowserController class]]) {
-        [myRightView setCatalystMode:NO];
+        [myRightView setViewMode:BViewBrowserMode];
         [myRightView setFoldersDisplayed:YES];
         //[myRightView setParent:self];
     }
@@ -122,7 +132,7 @@ NSFileManager *appFileManager;
         NSString *homeDir = NSHomeDirectory();
 
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
-        if (1) {
+        if (0) {
         NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 homeDir,kRootPathKey,
                                 myLeftView, kSenderKey,
@@ -134,8 +144,8 @@ NSFileManager *appFileManager;
         [(BrowserController*)myLeftView startBusyAnimations];
         }
         else {
+            [myLeftView setViewMode:BViewBrowserMode];
             [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
-            [myLeftView setCatalystMode:NO];
         }
     }
     /* Ajust the subView window Sizes */
@@ -255,34 +265,11 @@ NSFileManager *appFileManager;
 
 
 - (IBAction)FindDuplicates:(id)sender {
-    comparison_options_t options;
-    FileCollection *duplicates;
-    FileCollection *collection = [(BrowserController*)myLeftView concatenateAllCollections];
-    // This will eliminate any results from previous searches
-    [collection resetDuplicateLists];
-    
-    //Sets all options to FALSE;
-    memset(&options,0,sizeof(comparison_options_t));
-    
-//    options.names = [_chkFilename state];
-//    options.contents = [_chkContents state];
-//    options.sizes = [_chkSize state];
-//    options.dates = [_chkModifiedDate state];
-//    options.mp3_id3 = [_chkMP3_ID state];
-//    options.photo_exif = [_chkPhotoEXIF state];
-    
-    duplicates = [collection findDuplicates:options];
-    TreeRoot *root = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno) {
-        // Put Code here
-        //[[self StatusText] setIntegerValue:fileno];
-    }];
-    [(BrowserController*)myLeftView addTreeRoot:root];
+    if (duplicateSettingsWindow==nil)
+        duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
+    //NSWindow *wnd = [duplicateSettingsWindow window];
+    [duplicateSettingsWindow showWindow:self];
 
-    [(BrowserController*)myLeftView refreshTrees];
-    [_toolbarDeleteButton setEnabled:NO];
-    
-    //[_LeftOutlineView setDataSource:_LeftDataSrc];
-    //[_LeftOutlineView reloadItem:nil reloadChildren:YES];
 }
 
 
@@ -317,6 +304,21 @@ NSFileManager *appFileManager;
     else {
         [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
     }
+}
+
+- (void) startDuplicateFind:(NSNotification*)theNotification {
+    NSLog(@"Starting Duplicate Find");
+
+    NSDictionary *notifInfo = [theNotification userInfo];
+	// start the GetPathsOperation with the root path to start the search
+	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
+	[queue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
+
+
+}
+
+- (void) duplicateFindFinish:(NSNotification*)theNotification {
+    NSLog(@"Duplicate Find Finish");
 }
 
 #pragma mark File Manager Delegate - Copy
