@@ -140,7 +140,7 @@
     rootDir.children = [[NSMutableArray new] init];
     rootDir.url = [NSURL URLWithString:rootPath];
     NSLog(@"Scanning directory %@", rootDir.path);
-    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir->_url WithMode:YES];
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir->_url WithMode:BViewCatalystMode];
     for (NSURL *theURL in dirEnumerator) {
         [rootDir addURL:theURL];
     } // for

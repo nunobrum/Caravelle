@@ -17,7 +17,7 @@ NSString *const kvoTreeBranchPropertyChildren = @"childrenArray";
 
 NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     NSMutableArray *children = [[NSMutableArray alloc] init];
-    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:NO];
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewBrowserMode];
 
     for (NSURL *theURL in dirEnumerator) {
         TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:parent];
@@ -370,7 +370,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             item.tag |= tagTreeItemDirty; /* Mark all items as dirty so that at the end of the comparison ones dirty are deleted */
     }
     //NSLog(@"Scanning directory %@", self.path);
-    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:NO];
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
     for (NSURL *theURL in dirEnumerator) {
         TreeItem *item = [self itemWithURL:theURL];
