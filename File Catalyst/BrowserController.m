@@ -49,7 +49,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
-    self->_catalystMode = YES;
+    self->_viewMode = BViewBrowserMode;
     self->_filterText = @"";
     self->tableInfo = [NSMutableArray arrayWithObjects: SYSTEM_COLUMNS, nil];
     [self->tableInfo addObjectsFromArray:[NSArray arrayWithObjects: DEFAULT_COLUMNS, nil]];
@@ -107,7 +107,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         ret = [item branchAtIndex:index];
     }
-    if (!_catalystMode) {
+    if (_viewMode!=BViewCatalystMode) {
         // Use KVO to observe for changes of its children Array
         if (![_observedVisibleItems containsObject:ret]) {
             if ([ret isKindOfClass:[TreeBranch class]]) {
@@ -144,7 +144,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // This is not needed now since the Tree View is not displaying files in this application
         }
         else if ([item isKindOfClass:[TreeBranch class]]) { // it is a directory
-            if (_catalystMode) {
+            if (_viewMode==BViewCatalystMode) {
                 NSString *subTitle;
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
                 subTitle = [NSString stringWithFormat:@"%ld Files %@",
@@ -194,7 +194,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     //        }
     //    }
     CGFloat answer;
-    if (_catalystMode) {
+    if (_viewMode==BViewCatalystMode) {
          answer = [outlineView rowHeight];
     }
     else {
@@ -267,7 +267,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Updates the _treeNodeSelected */
             [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] Catalyst:_catalystMode];
+            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] mode:_viewMode];
             [_myPathBarControl setURL: [_treeNodeSelected url]];
             [self refreshDataView];
             /* Sends an Array with one Object */
@@ -313,7 +313,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
-        if (_catalystMode==NO && [theFile isKindOfClass:[TreeBranch class]]){
+        if (_viewMode==BViewBrowserMode && [theFile isKindOfClass:[TreeBranch class]]){
             //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
             cellView.textField.objectValue = @"--";
         }
@@ -676,7 +676,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) refreshTrees {
-    if (_catalystMode) {
+    if (_viewMode!=BViewBrowserMode) {
        // In catalyst Mode, there is no automatic Update
     }
     else {
@@ -856,7 +856,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     [SelectDirectoryDialog setCanChooseDirectories:YES];
     NSInteger returnOption =[SelectDirectoryDialog runModal];
     if (returnOption == NSFileHandlingPanelOKButton) {
-        if (_catalystMode){
+        if (_viewMode==BViewCatalystMode){
             NSString *rootPath = [[SelectDirectoryDialog URL] path];
             NSDictionary *answer = [NSDictionary dictionaryWithObjectsAndKeys:
                                     rootPath,kRootPathKey,
@@ -883,7 +883,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     TreeBranch *node = [self selectFolderByURL: newURL];
     if (NULL == node ) {
         /* The path is not contained existing roots */
-        if (_catalystMode==NO) {
+        if (_viewMode==BViewBrowserMode) {
             /* Instead of making a clever update of the tree
              Just remove the existing one and creates one from scratch */
             [self removeRootWithIndex:0];

@@ -39,7 +39,7 @@
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
-@property (getter =  getCatalystMode, setter = setCatalystMode:) BOOL catalystMode;
+@property (getter =  viewMode, setter = setViewMode:) BViewMode viewMode;
 @property TreeBranch *treeNodeSelected;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
