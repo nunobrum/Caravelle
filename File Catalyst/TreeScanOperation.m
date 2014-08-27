@@ -19,6 +19,8 @@ NSString *kTreeRootKey = @"treeRoot";
 
 NSString *kRootPathKey = @"RootPath";
 
+NSString *kOptionsKey = @"Options";
+
 // key for obtaining the associated TreeRoot
 NSString *kSenderKey = @"Sender";
 
@@ -62,7 +64,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
             rootDir.children = [[NSMutableArray new] init];
             rootDir.url = [NSURL URLWithString:rootPath];
             NSLog(@"From thread ! Scanning directory %@", rootDir.path);
-            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir.url WithMode:[mode boolValue]];
+            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir.url WithMode:[mode integerValue]];
             for (NSURL *theURL in dirEnumerator) {
                 [rootDir addURL:theURL];
                 if ([self isCancelled])

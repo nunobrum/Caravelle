@@ -6,14 +6,15 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
+#import "Definitions.h"
 #import "PathControlManager.h"
 #import "FileUtils.h"
 
 @implementation PathControlManager
 
--(void) setRootPath:(NSURL*) rootPath Catalyst:(BOOL) catalystMode {
+-(void) setRootPath:(NSURL*) rootPath mode:(BViewMode) viewMode {
     _rootPath = [rootPath path];
-    if (catalystMode)
+    if (viewMode==BViewCatalystMode)
         _rootLevel = [[rootPath pathComponents] count];
     else
         _rootLevel = 0;

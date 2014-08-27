@@ -7,13 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Definitions.h"
 
 @interface PathControlManager : NSPathControl {
     NSString *_rootPath;
     NSInteger _rootLevel;
 }
 
--(void) setRootPath:(NSURL*) rootPath Catalyst:(BOOL) catalystMode;
+-(void) setRootPath:(NSURL*) rootPath mode:(BViewMode) viewMode;
 -(void) setURL:(NSURL*)aURL;
 -(NSURL*) URL;
 
