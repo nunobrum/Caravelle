@@ -174,26 +174,28 @@
     return fileArray;
 }
 
--(FileCollection *) findDuplicates: (comparison_options_t)options {
+-(FileCollection *) findDuplicates: (DuplicateOptions) options operation:(NSOperation*)operation {
     NSInteger i, j;
     NSInteger max_files = [fileArray count];
     BOOL duplicate;
     FileCollection *duplicateList = [[FileCollection new] init];
     
-    if (options.sizes==TRUE) {
+    if (options & DupCompareSize) {
         [self sortByFileSize];
     }
     
     FileInformation *FileA, *FileB;
     for (i=0;i<max_files;i++) {
+        if ([operation isCancelled])
+            return nil;
         FileA = [fileArray objectAtIndex:i];
         for (j=i+1; j<max_files; j++) {
             FileB = [fileArray objectAtIndex:j];
             duplicate = TRUE;
-            if (options.names==TRUE && [FileA equalName: FileB]==FALSE) {
+            if (options & DupCompareName && [FileA equalName: FileB]==FALSE) {
                 duplicate= FALSE;
             }
-            else if (options.sizes==TRUE) {
+            else if (options & DupCompareSize) {
                 NSComparisonResult result = [FileA compareSize:FileB];
                 if (result ==NSOrderedAscending) {
                     j = max_files; // This will make the inner cycle to end
@@ -203,16 +205,16 @@
                     duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                 }
             }
-            if (duplicate==TRUE && options.dates== TRUE && [FileA equalDate:FileB]==FALSE) {
+            if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA equalDate:FileB]==FALSE) {
                 duplicate = FALSE;
             }
-            if (duplicate==TRUE && options.contents==TRUE) {
+            if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {
                 // First tries to make the difference using MD5 checksums
                 if ([FileA compareMD5checksum:FileB]==FALSE) {
                     duplicate = FALSE;
                 }
                 // If the MD5 Matches, then it must compare the full contents
-                else if (options.MD5_only || [FileA compareContents:FileB]==FALSE) {
+                else if ((options&DupCompareContentsMD5) || [FileA compareContents:FileB]==FALSE) {
                     duplicate = FALSE;
                 }
             }

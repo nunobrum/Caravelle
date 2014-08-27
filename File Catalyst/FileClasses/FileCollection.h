@@ -9,17 +9,8 @@
 #ifndef FileCatalyst1_FileCollection_h
 #define FileCatalyst1_FileCollection_h
 
+#import "Definitions.h"
 #import "FileInformation.h"
-
-typedef struct {
-    BOOL names;
-    BOOL sizes;
-    BOOL contents;
-    BOOL dates;
-    BOOL mp3_id3;
-    BOOL photo_exif;
-    BOOL MD5_only;
-} comparison_options_t;
 
 @interface FileCollection : NSObject {
 @private
@@ -40,7 +31,7 @@ typedef struct {
 -(void) addFileByURL: (NSURL *) anURL;
 -(void) addFiles: (NSMutableArray *)otherArray;
 
--(FileCollection*) findDuplicates: (comparison_options_t)options;
+-(FileCollection*) findDuplicates: (DuplicateOptions)options operation:(NSOperation*)operation;
 
 -(BOOL) isRootContainedInPath:(NSString *)otherRoot;
 -(BOOL) rootContainsPath:(NSString *)otherRoot;
