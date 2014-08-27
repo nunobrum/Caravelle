@@ -71,6 +71,9 @@
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
 		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
 		3CF645B919A6327A00DD53F5 /* myTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B819A6327A00DD53F5 /* myTableView.m */; };
+		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
+		3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
+		3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
 /* End PBXBuildFile section */
 
@@ -172,6 +175,11 @@
 		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeScanOperation.m; sourceTree = "<group>"; };
 		3CF645B719A6327A00DD53F5 /* myTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myTableView.h; sourceTree = "<group>"; };
 		3CF645B819A6327A00DD53F5 /* myTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myTableView.m; sourceTree = "<group>"; };
+		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
+		3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateFindSettingsViewController.h; sourceTree = "<group>"; };
+		3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateFindSettingsViewController.m; sourceTree = "<group>"; };
+		3CF6C8D719ACA4D100968765 /* DuplicateFindOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateFindOperation.h; path = FileClasses/DuplicateFindOperation.h; sourceTree = "<group>"; };
+		3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateFindOperation.m; path = FileClasses/DuplicateFindOperation.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -282,6 +290,7 @@
 				3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */,
 				3C29463218F9B833002B633C /* TreeClasses */,
 				3C29463118F9B81C002B633C /* FileClasses */,
+				3CF645BF19AB6DA300DD53F5 /* DuplicatedFindClasses */,
 				3CEA677618F87CE50080C4FC /* IconResources */,
 				3CEA675A18F87C2F0080C4FC /* Images.xcassets */,
 				3CEA674918F87C2F0080C4FC /* Supporting Files */,
@@ -378,6 +387,18 @@
 				3CF645B819A6327A00DD53F5 /* myTableView.m */,
 			);
 			name = BrowserViewClasses;
+			sourceTree = "<group>";
+		};
+		3CF645BF19AB6DA300DD53F5 /* DuplicatedFindClasses */ = {
+			isa = PBXGroup;
+			children = (
+				3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */,
+				3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */,
+				3CF6C8D719ACA4D100968765 /* DuplicateFindOperation.h */,
+				3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */,
+				3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */,
+			);
+			name = DuplicatedFindClasses;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -486,6 +507,7 @@
 				3C29462F18F9B570002B633C /* ToolbarSitesFolderIcon.icns in Resources */,
 				3C29461A18F9B570002B633C /* GenericSharepoint.icns in Resources */,
 				3C29461D18F9B570002B633C /* MovieFolderIcon.icns in Resources */,
+				3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */,
 				3C29462B18F9B570002B633C /* ToolbarMovieFolderIcon.icns in Resources */,
 				3C29462418F9B570002B633C /* ToolbarDesktopFolderIcon.icns in Resources */,
 				3C29462018F9B570002B633C /* ToolbarAdvanced.icns in Resources */,
@@ -534,9 +556,11 @@
 				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
+				3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
+				3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
