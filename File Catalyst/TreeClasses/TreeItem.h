@@ -10,13 +10,12 @@
 //#import "FileInformation.h"
 
 
-enum {
-    tagTreeItemDirty = (1UL << 0),
-    tagTreeItemMarked = (1UL << 1),
+typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
+    tagTreeItemDirty   = (1UL << 0),
+    tagTreeItemMarked  = (1UL << 1),
     tagTreeItemDropped = (1UL << 2),
-    tagTreeItemToMove = (1UL << 2)
+    tagTreeItemToMove  = (1UL << 3),
 };
-typedef NSUInteger TreeItemTagEnum;
 
 @protocol TreeProtocol <NSObject>
 
