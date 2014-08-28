@@ -323,7 +323,9 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         TreeItem *child = [cursor itemWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
-            child = [[TreeBranch new] initWithURL:theURL parent:cursor];
+            NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
+            child = [[TreeBranch new] initWithURL:pathURL parent:cursor];
+            [cursor.children addObject:child];
         }
         cursor = (TreeBranch*)child;
         if (cursor.children==nil) {
