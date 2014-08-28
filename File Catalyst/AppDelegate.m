@@ -37,6 +37,7 @@ NSString *opMoveOperation =@"MoveOperation";
 NSFileManager *appFileManager;
 
 @implementation AppDelegate {
+    ApplicationwMode applicationMode;
     NSArray *selectedFiles;
     id  selectedView;
 
@@ -44,6 +45,7 @@ NSFileManager *appFileManager;
 	NSTimer	*timer;                  // update timer for progress indicator
     NSNumber *scanCount;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
+    FileCollection *duplicates;
 
 }
 
@@ -132,6 +134,7 @@ NSFileManager *appFileManager;
         NSString *homeDir = NSHomeDirectory();
 
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+        [(BrowserController*)myRightView refreshTrees];
         if (0) {
         NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 homeDir,kRootPathKey,
@@ -147,6 +150,7 @@ NSFileManager *appFileManager;
             [myLeftView setViewMode:BViewBrowserMode];
             [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
         }
+        [(BrowserController*)myLeftView refreshTrees];
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
@@ -194,6 +198,7 @@ NSFileManager *appFileManager;
         BrowserController *BView =[notifData valueForKey: kSenderKey];
         [BView addTreeRoot:receivedTree];
         [BView stopBusyAnimations];
+        [BView refreshTrees];
         // set the number of images found indicator string
         [_StatusBar setTitle:@"Received data from Thread"];
     }
@@ -278,28 +283,41 @@ NSFileManager *appFileManager;
     NSDictionary *receivedData = [theNotification userInfo];
     selectedFiles = [receivedData objectForKey:kSelectedFilesKey];
     selectedView = [theNotification object];
+
     if (selectedFiles != nil) {
         NSInteger num_files=0;
         NSInteger total_size=0;
         NSInteger num_directories=0;
-        for (TreeItem *item in selectedFiles ) {
-            if ([item isKindOfClass:[TreeLeaf class]]) {
-                num_files++;
-                total_size += [(TreeLeaf*)item filesize];
+        if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
+            FileCollection *selectedDuplicates = [[FileCollection alloc] init];
+            for (TreeItem *item in selectedFiles ) {
+                [selectedDuplicates concatenateFileCollection: [duplicates duplicatesInPath:[item path]]];
             }
-            else if ([item isKindOfClass:[TreeBranch class]]) {
-                num_directories++;
-                total_size += [(TreeBranch*)item filesize];
-            }
+            /* will now populate the Right View with Duplicates*/
+            [myRightView removeAll];
+            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates callback:^(NSInteger fileno){}];
+            [myRightView addTreeRoot:rootDir];
+            [myRightView refreshTrees];
         }
         if ([selectedFiles count]==0) {
-            statusText = [NSString stringWithFormat:@"Ready"];
+            statusText = [NSString stringWithFormat:@"No Files Selected"];
         }
         else {
+            for (TreeItem *item in selectedFiles ) {
+                if ([item isKindOfClass:[TreeLeaf class]]) {
+                    num_files++;
+                    total_size += [(TreeLeaf*)item filesize];
+                }
+                else if ([item isKindOfClass:[TreeBranch class]]) {
+                    num_directories++;
+                    total_size += [(TreeBranch*)item filesize];
+                }
+            }
             NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
-            statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@", num_files, num_directories, sizeText];
+            statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
+                          num_files, num_directories, sizeText];
+            [_StatusBar setTitle: statusText];
         }
-        [_StatusBar setTitle: statusText];
     }
     else {
         [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
@@ -318,6 +336,18 @@ NSFileManager *appFileManager;
 }
 
 - (void) duplicateFindFinish:(NSNotification*)theNotification {
+    NSDictionary *info = [theNotification userInfo];
+    duplicates = [info objectForKey:kDuplicateList];
+    self->applicationMode = ApplicationwModeDuplicate;
+    [myLeftView setViewMode:BViewDuplicateMode];
+    [myRightView setViewMode:BViewDuplicateMode];
+    [myLeftView removeAll];
+    [myRightView removeAll];
+    TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno){}];
+    [myLeftView addTreeRoot:rootDir];
+    [myRightView addTreeRoot:rootDir];
+    [myLeftView refreshTrees];
+    [myRightView refreshTrees];
     NSLog(@"Duplicate Find Finish");
 }
 

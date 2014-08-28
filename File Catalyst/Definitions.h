@@ -41,6 +41,12 @@ typedef NS_ENUM(NSInteger, BViewMode) {
     BViewDuplicateMode
 };
 
+typedef NS_ENUM(NSInteger, ApplicationwMode) {
+    ApplicationwMode2Views = 0, /* Each View is independent of the other */
+    ApplicationwModeDuplicate,
+    ApplicationwModePreview
+};
+
 typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
     DupCompareNone         = 0,
     DupCompareName         = 1 << 0,
