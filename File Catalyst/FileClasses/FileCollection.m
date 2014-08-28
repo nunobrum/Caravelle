@@ -148,13 +148,20 @@
             {
                 NSInteger i;
                 file_path = [fi getPathComponents];
+                if ([file_path count]<ci)
+                    ci = [file_path count];
                 for (i=0; i< ci; i++) {
                     if (NO==[[common_path objectAtIndex:i] isEqualToString:[file_path objectAtIndex:i]]) {
-                        //NSLog(@"%li %@",i, [file_path objectAtIndex:i]);
+                        ci = i;
                         break;
                     }
                 }
-                ci = i+1;
+//                NSRange r;
+//                r.location = 0;
+//                r.length = 0+ci;
+//                rootDirectory = [NSString pathWithComponents:[common_path objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:r]]];
+//                NSLog(@"common path %li %@",ci, rootDirectory);
+
             }
         }
         if (ci==0) {
@@ -163,7 +170,7 @@
         else {
             NSRange r;
             r.location = 0;
-            r.length = 0+ci-1;
+            r.length = 0+ci;
             rootDirectory = [NSString pathWithComponents:[common_path objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:r]]];
         }
     }
@@ -219,7 +226,7 @@
                 }
             }
             if (duplicate) {
-                NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
+                //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
                 [FileA addDuplicate:FileB];
                 // The cycle will end once one duplicate is found
                 // This must be like this in order for the
@@ -237,6 +244,37 @@
         duplicateList->rootDirectory = nil; // It will be calculated next time the rootPath is called
         return duplicateList;
 }
+
+-(FileCollection*) filesInPath:(NSString*) path {
+    FileCollection *newCollection = [[FileCollection new] init];
+    for (FileInformation *finfo in fileArray) {
+        NSString *fpath = finfo.getPath;
+        NSRange result;
+        result = [fpath rangeOfString:path];
+        if (result.location == 0)
+            [newCollection AddFileInformation:finfo];
+
+    }
+    return newCollection;
+}
+
+-(FileCollection*) duplicatesInPath:(NSString*) path {
+    FileCollection *newCollection = [[FileCollection new] init];
+    for (FileInformation *finfo in fileArray) {
+        NSString *fpath = finfo.getPath;
+        NSRange result;
+        result = [fpath rangeOfString:path];
+        if (result.location == 0) {
+            FileInformation *cursor=finfo->duplicate_chain;
+            while (cursor!=finfo) {
+                [newCollection AddFileInformation:cursor];
+                cursor = cursor->duplicate_chain;
+            }
+        }
+    }
+    return newCollection;
+}
+
 
 -(BOOL) isRootContainedInPath:(NSString *)otherRoot {
     NSRange result;

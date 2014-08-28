@@ -32,6 +32,8 @@
 -(void) addFiles: (NSMutableArray *)otherArray;
 
 -(FileCollection*) findDuplicates: (DuplicateOptions)options operation:(NSOperation*)operation;
+-(FileCollection*) filesInPath:(NSString*) path;
+-(FileCollection*) duplicatesInPath:(NSString*) path;
 
 -(BOOL) isRootContainedInPath:(NSString *)otherRoot;
 -(BOOL) rootContainsPath:(NSString *)otherRoot;
