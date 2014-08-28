@@ -97,7 +97,7 @@
                         </connections>
                     </segmentedControl>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="18d-gO-oDa">
-                        <rect key="frame" x="409" y="10" width="82" height="32"/>
+                        <rect key="frame" x="327" y="9" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="QWc-UU-cEa">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -111,7 +111,7 @@ Gw
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lK6-6d-ysj">
-                        <rect key="frame" x="327" y="10" width="82" height="32"/>
+                        <rect key="frame" x="409" y="9" width="82" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MPf-h8-hHK">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -272,15 +272,15 @@ DQ
                 </subviews>
                 <constraints>
                     <constraint firstItem="mAB-09-Aap" firstAttribute="leading" secondItem="jOo-lv-NrI" secondAttribute="trailing" constant="17" id="2vJ-rL-8dH"/>
-                    <constraint firstItem="18d-gO-oDa" firstAttribute="top" secondItem="mAB-09-Aap" secondAttribute="bottom" constant="8" id="2wi-7P-4pg"/>
+                    <constraint firstItem="18d-gO-oDa" firstAttribute="top" secondItem="mAB-09-Aap" secondAttribute="bottom" constant="9" id="2wi-7P-4pg"/>
                     <constraint firstAttribute="trailing" secondItem="mAB-09-Aap" secondAttribute="trailing" constant="20" symbolic="YES" id="9NV-9A-eK9"/>
                     <constraint firstItem="mAB-09-Aap" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="262" id="IgO-hn-Es4"/>
                     <constraint firstItem="jOo-lv-NrI" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="SV2-Gu-Vii"/>
-                    <constraint firstItem="mAB-09-Aap" firstAttribute="trailing" secondItem="18d-gO-oDa" secondAttribute="trailing" id="TVK-az-6A0"/>
+                    <constraint firstItem="mAB-09-Aap" firstAttribute="trailing" secondItem="18d-gO-oDa" secondAttribute="trailing" constant="82" id="TVK-az-6A0"/>
                     <constraint firstItem="jOo-lv-NrI" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="20" symbolic="YES" id="XGY-zE-MLI"/>
                     <constraint firstItem="sMo-3g-EA5" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" id="auV-Je-hQv"/>
                     <constraint firstItem="sMo-3g-EA5" firstAttribute="top" secondItem="jOo-lv-NrI" secondAttribute="bottom" constant="8" symbolic="YES" id="f1a-KF-WJH"/>
-                    <constraint firstItem="18d-gO-oDa" firstAttribute="top" secondItem="sMo-3g-EA5" secondAttribute="top" id="h0k-y5-eR3"/>
+                    <constraint firstItem="18d-gO-oDa" firstAttribute="top" secondItem="sMo-3g-EA5" secondAttribute="top" constant="1" id="h0k-y5-eR3"/>
                     <constraint firstItem="mAB-09-Aap" firstAttribute="top" secondItem="jOo-lv-NrI" secondAttribute="top" id="m8L-kE-RsB"/>
                     <constraint firstAttribute="bottom" secondItem="sMo-3g-EA5" secondAttribute="bottom" constant="17" id="mkb-9V-yIz"/>
                 </constraints>
