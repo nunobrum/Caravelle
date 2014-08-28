@@ -21,6 +21,7 @@
 	md5_byte_t md5_checksum[16];
     bool valid_md5;
     NSString *Type;
+@public
     FileInformation *duplicate_chain;
 }
 
