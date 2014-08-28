@@ -99,7 +99,7 @@ NSFileManager *appFileManager;
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
     [center addObserver:self selector:@selector(handleOperationRequest:) name:notificationDoFileOperation object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
-    [center addObserver:self selector:@selector(duplicateFindFinish:) name:notificationDuplicateFindFinish object:nil];
+    [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
@@ -134,7 +134,7 @@ NSFileManager *appFileManager;
         NSString *homeDir = NSHomeDirectory();
 
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
-        [(BrowserController*)myRightView refreshTrees];
+        [(BrowserController*)myRightView selectFirstRoot];
         if (0) {
         NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                 homeDir,kRootPathKey,
@@ -150,7 +150,7 @@ NSFileManager *appFileManager;
             [myLeftView setViewMode:BViewBrowserMode];
             [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
         }
-        [(BrowserController*)myLeftView refreshTrees];
+        [(BrowserController*)myLeftView selectFirstRoot];
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
@@ -297,7 +297,7 @@ NSFileManager *appFileManager;
             [myRightView removeAll];
             TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates callback:^(NSInteger fileno){}];
             [myRightView addTreeRoot:rootDir];
-            [myRightView refreshTrees];
+            [myRightView selectFirstRoot];
         }
         if ([selectedFiles count]==0) {
             statusText = [NSString stringWithFormat:@"No Files Selected"];
@@ -335,7 +335,7 @@ NSFileManager *appFileManager;
 
 }
 
-- (void) duplicateFindFinish:(NSNotification*)theNotification {
+- (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
     self->applicationMode = ApplicationwModeDuplicate;
@@ -346,9 +346,23 @@ NSFileManager *appFileManager;
     TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno){}];
     [myLeftView addTreeRoot:rootDir];
     [myRightView addTreeRoot:rootDir];
-    [myLeftView refreshTrees];
-    [myRightView refreshTrees];
+    [myLeftView selectFirstRoot];
+    [myRightView selectFirstRoot];
     NSLog(@"Duplicate Find Finish");
+}
+// -------------------------------------------------------------------------------
+//	anyThread_handleLoadedImages:note
+//
+//	This method is called from any possible thread (any NSOperation) used to
+//	update our table view and its data source.
+//
+//	The notification contains the NSDictionary containing the image file's info
+//	to add to the table view.
+// -------------------------------------------------------------------------------
+- (void)anyThread_handleDuplicateFinish:(NSNotification *)note
+{
+	// update our table view on the main thread
+	[self performSelectorOnMainThread:@selector(mainThread_duplicateFindFinish:) withObject:note waitUntilDone:NO];
 }
 
 #pragma mark File Manager Delegate - Copy
