@@ -13,8 +13,6 @@
 #include "Definitions.h"
 
 @interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
-    //TreeItem *_Duplicates;
-    //BOOL extendToSubdirectories;
     NSMutableArray *tableData;
     NSSize iconSize;
     NSString *_filterText;
@@ -23,6 +21,7 @@
     NSSortDescriptor *TableSortDesc;
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_sharedOperationQueue;
+    BOOL blockTableRefresh;
 
 }
 
@@ -94,6 +93,7 @@
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 -(void) removeSelectedDirectory;
+-(void) removeAll;
 -(NSInteger) canAddRoot: (NSString*) rootPath;
 -(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL;

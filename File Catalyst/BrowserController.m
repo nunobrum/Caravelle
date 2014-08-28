@@ -46,6 +46,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    self->blockTableRefresh = NO;
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -107,7 +108,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         ret = [item branchAtIndex:index];
     }
-    if (_viewMode!=BViewCatalystMode) {
+    if (_viewMode==BViewBrowserMode) {
         // Use KVO to observe for changes of its children Array
         if (![_observedVisibleItems containsObject:ret]) {
             if ([ret isKindOfClass:[TreeBranch class]]) {
@@ -144,7 +145,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // This is not needed now since the Tree View is not displaying files in this application
         }
         else if ([item isKindOfClass:[TreeBranch class]]) { // it is a directory
-            if (_viewMode==BViewCatalystMode) {
+            if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
                 subTitle = [NSString stringWithFormat:@"%ld Files %@",
@@ -194,7 +195,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     //        }
     //    }
     CGFloat answer;
-    if (_viewMode==BViewCatalystMode) {
+    if (_viewMode!=BViewBrowserMode) {
          answer = [outlineView rowHeight];
     }
     else {
@@ -253,7 +254,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    if([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ]){
+    if(([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ]) && (!blockTableRefresh)) {
         NSArray *object;
         NSDictionary *answer=nil;
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
@@ -292,7 +293,6 @@ void DateFormatter(NSDate *date, NSString **output) {
  * Table Data Source Protocol
  */
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
-    //[self refreshDataView];
     return [tableData count];
 }
 
@@ -580,6 +580,8 @@ void DateFormatter(NSDate *date, NSString **output) {
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
+    if (blockTableRefresh)
+        return;
     NSInteger row = [_myOutlineView rowForItem:object];
     if (object == _treeNodeSelected) {
         /*If it is the selected Folder make a refresh*/
@@ -641,6 +643,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) refreshDataView {
+    if (blockTableRefresh) {
+        return;
+    }
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
@@ -693,13 +698,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(void) addTreeRoot:(TreeRoot*)theRoot {
     NSInteger answer = [self canAddRoot:[theRoot rootPath]];
     if (answer == pathsHaveNoRelation) {
-
         [BaseDirectoriesArray addObject: theRoot];
     }
     /* Refresh the Trees so that the trees are displayed */
-    [self refreshTrees];
+    //[self refreshTrees];
     /* Make the Root as selected */
-    [self selectFolderByURL:[theRoot url]];
+    //[self selectFolderByURL:[theRoot url]];
 
 }
 
@@ -709,13 +713,16 @@ void DateFormatter(NSDate *date, NSString **output) {
         [itemToBeDeleted removeBranch];
         [BaseDirectoriesArray removeObjectAtIndex:index];
     }
-    [self refreshTrees];
+    //[self refreshTrees];
 }
 
 -(void) removeRoot: (TreeRoot*) root {
     [root removeBranch];
     [BaseDirectoriesArray removeObjectIdenticalTo:root];
-    [self refreshDataView];
+}
+
+-(void) removeAll {
+    BaseDirectoriesArray = [[NSMutableArray alloc] init]; /* Garbage collection will release everything */
 }
 
 - (void) removeSelectedDirectory {
@@ -785,6 +792,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSRange result;
     BOOL found = false;
     TreeBranch *cursor = NULL;
+    if (theURL==nil)
+        return NULL;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         NSString *path = [theURL path];
@@ -793,6 +802,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* The URL is already contained in this tree */
             /* Start climbing tree */
             //[_myPathBarControl setRootPath:[root theURL] Catalyst:_catalystMode];
+            blockTableRefresh = YES; /* this is to avoid that Table is populated each time the cursor change */
             cursor = root;
             do {
                 [self selectAndExpand:cursor];
@@ -820,10 +830,12 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (found)
             break;
     }
+    blockTableRefresh = NO;
     if (found) {/* Exited by the break */
         /* Update data in the Table */
         [self selectAndExpand:cursor];
-        //[_myPathBarControl setURL:[cursor theURL]];
+        [_myPathBarControl setRootPath:[[cursor root] url] mode:_viewMode];
+        [_myPathBarControl setURL: theURL];
         [self refreshDataView];
         return cursor;
     }
