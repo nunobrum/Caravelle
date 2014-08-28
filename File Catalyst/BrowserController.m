@@ -580,8 +580,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
-    if (blockTableRefresh)
-        return;
     NSInteger row = [_myOutlineView rowForItem:object];
     if (object == _treeNodeSelected) {
         /*If it is the selected Folder make a refresh*/
@@ -643,9 +641,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) refreshDataView {
-    if (blockTableRefresh) {
-        return;
-    }
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
@@ -675,9 +670,10 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
         [tableData removeObjectsAtIndexes: tohide];
         [self sortWithDescriptor];
-        [self stopBusyAnimations];
-        [_myTableView reloadData];
     }
+    [self stopBusyAnimations];
+    [_myTableView reloadData];
+
 }
 
 -(void) refreshTrees {
@@ -696,15 +692,16 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 -(void) addTreeRoot:(TreeRoot*)theRoot {
-    NSInteger answer = [self canAddRoot:[theRoot rootPath]];
-    if (answer == pathsHaveNoRelation) {
-        [BaseDirectoriesArray addObject: theRoot];
+    if (theRoot!=nil) {
+        NSInteger answer = [self canAddRoot:[theRoot rootPath]];
+        if (answer == pathsHaveNoRelation) {
+            [BaseDirectoriesArray addObject: theRoot];
+        }
+        /* Refresh the Trees so that the trees are displayed */
+        //[self refreshTrees];
+        /* Make the Root as selected */
+        //[self selectFolderByURL:[theRoot url]];
     }
-    /* Refresh the Trees so that the trees are displayed */
-    //[self refreshTrees];
-    /* Make the Root as selected */
-    //[self selectFolderByURL:[theRoot url]];
-
 }
 
 -(void) removeRootWithIndex:(NSInteger)index {
@@ -759,14 +756,14 @@ void DateFormatter(NSDate *date, NSString **output) {
     return answer;
 }
 
--(FileCollection *) concatenateAllCollections {
-    FileCollection *collection =[[FileCollection new] init];
-    // Will concatenate all file collections into a single one.
-    for (TreeRoot *theRoot in BaseDirectoriesArray) {
-        [collection concatenateFileCollection: [theRoot fileCollection]];
-    }
-    return collection;
-}
+//-(FileCollection *) concatenateAllCollections {
+//    FileCollection *collection =[[FileCollection new] init];
+//    // Will concatenate all file collections into a single one.
+//    for (TreeRoot *theRoot in BaseDirectoriesArray) {
+//        [collection concatenateFileCollection: [theRoot fileCollection]];
+//    }
+//    return collection;
+//}
 
 -(void) selectAndExpand:(TreeBranch*) cursor {
     int retries = 2;
@@ -786,6 +783,18 @@ void DateFormatter(NSDate *date, NSString **output) {
     /* Sets the directory to be Displayed */
     _treeNodeSelected = cursor;
 
+}
+
+-(TreeBranch*) selectFirstRoot {
+    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
+        TreeRoot *root = BaseDirectoriesArray[0];
+        [self selectAndExpand:root];
+        [_myPathBarControl setRootPath:[root url] mode:_viewMode];
+        [_myPathBarControl setURL: [root url]];
+        [self refreshDataView];
+        return root;
+    }
+    return NULL;
 }
 
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL {

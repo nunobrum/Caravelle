@@ -21,7 +21,7 @@
     NSSortDescriptor *TableSortDesc;
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_sharedOperationQueue;
-    BOOL blockTableRefresh;
+    BOOL blockTableRefresh; //Used to block the automatic refresh of the Table in the didChangeSelection method on OutlineView
 
 }
 
@@ -95,7 +95,8 @@
 -(void) removeSelectedDirectory;
 -(void) removeAll;
 -(NSInteger) canAddRoot: (NSString*) rootPath;
--(FileCollection *) concatenateAllCollections;
+//-(FileCollection *) concatenateAllCollections;
+-(TreeBranch*) selectFirstRoot;
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
