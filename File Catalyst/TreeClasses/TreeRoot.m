@@ -34,71 +34,15 @@
 
 
 -(void) refreshTreeFromCollection:(void (^)(NSInteger fileno))callbackhandler {
-    // Will get the first level of the tree
-    TreeBranch *cursor, *currdir;
-    //TreeRoot* rootDir = self;
     NSInteger fileno=0;
-
     if (_isCollectionSet && _fileCollection!=nil) {
-
-        NSInteger level0 = [[[NSURL fileURLWithPath:[_fileCollection rootPath]] pathComponents] count];
-
-
-
         if ([self children]==nil)
             [self setChildren: [[NSMutableArray new] init]];
         else
             [self removeBranch];
 
         for (FileInformation *finfo in _fileCollection.fileArray) {
-            //NSURL *handler = finfo.getURL;
-
-            NSArray *pathComponents = [finfo getPathComponents];
-            NSInteger level;
-
-            // Retrieve the file name. From NSURLNameKey, cached during the enumeration.
-            //NSNumber *fileSize = [finfo getFileSize];
-            //NSLog(@"%@--->",[finfo getName]);
-
-            currdir = (TreeBranch*)self;
-            NSURL *currURL = [self url];
-            for (level=level0; level < [pathComponents count]-1; level++) { //last path component is the file name
-                NSString *dirName = [pathComponents objectAtIndex:level];
-                //NSLog(@"<%@>",dirName);
-                NSURL *newdir;// = [NSURL new];
-                newdir = [currURL URLByAppendingPathComponent:dirName isDirectory:YES];
-                cursor = nil;
-                for (TreeBranch *subdir in [currdir branchesInNode]){
-                    // If the two are the same
-                    //NSLog(@"subdir %@ currdir %@",[subdir name],dirName);
-                    if ([newdir isEqualTo:[subdir url]]) {
-                        cursor = subdir;
-                        break;
-                    }
-                }
-                if (cursor==nil) { // the directory doesn't exit
-                    TreeBranch *newDir = [[TreeBranch new] init];  // Create the new directory or file
-                    newDir.url = newdir ;
-                    newDir.parent = currdir;
-                    newDir.children = nil; //[[NSMutableArray new] init];
-                    [[currdir children] addObject: newDir]; // Adds the created file or directory to the current directory
-                    currdir = newDir;
-                    currURL = [newDir url];
-
-                } // if
-                else {
-                    currdir = cursor;
-                    currURL = [cursor url];
-                }
-            } //for
-            // Now adding the File
-            TreeLeaf *newFile = [[TreeLeaf new] init];  // Create the new directory or file
-            newFile.url = [finfo getURL];
-            //[newFile SetFileInformation: finfo];
-            if (currdir.children==nil) {
-                currdir.children =[[NSMutableArray new] init];
-            }
-            [[currdir children] addObject: newFile]; // Adds the created file or directory to the current director
+            [self addURL:finfo.getURL];
             if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
                 callbackhandler(fileno);
             fileno++;
