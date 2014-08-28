@@ -133,7 +133,7 @@
 }
 
 /* Computes the common path between all files in the collection */
--(NSString*) rootPath {
+-(NSString*) commonPath {
     if (rootDirectory==nil) {
         NSArray *common_path = nil;
         NSArray *file_path;
@@ -296,7 +296,7 @@
 
 -(BOOL) isRootContainedIn:(FileCollection *)otherCollection {
     NSRange result;
-    result = [[otherCollection rootPath] rangeOfString:rootDirectory];
+    result = [[otherCollection commonPath] rangeOfString:rootDirectory];
     if (result.location == NSNotFound)
         return NO;
     else
@@ -305,7 +305,7 @@
 
 -(BOOL) rootContains:(FileCollection *)otherCollection {
     NSRange result;
-    result = [rootDirectory rangeOfString:[otherCollection rootPath]];
+    result = [rootDirectory rangeOfString:[otherCollection commonPath]];
     if (result.location == NSNotFound)
         return NO;
     else

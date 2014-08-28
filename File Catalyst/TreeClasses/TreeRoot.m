@@ -58,7 +58,7 @@
 
 
         TreeRoot *rootDir = [[TreeRoot new] init];
-        NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+        NSURL *rootpath = [NSURL URLWithString:[fileCollection commonPath]];
 
         // assigns the name to the root directory
         [rootDir setUrl: rootpath];

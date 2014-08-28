@@ -24,7 +24,7 @@
 -(void) addFilesInDirectory:(NSString *)rootpath callback:(void (^)(NSInteger fileno))callbackhandler;
 
 -(NSInteger) FileCount;
--(NSString*) rootPath;
+-(NSString*) commonPath;
 -(NSMutableArray*) fileArray;
 
 -(void) AddFileInformation: (FileInformation*) aFileInfo;
