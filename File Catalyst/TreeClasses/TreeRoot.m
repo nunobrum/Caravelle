@@ -54,17 +54,23 @@
 }
 
 +(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
-    TreeRoot *rootDir = [[TreeRoot new] init];
-    NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+    if (fileCollection!=nil && [fileCollection FileCount]>0 ) {
 
-    // assigns the name to the root directory
-    [rootDir setUrl: rootpath];
-    [rootDir setFileCollection: fileCollection];
-    [rootDir setIsCollectionSet:YES];
 
-    /* Refresh the Trees so that the trees are displayed */
-    [rootDir refreshTreeFromCollection:callbackhandler];
-    return rootDir;
+        TreeRoot *rootDir = [[TreeRoot new] init];
+        NSURL *rootpath = [NSURL URLWithString:[fileCollection rootPath]];
+
+        // assigns the name to the root directory
+        [rootDir setUrl: rootpath];
+        [rootDir setFileCollection: fileCollection];
+        [rootDir setIsCollectionSet:YES];
+
+        /* Refresh the Trees so that the trees are displayed */
+        [rootDir refreshTreeFromCollection:callbackhandler];
+        return rootDir;
+    }
+    else
+        return NULL;
 }
 
 
