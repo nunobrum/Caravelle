@@ -268,11 +268,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Updates the _treeNodeSelected */
             [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            if (_viewMode==BViewBrowserMode)
-                [_myPathBarControl setRootPath:nil];
-            else
-                [_myPathBarControl setRootPath:[[_treeNodeSelected root] url]];
-            [_myPathBarControl setURL: [_treeNodeSelected url]];
+            [self setPathBarToItem:_treeNodeSelected];
             [self refreshDataView];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
@@ -795,17 +791,49 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 }
 
+-(void) setPathBarToItem:(TreeItem*)item {
+    if (_viewMode==BViewBrowserMode)
+        [_myPathBarControl setRootPath:nil];
+    else
+        [_myPathBarControl setRootPath:[[item root] url]];
+    if ([item isKindOfClass:[TreeBranch class]]) {
+        [_myPathBarControl setURL: [item url]];
+    }
+    else {
+        [_myPathBarControl setURL: [[item parent] url]];
+    }
+}
+
 -(TreeBranch*) selectFirstRoot {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
         TreeRoot *root = BaseDirectoriesArray[0];
         [self selectAndExpand:root];
-        if (_viewMode==BViewBrowserMode)
-            [_myPathBarControl setRootPath:nil];
-        else
-            [_myPathBarControl setRootPath:[root url]];
-        [_myPathBarControl setURL: [root url]];
+        [self setPathBarToItem:root];
         [self refreshDataView];
         return root;
+    }
+    return NULL;
+}
+
+-(TreeBranch*) selectFolderByItem:(TreeItem*) treeNode {
+    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
+        NSArray *treeComps = [treeNode treeComponents];
+
+        for (TreeRoot *root in BaseDirectoriesArray) {
+            if (root==treeComps[0]){ // Search for Root Node
+                TreeBranch *lastBranch;
+                for (TreeItem *node in treeComps) {
+                    if ([node isKindOfClass:[TreeBranch class]])
+                    {
+                        lastBranch = (TreeBranch*)node;
+                        [self selectAndExpand:lastBranch];
+                    }
+                }
+                [self setPathBarToItem:lastBranch];
+                [self refreshDataView];
+                return lastBranch;
+            }
+        }
     }
     return NULL;
 }
@@ -856,11 +884,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (found) {/* Exited by the break */
         /* Update data in the Table */
         [self selectAndExpand:cursor];
-        if (_viewMode==BViewBrowserMode)
-            [_myPathBarControl setRootPath:nil];
-        else
-            [_myPathBarControl setRootPath:[[cursor root] url]];
-        [_myPathBarControl setURL: theURL];
+        [self setPathBarToItem:cursor];
         [self refreshDataView];
         return cursor;
     }

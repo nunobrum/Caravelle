@@ -100,6 +100,7 @@
 -(NSInteger) canAddRoot: (NSString*) rootPath;
 //-(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFirstRoot;
+-(TreeBranch*) selectFolderByItem:(TreeItem*) treeNode;
 -(TreeBranch*) selectFolderByURL:(NSURL*)theURL;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
