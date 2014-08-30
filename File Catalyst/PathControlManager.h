@@ -14,7 +14,7 @@
     NSInteger _rootLevel;
 }
 
--(void) setRootPath:(NSURL*) rootPath mode:(BViewMode) viewMode;
+-(void) setRootPath:(NSURL*) rootPath;
 -(void) setURL:(NSURL*)aURL;
 -(NSURL*) URL;
 

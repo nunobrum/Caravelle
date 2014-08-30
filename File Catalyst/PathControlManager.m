@@ -12,13 +12,9 @@
 
 @implementation PathControlManager
 
--(void) setRootPath:(NSURL*) rootPath mode:(BViewMode) viewMode {
+-(void) setRootPath:(NSURL*) rootPath {
     _rootPath = [rootPath path];
-    if (viewMode==BViewCatalystMode)
-        _rootLevel = [[rootPath pathComponents] count];
-    else
-        _rootLevel = 0;
-
+    _rootLevel = [[rootPath pathComponents] count];
 }
 
 -(void) setURL:(NSURL*)aURL {
