@@ -308,6 +308,10 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(BOOL) addURL:(NSURL*)theURL {
     /* Check first if base path is common */
     NSRange result;
+    if (theURL==nil) {
+        NSLog(@"OOOOPSS! Something went deadly wrong here.\nThe URL is null");
+        return FALSE;
+    }
     result = [[theURL path] rangeOfString:[self path]];
     if (NSNotFound==result.location) {
         // The new root is already contained in the existing trees
