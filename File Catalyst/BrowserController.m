@@ -630,6 +630,13 @@ void DateFormatter(NSDate *date, NSString **output) {
  * Parent access routines
  */
 
+-(void) setViewMode:(BViewMode)viewMode {
+    _viewMode = viewMode;
+}
+-(BViewMode) viewMode {
+    return _viewMode;
+}
+
 
 -(NSOutlineView*) treeOutlineView {
     return _myOutlineView;

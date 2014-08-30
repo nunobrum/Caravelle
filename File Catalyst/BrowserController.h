@@ -22,6 +22,7 @@
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_sharedOperationQueue;
     BOOL blockTableRefresh; //Used to block the automatic refresh of the Table in the didChangeSelection method on OutlineView
+    BViewMode _viewMode;
 
 }
 
@@ -38,7 +39,6 @@
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
-@property (getter =  viewMode, setter = setViewMode:) BViewMode viewMode;
 @property TreeBranch *treeNodeSelected;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
@@ -83,6 +83,9 @@
 /*
  * Parent access routines
  */
+
+-(void) setViewMode:(BViewMode)viewMode;
+-(BViewMode) viewMode;
 
 -(NSOutlineView*) treeOutlineView;
 -(id) getFileAtIndex:(NSUInteger)index;
