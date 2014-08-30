@@ -142,7 +142,7 @@
             if (common_path==nil)
             {
                 common_path = [fi getPathComponents];
-                ci = [common_path count];
+                ci = [common_path count]-1; /* This will exclude the file name */
             }
             else
             {
