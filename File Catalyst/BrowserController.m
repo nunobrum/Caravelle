@@ -268,7 +268,10 @@ void DateFormatter(NSDate *date, NSString **output) {
             /* Updates the _treeNodeSelected */
             [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [_myPathBarControl setRootPath:[[_treeNodeSelected root] url] mode:_viewMode];
+            if (_viewMode==BViewBrowserMode)
+                [_myPathBarControl setRootPath:nil];
+            else
+                [_myPathBarControl setRootPath:[[_treeNodeSelected root] url]];
             [_myPathBarControl setURL: [_treeNodeSelected url]];
             [self refreshDataView];
             /* Sends an Array with one Object */
@@ -789,7 +792,10 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
         TreeRoot *root = BaseDirectoriesArray[0];
         [self selectAndExpand:root];
-        [_myPathBarControl setRootPath:[root url] mode:_viewMode];
+        if (_viewMode==BViewBrowserMode)
+            [_myPathBarControl setRootPath:nil];
+        else
+            [_myPathBarControl setRootPath:[root url]];
         [_myPathBarControl setURL: [root url]];
         [self refreshDataView];
         return root;
@@ -843,7 +849,10 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (found) {/* Exited by the break */
         /* Update data in the Table */
         [self selectAndExpand:cursor];
-        [_myPathBarControl setRootPath:[[cursor root] url] mode:_viewMode];
+        if (_viewMode==BViewBrowserMode)
+            [_myPathBarControl setRootPath:nil];
+        else
+            [_myPathBarControl setRootPath:[[cursor root] url]];
         [_myPathBarControl setURL: theURL];
         [self refreshDataView];
         return cursor;
