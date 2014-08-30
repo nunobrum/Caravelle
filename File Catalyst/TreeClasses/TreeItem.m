@@ -27,7 +27,7 @@
     if (self) {
         self.tag = 0;
         self->_url = url;
-        //self->_parent = nil;
+        self->_parent = nil;
     }
     return self;
 }
@@ -87,6 +87,14 @@
     //NSString *path;
     //[_url getResourceValue:&path     forKey:NSURLPathKey error:NULL];
     return [_url path];
+}
+
+-(TreeItem*) root {
+    TreeItem *cursor = self;
+    while (cursor->_parent!=NULL) {
+        cursor=cursor->_parent;
+    }
+    return cursor;
 }
 
 

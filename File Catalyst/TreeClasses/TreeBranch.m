@@ -49,7 +49,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
-    self->_parent = parent;
     self->refreshing = NO;
     return self;
 }
@@ -73,14 +72,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 }
 
 
-
--(TreeBranch*) root {
-    TreeBranch *cursor = self;
-    while (cursor->_parent!=NULL) {
-        cursor=cursor->_parent;
-    }
-    return cursor;
-}
 
 -(void) removeBranch {
     if (_children != nil) {

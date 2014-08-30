@@ -24,8 +24,6 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
     BOOL refreshing;
 }
 
-@property (retain) TreeBranch     *parent;
-
 
 @property (retain) NSMutableArray *children;
 
@@ -34,7 +32,6 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 -(void) dealloc;
 
--(TreeItem*) root;
 
 -(BOOL)      isBranch;
 -(void)      removeBranch;

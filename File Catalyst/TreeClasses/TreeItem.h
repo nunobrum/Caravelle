@@ -25,11 +25,12 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 
 
 @interface TreeItem : NSObject <NSPasteboardWriting, NSPasteboardReading> {
-    NSURL *_url;
+    NSURL           *_url;
     TreeItemTagEnum _tag;
+    TreeItem        *_parent;
 }
 
-//@property (retain) TreeItem      *parent;
+@property TreeItem                  *parent;
 @property NSURL                     *url;
 @property TreeItemTagEnum           tag;
 
@@ -37,6 +38,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 
 + (TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent;
+- (TreeItem*) root;
 
 -(BOOL) isBranch;
 -(NSString*) name;
