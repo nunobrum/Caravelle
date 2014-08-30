@@ -40,6 +40,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 + (TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent;
 - (TreeItem*) root;
 
+-(NSArray *) treeComponents;
+
 -(BOOL) isBranch;
 -(NSString*) name;
 -(NSDate*)   dateModified;

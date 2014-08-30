@@ -97,6 +97,15 @@
     return cursor;
 }
 
+-(NSArray *) treeComponents {
+    NSMutableArray *answer = [NSMutableArray arrayWithObject:self];
+    TreeItem *cursor = self;
+    while (cursor->_parent!=NULL) {
+        cursor=cursor->_parent;
+        [answer insertObject:cursor atIndex:0];
+    }
+    return answer;
+}
 
 -(long long) filesize {
     NSNumber *filesize;
