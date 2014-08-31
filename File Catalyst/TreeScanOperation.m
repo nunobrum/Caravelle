@@ -60,16 +60,17 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
             /* Should it be decided to inform */
         }
         else {
-            TreeRoot *rootDir = [[TreeRoot new] init];
-            rootDir.children = [[NSMutableArray new] init];
-            rootDir.url = [NSURL URLWithString:rootPath];
-            NSLog(@"From thread ! Scanning directory %@", rootDir.path);
-            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootDir.url WithMode:[mode integerValue]];
-            for (NSURL *theURL in dirEnumerator) {
-                [rootDir addURL:theURL];
-                if ([self isCancelled])
-                    break;
-            } // for
+            NSURL *rootURL = [NSURL fileURLWithPath:rootPath isDirectory:YES];
+
+            NSLog(@"From thread ! Scanning directory %@", rootPath);
+            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootURL WithMode:[mode integerValue]];
+            TreeRoot *rootDir = [TreeRoot treeFromEnumerator:dirEnumerator
+                                                         URL:rootURL
+                                                      parent:nil
+                                                 cancelBlock:^(){
+                                                     return [self isCancelled];
+                                                 }];
+
             if (![self isCancelled])
             {
                 NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:

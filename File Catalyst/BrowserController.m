@@ -46,7 +46,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    self->blockTableRefresh = NO;
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -254,7 +253,8 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    if(([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ]) && (!blockTableRefresh)) {
+    // TODO !!! implement a performInMainThread so that critical synchronise problems are minimized
+    if ([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ])  {
         NSArray *object;
         NSDictionary *answer=nil;
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
@@ -414,7 +414,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
         else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
             // Going to open the Select That directory on the Outline View
-            [self selectAndExpand:node];
+            [self selectFolderByItem:node];
             /* Set the path bar */
             //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
@@ -627,7 +627,12 @@ void DateFormatter(NSDate *date, NSString **output) {
  */
 
 -(void) setViewMode:(BViewMode)viewMode {
+    if (viewMode!=_viewMode) {
+        [self removeAll];
+        [self refreshTrees];
+        [self startBusyAnimations];
     _viewMode = viewMode;
+    }
 }
 -(BViewMode) viewMode {
     return _viewMode;
@@ -713,14 +718,14 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(void) removeRootWithIndex:(NSInteger)index {
     if (index < [BaseDirectoriesArray count]) {
         TreeRoot *itemToBeDeleted = [BaseDirectoriesArray objectAtIndex:index];
-        [itemToBeDeleted removeBranch];
+        [itemToBeDeleted deallocTree];
         [BaseDirectoriesArray removeObjectAtIndex:index];
     }
     //[self refreshTrees];
 }
 
 -(void) removeRoot: (TreeRoot*) root {
-    [root removeBranch];
+    [root deallocTree];
     [BaseDirectoriesArray removeObjectIdenticalTo:root];
 }
 
@@ -780,11 +785,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             retries = 0; /* Finished, dont need to retry any more. */
         }
         else {
-            // The object was not found, will need to force the expand
-            [_myOutlineView expandItem:[_myOutlineView itemAtRow:[_myOutlineView selectedRow]]];
-            [_myOutlineView reloadData];
             retries--;
         }
+        // The object was not found, will need to force the expand
+        [_myOutlineView expandItem:[_myOutlineView itemAtRow:[_myOutlineView selectedRow]]];
+        [_myOutlineView reloadData];
+
     }
     /* Sets the directory to be Displayed */
     _treeNodeSelected = cursor;
@@ -809,13 +815,12 @@ void DateFormatter(NSDate *date, NSString **output) {
         TreeRoot *root = BaseDirectoriesArray[0];
         [self selectAndExpand:root];
         [self setPathBarToItem:root];
-        [self refreshDataView];
         return root;
     }
     return NULL;
 }
 
--(TreeBranch*) selectFolderByItem:(TreeItem*) treeNode {
+-(BOOL) selectFolderByItem:(TreeItem*) treeNode {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
         NSArray *treeComps = [treeNode treeComponents];
 
@@ -823,70 +828,47 @@ void DateFormatter(NSDate *date, NSString **output) {
             if (root==treeComps[0]){ // Search for Root Node
                 TreeBranch *lastBranch;
                 for (TreeItem *node in treeComps) {
-                    if ([node isKindOfClass:[TreeBranch class]])
+                    if ([node isKindOfClass:[TreeBranch class]] ||
+                        [node isKindOfClass:[TreeRoot   class]])
                     {
+                        [_myOutlineView expandItem:node];
+                        [_myOutlineView reloadData];
                         lastBranch = (TreeBranch*)node;
-                        [self selectAndExpand:lastBranch];
                     }
                 }
                 [self setPathBarToItem:lastBranch];
-                [self refreshDataView];
-                return lastBranch;
+                [self selectAndExpand:lastBranch];
+                return YES;
             }
         }
     }
-    return NULL;
+    return NO;
 }
 
--(TreeBranch*) selectFolderByURL:(NSURL*)theURL {
-    NSRange result;
-    BOOL found = false;
-    TreeBranch *cursor = NULL;
+-(TreeBranch*) getItemByURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
-        NSString *path = [theURL path];
-        result = [path rangeOfString:[root path]];
-        if (NSNotFound!=result.location) {
+        if ([root containsURL:theURL]) {
             /* The URL is already contained in this tree */
             /* Start climbing tree */
-            //[_myPathBarControl setRootPath:[root theURL] Catalyst:_catalystMode];
-            blockTableRefresh = YES; /* this is to avoid that Table is populated each time the cursor change */
-            cursor = root;
-            do {
-                [self selectAndExpand:cursor];
-                /* Test if the current directory is already a match */
-                NSComparisonResult res = [[cursor path] compare:path];
-                if (res==NSOrderedSame) { /* Matches the directory. Maybe there is a more clever way to do this. */
-                    found = true;
+            NSArray *pcomps = [theURL pathComponents]; // Get the component Names
+            NSUInteger level = [[[root url] pathComponents] count]; // Get the current level
+            NSUInteger top_level = [pcomps count];
+            TreeBranch *cursor = root;
+            while (level < top_level) {
+                TreeItem *child = [cursor itemWithName:pcomps[level] class:[TreeBranch class]];
+                if ((child!=nil) && ([child isKindOfClass:[TreeBranch class]])) {
+                    cursor = (TreeBranch*)child;
+                    level++;
+                }
+                else
                     break;
-                }
-                else {
-                    found=FALSE;
-                    for (TreeBranch *child in [cursor children]) {
-                        result = [path rangeOfString:[child path]];
-                        //NSLog(@"Cursor=%@ Child=%@, result=%lu", [cursor path], [child path], (unsigned long)result.location);
-                        if (NSNotFound!=result.location) { /* Matches the directory. Maybe there is a more clever way to do this. */
-                            cursor = child;
-                            found = true;
-                            break;
-                        }
-
-                    }
-                }
-            } while (found);
+            }
+            if ([theURL isEqual:[cursor url]]) // This doesnt Work :-( !!!
+                return cursor;
         }
-        if (found)
-            break;
-    }
-    blockTableRefresh = NO;
-    if (found) {/* Exited by the break */
-        /* Update data in the Table */
-        [self selectAndExpand:cursor];
-        [self setPathBarToItem:cursor];
-        [self refreshDataView];
-        return cursor;
     }
     return NULL;
 }
@@ -931,7 +913,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             [self addTreeRoot:[TreeRoot treeWithURL:[SelectDirectoryDialog URL]]];
             TreeRoot *node = [BaseDirectoriesArray objectAtIndex:0];
             if (NULL != node){
-                [self selectFolderByURL:[node url]];
+                [self selectFolderByItem:node];
             }
         }
     }
@@ -941,7 +923,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     /* Gets the clicked Cell */
     NSPathComponentCell *selectedPath =[_myPathBarControl clickedPathComponentCell];
     NSURL *newURL = [selectedPath URL];
-    TreeBranch *node = [self selectFolderByURL: newURL];
+    TreeBranch *node = [self getItemByURL: newURL];
     if (NULL == node ) {
         /* The path is not contained existing roots */
         if (_viewMode==BViewBrowserMode) {
@@ -953,7 +935,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         }
     }
     if (NULL != node){
-        [self selectFolderByURL:[node url]];
+        [self selectFolderByItem:node];
     }
 }
 
