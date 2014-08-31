@@ -34,45 +34,32 @@
 }
 
 
--(void) refreshTreeFromCollection:(void (^)(NSInteger fileno))callbackhandler {
-    NSInteger fileno=0;
-    @synchronized(self) {
-        if (_isCollectionSet && _fileCollection!=nil && !refreshing) {
-            self->refreshing = YES;
-            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-            [self removeBranch];
-            for (FileInformation *finfo in _fileCollection.fileArray) {
-                [self addURL:finfo.getURL];
-                if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
-                    callbackhandler(fileno);
-                fileno++;
-
-            } // for
-            self->refreshing=FALSE;
-            [self didChangeValueForKey:kvoTreeBranchPropertyChildren]; // This will inform the observer about change
-        }
-        else
-            NSLog(@"Ooops! This wasn't supposed to happen. File collection should have been set");
-    }
-}
-
 +(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
     if (fileCollection!=nil && [fileCollection FileCount]>0 ) {
+        NSInteger fileno=0;
 
-
-        TreeRoot *rootDir = [[TreeRoot new] init];
         NSString *patH = [fileCollection commonPath];
         NSURL *rootURL = [NSURL fileURLWithPath:patH isDirectory:YES];
         if (rootURL==nil) {
             NSLog(@"We have a problem here. The NSURL wasnt sucessfully created after commonPath");
         }
+        TreeRoot *rootDir = [[TreeRoot new] initWithURL:rootURL parent:nil];
+
         // assigns the name to the root directory
-        [rootDir setUrl: rootURL];
         [rootDir setFileCollection: fileCollection];
         [rootDir setIsCollectionSet:YES];
 
+        /* Since a new tree is created there is no problems with contentions */
+
         /* Refresh the Trees so that the trees are displayed */
-        [rootDir refreshTreeFromCollection:callbackhandler];
+        for (FileInformation *finfo in fileCollection.fileArray) {
+            [rootDir addURL:finfo.getURL];
+            if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
+                callbackhandler(fileno);
+            fileno++;
+
+        } // for
+
         return rootDir;
     }
     else

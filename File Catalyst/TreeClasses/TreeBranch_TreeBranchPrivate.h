@@ -15,8 +15,6 @@
 -(BOOL) addURL:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
 
--(void) removeBranch;
-
 
 @end
 

@@ -27,10 +27,10 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 @interface TreeItem : NSObject <NSPasteboardWriting, NSPasteboardReading> {
     NSURL           *_url;
     TreeItemTagEnum _tag;
-    TreeItem        *_parent;
+    TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
 }
 
-@property TreeItem                  *parent;
+@property (weak) TreeItem                  *parent;
 @property NSURL                     *url;
 @property TreeItemTagEnum           tag;
 

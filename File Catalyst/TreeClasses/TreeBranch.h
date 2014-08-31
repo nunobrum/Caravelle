@@ -30,6 +30,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
 
 -(void) dealloc;
+-(void) deallocTree;
 
 
 -(BOOL)      isBranch;
