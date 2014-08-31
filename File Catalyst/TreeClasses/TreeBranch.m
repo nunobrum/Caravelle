@@ -43,10 +43,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 }
 
 
--(void) dealloc {
-    [self deallocTree];
-}
-
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)theKey {
 
     BOOL automatic = NO;
@@ -59,22 +55,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     return automatic;
 }
 
-
-
--(void) deallocTree {
-    if (self->children != nil) {
-        @synchronized(self) {
-        for (TreeItem *item in self->children) {
-            if ([item isBranch])
-                [(TreeBranch*)item deallocTree];
-            item.parent=nil;
-        }
-        [self->children removeAllObjects];
-        self.parent=nil;
-        //[self setDateModified:nil];
-        }
-    }
-}
 
 /* Computes the total of all the files in the current Branch */
 -(long long) sizeOfNode {
