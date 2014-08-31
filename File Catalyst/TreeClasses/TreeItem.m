@@ -13,21 +13,13 @@
 
 @implementation TreeItem
 
--(TreeItem*) init {
-    self = [super init];
-    if (self) {
-        self->_url = nil;
-        self.tag = 0;
-    }
-    return self;
-}
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
         self.tag = 0;
         self->_url = url;
-        self->_parent = nil;
+        self->_parent = parent;
     }
     return self;
 }
@@ -114,23 +106,19 @@
 }
 
 -(BOOL) sendToRecycleBin {
-    return [[NSFileManager defaultManager] removeItemAtPath:[self path] error:nil];
+    return [(TreeBranch*)_parent sendToRecycleBinItem:self];
 }
 
 -(BOOL) eraseFile {
-    // !!! TODO
-    return NO;
+    return [(TreeBranch*)_parent eraseItem:self];
 }
 
 -(BOOL) copyFileTo:(NSString *)path {
-    // !!! TODO : Missing implementation
-    NSLog(@"Copy File Method not implemented");
-    return NO;
+    return [(TreeBranch*)_parent copyItem:self To:path];
 }
+
 -(BOOL) moveFileTo:(NSString *)path {
-    // !!! TODO : Missing implementation
-    NSLog(@"Move File Method not implemented");
-    return NO;
+    return [(TreeBranch*)_parent MoveItem:self To:path];
 }
 
 -(BOOL) openFile {

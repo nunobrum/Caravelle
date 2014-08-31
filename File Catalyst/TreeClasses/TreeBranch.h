@@ -22,19 +22,17 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
     BOOL refreshing;
+@private
+    NSMutableArray *children;
 }
 
 
-@property (retain) NSMutableArray *children;
-
--(TreeBranch*) init;
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
 
 -(void) dealloc;
 
 
 -(BOOL)      isBranch;
--(void)      removeBranch;
 -(NSInteger) numberOfLeafsInNode;
 -(NSInteger) numberOfBranchesInNode;
 -(NSInteger) numberOfItemsInNode;
@@ -60,19 +58,28 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 -(BOOL) isExpandable;
 
 -(TreeItem*) itemWithName:(NSString*) name class:(id)cls;
--(BOOL) addURL:(NSURL*)theURL;
 
 //-(NSMutableArray*) branchesInBranch;
 
 //-(FileCollection*) duplicatesInNode;
 //-(FileCollection*) duplicatesInBranch;
 
--(void) refreshTreeFromURLs;
++(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
+
 -(void)refreshContentsOnQueue: (NSOperationQueue *) queue;
 
 -(NSInteger) relationTo:(NSString*) otherPath;
+-(BOOL) containsURL:(NSURL*)url;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;
+
+/*
+ * File Manipulation methods
+ */
+-(BOOL) sendToRecycleBinItem:(TreeItem*) item;
+-(BOOL) eraseItem:(TreeItem*) item;
+-(BOOL) copyItem:(TreeItem*)item To:(NSString*)path;
+-(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path;
 
 @end

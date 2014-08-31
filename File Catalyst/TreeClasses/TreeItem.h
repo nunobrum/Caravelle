@@ -34,7 +34,6 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 @property NSURL                     *url;
 @property TreeItemTagEnum           tag;
 
--(TreeItem*) init;
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 
 + (TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent;
