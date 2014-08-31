@@ -21,7 +21,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
-    BOOL refreshing;
+
 @private
     NSMutableArray *children;
 }

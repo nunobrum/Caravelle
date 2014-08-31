@@ -38,7 +38,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->children = nil;
-    self->refreshing = NO;
     return self;
 }
 
@@ -60,7 +59,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(long long) sizeOfNode {
     long long total=0;
     @synchronized(self) {
-    if (!refreshing) {
         if (self->children!=nil) {
             for (TreeItem *item in self->children) {
                 if ([item isKindOfClass:[TreeLeaf class]]==YES) {
@@ -69,10 +67,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             }
         }
     }
-    else {
-        NSLog(@"sizeOfNode while refreshing");
-    }
-    }
     return total;
 }
 
@@ -80,19 +74,14 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(long long) filesize {
     long long total=0;
     @synchronized(self) {
-    if (!refreshing) {
         if (self->children!=nil) {
             for (TreeItem *item in self->children) {
                 total+= [item filesize];
             }
         }
-    //    NSNumber *amountSum = [self->children valueForKeyPath:@"@sum.filesize"];
-    //    if (total != [amountSum longLongValue])
-    //        NSLog(@"comparing two calculations %lld == %@", total, amountSum);
-    }
-    else {
-        NSLog(@"filesize while refreshing");
-    }
+        //    NSNumber *amountSum = [self->children valueForKeyPath:@"@sum.filesize"];
+        //    if (total != [amountSum longLongValue])
+        //        NSLog(@"comparing two calculations %lld == %@", total, amountSum);
     }
     return total;
 }
@@ -100,7 +89,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
     @synchronized(self) {
-    if (!refreshing) {
         if (self->children!=nil) {
             for (TreeItem *item in self->children) {
                 if ([item isKindOfClass:[TreeLeaf class]]==YES) {
@@ -109,17 +97,12 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             }
         }
     }
-    else {
-        NSLog(@"numberOfLeafsInNode while refreshing");
-    }
-    }
     return total;
 }
 
 -(NSInteger) numberOfBranchesInNode {
     NSInteger total=0;
     @synchronized(self) {
-    if (!refreshing) {
         if (self->children!=nil) {
             for (TreeItem *item in self->children) {
                 if ([item isKindOfClass:[TreeBranch class]]==YES) {
@@ -128,23 +111,14 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             }
         }
     }
-    else {
-        NSLog(@"numberOfBranchesInNode while refreshing");
-    }
-    }
     return total;
 }
 
 -(NSInteger) numberOfItemsInNode {
     @synchronized(self) {
-    if (!refreshing) {
         if (self->children!=nil) {
             return [self->children count]; /* This is needed to invalidate and re-scan the node */
         }
-    }
-    else {
-        NSLog(@"numberOfItemsInNode while refreshing");
-    }
     }
     return 0;
 }
@@ -154,7 +128,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(NSInteger) numberOfLeafsInBranch {
     NSInteger total=0;
     @synchronized(self) {
-    if (!refreshing) {
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeBranch class]]==YES) {
                 total += [(TreeBranch*)item numberOfLeafsInBranch];
@@ -162,7 +135,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             else
                 total++;
         }
-    }
     }
     return total;
 }
@@ -172,7 +144,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
  node is expandable. It is preferable to assume as yes and later correct. */
 -(BOOL) isExpandable {
     @synchronized(self) {
-        if (!refreshing && (self->children!=nil) && ([self numberOfBranchesInNode]!=0))
+        if ((self->children!=nil) && ([self numberOfBranchesInNode]!=0))
             return YES;
     }
     return NO;
@@ -197,7 +169,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(TreeBranch*) branchAtIndex:(NSUInteger) index {
     NSInteger i=0;
     @synchronized(self) {
-    if (!refreshing) {
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeBranch class]]==YES) {
                 if (i==index)
@@ -205,14 +176,13 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
                 i++;
             }
         }
-    }}
+    }
     return nil;
 }
 
 -(TreeLeaf*) leafAtIndex:(NSUInteger) index {
     NSInteger i=0;
     @synchronized(self) {
-    if (!refreshing) {
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeLeaf class]]==YES) {
                 if (i==index)
@@ -220,7 +190,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
                 i++;
             }
         }
-    }}
+    }
     return nil;
 }
 
@@ -228,7 +198,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 -(FileCollection*) filesInNode {
     @synchronized(self) {
-    if (!refreshing) {
         FileCollection *answer = [[FileCollection new] init];
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeLeaf class]]==YES) {
@@ -239,7 +208,6 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         }
         return answer;
     }
-    }
     return NULL;
 }
 -(FileCollection*) filesInBranch {
@@ -247,20 +215,15 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 }
 -(NSMutableArray*) itemsInNode {
     @synchronized(self) {
-    if (!refreshing) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         [answer addObjectsFromArray:self->children];
         return answer;
-    }
-    else {
-        NSLog(@"itemsInBranch while refreshing");
-    }
     }
     return NULL;
 }
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector {
-    if (!refreshing) {
+    @synchronized(self) {
         [collector addObjectsFromArray: self->children];
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeBranch class]]==YES) {
@@ -268,26 +231,18 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             }
         }
     }
-    else {
-        NSLog(@"harvestItemsInBranch while refreshing");
-    }
 }
 -(NSMutableArray*) itemsInBranch {
     @synchronized(self) {
-    if (!refreshing) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         [self _harvestItemsInBranch:answer];
         return answer; // Pending Implementation
     }
-    else {
-        NSLog(@"itemsInBranch while refreshing");
-    }}
     return nil;
 }
 
 -(NSMutableArray*) leafsInNode {
     @synchronized(self) {
-    if (!refreshing) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeLeaf class]]==YES) {
@@ -296,14 +251,11 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         }
         return answer;
     }
-    else {
-        NSLog(@"leafsInNode while refreshing");
-    }}
     return nil;
 }
 
 -(void) _harvestLeafsInBranch:(NSMutableArray*)collector {
-    if (!refreshing) {
+    @synchronized(self) {
         for (TreeItem *item in self->children) {
             if ([item isKindOfClass:[TreeBranch class]]==YES) {
                 [(TreeBranch*)item _harvestLeafsInBranch: collector];
@@ -313,53 +265,35 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             }
         }
     }
-    else {
-        NSLog(@"_harvestLeafsInBranch while refreshing");
-    }
 }
 -(NSMutableArray*) leafsInBranch {
     @synchronized(self) {
-        if (!refreshing) {
-            NSMutableArray *answer = [[NSMutableArray new] init];
-            [self _harvestLeafsInBranch: answer];
-            return answer; // Pending Implementation
-        }
-        else {
-            NSLog(@"leafsInBranch while refreshing");
-        }
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        [self _harvestLeafsInBranch: answer];
+        return answer; // Pending Implementation
     }
     return nil;
 }
 
 -(NSMutableArray*) branchesInNode {
     @synchronized(self) {
-        if (!refreshing) {
-            NSMutableArray *answer = [[NSMutableArray new] init];
-            for (TreeItem *item in self->children) {
-                if ([item isKindOfClass:[TreeBranch class]]==YES) {
-                    [answer addObject:item];
-                }
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        for (TreeItem *item in self->children) {
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [answer addObject:item];
             }
-            return answer;
         }
-        else {
-            NSLog(@"branchesInNode while refreshing");
-        }
+        return answer;
     }
     return nil;
 }
 
 -(TreeItem*) itemWithName:(NSString*) name class:(id)cls {
     @synchronized(self) {
-        if (!refreshing) {
-            for (TreeItem *item in self->children) {
-                if ([[item name] isEqualToString: name] && [item isKindOfClass:cls]) {
-                    return item;
-                }
+        for (TreeItem *item in self->children) {
+            if ([[item name] isEqualToString: name] && [item isKindOfClass:cls]) {
+                return item;
             }
-        }
-        else {
-            NSLog(@"itemWithName while refreshing");
         }
     }
     return nil;
@@ -367,15 +301,10 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 -(TreeItem*) itemWithURL:(NSURL*) aURL {
     @synchronized(self) {
-        if (!refreshing) {
-            for (TreeItem *item in self->children) {
-                if ([[item url] isEqualTo: aURL]) {
-                    return item;
-                }
+        for (TreeItem *item in self->children) {
+            if ([[item url] isEqualTo: aURL]) {
+                return item;
             }
-        }
-        else {
-            NSLog(@"itemWithURL while refreshing");
         }
     }
     return nil;
@@ -512,17 +441,14 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        if (!self->refreshing && self->children==nil) { // !!! TODO Will have to solve this. Sync problems with Children. Hint use Refreshing property to block all methods that enumerate children.
+        if (self->children==nil) { // !!! TODO Will have to solve this. Sync problems with Children. Hint use Refreshing property to block all methods that enumerate children.
             // We would have to keep track of the block with an NSBlockOperation, if we wanted to later support cancelling operations that have scrolled offscreen and are no longer needed. That will be left as an exercise to the user.
             [queue addOperationWithBlock:^(void) {
                 NSMutableArray *newChildren = [self childrenRefreshed];
-                self->refreshing=YES;
                 [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
                 // We synchronize access to the image/imageLoading pair of variables
                 @synchronized (self) {
                     self->children = newChildren;
-                    self->refreshing = NO;
-
                 }
                 [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
 
