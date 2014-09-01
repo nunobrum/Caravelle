@@ -689,7 +689,7 @@ CA
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="763" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
-                        <rect key="frame" x="2" y="4" width="645" height="17"/>
+                        <rect key="frame" x="2" y="4" width="767" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="gJV-jD-cFn">
                             <font key="font" metaFont="system"/>
@@ -698,14 +698,14 @@ CA
                         </textFieldCell>
                     </textField>
                     <progressIndicator maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8BL-5Q-1hY">
-                        <rect key="frame" x="667" y="1" width="96" height="20"/>
+                        <rect key="frame" x="688" y="1" width="96" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="3bd-VX-Gpn"/>
                         </constraints>
                     </progressIndicator>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Clz-g3-ghw">
-                        <rect key="frame" x="775" y="4" width="59" height="17"/>
+                        <rect key="frame" x="796" y="4" width="38" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="Label" id="JuP-4D-DiO">
                             <font key="font" metaFont="system"/>
@@ -721,11 +721,9 @@ CA
                     <constraint firstAttribute="bottom" secondItem="Clz-g3-ghw" secondAttribute="bottom" constant="4" id="L2y-Gf-6dB"/>
                     <constraint firstAttribute="bottom" secondItem="L75-zs-bdV" secondAttribute="bottom" constant="4" id="LVw-L3-6uG"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="top" secondItem="Clz-g3-ghw" secondAttribute="top" constant="1" id="SY5-NW-RnJ"/>
-                    <constraint firstItem="8BL-5Q-1hY" firstAttribute="leading" secondItem="L75-zs-bdV" secondAttribute="trailing" constant="22" id="Wzb-hj-BCT"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="fwX-zR-Fkt"/>
                     <constraint firstAttribute="trailing" secondItem="Clz-g3-ghw" secondAttribute="trailing" constant="20" symbolic="YES" id="iQp-AG-4BP"/>
                     <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="1" id="jcQ-N5-wMD"/>
-                    <constraint firstItem="8BL-5Q-1hY" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="667" id="khK-io-dAv"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="m0A-BY-371"/>
                 </constraints>
             </view>
