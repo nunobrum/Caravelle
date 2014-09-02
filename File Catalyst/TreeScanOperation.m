@@ -16,24 +16,8 @@ NSString *kTreeRootKey = @"treeRoot";
 
 NSString *notificationTreeConstructionFinished = @"TreeFinished";
 
-@interface TreeScanOperation ()
-{
-    NSNumber *operationCount;
-}
-
-@end
-
 
 @implementation TreeScanOperation
-- (id)initWithInfo:(NSDictionary*)info {
-
-    self = [super initWithInfo:info];
-    if (self)
-    {
-        operationCount = [info objectForKey:kOperationCountKey];
-    }
-    return self;
-}
 
 -(void) main {
     if (![self isCancelled])

@@ -26,6 +26,7 @@ NSString *kModeKey = @"Mode";
     if (self)
     {
         _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
+        operationCount = [info objectForKey:kOperationCountKey];
     }
     return self;
 }

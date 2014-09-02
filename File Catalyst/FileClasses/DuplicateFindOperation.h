@@ -15,6 +15,5 @@ extern NSString *kDuplicateList;
 
 @interface DuplicateFindOperation : AppOperation
 
-- (id)initWithInfo:(NSDictionary*)info;
 
 @end

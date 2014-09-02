@@ -28,15 +28,6 @@ NSString *kOptionsKey = @"Options";
 
 @implementation DuplicateFindOperation
 
-- (id)initWithInfo:(NSDictionary*)info {
-
-    self = [super init];
-    if (self)
-    {
-        _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
-    }
-    return self;
-}
 
 -(void) main {
     NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
