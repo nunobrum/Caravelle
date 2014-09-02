@@ -902,7 +902,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             NSDictionary *answer = [NSDictionary dictionaryWithObjectsAndKeys:
                                     rootPath,kRootPathKey,
                                     self, kSenderKey,
-                                    [NSNumber numberWithBool:YES], kModeKey,
+                                    [NSNumber numberWithInteger:_viewMode], kModeKey,
                                     nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationCatalystRootUpdate object:self userInfo:answer];
         }

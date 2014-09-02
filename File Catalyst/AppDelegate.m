@@ -41,7 +41,7 @@ NSFileManager *appFileManager;
 
     NSOperationQueue *queue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 	NSTimer	*timer;                  // update timer for progress indicator
-    NSNumber *scanCount;
+    NSNumber *operationCounter;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     FileCollection *duplicates;
 
@@ -57,7 +57,7 @@ NSFileManager *appFileManager;
 	if (self)
     {
         queue = [[NSOperationQueue alloc] init];
-        scanCount= [NSNumber numberWithInteger:0];
+        operationCounter= [NSNumber numberWithInteger:0];
         appFileManager = [[NSFileManager alloc] init];
         [appFileManager setDelegate:self];
 	}
@@ -138,7 +138,7 @@ NSFileManager *appFileManager;
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       homeDir,kRootPathKey,
                                       myLeftView, kSenderKey,
-                                      scanCount, kOperationCountKey,
+                                      operationCounter, kOperationCountKey,
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
@@ -162,9 +162,9 @@ NSFileManager *appFileManager;
     /* In a normal mode the Browser only has one Root */
     [BrowserView removeRootWithIndex:0];
     /* Increment the Scan Count */
-    NSInteger aux = [scanCount integerValue]+1;
-    scanCount = [NSNumber numberWithInteger:aux];
-    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:scanCount forKey:kOperationCountKey]];
+    NSInteger aux = [operationCounter integerValue]+1;
+    operationCounter = [NSNumber numberWithInteger:aux];
+    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:operationCounter forKey:kOperationCountKey]];
     /* Add the Job to the Queue */
 	//[queue cancelAllOperations];
 
@@ -190,7 +190,7 @@ NSFileManager *appFileManager;
     NSNumber *loadScanCountNum = [notifData valueForKey:kOperationCountKey];
 
     // make sure the current scan matches the scan of our loaded image
-    if (scanCount == loadScanCountNum)
+    if (operationCounter == loadScanCountNum)
     {
         TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
         BrowserController *BView =[notifData valueForKey: kSenderKey];
