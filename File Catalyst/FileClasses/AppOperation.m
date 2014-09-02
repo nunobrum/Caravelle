@@ -11,9 +11,10 @@
 // key for obtaining the current scan count
 NSString *kOperationCountKey = @"operationCount";
 
+// key for obtaining the associated TreeRoot
 NSString *kRootPathKey = @"RootPath";
 
-// key for obtaining the associated TreeRoot
+// Key for obtaining the sender of the notification !!! TODO Test if this is really needed. notifications already include sender objects anyway. Maybe just for convinience of resending the Dictionary.
 NSString *kSenderKey = @"Sender";
 
 NSString *kModeKey = @"Mode";
