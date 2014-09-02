@@ -8,6 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString *notificationStartDuplicateFind;
+
 @interface DuplicateFindSettingsViewController : NSWindowController
 @property (strong) IBOutlet NSTableView *folderList;
 

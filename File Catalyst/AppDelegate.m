@@ -20,16 +20,14 @@
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 NSString *kSelectedFilesKey=@"FilesSelected";
 
-NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
-NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 
 NSString *notificationCatalystRootUpdate=@"RootUpdate";
 NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 
 NSString *notificationDoFileOperation = @"DoOperation";
-NSString *kOperationKey =@"OperationKey";
-NSString *kDestinationKey =@"DestinationKey";
+NSString *kDropOperationKey =@"OperationKey";
+NSString *kDropDestinationKey =@"DestinationKey";
 
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
@@ -140,7 +138,7 @@ NSFileManager *appFileManager;
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       homeDir,kRootPathKey,
                                       myLeftView, kSenderKey,
-                                      scanCount, kScanCountKey,
+                                      scanCount, kOperationCountKey,
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
@@ -166,7 +164,7 @@ NSFileManager *appFileManager;
     /* Increment the Scan Count */
     NSInteger aux = [scanCount integerValue]+1;
     scanCount = [NSNumber numberWithInteger:aux];
-    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:scanCount forKey:kScanCountKey]];
+    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:scanCount forKey:kOperationCountKey]];
     /* Add the Job to the Queue */
 	//[queue cancelAllOperations];
 
@@ -189,7 +187,7 @@ NSFileManager *appFileManager;
 	//
 	NSDictionary *notifData = [note userInfo];
 
-    NSNumber *loadScanCountNum = [notifData valueForKey:kScanCountKey];
+    NSNumber *loadScanCountNum = [notifData valueForKey:kOperationCountKey];
 
     // make sure the current scan matches the scan of our loaded image
     if (scanCount == loadScanCountNum)
@@ -222,11 +220,11 @@ NSFileManager *appFileManager;
 -(void) handleOperationRequest: (NSNotification*) note
 {
     NSDictionary *notifData = [note userInfo];
-    NSString *operation = [notifData objectForKey:kOperationKey];
+    NSString *operation = [notifData objectForKey:kDropOperationKey];
     NSArray *files = [notifData objectForKey:kSelectedFilesKey];
 
     if ([operation isEqualToString:opCopyOperation]) {
-        NSURL *toDirectory = [notifData objectForKey:kDestinationKey];
+        NSURL *toDirectory = [notifData objectForKey:kDropDestinationKey];
         copyFilesThreaded(files, [toDirectory path]);
 
     }

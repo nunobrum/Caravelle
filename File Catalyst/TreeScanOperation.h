@@ -7,9 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AppOperation.h"
 
-@interface TreeScanOperation : NSOperation
+extern NSString *notificationTreeConstructionFinished;
+extern NSString *kTreeRootKey;
 
-- (id)initWithInfo:(NSDictionary*)info;
+
+@interface TreeScanOperation : AppOperation
+
 
 @end

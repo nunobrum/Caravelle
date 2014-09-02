@@ -7,6 +7,9 @@
 //
 
 #import "Definitions.h"
+#import "AppOperation.h"
+
+NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 
 @interface ValueToBoolean : NSValueTransformer
 

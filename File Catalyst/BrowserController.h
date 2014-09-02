@@ -12,6 +12,12 @@
 #import "PathControlManager.h"
 #include "Definitions.h"
 
+extern NSString *notificationStatusUpdate;
+
+
+extern NSString *notificationCatalystRootUpdate;
+
+
 @interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
     NSMutableArray *tableData;
     NSSize iconSize;

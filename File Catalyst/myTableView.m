@@ -121,9 +121,8 @@
         }
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                               files, kSelectedFilesKey,
-                              self, kSenderKey,  // pass back to check if user cancelled/started a new scan
-                              operation, kOperationKey,
-                              [self.treeNodeSelected url], kDestinationKey,
+                              operation, kDropOperationKey,
+                              [self.treeNodeSelected url], kDropDestinationKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 

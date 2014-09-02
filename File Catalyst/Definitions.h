@@ -9,29 +9,17 @@
 #ifndef File_Catalyst_Definitions_h
 #define File_Catalyst_Definitions_h
 
-extern NSString *notificationStatusUpdate;
-extern NSString *kSelectedFilesKey;
 
-extern NSString *notificationStartDuplicateFind;
-extern NSString *notificationDuplicateFindFinish;
-extern NSString *kDuplicateList;
-
-extern NSString *notificationCatalystRootUpdate;
-extern NSString *kRootPathKey;
-
+/* Used for Drag&Drop notifications */
 extern NSString *notificationDoFileOperation;
-extern NSString *kOperationKey;
-extern NSString *kDestinationKey;
+extern NSString *kDropOperationKey;
+extern NSString *kDropDestinationKey;
+/* Used for Both Drag&Drop and for Status Notifications */
+extern NSString *kSelectedFilesKey;
 
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
 
-extern NSString *notificationTreeConstructionFinished;
-extern NSString *kTreeRootKey;
-extern NSString *kSenderKey;
-extern NSString *kModeKey;
-extern NSString *kScanCountKey;
-extern NSString *kOptionsKey;
 
 extern NSFileManager *appFileManager;
 
@@ -57,6 +45,7 @@ typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
     DupCompareContentsFull = 1 << 5,
     DupCompareContentsMD5  = 1 << 6
 };
+extern NSString *kOptionsKey;
 
 #define UPDATE_CADENCE_PER_FILE 100
 

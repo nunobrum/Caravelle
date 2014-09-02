@@ -7,8 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "AppOperation.h"
 
-@interface DuplicateFindOperation : NSOperation
+extern NSString *notificationDuplicateFindFinish;
+extern NSString *kDuplicateList;
+
+
+@interface DuplicateFindOperation : AppOperation
 
 - (id)initWithInfo:(NSDictionary*)info;
 

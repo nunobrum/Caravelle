@@ -11,27 +11,14 @@
 #import "MyDirectoryEnumerator.h"
 #import "Definitions.h"
 
-// key for obtaining the current scan count
-NSString *kScanCountKey = @"scanCount";
-
 // key for obtaining the associated TreeRoot
 NSString *kTreeRootKey = @"treeRoot";
-
-NSString *kRootPathKey = @"RootPath";
-
-NSString *kOptionsKey = @"Options";
-
-// key for obtaining the associated TreeRoot
-NSString *kSenderKey = @"Sender";
-
-NSString *kModeKey = @"CatalystMode";
 
 NSString *notificationTreeConstructionFinished = @"TreeFinished";
 
 @interface TreeScanOperation ()
 {
-    NSMutableDictionary *_taskInfo;
-    NSNumber *ourScanCount;
+    NSNumber *operationCount;
 }
 
 @end
@@ -40,11 +27,10 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
 @implementation TreeScanOperation
 - (id)initWithInfo:(NSDictionary*)info {
 
-    self = [super init];
+    self = [super initWithInfo:info];
     if (self)
     {
-        _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
-        ourScanCount = [info objectForKey:kScanCountKey];
+        operationCount = [info objectForKey:kOperationCountKey];
     }
     return self;
 }
@@ -75,7 +61,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
             {
                 NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                       rootDir, kTreeRootKey,
-                                      ourScanCount, kScanCountKey,  // pass back to check if user cancelled/started a new scan
+                                      operationCount, kOperationCountKey,  // pass back to check if user cancelled/started a new scan
                                       nil];
                 // for the purposes of this sample, we're just going to post the information
                 // out there and let whoever might be interested receive it (in our case its MyWindowController).

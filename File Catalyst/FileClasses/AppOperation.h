@@ -8,6 +8,19 @@
 
 #import <Foundation/Foundation.h>
 
-@interface AppOperation : NSOperation
+extern NSString *kSenderKey;
+extern NSString *kModeKey;
+extern NSString *kOperationCountKey;
+extern NSString *kRootPathKey;
+
+
+@interface AppOperation : NSOperation {
+    NSMutableDictionary *_taskInfo;
+    NSNumber *operationCount;
+    int statusCount;
+    int statusTotal;
+}
+
+- (id)initWithInfo:(NSDictionary*)info;
 
 @end

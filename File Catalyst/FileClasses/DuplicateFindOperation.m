@@ -11,7 +11,10 @@
 #import "MyDirectoryEnumerator.h"
 #import "FileCollection.h"
 
+NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 NSString *kDuplicateList = @"DuplicateList";
+
+NSString *kOptionsKey = @"Options";
 
 @interface DuplicateFindOperation ()
 {

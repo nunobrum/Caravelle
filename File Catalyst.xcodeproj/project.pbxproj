@@ -71,7 +71,6 @@
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
 		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
-		3CF645B919A6327A00DD53F5 /* myTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B819A6327A00DD53F5 /* myTableView.m */; };
 		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
 		3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
 		3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
@@ -177,8 +176,6 @@
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
 		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeScanOperation.h; path = ../TreeScanOperation.h; sourceTree = "<group>"; };
 		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeScanOperation.m; path = ../TreeScanOperation.m; sourceTree = "<group>"; };
-		3CF645B719A6327A00DD53F5 /* myTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myTableView.h; sourceTree = "<group>"; };
-		3CF645B819A6327A00DD53F5 /* myTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myTableView.m; sourceTree = "<group>"; };
 		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
 		3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateFindSettingsViewController.h; sourceTree = "<group>"; };
 		3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateFindSettingsViewController.m; sourceTree = "<group>"; };
@@ -212,8 +209,6 @@
 		3C29463118F9B81C002B633C /* FileClasses */ = {
 			isa = PBXGroup;
 			children = (
-				3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */,
-				3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */,
 				3C29464618F9B87C002B633C /* FileCollection.h */,
 				3C29463F18F9B87C002B633C /* FileCollection.m */,
 				3C29464718F9B87C002B633C /* FileInformation.h */,
@@ -230,6 +225,8 @@
 				3CFD4D551998E16C0074F08B /* FileUtils.m */,
 				3CA7DFC019B5FE9D00600F41 /* AppOperation.h */,
 				3CA7DFC119B5FE9D00600F41 /* AppOperation.m */,
+				3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */,
+				3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */,
 			);
 			path = FileClasses;
 			sourceTree = "<group>";
@@ -390,8 +387,6 @@
 				3C717C08198D5B200025E28A /* BrowserController.m */,
 				3CBA37C3199613460040307B /* PathControlManager.h */,
 				3CBA37C4199613460040307B /* PathControlManager.m */,
-				3CF645B719A6327A00DD53F5 /* myTableView.h */,
-				3CF645B819A6327A00DD53F5 /* myTableView.m */,
 			);
 			name = BrowserViewClasses;
 			sourceTree = "<group>";
@@ -556,7 +551,6 @@
 				3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */,
 				3C29464A18F9B87C002B633C /* FileInformation.m in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
-				3CF645B919A6327A00DD53F5 /* myTableView.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3CBA37C5199613460040307B /* PathControlManager.m in Sources */,

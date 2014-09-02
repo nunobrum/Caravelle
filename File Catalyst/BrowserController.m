@@ -14,6 +14,7 @@
 #import "TreeBranch.h"
 #import "TreeRoot.h"
 #import "FileInformation.h"
+#import "appOperation.h"
 
 #define COL_FILENAME @"NameID"
 #define COL_DATE_MOD @"ModifiedID"
@@ -256,13 +257,13 @@ void DateFormatter(NSDate *date, NSString **output) {
     // TODO !!! implement a performInMainThread so that critical synchronise problems are minimized
     if ([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ])  {
         NSArray *object;
-        NSDictionary *answer=nil;
+        NSDictionary *noteInfo=nil;
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         NSInteger SelectedCount = [rowsSelected count];
         if (SelectedCount ==0) {
             /* Sends an Empty Array */
             object = [[NSArray new] init];
-            answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
+            noteInfo = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
             [_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
@@ -272,15 +273,15 @@ void DateFormatter(NSDate *date, NSString **output) {
             [self refreshDataView];
             /* Sends an Array with one Object */
             object = [NSArray arrayWithObject:_treeNodeSelected];
-            answer = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
+            noteInfo = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
 
         }
         else {
             // !!! Houston we have a problem
         }
 
-        if (answer != nil) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
+        if (noteInfo != nil) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:noteInfo];
         }
     }
 
@@ -552,8 +553,8 @@ void DateFormatter(NSDate *date, NSString **output) {
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                               files, kSelectedFilesKey,
                               self, kSenderKey,  // pass back to check if user cancelled/started a new scan
-                              opCommand, kOperationKey,
-                              destination, kDestinationKey,
+                              opCommand, kDropOperationKey,
+                              destination, kDropDestinationKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
