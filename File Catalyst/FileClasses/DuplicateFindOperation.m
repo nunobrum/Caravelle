@@ -65,16 +65,6 @@ NSString *kDuplicateList = @"DuplicateList";
         if (![self isCancelled])
         {
             duplicates = [filecollection findDuplicates:[Options integerValue] operation:self];
-            //    TreeRoot *root = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno) {
-            //        // Put Code here
-            //        //[[self StatusText] setIntegerValue:fileno];
-            //    }];
-            //    [(BrowserController*)myLeftView addTreeRoot:root];
-            //
-            //    [(BrowserController*)myLeftView refreshTrees];
-            //    [_toolbarDeleteButton setEnabled:NO];
-            //
-
             NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                   duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
                                   nil];

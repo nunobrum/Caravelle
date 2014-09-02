@@ -132,19 +132,19 @@ NSFileManager *appFileManager;
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
         NSString *homeDir = NSHomeDirectory();
-
+        [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
         [(BrowserController*)myRightView selectFirstRoot];
-        if (0) {
-        NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                homeDir,kRootPathKey,
-                                myLeftView, kSenderKey,
-                                scanCount, kScanCountKey,
-                                [NSNumber numberWithBool:YES], kModeKey,
-                                nil];
-        TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
-        [queue addOperation:Op];
-        [(BrowserController*)myLeftView startBusyAnimations];
+        if (1) {
+            [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
+            NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      homeDir,kRootPathKey,
+                                      myLeftView, kSenderKey,
+                                      scanCount, kScanCountKey,
+                                      [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
+                                      nil];
+            TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
+            [queue addOperation:Op];
         }
         else {
             [myLeftView setViewMode:BViewBrowserMode];
@@ -198,7 +198,7 @@ NSFileManager *appFileManager;
         BrowserController *BView =[notifData valueForKey: kSenderKey];
         [BView addTreeRoot:receivedTree];
         [BView stopBusyAnimations];
-        [BView refreshTrees];
+        [BView selectFolderByItem: receivedTree];
         // set the number of images found indicator string
         [_StatusBar setTitle:@"Received data from Thread"];
     }
@@ -326,7 +326,8 @@ NSFileManager *appFileManager;
 
 - (void) startDuplicateFind:(NSNotification*)theNotification {
     NSLog(@"Starting Duplicate Find");
-
+    [myLeftView setViewMode:BViewDuplicateMode];
+    [myRightView setViewMode:BViewDuplicateMode];
     NSDictionary *notifInfo = [theNotification userInfo];
 	// start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
@@ -339,10 +340,6 @@ NSFileManager *appFileManager;
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
     self->applicationMode = ApplicationwModeDuplicate;
-    [myLeftView setViewMode:BViewDuplicateMode];
-    [myRightView setViewMode:BViewDuplicateMode];
-    [myLeftView removeAll];
-    [myRightView removeAll];
     TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno){}];
     [myLeftView addTreeRoot:rootDir];
     [myRightView addTreeRoot:rootDir];

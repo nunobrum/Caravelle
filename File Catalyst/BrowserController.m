@@ -717,15 +717,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(void) removeRootWithIndex:(NSInteger)index {
     if (index < [BaseDirectoriesArray count]) {
-        TreeRoot *itemToBeDeleted = [BaseDirectoriesArray objectAtIndex:index];
-        [itemToBeDeleted deallocTree];
         [BaseDirectoriesArray removeObjectAtIndex:index];
     }
     //[self refreshTrees];
 }
 
 -(void) removeRoot: (TreeRoot*) root {
-    [root deallocTree];
     [BaseDirectoriesArray removeObjectIdenticalTo:root];
 }
 
