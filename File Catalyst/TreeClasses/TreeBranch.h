@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 //-(FileCollection*) duplicatesInNode;
 //-(FileCollection*) duplicatesInBranch;
-
+-(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 
 -(void)refreshContentsOnQueue: (NSOperationQueue *) queue;
@@ -75,7 +75,15 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
  */
 -(BOOL) sendToRecycleBinItem:(TreeItem*) item;
 -(BOOL) eraseItem:(TreeItem*) item;
+
 -(BOOL) copyItem:(TreeItem*)item To:(NSString*)path;
 -(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path;
+
+-(BOOL) copyItem:(TreeItem*)item toBranch:(TreeBranch*)path;
+-(BOOL) MoveItem:(TreeItem*)item toBranch:(TreeBranch*)path;
+
+-(BOOL) copyItems:(NSArray*)item toBranch:(TreeBranch*)path;
+-(BOOL) MoveItems:(NSArray*)item toBranch:(TreeBranch*)path;
+
 
 @end

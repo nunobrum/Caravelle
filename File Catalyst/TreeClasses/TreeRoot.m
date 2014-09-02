@@ -77,6 +77,14 @@
 
 }
 
++(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
+    TreeRoot *tree = [TreeRoot alloc];
+    tree = [tree initFromEnumerator:dirEnum URL:rootURL parent:parent cancelBlock:cancelBlock];
+    tree->_fileCollection = NULL;
+    tree->_isCollectionSet = NO;
+    return tree;
+}
+
 //+(TreeRoot*) treeFromPath:(NSString*)rootPath {
 //    TreeRoot *rootDir = [[TreeRoot new] init];
 //    rootDir.children = [[NSMutableArray new] init];

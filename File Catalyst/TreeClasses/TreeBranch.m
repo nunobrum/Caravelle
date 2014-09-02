@@ -374,14 +374,19 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 //}
 
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
-    TreeBranch *tree = [[TreeBranch alloc] initWithURL:rootURL parent:parent];
+    TreeBranch *tree = [TreeBranch alloc];
+    return [tree initFromEnumerator:dirEnum URL:rootURL parent:parent cancelBlock:cancelBlock];
+}
+
+-(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
+    self = [self initWithURL:rootURL parent:parent];
     /* Since the instance is created now, there is no problem with thread synchronization */
     for (NSURL *theURL in dirEnum) {
-        [tree addURL:theURL];
-        if (cancelBlock)
+        [self addURL:theURL];
+        if (cancelBlock())
             break;
     }
-    return tree;
+    return self;
 }
 
 /* This is not to be used with Catalyst Mode */
@@ -457,21 +462,63 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     }
 }
 
+-(void) removeItem:(TreeItem*)item {
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        [self->children removeObject:item];
+    }
+    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+}
+
+-(void) addItem:(TreeItem*)item {
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        [self->children addObject:item];
+    }
+    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+}
+
 /*
  * File Manipulation methods
  */
 -(BOOL) sendToRecycleBinItem:(TreeItem*) item {
-    BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[self path] error:nil];
-    return answer;
+    BOOL ok = [appFileManager removeItemAtPath:[self path] error:nil];
+    if (ok) {
+        [self removeItem:item];
+    }
+    return ok;
 }
+
 -(BOOL) eraseItem:(TreeItem*) item {
-    return NO;
+    return NO; // !!! TODO
 }
+
 -(BOOL) copyItem:(TreeItem*)item To:(NSString*)path {
-    return NO;
+    BOOL ok = [appFileManager copyItemAtPath:[item path] toPath:path error:nil];
+    return ok;
 }
+
 -(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path {
-    return NO;
+    BOOL ok = [appFileManager moveItemAtPath:[item path] toPath:path error:nil];
+    if (ok) {
+        [self removeItem:item];
+    }
+    return ok;
+}
+
+-(BOOL) copyItem:(TreeItem*)item toBranch:(TreeBranch*)path {
+    return NO;  // !!! TODO
+}
+-(BOOL) MoveItem:(TreeItem*)item toBranch:(TreeBranch*)path {
+    return NO;  // !!! TODO
+}
+
+-(BOOL) copyItems:(NSArray*)item toBranch:(TreeBranch*)path {
+    return NO;  // !!! TODO
+}
+
+-(BOOL) MoveItems:(NSArray*)item toBranch:(TreeBranch*)path {
+    return NO;  // !!! TODO
 }
 
 @end

@@ -14,7 +14,8 @@
 -(void) _harvestLeafsInBranch:(NSMutableArray*)collector;
 -(BOOL) addURL:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
-
+-(void) removeItem:(TreeItem*)item;
+-(void) addItem:(TreeItem*)item;
 
 @end
 
