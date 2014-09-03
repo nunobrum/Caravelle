@@ -21,7 +21,7 @@
 -(FileCollection *) fileCollection;
 -(NSString*) rootPath;
 
-+(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler;
++(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection;
 +(TreeRoot*) treeWithURL:(NSURL*) rootURL;
 //+(TreeRoot*) treeFromPath:(NSString*)rootPath;
 @end

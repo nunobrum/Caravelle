@@ -87,8 +87,7 @@
             [self addFileByURL:theURL];
             fileno+=1;
         }
-        if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
-            callbackhandler(fileno);
+        callbackhandler(fileno);
     }
     
     // Release the localFileManager.

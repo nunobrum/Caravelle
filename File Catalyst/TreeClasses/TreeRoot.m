@@ -34,7 +34,7 @@
 }
 
 
-+(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection callback:(void (^)(NSInteger fileno))callbackhandler {
++(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection {
     if (fileCollection!=nil && [fileCollection FileCount]>0 ) {
         NSInteger fileno=0;
 
@@ -54,8 +54,6 @@
         /* Refresh the Trees so that the trees are displayed */
         for (FileInformation *finfo in fileCollection.fileArray) {
             [rootDir addURL:finfo.getURL];
-            if (0 ==(fileno % UPDATE_CADENCE_PER_FILE))
-                callbackhandler(fileno);
             fileno++;
 
         } // for

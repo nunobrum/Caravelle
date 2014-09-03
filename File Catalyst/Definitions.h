@@ -47,7 +47,5 @@ typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
 };
 extern NSString *kOptionsKey;
 
-#define UPDATE_CADENCE_PER_FILE 100
-
 
 #endif

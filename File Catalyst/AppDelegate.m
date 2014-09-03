@@ -293,7 +293,7 @@ NSFileManager *appFileManager;
             }
             /* will now populate the Right View with Duplicates*/
             [myRightView removeAll];
-            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates callback:^(NSInteger fileno){}];
+            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
             [myRightView addTreeRoot:rootDir];
             [myRightView selectFirstRoot];
         }
@@ -338,7 +338,7 @@ NSFileManager *appFileManager;
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
     self->applicationMode = ApplicationwModeDuplicate;
-    TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates callback:^(NSInteger fileno){}];
+    TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates];
     [myLeftView addTreeRoot:rootDir];
     [myRightView addTreeRoot:rootDir];
     [myLeftView selectFirstRoot];
