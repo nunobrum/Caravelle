@@ -28,7 +28,7 @@ extern NSString *notificationCatalystRootUpdate;
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_sharedOperationQueue;
     BViewMode _viewMode;
-
+    NSTableView *_focusedView; // Contains the currently selected view
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
@@ -109,5 +109,6 @@ extern NSString *notificationCatalystRootUpdate;
 -(TreeBranch*) getItemByURL:(NSURL*)theURL;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
+-(NSArray*) getSelectedItems;
 
 @end

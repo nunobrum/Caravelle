@@ -48,6 +48,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
+    self->_focusedView = nil;
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
     self->_viewMode = BViewBrowserMode;
@@ -260,6 +261,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         NSDictionary *noteInfo=nil;
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         NSInteger SelectedCount = [rowsSelected count];
+        _focusedView = _myOutlineView;
         if (SelectedCount ==0) {
             /* Sends an Empty Array */
             object = [[NSArray new] init];
@@ -357,6 +359,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
         //NSLog(@"Table Selection Changed");
+        _focusedView = _myOutlineView;
         NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
         NSArray *objects = [tableData objectsAtIndexes:rowsSelected];
         NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:kSelectedFilesKey];
@@ -942,5 +945,17 @@ void DateFormatter(NSDate *date, NSString **output) {
     [_myTableView reloadData];
 }
 
+-(NSArray*) getSelectedItems {
+    NSArray* answer = nil;
+    if (_focusedView==_myOutlineView) {
+        NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
+        answer = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+    }
+    else if (_focusedView == _myTableView) {
+        NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
+        answer = [tableData objectsAtIndexes:rowsSelected];
+    }
+    return answer;
+}
 
 @end
