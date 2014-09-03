@@ -105,24 +105,16 @@
     return [filesize longLongValue];
 }
 
--(BOOL) sendToRecycleBin {
-    return [(TreeBranch*)_parent sendToRecycleBinItem:self];
-}
-
--(BOOL) eraseFile {
-    return [(TreeBranch*)_parent eraseItem:self];
-}
-
--(BOOL) copyFileTo:(NSString *)path {
-    return [(TreeBranch*)_parent copyItem:self To:path];
-}
-
--(BOOL) moveFileTo:(NSString *)path {
-    return [(TreeBranch*)_parent MoveItem:self To:path];
-}
 
 -(BOOL) openFile {
     [[NSWorkspace sharedWorkspace] openFile:[self path]];
+    return YES;
+}
+
+-(BOOL) removeItem {
+    if (_parent) {
+        [(TreeBranch*)_parent removeItem:self];
+    }
     return YES;
 }
 

@@ -49,11 +49,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 /*
  * File manipulation methods
  */
--(BOOL) sendToRecycleBin;
--(BOOL) eraseFile;
--(BOOL) copyFileTo:(NSString *)path;
--(BOOL) moveFileTo:(NSString *)path;
 -(BOOL) openFile;
+-(BOOL) removeItem;
 
 
 @end

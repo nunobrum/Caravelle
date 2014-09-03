@@ -462,63 +462,60 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     }
 }
 
--(void) removeItem:(TreeItem*)item {
+-(BOOL) removeItem:(TreeItem*)item {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         [self->children removeObject:item];
     }
     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    return YES;
 }
 
--(void) addItem:(TreeItem*)item {
+-(BOOL) addItem:(TreeItem*)item {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         [self->children addObject:item];
+        [item setParent:self];
     }
     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    return YES;
+}
+
+-(BOOL) moveItem:(TreeItem*)item {
+    TreeBranch *old_parent = (TreeBranch*)[item parent];
+    [self addItem:item];
+    if (old_parent) { // Remove from old parent
+        [old_parent removeItem:item];
+    }
+    return YES;
 }
 
 /*
  * File Manipulation methods
  */
--(BOOL) sendToRecycleBinItem:(TreeItem*) item {
-    BOOL ok = [appFileManager removeItemAtPath:[self path] error:nil];
-    if (ok) {
-        [self removeItem:item];
-    }
-    return ok;
-}
-
--(BOOL) eraseItem:(TreeItem*) item {
-    return NO; // !!! TODO
-}
-
--(BOOL) copyItem:(TreeItem*)item To:(NSString*)path {
-    BOOL ok = [appFileManager copyItemAtPath:[item path] toPath:path error:nil];
-    return ok;
-}
-
--(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path {
-    BOOL ok = [appFileManager moveItemAtPath:[item path] toPath:path error:nil];
-    if (ok) {
-        [self removeItem:item];
-    }
-    return ok;
-}
-
--(BOOL) copyItem:(TreeItem*)item toBranch:(TreeBranch*)path {
-    return NO;  // !!! TODO
-}
--(BOOL) MoveItem:(TreeItem*)item toBranch:(TreeBranch*)path {
-    return NO;  // !!! TODO
-}
-
--(BOOL) copyItems:(NSArray*)item toBranch:(TreeBranch*)path {
-    return NO;  // !!! TODO
-}
-
--(BOOL) MoveItems:(NSArray*)item toBranch:(TreeBranch*)path {
-    return NO;  // !!! TODO
-}
+//-(BOOL) sendToRecycleBinItem:(TreeItem*) item {
+//    BOOL ok = [appFileManager removeItemAtPath:[self path] error:nil];
+//    if (ok) {
+//        [self removeItem:item];
+//    }
+//    return ok;
+//}
+//
+//-(BOOL) eraseItem:(TreeItem*) item {
+//    return NO; // !!! TODO
+//}
+//
+//-(BOOL) copyItem:(TreeItem*)item To:(NSString*)path {
+//    BOOL ok = [appFileManager copyItemAtPath:[item path] toPath:path error:nil];
+//    return ok;
+//}
+//
+//-(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path {
+//    BOOL ok = [appFileManager moveItemAtPath:[item path] toPath:path error:nil];
+//    if (ok) {
+//        [self removeItem:item];
+//    }
+//    return ok;
+//}
 
 @end

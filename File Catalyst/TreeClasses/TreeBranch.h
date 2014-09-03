@@ -71,19 +71,12 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;
 
 /*
- * File Manipulation methods
+ * Item Manipulation methods
  */
--(BOOL) sendToRecycleBinItem:(TreeItem*) item;
--(BOOL) eraseItem:(TreeItem*) item;
 
--(BOOL) copyItem:(TreeItem*)item To:(NSString*)path;
--(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path;
-
--(BOOL) copyItem:(TreeItem*)item toBranch:(TreeBranch*)path;
--(BOOL) MoveItem:(TreeItem*)item toBranch:(TreeBranch*)path;
-
--(BOOL) copyItems:(NSArray*)item toBranch:(TreeBranch*)path;
--(BOOL) MoveItems:(NSArray*)item toBranch:(TreeBranch*)path;
+-(BOOL) addItem:(TreeItem*)item;
+-(BOOL) removeItem:(TreeItem*)item;
+-(BOOL) moveItem:(TreeItem*)item;
 
 
 @end
