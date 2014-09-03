@@ -664,6 +664,8 @@ CA
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>
                 <outlet property="statusProgressLabel" destination="Clz-g3-ghw" id="bjP-th-9Hn"/>
+                <outlet property="toolbarCopyLeftButton" destination="MN4-aw-9WU" id="pO1-2B-aEb"/>
+                <outlet property="toolbarCopyRightButton" destination="yNV-f2-8pv" id="xzP-Fq-j3K"/>
                 <outlet property="toolbarDeleteButton" destination="j6M-5a-ig4" id="Z4A-cd-9jc"/>
                 <outlet property="window" destination="2037" id="2039"/>
             </connections>
@@ -688,8 +690,8 @@ CA
                         <rect key="frame" x="1" y="22" width="850" height="637"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </splitView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="763" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
-                        <rect key="frame" x="2" y="4" width="767" height="17"/>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="321" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
+                        <rect key="frame" x="2" y="4" width="325" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="gJV-jD-cFn">
                             <font key="font" metaFont="system"/>
@@ -697,16 +699,19 @@ CA
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <progressIndicator maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8BL-5Q-1hY">
-                        <rect key="frame" x="688" y="1" width="96" height="20"/>
+                    <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8BL-5Q-1hY">
+                        <rect key="frame" x="628" y="1" width="96" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="96" id="3bd-VX-Gpn"/>
+                            <constraint firstAttribute="width" constant="96" id="6VE-G1-lyA"/>
                         </constraints>
                     </progressIndicator>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Clz-g3-ghw">
-                        <rect key="frame" x="796" y="4" width="38" height="17"/>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Clz-g3-ghw">
+                        <rect key="frame" x="736" y="4" width="100" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="96" id="heI-IR-83E"/>
+                        </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="Label" id="JuP-4D-DiO">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -715,16 +720,16 @@ CA
                     </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="Clz-g3-ghw" firstAttribute="leading" secondItem="8BL-5Q-1hY" secondAttribute="trailing" constant="14" id="6si-cY-fhv"/>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="906-0s-8Jl"/>
-                    <constraint firstAttribute="trailing" secondItem="6MC-cR-BWB" secondAttribute="trailing" constant="1" id="GE5-vo-iIl"/>
-                    <constraint firstAttribute="bottom" secondItem="Clz-g3-ghw" secondAttribute="bottom" constant="4" id="L2y-Gf-6dB"/>
-                    <constraint firstAttribute="bottom" secondItem="L75-zs-bdV" secondAttribute="bottom" constant="4" id="LVw-L3-6uG"/>
-                    <constraint firstItem="8BL-5Q-1hY" firstAttribute="top" secondItem="Clz-g3-ghw" secondAttribute="top" constant="1" id="SY5-NW-RnJ"/>
-                    <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="fwX-zR-Fkt"/>
-                    <constraint firstAttribute="trailing" secondItem="Clz-g3-ghw" secondAttribute="trailing" constant="20" symbolic="YES" id="iQp-AG-4BP"/>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="1" id="jcQ-N5-wMD"/>
-                    <constraint firstItem="L75-zs-bdV" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="m0A-BY-371"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="Ehx-zg-ePr"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="centerX" secondItem="2038" secondAttribute="centerX" id="Qtq-mv-wQg"/>
+                    <constraint firstAttribute="bottom" secondItem="8BL-5Q-1hY" secondAttribute="bottom" constant="2" id="Rhj-s9-wzI"/>
+                    <constraint firstItem="8BL-5Q-1hY" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="2" id="Z5S-y4-t0r"/>
+                    <constraint firstItem="Clz-g3-ghw" firstAttribute="baseline" secondItem="L75-zs-bdV" secondAttribute="baseline" id="aFc-H8-Sf5"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="1" id="c8A-cU-tQa"/>
+                    <constraint firstAttribute="trailing" secondItem="Clz-g3-ghw" secondAttribute="trailing" constant="18" id="e4Z-Mp-jI0"/>
+                    <constraint firstItem="Clz-g3-ghw" firstAttribute="leading" secondItem="8BL-5Q-1hY" secondAttribute="trailing" constant="14" id="r7a-ox-54N"/>
+                    <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="uJf-ro-GFu"/>
+                    <constraint firstItem="L75-zs-bdV" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="wfa-Hm-x70"/>
                 </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="EB34DDB4-8020-4906-B401-E359A05BD185" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="3f7-iI-Bff">
@@ -738,15 +743,23 @@ CA
                         <size key="maxSize" width="32" height="0.0"/>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarCustomizeToolbarItem" id="gy8-my-hX9"/>
-                    <toolbarItem implicitItemIdentifier="FCA2E997-6292-4DC4-8184-265C334D0A08" explicitItemIdentifier="NSToolbarDeleteItem" label="Delete" paletteLabel="Delete Item" tag="-1" image="ToolbarDeleteIcon" autovalidates="NO" id="j6M-5a-ig4">
+                    <toolbarItem implicitItemIdentifier="FCA2E997-6292-4DC4-8184-265C334D0A08" explicitItemIdentifier="NSToolbarDeleteItem" label="Delete" paletteLabel="Delete Item" tag="-1" image="NSTrashFull" autovalidates="NO" id="j6M-5a-ig4">
                         <connections>
                             <action selector="toolbarDelete:" target="494" id="I1k-A0-JMV"/>
                         </connections>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="255A7D65-E122-43C0-B22B-C949840C77B1" label="Eject" paletteLabel="Eject" tag="-1" image="EjectMediaIcon" id="zTK-cl-2Xn"/>
                     <toolbarItem implicitItemIdentifier="E57D1F1F-3427-4897-B721-CD8707B1AFB8" label="Info" paletteLabel="Info" tag="-1" image="ToolbarInfo" id="93A-nS-XRa"/>
-                    <toolbarItem implicitItemIdentifier="BA5041D9-678F-4005-B84B-AF5E7C1B1C9D" label="Copy" paletteLabel="Copy Left" tag="-1" image="BackwardArrowIcon" id="MN4-aw-9WU"/>
-                    <toolbarItem implicitItemIdentifier="6B76E4DD-0048-4A26-B4E6-BE20783D91C8" label="Copy" paletteLabel="Copy Right" tag="-1" image="ForwardArrowIcon" id="yNV-f2-8pv"/>
+                    <toolbarItem implicitItemIdentifier="BA5041D9-678F-4005-B84B-AF5E7C1B1C9D" label="Copy" paletteLabel="Copy Left" tag="-1" image="BackwardArrowIcon" id="MN4-aw-9WU">
+                        <connections>
+                            <action selector="toolbarCopyLeftAction:" target="494" id="Mhn-pB-M4m"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="6B76E4DD-0048-4A26-B4E6-BE20783D91C8" label="Copy" paletteLabel="Copy Right" tag="-1" image="ForwardArrowIcon" id="yNV-f2-8pv">
+                        <connections>
+                            <action selector="toolbarCopyRightAction:" target="494" id="2kI-K5-6Bt"/>
+                        </connections>
+                    </toolbarItem>
                     <toolbarItem implicitItemIdentifier="53F8327A-F7B0-4673-B519-439B459D8724" label="Label" paletteLabel="Label" tag="-1" image="ToolbarLabels" id="pDr-BP-Gj1"/>
                     <toolbarItem implicitItemIdentifier="4C0BD16C-7089-47F6-A6DE-B1C7470BEAAB" label="Toolbar Item" paletteLabel="Toolbar Item" tag="-1" image="GenericFolderIcon" id="MfD-9Z-u0d"/>
                 </allowedToolbarItems>
@@ -771,7 +784,7 @@ CA
         <image name="ForwardArrowIcon" width="512" height="512"/>
         <image name="GenericDocumentIcon" width="512" height="512"/>
         <image name="GenericFolderIcon" width="512" height="512"/>
-        <image name="ToolbarDeleteIcon" width="512" height="512"/>
+        <image name="NSTrashFull" width="32" height="32"/>
         <image name="ToolbarInfo" width="512" height="512"/>
         <image name="ToolbarLabels" width="512" height="512"/>
     </resources>

@@ -94,7 +94,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
-    [center addObserver:self selector:@selector(handleOperationRequest:) name:notificationDoFileOperation object:nil];
+    [center addObserver:self selector:@selector(handleOperationInformation:) name:notificationDoFileOperation object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
@@ -216,20 +216,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
 }
 
--(void) handleOperationRequest: (NSNotification*) note
-{
-    NSDictionary *notifData = [note userInfo];
-    NSString *operation = [notifData objectForKey:kDropOperationKey];
-    NSArray *files = [notifData objectForKey:kSelectedFilesKey];
-
-    if ([operation isEqualToString:opCopyOperation]) {
-        NSURL *toDirectory = [notifData objectForKey:kDropDestinationKey];
-        copyFilesThreaded(files, [toDirectory path]);
-
-    }
-    // TODO !!! Update the Status during the operation
-    // Hint : Use the Queue Manager count and a Timer to update the operation each second.
-}
 
 // -------------------------------------------------------------------------------
 //	windowShouldClose:sender
@@ -260,20 +246,63 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)toolbarCatalystSwitch:(id)sender {
 }
 
+- (IBAction)toolbarCopyRightAction:(id)sender {
+}
+
+- (IBAction)toolbarCopyLeftAction:(id)sender {
+}
+
 
 - (IBAction)RemoveSelected:(id)sender {
     [_toolbarDeleteButton setEnabled:NO];
 }
 
 
-- (IBAction)FindDuplicates:(id)sender {
-    if (duplicateSettingsWindow==nil)
-        duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
-    //NSWindow *wnd = [duplicateSettingsWindow window];
-    [duplicateSettingsWindow showWindow:self];
-
+#pragma mark Operations Handling
+-(void) handleOperationInformation: (NSNotification*) note
+{
+    //    NSDictionary *notifData = [note userInfo];
+    //    NSString *operation = [notifData objectForKey:kDropOperationKey];
+    //    NSArray *files = [notifData objectForKey:kSelectedFilesKey];
+    //
+    //    if ([operation isEqualToString:opCopyOperation]) {
+    //        NSURL *toDirectory = [notifData objectForKey:kDropDestinationKey];
+    //
+    //    }
+    // TODO !!! Update the Status during the operation
+    // Hint : Use the Queue Manager count and a Timer to update the operation each second.
+    [self _startOperationBusyIndication];
 }
 
+-(void) _startOperationBusyIndication {
+    _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
+    [self.statusProgressIndicator setHidden:NO];
+    [self.statusProgressIndicator startAnimation:self];
+    [self.statusProgressLabel setStringValue:@"Busy busy busy"];
+}
+
+- (void)_operationsInfoFired:(NSTimer *)timer {
+    if ([operationsQueue operationCount]==0) {
+    //[operationInfoTimer release];
+        [self _stopOperationBusyIndication];
+    }
+    else {
+        // !!! Get from Operation the status Text
+    }
+    NSLog(@"operation Status Update");
+}
+
+- (void)_stopOperationBusyIndication {
+    // We want to stop any previous animations
+    if (_operationInfoTimer != nil) {
+        [_operationInfoTimer invalidate];
+        //[operationInfoTimer release];
+        _operationInfoTimer = nil;
+    }
+    [self.statusProgressIndicator stopAnimation:self];
+    [self.statusProgressIndicator setHidden:YES];
+    [self.statusProgressLabel setStringValue:@""];
+}
 
 - (void) statusUpdate:(NSNotification*)theNotification {
     NSString *statusText;
@@ -320,7 +349,17 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
     }
 }
+#pragma mark Find Duplicates
 
+- (IBAction)FindDuplicates:(id)sender {
+    if (duplicateSettingsWindow==nil)
+        duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
+    //NSWindow *wnd = [duplicateSettingsWindow window];
+    [duplicateSettingsWindow showWindow:self];
+
+}
+
+/* invoked by Find Duplicates Dialog on OK Button */
 - (void) startDuplicateFind:(NSNotification*)theNotification {
     NSLog(@"Starting Duplicate Find");
     [myLeftView setViewMode:BViewDuplicateMode];
