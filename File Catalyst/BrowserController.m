@@ -519,7 +519,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             //NSLog(@"Copy Item %@", [pastedItem lastPathComponent]);
             i++;
         }
-        destination = [_treeNodeSelected url];
+        destination = _treeNodeSelected;
         answer= YES;
         opCommand = opCopyOperation;
     }
@@ -528,7 +528,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         if ([targetItem isKindOfClass:[TreeBranch class]]) {
             if (sourceDragMask & NSDragOperationCopy) {
                 opCommand = opCopyOperation;
-                destination = [targetItem url];
+                destination = targetItem;
                 answer = YES;
             }
             else if (sourceDragMask & NSDragOperationMove) {
@@ -747,7 +747,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         // Will send the corresponding file to recycle bin
         // !!! TODO
         TreeItem *fileOrDirectory = [_myOutlineView itemAtRow: fileSelected];
-        [fileOrDirectory sendToRecycleBin];
+        [fileOrDirectory removeItem];
     }
     [_myOutlineView reloadItem:nil reloadChildren:YES];
 
