@@ -12,13 +12,12 @@
 #import "FileCollection.h"
 #import "TreeLeaf.h"
 #import "TreeScanOperation.h"
-#import "FileUtils.h"
+#import "FileOperation.h"
 #import "DuplicateFindOperation.h"
 
 #import "DuplicateFindSettingsViewController.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
-NSString *kSelectedFilesKey=@"FilesSelected";
 
 
 NSString *notificationCatalystRootUpdate=@"RootUpdate";
@@ -28,16 +27,17 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 NSString *notificationDoFileOperation = @"DoOperation";
 NSString *kDropOperationKey =@"OperationKey";
 NSString *kDropDestinationKey =@"DestinationKey";
+NSString *kDroppedFilesKey=@"FilesSelected";
 
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
+NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 
 @implementation AppDelegate {
     ApplicationwMode applicationMode;
-    NSArray *selectedFiles;
     id  selectedView;
 	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *operationCounter;
@@ -238,8 +238,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	return (numOperationsRunning == 0);
 }
 
+#pragma mark Action Outlets
 
 - (IBAction)toolbarDelete:(id)sender {
+    NSArray *selectedFiles = [selectedView getSelectedItems];
+    sendItemsToRecycleBin(selectedFiles);
     NSLog(@"Menu Delete clicked");
 }
 
@@ -307,48 +310,61 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (void) statusUpdate:(NSNotification*)theNotification {
     NSString *statusText;
     NSDictionary *receivedData = [theNotification userInfo];
-    selectedFiles = [receivedData objectForKey:kSelectedFilesKey];
-    selectedView = [theNotification object];
 
-    if (selectedFiles != nil) {
-        NSInteger num_files=0;
-        NSInteger total_size=0;
-        NSInteger num_directories=0;
-        if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
-            FileCollection *selectedDuplicates = [[FileCollection alloc] init];
-            for (TreeItem *item in selectedFiles ) {
-                [selectedDuplicates concatenateFileCollection: [duplicates duplicatesInPath:[item path]]];
+    selectedView = [theNotification object];
+    if ([selectedView isKindOfClass:[BrowserController class]]) {
+
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+
+        if (selectedFiles != nil) {
+            NSInteger num_files=0;
+            NSInteger total_size=0;
+            NSInteger num_directories=0;
+            if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
+                FileCollection *selectedDuplicates = [[FileCollection alloc] init];
+                for (TreeItem *item in selectedFiles ) {
+                    [selectedDuplicates concatenateFileCollection: [duplicates duplicatesInPath:[item path]]];
+                }
+                /* will now populate the Right View with Duplicates*/
+                [myRightView removeAll];
+                TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
+                [myRightView addTreeRoot:rootDir];
+                [myRightView selectFirstRoot];
             }
-            /* will now populate the Right View with Duplicates*/
-            [myRightView removeAll];
-            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
-            [myRightView addTreeRoot:rootDir];
-            [myRightView selectFirstRoot];
-        }
-        if ([selectedFiles count]==0) {
-            statusText = [NSString stringWithFormat:@"No Files Selected"];
+            if ([selectedFiles count]==0) {
+                [self.toolbarDeleteButton setEnabled:NO];
+                if (selectedView==myLeftView) {
+                    [self.toolbarCopyRightButton setEnabled:NO];
+                }
+                else if (selectedView==myRightView) {
+                    [self.toolbarCopyLeftButton setEnabled:NO];
+                }
+                statusText = [NSString stringWithFormat:@"No Files Selected"];
+            }
+            else {
+                for (TreeItem *item in selectedFiles ) {
+                    if ([item isKindOfClass:[TreeLeaf class]]) {
+                        num_files++;
+                        total_size += [(TreeLeaf*)item filesize];
+                    }
+                    else if ([item isKindOfClass:[TreeBranch class]]) {
+                        num_directories++;
+                        total_size += [(TreeBranch*)item filesize];
+                    }
+                }
+                NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
+                statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
+                              num_files, num_directories, sizeText];
+                [_StatusBar setTitle: statusText];
+            }
         }
         else {
-            for (TreeItem *item in selectedFiles ) {
-                if ([item isKindOfClass:[TreeLeaf class]]) {
-                    num_files++;
-                    total_size += [(TreeLeaf*)item filesize];
-                }
-                else if ([item isKindOfClass:[TreeBranch class]]) {
-                    num_directories++;
-                    total_size += [(TreeBranch*)item filesize];
-                }
-            }
-            NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
-            statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
-                          num_files, num_directories, sizeText];
-            [_StatusBar setTitle: statusText];
+            [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
         }
     }
-    else {
-        [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
-    }
 }
+
+
 #pragma mark Find Duplicates
 
 - (IBAction)FindDuplicates:(id)sender {

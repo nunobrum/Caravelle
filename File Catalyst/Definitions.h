@@ -15,10 +15,11 @@ extern NSString *notificationDoFileOperation;
 extern NSString *kDropOperationKey;
 extern NSString *kDropDestinationKey;
 /* Used for Both Drag&Drop and for Status Notifications */
-extern NSString *kSelectedFilesKey;
+extern NSString *kDroppedFilesKey;
 
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
+extern NSString *opSendRecycleBinOperation;
 
 
 extern NSFileManager *appFileManager;

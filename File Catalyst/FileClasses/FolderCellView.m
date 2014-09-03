@@ -109,7 +109,7 @@
             return NO;
         }
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              files, kSelectedFilesKey,
+                              files, kDroppedFilesKey,
                               operation, kDropOperationKey,
                               self->url, kDropDestinationKey,
                               nil];

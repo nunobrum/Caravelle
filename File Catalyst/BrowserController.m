@@ -257,15 +257,10 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
     // TODO !!! implement a performInMainThread so that critical synchronise problems are minimized
     if ([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ])  {
-        NSArray *object;
-        NSDictionary *noteInfo=nil;
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         NSInteger SelectedCount = [rowsSelected count];
         _focusedView = _myOutlineView;
         if (SelectedCount ==0) {
-            /* Sends an Empty Array */
-            object = [[NSArray new] init];
-            noteInfo = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
             [_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
@@ -273,20 +268,13 @@ void DateFormatter(NSDate *date, NSString **output) {
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             [self setPathBarToItem:_treeNodeSelected];
             [self refreshDataView];
-            /* Sends an Array with one Object */
-            object = [NSArray arrayWithObject:_treeNodeSelected];
-            noteInfo = [NSDictionary dictionaryWithObject:object forKey:kSelectedFilesKey];
-
         }
         else {
             // !!! Houston we have a problem
+            return;
         }
-
-        if (noteInfo != nil) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:noteInfo];
-        }
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[notification userInfo]];
     }
-
 }
 
 #pragma mark - TableView Datasource Protocol
@@ -359,11 +347,8 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
         //NSLog(@"Table Selection Changed");
-        _focusedView = _myOutlineView;
-        NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
-        NSArray *objects = [tableData objectsAtIndexes:rowsSelected];
-        NSDictionary *answer = [NSDictionary dictionaryWithObject:objects forKey:kSelectedFilesKey];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:answer];
+        _focusedView = _myTableView;
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[aNotification userInfo]];
     }
 }
 
@@ -554,7 +539,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     }
     if (answer==YES) {
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              files, kSelectedFilesKey,
+                              files, kDroppedFilesKey,
                               self, kSenderKey,  // pass back to check if user cancelled/started a new scan
                               opCommand, kDropOperationKey,
                               destination, kDropDestinationKey,
@@ -948,8 +933,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(NSArray*) getSelectedItems {
     NSArray* answer = nil;
     if (_focusedView==_myOutlineView) {
+        /* This is done like this so that not more than one folder is selected */
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
-        answer = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+        answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[rowsSelected firstIndex]]];
     }
     else if (_focusedView == _myTableView) {
         NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];

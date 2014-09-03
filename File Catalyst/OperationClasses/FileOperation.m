@@ -16,14 +16,17 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 -(void) main {
     if (![self isCancelled])
 	{
-        NSArray *items = [_taskInfo objectForKey: kSelectedFilesKey];
+        NSArray *items = [_taskInfo objectForKey: kDroppedFilesKey];
         NSString *op = [_taskInfo objectForKey: kDropOperationKey];
         TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
 
-        if (items==nil || op==nil || ![dest isKindOfClass:[TreeBranch class]]) {
+        if (items==nil || op==nil) {
             /* Should it be decided to inform */
         }
         else {
+            if ( ![dest isKindOfClass:[TreeBranch class]]) {
+
+            }
             for (id item in items) {
                 if ([item isKindOfClass:[NSURL class]]) {
                     if ([op isEqualToString:opCopyOperation]) {
@@ -53,6 +56,12 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             [dest moveItem:item];
                         }
                     }
+                    else if ([op isEqualToString:opSendRecycleBinOperation]) {
+                        BOOL ok = sendToRecycleBin([item url]);
+                        if (ok) {
+                            [item removeItem];
+                        }
+                    }
                 }
                 if ([self isCancelled]) {
                     break;
@@ -73,7 +82,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 BOOL copyItemsToBranch(NSArray *items, TreeBranch *folder) {
     NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               opCopyOperation, kDropOperationKey,
-                              items, kSelectedFilesKey,
+                              items, kDroppedFilesKey,
                               folder, kDropDestinationKey,
                               nil];
     FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
@@ -82,11 +91,22 @@ BOOL copyItemsToBranch(NSArray *items, TreeBranch *folder) {
     return answer;
 }
 
-extern BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder) {
+BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder) {
     NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               opMoveOperation, kDropOperationKey,
-                              items, kSelectedFilesKey,
+                              items, kDroppedFilesKey,
                               folder, kDropDestinationKey,
+                              nil];
+    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
+    BOOL answer = [operation isReady];
+    [operationsQueue addOperation:operation];
+    return answer;
+}
+
+BOOL sendItemsToRecycleBin(NSArray *items) {
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opSendRecycleBinOperation, kDropOperationKey,
+                              items, kDroppedFilesKey,
                               nil];
     FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
     BOOL answer = [operation isReady];
@@ -103,4 +123,9 @@ BOOL copyItemToBranch(TreeItem *item, TreeBranch *folder) {
 BOOL moveItemToBranch(TreeItem *item, TreeBranch *folder) {
     NSArray *items = [NSArray arrayWithObject:item];
     return moveItemsToBranch(items, folder);
+}
+
+BOOL sendItemToRecycleBin(TreeItem *item) {
+    NSArray *items = [NSArray arrayWithObject:item];
+    return sendItemsToRecycleBin(items);
 }
