@@ -22,6 +22,7 @@ extern NSString *opMoveOperation;
 
 
 extern NSFileManager *appFileManager;
+extern NSOperationQueue *operationsQueue;
 
 typedef NS_ENUM(NSInteger, BViewMode) {
     BViewBrowserMode = 1,

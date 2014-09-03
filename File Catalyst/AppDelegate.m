@@ -33,14 +33,13 @@ NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
 
 NSFileManager *appFileManager;
+NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 
 @implementation AppDelegate {
     ApplicationwMode applicationMode;
     NSArray *selectedFiles;
     id  selectedView;
-
-    NSOperationQueue *queue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
-	NSTimer	*timer;                  // update timer for progress indicator
+	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *operationCounter;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     FileCollection *duplicates;
@@ -56,7 +55,7 @@ NSFileManager *appFileManager;
 	self = [super init];
 	if (self)
     {
-        queue = [[NSOperationQueue alloc] init];
+        operationsQueue = [[NSOperationQueue alloc] init];
         operationCounter= [NSNumber numberWithInteger:0];
         appFileManager = [[NSFileManager alloc] init];
         [appFileManager setDelegate:self];
@@ -142,7 +141,7 @@ NSFileManager *appFileManager;
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
-            [queue addOperation:Op];
+            [operationsQueue addOperation:Op];
         }
         else {
             [myLeftView setViewMode:BViewBrowserMode];
@@ -171,7 +170,7 @@ NSFileManager *appFileManager;
 	// start the GetPathsOperation with the root path to start the search
 	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
 
-	[queue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
+	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
 
 }
 
@@ -238,7 +237,7 @@ NSFileManager *appFileManager;
 - (BOOL)windowShouldClose:(id)sender
 {
 	// are you sure you want to close, (threads running)
-	NSInteger numOperationsRunning = [[queue operations] count];
+	NSInteger numOperationsRunning = [[operationsQueue operations] count];
 
 	if (numOperationsRunning > 0)
 	{
@@ -329,7 +328,7 @@ NSFileManager *appFileManager;
     NSDictionary *notifInfo = [theNotification userInfo];
 	// start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
-	[queue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
+	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
 
 
 }

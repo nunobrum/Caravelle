@@ -9,12 +9,12 @@
 #import "FileUtils.h"
 #import "Definitions.h"
 
-static NSOperationQueue *localOperationsQueue() {
-    static NSOperationQueue *queue= nil;
-    if (queue==nil)
-        queue= [[NSOperationQueue alloc] init];
-    return queue;
-}
+//static NSOperationQueue *localOperationsQueue() {
+//    static NSOperationQueue *queue= nil;
+//    if (queue==nil)
+//        queue= [[NSOperationQueue alloc] init];
+//    return queue;
+//}
 
 BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;
@@ -83,64 +83,64 @@ BOOL openFile(NSURL*url) {
     [[NSWorkspace sharedWorkspace] openFile:[url path]];
     return YES;
 }
-
-BOOL copyFilesThreaded(NSArray *files, id toDirectory) {
-    NSString *toDir;
-    if ([toDirectory isKindOfClass:[NSURL class]]) {
-        toDir = [(NSURL*)toDirectory path];
-    }
-    else if ([toDirectory isKindOfClass:[NSString class]]) {
-        toDir = toDirectory;
-    }
-    else {
-        return NO;
-    }
-    for (id file in files) {
-        NSString *src;
-        if ([file isKindOfClass:[NSURL class]])
-            src = [(NSURL*)file path];
-        else
-            src = file;
-        [localOperationsQueue() addOperationWithBlock:^(void) {
-            NSError *error=nil;
-            NSString *newFilePath = [toDir stringByAppendingPathComponent:[file lastPathComponent]];
-            NSLog(@"Copying '%@' to '%@' ", file, newFilePath);
-            [appFileManager copyItemAtPath:src toPath:newFilePath error:&error];
-            if (error!=nil)
-                NSLog(@"Error %@", error);
-        }];
-    }
-    return YES;
-}
-
-BOOL moveFilesThreaded(NSArray *files, id toDirectory) {
-    NSString *toDir;
-    if ([toDirectory isKindOfClass:[NSURL class]]) {
-        toDir = [(NSURL*)toDirectory path];
-    }
-    else if ([toDirectory isKindOfClass:[NSString class]]) {
-        toDir = toDirectory;
-    }
-    else {
-        return NO;
-    }
-    for (NSString *file in files) {
-        NSString *src;
-        if ([file isKindOfClass:[NSURL class]])
-            src = [(NSURL*)file path];
-        else
-            src = file;
-        [localOperationsQueue() addOperationWithBlock:^(void) {
-            NSError *error=nil;
-            NSString *newFilePath = [toDir stringByAppendingPathComponent:[file lastPathComponent]];
-            //NSLog(@"Moving '%@' to '%@' ", file, newFilePath);
-            [appFileManager moveItemAtPath:src toPath:newFilePath error:&error];
-            if (error!=nil)
-                NSLog(@"Error %@", error);
-        }];
-    }
-    return YES;
-}
+//
+//BOOL copyFilesThreaded(NSArray *files, id toDirectory) {
+//    NSString *toDir;
+//    if ([toDirectory isKindOfClass:[NSURL class]]) {
+//        toDir = [(NSURL*)toDirectory path];
+//    }
+//    else if ([toDirectory isKindOfClass:[NSString class]]) {
+//        toDir = toDirectory;
+//    }
+//    else {
+//        return NO;
+//    }
+//    for (id file in files) {
+//        NSString *src;
+//        if ([file isKindOfClass:[NSURL class]])
+//            src = [(NSURL*)file path];
+//        else
+//            src = file;
+//        [localOperationsQueue() addOperationWithBlock:^(void) {
+//            NSError *error=nil;
+//            NSString *newFilePath = [toDir stringByAppendingPathComponent:[file lastPathComponent]];
+//            NSLog(@"Copying '%@' to '%@' ", file, newFilePath);
+//            [appFileManager copyItemAtPath:src toPath:newFilePath error:&error];
+//            if (error!=nil)
+//                NSLog(@"Error %@", error);
+//        }];
+//    }
+//    return YES;
+//}
+//
+//BOOL moveFilesThreaded(NSArray *files, id toDirectory) {
+//    NSString *toDir;
+//    if ([toDirectory isKindOfClass:[NSURL class]]) {
+//        toDir = [(NSURL*)toDirectory path];
+//    }
+//    else if ([toDirectory isKindOfClass:[NSString class]]) {
+//        toDir = toDirectory;
+//    }
+//    else {
+//        return NO;
+//    }
+//    for (NSString *file in files) {
+//        NSString *src;
+//        if ([file isKindOfClass:[NSURL class]])
+//            src = [(NSURL*)file path];
+//        else
+//            src = file;
+//        [localOperationsQueue() addOperationWithBlock:^(void) {
+//            NSError *error=nil;
+//            NSString *newFilePath = [toDir stringByAppendingPathComponent:[file lastPathComponent]];
+//            //NSLog(@"Moving '%@' to '%@' ", file, newFilePath);
+//            [appFileManager moveItemAtPath:src toPath:newFilePath error:&error];
+//            if (error!=nil)
+//                NSLog(@"Error %@", error);
+//        }];
+//    }
+//    return YES;
+//}
 
 NSDictionary *getDiskInformation(NSURL *diskPath) {
     static NSMutableDictionary *diskInfos = nil; /* Used to store all the queries */
