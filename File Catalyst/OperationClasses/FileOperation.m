@@ -19,59 +19,61 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
         NSArray *items = [_taskInfo objectForKey: kDroppedFilesKey];
         NSString *op = [_taskInfo objectForKey: kDropOperationKey];
         TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
+        int opDone = 0;
 
         if (items==nil || op==nil) {
             /* Should it be decided to inform */
         }
         else {
-            if ( ![dest isKindOfClass:[TreeBranch class]]) {
+            if ([op isEqualToString:opSendRecycleBinOperation]) {
+                for (id item in items) {
+                    BOOL ok = NO;
+                    if ([item isKindOfClass:[NSURL class]]) {
+                        // !!! TODO
+                    }
+                    else if ([item isKindOfClass:[TreeItem class]]) {
+                        ok = sendToRecycleBin([item url]);
+                    }
+                    if (ok) {
+                        [item removeItem];
+                        opDone++;
+                    }
+                    if ([self isCancelled]) break;
+                }
 
             }
-            for (id item in items) {
-                if ([item isKindOfClass:[NSURL class]]) {
-                    if ([op isEqualToString:opCopyOperation]) {
-                        BOOL ok = copyFileTo(item, [dest url]);
+            else if (![dest isKindOfClass:[TreeBranch class]]) {
+                if ([op isEqualToString:opCopyOperation]) {
+                    for (id item in items) {
+                        BOOL ok = NO;
+                        if ([item isKindOfClass:[NSURL class]])
+                            ok = copyFileTo(item, [dest url]);
+                        else if ([item isKindOfClass:[TreeItem class]])
+                            ok = copyFileTo([item url], [dest url]);
                         if (ok) {
                             [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                            opDone++;
                         }
+                        if ([self isCancelled]) break;
                     }
-                    else if ([op isEqualToString:opMoveOperation]) {
-                        BOOL ok = moveFileTo(item, [dest url]);
+                }
+                else if ([op isEqualToString:opMoveOperation]) {
+                    for (id item in items) {
+                        BOOL ok = NO;
+                        if ([item isKindOfClass:[NSURL class]])
+                            ok = moveFileTo(item, [dest url]);
+                        else if ([item isKindOfClass:[TreeItem class]])
+                            ok = moveFileTo([item url], [dest url]);
                         if (ok) {
-                            /* Since source is unknown, there is no need to move the object */
                             [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                            opDone++;
                         }
-                    }                }
-                else if ([item isKindOfClass:[TreeItem class]])
-                {
-                    if ([op isEqualToString:opCopyOperation]) {
-                        BOOL ok = copyFileTo([item url], [dest url]);
-                        if (ok) {
-                            [dest addItem:item];
-                        }
-                    }
-                    else if ([op isEqualToString:opMoveOperation]) {
-                        BOOL ok = moveFileTo([item url], [dest url]);
-                        if (ok) {
-                            [dest moveItem:item];
-                        }
-                    }
-                    else if ([op isEqualToString:opSendRecycleBinOperation]) {
-                        BOOL ok = sendToRecycleBin([item url]);
-                        if (ok) {
-                            [item removeItem];
-                        }
+                        if ([self isCancelled]) break;
                     }
                 }
-                if ([self isCancelled]) {
-                    break;
-                }
-            }
-            if (![self isCancelled])
-            {
 
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
             }
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
         }
     }
 }
