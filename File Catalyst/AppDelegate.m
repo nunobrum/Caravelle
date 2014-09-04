@@ -143,6 +143,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
             [operationsQueue addOperation:Op];
+            [self _startOperationBusyIndication];
         }
         else {
             [myLeftView setViewMode:BViewBrowserMode];
@@ -292,7 +293,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
-    [self.statusProgressLabel setStringValue:@"Busy busy busy"];
+    [self.statusProgressLabel setHidden:NO];
+    [self.statusProgressLabel setStringValue:@"Busy Busy Busy"];
 }
 
 - (void)_operationsInfoFired:(NSTimer *)timer {
@@ -302,6 +304,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
     else {
         // !!! Get from Operation the status Text
+        NSArray *operations = [operationsQueue operations];
+        AppOperation *currOperation = operations[0];
+        NSString *status = [currOperation statusText];
+        [self.statusProgressLabel setStringValue:status];
     }
     NSLog(@"operation Status Update");
 }
@@ -315,7 +321,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
     [self.statusProgressIndicator stopAnimation:self];
     [self.statusProgressIndicator setHidden:YES];
-    [self.statusProgressLabel setStringValue:@""];
+    [self.statusProgressLabel setHidden:YES];
 }
 
 - (void) statusUpdate:(NSNotification*)theNotification {
@@ -400,6 +406,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSLog(@"Starting Duplicate Find");
     [myLeftView setViewMode:BViewDuplicateMode];
     [myRightView setViewMode:BViewDuplicateMode];
+    [self _startOperationBusyIndication];
     NSDictionary *notifInfo = [theNotification userInfo];
 	// start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
@@ -414,9 +421,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     self->applicationMode = ApplicationwModeDuplicate;
     TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates];
     [myLeftView addTreeRoot:rootDir];
+    [myLeftView stopBusyAnimations];
+    [myLeftView selectFolderByItem: rootDir];
+
     [myRightView addTreeRoot:rootDir];
-    [myLeftView selectFirstRoot];
-    [myRightView selectFirstRoot];
+    [myRightView stopBusyAnimations];
+    [myRightView selectFolderByItem:rootDir];
+
     NSLog(@"Duplicate Find Finish");
 }
 // -------------------------------------------------------------------------------
