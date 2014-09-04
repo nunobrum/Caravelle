@@ -251,9 +251,19 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (IBAction)toolbarCopyRightAction:(id)sender {
+    if (selectedView == myLeftView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+    }
+    NSLog(@"Menu Copy Right clicked");
 }
 
 - (IBAction)toolbarCopyLeftAction:(id)sender {
+    if (selectedView == myRightView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+    }
+    NSLog(@"Menu Copy Left clicked");
 }
 
 
@@ -354,8 +364,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 [self.toolbarDeleteButton setEnabled:YES];
                 if (selectedView==myLeftView) {
                     [self.toolbarCopyRightButton setEnabled:YES];
+                    [self.toolbarCopyLeftButton setEnabled:NO];
                 }
                 else if (selectedView==myRightView) {
+                    [self.toolbarCopyRightButton setEnabled:NO];
                     [self.toolbarCopyLeftButton setEnabled:YES];
                 }
 

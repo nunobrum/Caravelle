@@ -446,7 +446,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        if (self->children==nil) { // !!! TODO Will have to solve this. Sync problems with Children. Hint use Refreshing property to block all methods that enumerate children.
+        //if (self->children==nil) { // !!! TODO Will have to solve this. Sync problems with Children. Hint use Refreshing property to block all methods that enumerate children.
             // We would have to keep track of the block with an NSBlockOperation, if we wanted to later support cancelling operations that have scrolled offscreen and are no longer needed. That will be left as an exercise to the user.
             [queue addOperationWithBlock:^(void) {
                 NSMutableArray *newChildren = [self childrenRefreshed];
@@ -458,7 +458,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
                 [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
 
             }];
-        }
+    //    }
     }
 }
 
