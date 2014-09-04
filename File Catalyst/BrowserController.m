@@ -60,7 +60,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     _sharedOperationQueue = [[NSOperationQueue alloc] init];
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_sharedOperationQueue setMaxConcurrentOperationCount:2];
-
+    NSLog(@"Init Browser Controller");
     return self;
 }
 
@@ -109,16 +109,10 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         ret = [item branchAtIndex:index];
     }
+    // Use KVO to observe for changes of its children Array
+    [self observeItem:ret];
     if (_viewMode==BViewBrowserMode) {
-        // Use KVO to observe for changes of its children Array
-        if (![_observedVisibleItems containsObject:ret]) {
-            if ([ret isKindOfClass:[TreeBranch class]]) {
-                [ret addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
-                //NSLog(@"Adding Observer to %@", [ret name]);
-                [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
-                [_observedVisibleItems addObject:ret];
-            }
-        }
+        [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
     }
     return ret;
 }
@@ -232,14 +226,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 - (void)outlineView:(NSOutlineView *)outlineView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row {
     // Stop observing visible things
     TreeItem *item = [[rowView viewAtColumn:0] objectValue];
-    //NSLog(@"Removing from observed '%@'", [item name]);
-    NSInteger index = item ? [_observedVisibleItems indexOfObject:item] : NSNotFound;
-    if (index != NSNotFound && item!=_treeNodeSelected) { //keep observing the selected folder
-        [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
-        [_observedVisibleItems removeObjectAtIndex:index];
+    if (item!=_treeNodeSelected) { //keep observing the selected folder
+        [self unobserveItem:item];
     }
-    //else
-    //    NSLog(@"Didnt Find it");
 }
 
 /*
@@ -267,7 +256,10 @@ void DateFormatter(NSDate *date, NSString **output) {
             [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             [self setPathBarToItem:_treeNodeSelected];
-            [self refreshDataView];
+            //[self refreshDataView];
+            // Use KVO to observe for changes of its children Array
+            [self observeItem:_treeNodeSelected];
+            [_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
         }
         else {
             // !!! Houston we have a problem
@@ -408,7 +400,11 @@ void DateFormatter(NSDate *date, NSString **output) {
             //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
             self.treeNodeSelected=node;
-            [self refreshDataView];
+
+            // Use KVO to observe for changes of its children Array
+            [self observeItem:_treeNodeSelected];
+            [_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+
             break; /* Only one Folder can be Opened */
         }
         else
@@ -568,6 +564,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
+    //NSLog(@"Reloading %@", [object name]);
     NSInteger row = [_myOutlineView rowForItem:object];
     if (object == _treeNodeSelected) {
         /*If it is the selected Folder make a refresh*/
@@ -604,6 +601,28 @@ void DateFormatter(NSDate *date, NSString **output) {
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
         [self performSelectorOnMainThread:@selector(_reloadRowForEntity:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+    }
+}
+
+-(void) observeItem:(TreeItem*)item {
+    // Use KVO to observe for changes of its children Array
+    if ([item isKindOfClass:[TreeBranch class]]) {
+        if (![_observedVisibleItems containsObject:item]) {
+            [item addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
+            [_observedVisibleItems addObject:item];
+            NSLog(@"Adding Observer to %@, %lu", [item name], (unsigned long)[_observedVisibleItems count]);
+        }
+    }
+}
+
+-(void) unobserveItem:(TreeItem*)item {
+    // Use KVO to observe for changes of its children Array
+    if ([item isKindOfClass:[TreeBranch class]]) {
+        if ([_observedVisibleItems containsObject:item]) {
+            [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
+            [_observedVisibleItems removeObject:item];
+            NSLog(@"Remove Observer to %@, %lu", [item name], (unsigned long)[_observedVisibleItems count]);
+        }
     }
 }
 
