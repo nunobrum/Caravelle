@@ -408,7 +408,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             //[_myPathBarControl setURL: [node theURL]];
             /* Setting the node for Table Display */
             self.treeNodeSelected=node;
-            [_myTableView reloadData];
+            [self refreshDataView];
             break; /* Only one Folder can be Opened */
         }
         else
@@ -927,7 +927,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (IBAction)FilterChange:(id)sender {
     _filterText = [sender stringValue];
-    [_myTableView reloadData];
+    [self refreshDataView];
 }
 
 -(NSArray*) getSelectedItems {
@@ -935,7 +935,12 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (_focusedView==_myOutlineView) {
         /* This is done like this so that not more than one folder is selected */
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
-        answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[rowsSelected firstIndex]]];
+        if ([rowsSelected count]) {
+            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[rowsSelected firstIndex]]];
+        }
+        else {
+            answer = [[NSArray alloc] init]; // will send an empty array
+        }
     }
     else if (_focusedView == _myTableView) {
         NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
