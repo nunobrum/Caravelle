@@ -75,7 +75,7 @@ NSURL* copyFileTo(NSURL*srcURL, NSURL *destURL) {
     NSURL *destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     // !!! TODO Check if File Exists and propose nameing
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
-    if (error) {
+    if (error) { // !!! Signal the error occurence to the application
         NSLog(@"================ COPY ERROR =====================");
         NSLog(@"%@", error);
         NSLog(@"=================================================");
@@ -89,7 +89,7 @@ NSURL *moveFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
     NSURL *destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];
-    if (error) {
+    if (error) { // !!! Signal the error occurence to the application
         NSLog(@"================ MOVE ERROR =====================");
         NSLog(@"%@", error);
         NSLog(@"=================================================");

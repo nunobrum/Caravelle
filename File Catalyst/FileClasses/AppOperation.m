@@ -33,7 +33,7 @@ NSString *kModeKey = @"Mode";
 }
 
 -(NSString*) statusText {
-    return [NSString stringWithFormat:@"%d Files Indexed", statusCount];
+    return [NSString stringWithFormat:@"%d Files", statusCount];
 }
 
 @end

@@ -638,6 +638,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (viewMode!=_viewMode) {
         [self removeAll];
         [self refreshTrees];
+        tableData = nil;
+        [_myTableView reloadData];
         [self startBusyAnimations];
     _viewMode = viewMode;
     }

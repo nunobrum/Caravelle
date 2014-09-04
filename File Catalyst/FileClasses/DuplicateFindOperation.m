@@ -16,20 +16,13 @@ NSString *kDuplicateList = @"DuplicateList";
 
 NSString *kOptionsKey = @"Options";
 
-@interface DuplicateFindOperation ()
-{
-    NSMutableDictionary *_taskInfo;
-    NSNumber *ourScanCount;
-}
-
-@end
-
-
 
 @implementation DuplicateFindOperation
 
 
 -(void) main {
+    if (![self isCancelled])
+	{
     NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
     NSNumber *Options = [_taskInfo objectForKey: kOptionsKey];
 
@@ -51,6 +44,7 @@ NSString *kOptionsKey = @"Options";
                     [filecollection addFileByURL:theURL];
                     if ([self isCancelled])
                         break;
+                    statusCount++;
                 } // for
             }
                 if ([self isCancelled])
@@ -70,6 +64,6 @@ NSString *kOptionsKey = @"Options";
         }
     }
 }
-
+}
 
 @end
