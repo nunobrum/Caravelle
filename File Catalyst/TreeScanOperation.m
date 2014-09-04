@@ -38,6 +38,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
                                                          URL:rootURL
                                                       parent:nil
                                                  cancelBlock:^(){
+                                                     statusCount++;
                                                      return [self isCancelled];
                                                  }];
 

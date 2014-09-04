@@ -27,8 +27,13 @@ NSString *kModeKey = @"Mode";
     {
         _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
         operationCount = [info objectForKey:kOperationCountKey];
+        statusCount = 0;
     }
     return self;
+}
+
+-(NSString*) statusText {
+    return [NSString stringWithFormat:@"%d Files Indexed", statusCount];
 }
 
 @end
