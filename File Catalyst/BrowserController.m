@@ -259,8 +259,10 @@ void DateFormatter(NSDate *date, NSString **output) {
             //[self refreshDataView];
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
-            [_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
-        }
+            if (_viewMode==BViewBrowserMode) {
+                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+            }
+       }
         else {
             // !!! Houston we have a problem
             return;
@@ -403,7 +405,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
-            [_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+            if (_viewMode==BViewBrowserMode) {
+                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+            }
 
             break; /* Only one Folder can be Opened */
         }
