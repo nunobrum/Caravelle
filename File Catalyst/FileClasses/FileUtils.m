@@ -58,6 +58,11 @@ inline long long filesize(NSURL*url) {
 BOOL eraseFile(NSURL*url) {
     NSError *error;
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];
+    if (error) {
+        NSLog(@"=================ERASE ERROR ====================");
+        NSLog(@"%@", error);
+        NSLog(@"=================================================");
+    }
     return answer;
 }
 
@@ -65,16 +70,32 @@ void sendToRecycleBin(NSArray *urls) {
     [[NSWorkspace sharedWorkspace] recycleURLs:urls completionHandler:nil];
 }
 
-BOOL copyFileTo(NSURL*srcURL, NSURL *destURL) {
+NSURL* copyFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
-    BOOL answer = [appFileManager copyItemAtURL:srcURL toURL:destURL error:&error];
-    return answer;
+    NSURL *destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
+    // !!! TODO Check if File Exists and propose nameing
+    [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
+    if (error) {
+        NSLog(@"================ COPY ERROR =====================");
+        NSLog(@"%@", error);
+        NSLog(@"=================================================");
+        return NULL;
+
+    }
+    return destFileURL;
 }
 
-BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) {
+NSURL *moveFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
-    BOOL answer = [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
-    return answer;
+    NSURL *destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
+    [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];
+    if (error) {
+        NSLog(@"================ MOVE ERROR =====================");
+        NSLog(@"%@", error);
+        NSLog(@"=================================================");
+        return NULL;
+    }
+    return destFileURL;
 }
 
 BOOL openFile(NSURL*url) {

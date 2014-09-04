@@ -71,17 +71,16 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                 else {
                     TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
 
-                    if (dest!=nil && ![dest isKindOfClass:[TreeBranch class]]) {
+                    if (dest!=nil && [dest isKindOfClass:[TreeBranch class]]) {
                         if ([op isEqualToString:opCopyOperation]) {
                             for (id item in items) {
-                                BOOL ok = NO;
+                                NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]])
-                                    ok = copyFileTo(item, [dest url]);
-                                else if ([item isKindOfClass:[TreeItem class]]) {
-                                    ok = copyFileTo([item url], [dest url]);
-                                    if (ok) {
-                                        [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
-                                    }
+                                    newURL = copyFileTo(item, [dest url]);
+                                else if ([item isKindOfClass:[TreeItem class]])
+                                    newURL = copyFileTo([item url], [dest url]);
+                                if (newURL) {
+                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
                                 }
                                 opDone++;
                                 if ([self isCancelled]) break;
@@ -89,19 +88,18 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                         }
                         else if ([op isEqualToString:opMoveOperation]) {
                             for (id item in items) {
-                                BOOL ok = NO;
+                                NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]])
-                                    ok = moveFileTo(item, [dest url]);
+                                    newURL = moveFileTo(item, [dest url]);
                                 else if ([item isKindOfClass:[TreeItem class]])
-                                    ok = moveFileTo([item url], [dest url]);
-                                if (ok) {
-                                    [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                                    newURL = moveFileTo([item url], [dest url]);
+                                if (newURL) {
+                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
                                     opDone++;
                                 }
                                 if ([self isCancelled]) break;
                             }
                         }
-
                     }
                 }
                 [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];

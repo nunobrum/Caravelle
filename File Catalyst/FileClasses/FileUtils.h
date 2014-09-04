@@ -19,8 +19,8 @@ extern inline long long filesize(NSURL*url);
 // File Operations
 extern void sendToRecycleBin(NSArray *urls);
 extern BOOL eraseFile(NSURL*url);
-extern BOOL copyFileTo(NSURL*srcURL, NSURL *destURL);
-extern BOOL moveFileTo(NSURL*srcURL, NSURL *destURL);
+extern NSURL *copyFileTo(NSURL*srcURL, NSURL *destURL);
+extern NSURL *moveFileTo(NSURL*srcURL, NSURL *destURL);
 extern BOOL openFile(NSURL*url);
 
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory);
