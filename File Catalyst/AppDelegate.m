@@ -31,6 +31,7 @@ NSString *kDroppedFilesKey=@"FilesSelected";
 
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
+NSString *opEraseOperation =@"EraseOperation";
 NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 
 NSFileManager *appFileManager;
@@ -309,8 +310,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (void) statusUpdate:(NSNotification*)theNotification {
     NSString *statusText;
-    NSDictionary *receivedData = [theNotification userInfo];
-
     selectedView = [theNotification object];
     if ([selectedView isKindOfClass:[BrowserController class]]) {
 
@@ -352,11 +351,20 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                         total_size += [(TreeBranch*)item filesize];
                     }
                 }
+                [self.toolbarDeleteButton setEnabled:YES];
+                if (selectedView==myLeftView) {
+                    [self.toolbarCopyRightButton setEnabled:YES];
+                }
+                else if (selectedView==myRightView) {
+                    [self.toolbarCopyLeftButton setEnabled:YES];
+                }
+
                 NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
                 statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
                               num_files, num_directories, sizeText];
-                [_StatusBar setTitle: statusText];
+
             }
+            [_StatusBar setTitle: statusText];
         }
         else {
             [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];

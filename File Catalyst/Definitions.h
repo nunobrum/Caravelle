@@ -19,6 +19,7 @@ extern NSString *kDroppedFilesKey;
 
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
+extern NSString *opEraseOperation;
 extern NSString *opSendRecycleBinOperation;
 
 

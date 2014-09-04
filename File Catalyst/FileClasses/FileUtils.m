@@ -55,16 +55,14 @@ inline long long filesize(NSURL*url) {
     return [filesize longLongValue];
 }
 
-BOOL sendToRecycleBin(NSURL*url) {
+BOOL eraseFile(NSURL*url) {
     NSError *error;
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];
     return answer;
 }
 
-BOOL eraseFile(NSURL*url) {
-    // Missing implementation
-    NSLog(@"Erase File Method not implemented");
-    return NO;
+void sendToRecycleBin(NSArray *urls) {
+    [[NSWorkspace sharedWorkspace] recycleURLs:urls completionHandler:nil];
 }
 
 BOOL copyFileTo(NSURL*srcURL, NSURL *destURL) {

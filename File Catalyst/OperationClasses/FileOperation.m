@@ -18,7 +18,6 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 	{
         NSArray *items = [_taskInfo objectForKey: kDroppedFilesKey];
         NSString *op = [_taskInfo objectForKey: kDropOperationKey];
-        TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
         int opDone = 0;
 
         if (items==nil || op==nil) {
@@ -26,57 +25,91 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
         }
         else {
             if ([op isEqualToString:opSendRecycleBinOperation]) {
+                NSMutableArray *urls = [[NSMutableArray alloc] initWithCapacity:[items count]];
                 for (id item in items) {
-                    BOOL ok = NO;
                     if ([item isKindOfClass:[NSURL class]]) {
-                        // !!! TODO
+                        [urls addObject:item];
                     }
                     else if ([item isKindOfClass:[TreeItem class]]) {
-                        ok = sendToRecycleBin([item url]);
+                        [urls addObject:[item url]];
                     }
-                    if (ok) {
-                        [item removeItem];
-                        opDone++;
-                    }
-                    if ([self isCancelled]) break;
                 }
-
+                if (![self isCancelled]) {
+                    [[NSWorkspace sharedWorkspace]
+                     recycleURLs:urls // Using the completion block to send the notification
+                     completionHandler:^(NSDictionary *newurls, NSError *error) {
+                         if (error==nil) {
+                             for (id item in items) {
+                                 if ([item isKindOfClass:[TreeItem class]]) {
+                                     [item removeItem];
+                                 }
+                             }
+                         }
+                         [[NSNotificationCenter defaultCenter]
+                          postNotificationName:notificationFinishedFileOperation
+                          object:nil
+                          userInfo:_taskInfo];
+                     }];
+                }
             }
-            else if (![dest isKindOfClass:[TreeBranch class]]) {
-                if ([op isEqualToString:opCopyOperation]) {
+            else {
+                if ([op isEqualToString:opEraseOperation]) {
                     for (id item in items) {
                         BOOL ok = NO;
                         if ([item isKindOfClass:[NSURL class]])
-                            ok = copyFileTo(item, [dest url]);
-                        else if ([item isKindOfClass:[TreeItem class]])
-                            ok = copyFileTo([item url], [dest url]);
-                        if (ok) {
-                            [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                            ok = eraseFile(item);
+                        else if ([item isKindOfClass:[TreeItem class]]) {
+                            ok = eraseFile([item url]);
+                            if (ok) {
+                                [item removeItem];
+                            }
                             opDone++;
                         }
                         if ([self isCancelled]) break;
                     }
                 }
-                else if ([op isEqualToString:opMoveOperation]) {
-                    for (id item in items) {
-                        BOOL ok = NO;
-                        if ([item isKindOfClass:[NSURL class]])
-                            ok = moveFileTo(item, [dest url]);
-                        else if ([item isKindOfClass:[TreeItem class]])
-                            ok = moveFileTo([item url], [dest url]);
-                        if (ok) {
-                            [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
-                            opDone++;
+                else {
+                    TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
+
+                    if (dest!=nil && ![dest isKindOfClass:[TreeBranch class]]) {
+                        if ([op isEqualToString:opCopyOperation]) {
+                            for (id item in items) {
+                                BOOL ok = NO;
+                                if ([item isKindOfClass:[NSURL class]])
+                                    ok = copyFileTo(item, [dest url]);
+                                else if ([item isKindOfClass:[TreeItem class]]) {
+                                    ok = copyFileTo([item url], [dest url]);
+                                    if (ok) {
+                                        [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                                    }
+                                }
+                                opDone++;
+                                if ([self isCancelled]) break;
+                            }
                         }
-                        if ([self isCancelled]) break;
+                        else if ([op isEqualToString:opMoveOperation]) {
+                            for (id item in items) {
+                                BOOL ok = NO;
+                                if ([item isKindOfClass:[NSURL class]])
+                                    ok = moveFileTo(item, [dest url]);
+                                else if ([item isKindOfClass:[TreeItem class]])
+                                    ok = moveFileTo([item url], [dest url]);
+                                if (ok) {
+                                    [dest addItem:[TreeItem treeItemForURL:item parent:dest]];
+                                    opDone++;
+                                }
+                                if ([self isCancelled]) break;
+                            }
+                        }
+
                     }
                 }
-
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
             }
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
         }
     }
 }
+
 
 @end
 
