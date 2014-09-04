@@ -750,12 +750,12 @@ CA
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="255A7D65-E122-43C0-B22B-C949840C77B1" label="Eject" paletteLabel="Eject" tag="-1" image="EjectMediaIcon" id="zTK-cl-2Xn"/>
                     <toolbarItem implicitItemIdentifier="E57D1F1F-3427-4897-B721-CD8707B1AFB8" label="Info" paletteLabel="Info" tag="-1" image="ToolbarInfo" id="93A-nS-XRa"/>
-                    <toolbarItem implicitItemIdentifier="BA5041D9-678F-4005-B84B-AF5E7C1B1C9D" label="Copy" paletteLabel="Copy Left" tag="-1" image="BackwardArrowIcon" id="MN4-aw-9WU">
+                    <toolbarItem implicitItemIdentifier="BA5041D9-678F-4005-B84B-AF5E7C1B1C9D" label="Copy" paletteLabel="Copy Left" tag="-1" image="BackwardArrowIcon" autovalidates="NO" id="MN4-aw-9WU">
                         <connections>
                             <action selector="toolbarCopyLeftAction:" target="494" id="Mhn-pB-M4m"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6B76E4DD-0048-4A26-B4E6-BE20783D91C8" label="Copy" paletteLabel="Copy Right" tag="-1" image="ForwardArrowIcon" id="yNV-f2-8pv">
+                    <toolbarItem implicitItemIdentifier="6B76E4DD-0048-4A26-B4E6-BE20783D91C8" label="Copy" paletteLabel="Copy Right" tag="-1" image="ForwardArrowIcon" autovalidates="NO" id="yNV-f2-8pv">
                         <connections>
                             <action selector="toolbarCopyRightAction:" target="494" id="2kI-K5-6Bt"/>
                         </connections>
