@@ -33,7 +33,7 @@ NSString *kModeKey = @"Mode";
 }
 
 -(NSString*) statusText {
-    return [NSString stringWithFormat:@"%d Files", statusCount];
+    return [NSString stringWithFormat:@"%lu Files", statusCount];
 }
 
 @end

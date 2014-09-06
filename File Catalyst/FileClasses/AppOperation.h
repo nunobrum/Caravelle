@@ -17,8 +17,9 @@ extern NSString *kRootPathKey;
 @interface AppOperation : NSOperation {
     NSMutableDictionary *_taskInfo;
     NSNumber *operationCount;
-    int statusCount;
-    int statusTotal;
+@public
+    NSUInteger statusCount;
+    NSUInteger statusTotal;
 }
 
 - (id)initWithInfo:(NSDictionary*)info;
