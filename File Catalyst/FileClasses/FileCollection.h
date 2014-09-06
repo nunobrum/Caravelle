@@ -31,9 +31,8 @@
 -(void) addFileByURL: (NSURL *) anURL;
 -(void) addFiles: (NSMutableArray *)otherArray;
 
--(FileCollection*) findDuplicates: (DuplicateOptions)options operation:(NSOperation*)operation;
 -(FileCollection*) filesInPath:(NSString*) path;
--(FileCollection*) duplicatesInPath:(NSString*) path;
+-(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount;
 
 -(BOOL) isRootContainedInPath:(NSString *)otherRoot;
 -(BOOL) rootContainsPath:(NSString *)otherRoot;

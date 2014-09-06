@@ -180,69 +180,6 @@
     return fileArray;
 }
 
--(FileCollection *) findDuplicates: (DuplicateOptions) options operation:(NSOperation*)operation {
-    NSInteger i, j;
-    NSInteger max_files = [fileArray count];
-    BOOL duplicate;
-    FileCollection *duplicateList = [[FileCollection new] init];
-    
-    if (options & DupCompareSize) {
-        [self sortByFileSize];
-    }
-    
-    FileInformation *FileA, *FileB;
-    for (i=0;i<max_files;i++) {
-        if ([operation isCancelled])
-            return nil;
-        FileA = [fileArray objectAtIndex:i];
-        for (j=i+1; j<max_files; j++) {
-            FileB = [fileArray objectAtIndex:j];
-            duplicate = TRUE;
-            if (options & DupCompareName && [FileA equalName: FileB]==FALSE) {
-                duplicate= FALSE;
-            }
-            else if (options & DupCompareSize) {
-                NSComparisonResult result = [FileA compareSize:FileB];
-                if (result ==NSOrderedAscending) {
-                    j = max_files; // This will make the inner cycle to end
-                    duplicate = FALSE;
-                }
-                else if (result == NSOrderedDescending) {
-                    duplicate = FALSE; // This in principle will never happen if the files are sorted by size
-                }
-            }
-            if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA equalDate:FileB]==FALSE) {
-                duplicate = FALSE;
-            }
-            if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {
-                // First tries to make the difference using MD5 checksums
-                if ([FileA compareMD5checksum:FileB]==FALSE) {
-                    duplicate = FALSE;
-                }
-                // If the MD5 Matches, then it must compare the full contents
-                else if ((options&DupCompareContentsMD5) || [FileA compareContents:FileB]==FALSE) {
-                    duplicate = FALSE;
-                }
-            }
-            if (duplicate) {
-                //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
-                [FileA addDuplicate:FileB];
-                // The cycle will end once one duplicate is found
-                // This must be like this in order for the
-                // Duplicate ring to work, and it makes the algorithm much faster
-                j = max_files;
-            }
-        }
-        if ([FileA hasDuplicates]==YES) {
-            [duplicateList AddFileInformation:FileA];
-        }
-    }
-    if ([duplicateList FileCount]==0)
-        return nil;
-    else
-        duplicateList->rootDirectory = nil; // It will be calculated next time the rootPath is called
-        return duplicateList;
-}
 
 -(FileCollection*) filesInPath:(NSString*) path {
     FileCollection *newCollection = [[FileCollection new] init];
@@ -257,7 +194,7 @@
     return newCollection;
 }
 
--(FileCollection*) duplicatesInPath:(NSString*) path {
+-(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount {
     FileCollection *newCollection = [[FileCollection new] init];
     for (FileInformation *finfo in fileArray) {
         NSString *fpath = finfo.getPath;
@@ -266,7 +203,10 @@
         if (result.location == 0) {
             FileInformation *cursor=finfo->duplicate_chain;
             while (cursor!=finfo) {
-                [newCollection AddFileInformation:cursor];
+                if (cursor->dCounter!=dCount) {
+                    [newCollection AddFileInformation:cursor];
+                    cursor->dCounter = dCount;
+                }
                 cursor = cursor->duplicate_chain;
             }
         }

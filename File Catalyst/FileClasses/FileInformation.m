@@ -25,6 +25,7 @@
         self->Type = Nil;
         valid_md5 = FALSE;
         duplicate_chain = nil;
+        dCounter = 0;
     }
     return self;
 }

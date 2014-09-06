@@ -327,6 +327,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (void) statusUpdate:(NSNotification*)theNotification {
+    static NSUInteger dupShow = 0;
     NSString *statusText;
     selectedView = [theNotification object];
     if ([selectedView isKindOfClass:[BrowserController class]]) {
@@ -338,9 +339,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             NSInteger total_size=0;
             NSInteger num_directories=0;
             if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
+                dupShow++;
                 FileCollection *selectedDuplicates = [[FileCollection alloc] init];
                 for (TreeItem *item in selectedFiles ) {
-                    [selectedDuplicates concatenateFileCollection: [duplicates duplicatesInPath:[item path]]];
+                    FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
+                    [selectedDuplicates concatenateFileCollection: itemDups];
                 }
                 /* will now populate the Right View with Duplicates*/
                 [myRightView removeAll];

@@ -23,6 +23,7 @@
     NSString *Type;
 @public
     FileInformation *duplicate_chain;
+    NSUInteger dCounter;
 }
 
 
