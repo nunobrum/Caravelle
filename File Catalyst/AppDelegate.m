@@ -294,13 +294,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];
-    [self.statusProgressLabel setStringValue:@"Busy Busy Busy"];
+    [self.statusProgressLabel setStringValue:@"..."];
 }
 
 - (void)_operationsInfoFired:(NSTimer *)timer {
     if ([operationsQueue operationCount]==0) {
     //[operationInfoTimer release];
+        [timer invalidate];
         [self _stopOperationBusyIndication];
+        NSLog(@"operation Status Updating after a stop");
     }
     else {
         // !!! Get from Operation the status Text
@@ -309,7 +311,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         NSString *status = [currOperation statusText];
         [self.statusProgressLabel setStringValue:status];
     }
-    NSLog(@"operation Status Update");
+
 }
 
 - (void)_stopOperationBusyIndication {
@@ -411,6 +413,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	// start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
 	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
+    [self _startOperationBusyIndication];
 
 
 }
@@ -447,14 +450,14 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 #pragma mark File Manager Delegate - Copy
 
-- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
-    NSLog(@"shouldCopyItemAtURL");
-    return YES;
-}
-- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
-    NSLog(@"shouldCopyItemAtPath");
-    return YES;
-}
+//- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+//    //NSLog(@"shouldCopyItemAtURL");
+//    return YES;
+//}
+//- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+//    //NSLog(@"shouldCopyItemAtPath");
+//    return YES;
+//}
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     return NO;
