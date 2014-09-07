@@ -284,8 +284,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     //        NSURL *toDirectory = [notifData objectForKey:kDropDestinationKey];
     //
     //    }
-    // TODO !!! Update the Status during the operation
-    // Hint : Use the Queue Manager count and a Timer to update the operation each second.
     [self _startOperationBusyIndication];
 }
 
@@ -305,7 +303,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         NSLog(@"operation Status Updating after a stop");
     }
     else {
-        // !!! Get from Operation the status Text
+        // Get from Operation the status Text
         NSArray *operations = [operationsQueue operations];
         AppOperation *currOperation = operations[0];
         NSString *status = [currOperation statusText];
@@ -451,22 +449,44 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	[self performSelectorOnMainThread:@selector(mainThread_duplicateFindFinish:) withObject:note waitUntilDone:NO];
 }
 
-#pragma mark File Manager Delegate - Copy
+#pragma mark File Manager Delegate
 
-//- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
-//    //NSLog(@"shouldCopyItemAtURL");
-//    return YES;
-//}
-//- (BOOL)fileManager:(NSFileManager *)fileManager shouldCopyItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
-//    //NSLog(@"shouldCopyItemAtPath");
-//    return YES;
-//}
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after copy error");
+    NSLog(@"-------------------------------");
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after copy error");
+    NSLog(@"-------------------------------");    return NO;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after move error");
+    NSLog(@"-------------------------------");    return NO;
+}
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after move error");
+    NSLog(@"-------------------------------");
+    return NO;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after remove error");
+    NSLog(@"-------------------------------");
+    return NO;
+}
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtURL:(NSURL *)URL {
+    NSLog(@"FileManagerDelegate -----------");
+    NSLog(@"Not proceeding after remove error");
+    NSLog(@"-------------------------------");
     return NO;
 }
 
