@@ -362,6 +362,7 @@
                                                     </binding>
                                                     <outlet property="dataSource" destination="-2" id="Gtw-dH-pWy"/>
                                                     <outlet property="delegate" destination="-2" id="Dyp-Hx-mPu"/>
+                                                    <outlet property="menu" destination="q8e-qr-VOA" id="muv-xx-Q2z"/>
                                                 </connections>
                                             </tableView>
                                         </subviews>
@@ -425,6 +426,20 @@
             </constraints>
         </customView>
         <userDefaultsController representsSharedInstance="YES" id="bzt-zK-cB1"/>
+        <menu id="q8e-qr-VOA" userLabel="fileContextMenu">
+            <items>
+                <menuItem title="Open" id="WFz-fS-fZg">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Edit" id="CQK-9R-8lM">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+                <menuItem title="Delete" id="AiJ-65-eUG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+            </items>
+            <accessibility description="fileContextMenu"/>
+        </menu>
     </objects>
     <resources>
         <image name="FinderIcon" width="512" height="512"/>

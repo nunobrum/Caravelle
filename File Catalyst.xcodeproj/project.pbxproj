@@ -304,6 +304,7 @@
 		3CEA674818F87C2F0080C4FC /* File Catalyst */ = {
 			isa = PBXGroup;
 			children = (
+				3CEA675A18F87C2F0080C4FC /* Images.xcassets */,
 				3C717C0A198FB95F0025E28A /* Definitions.h */,
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
@@ -314,7 +315,6 @@
 				3C29463118F9B81C002B633C /* FileClasses */,
 				3CF645BF19AB6DA300DD53F5 /* DuplicatedFindClasses */,
 				3CEA677618F87CE50080C4FC /* IconResources */,
-				3CEA675A18F87C2F0080C4FC /* Images.xcassets */,
 				3CEA674918F87C2F0080C4FC /* Supporting Files */,
 			);
 			path = "File Catalyst";

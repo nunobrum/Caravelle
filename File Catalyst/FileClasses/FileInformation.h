@@ -11,7 +11,7 @@
 
 #include "MD5.h"
 
-@interface FileInformation : NSObject { /// !!! To Consider : Derive this class directly from NSURL : Memory footprint improvement
+@interface FileInformation : NSObject { /// !!! To Consider : Derive this class directly from NSURL : Memory footprint improvement ??????? Another idea is to merge this class with the TreeItem. Use a Dictionary to hold the key information.
 @private
     //NSURL      *URL;
     NSString   *name;

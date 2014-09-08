@@ -114,6 +114,9 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (_viewMode==BViewBrowserMode) {
         [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
     }
+    else {
+        [self refreshDataView];
+    }
     return ret;
 }
 
@@ -244,7 +247,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
-    // TODO !!! implement a performInMainThread so that critical synchronise problems are minimized
     if ([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ])  {
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         NSInteger SelectedCount = [rowsSelected count];
@@ -262,9 +264,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             if (_viewMode==BViewBrowserMode) {
                 [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
             }
+            else {
+                [self refreshDataView];
+            }
        }
         else {
-            // !!! Houston we have a problem
+            NSLog(@"Houston we have a problem");
             return;
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[notification userInfo]];
@@ -408,7 +413,9 @@ void DateFormatter(NSDate *date, NSString **output) {
             if (_viewMode==BViewBrowserMode) {
                 [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
             }
-
+            else {
+                [self refreshDataView];
+            }
             break; /* Only one Folder can be Opened */
         }
         else
@@ -495,8 +502,13 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     NSString *opCommand=nil;
     id destination;
-    // !!! TODO : Test the row is on the table itself.
-    if (operation == NSTableViewDropAbove) {
+    if (aTableView!=_myTableView) {
+        // For the moment only accept drops into the table View.
+        answer =  NO; // This instruction is useless. The answer is by default NO.
+        // Only to make the code more clear.
+    }
+    else if (operation == NSTableViewDropAbove) {
+        // TODO !!! Process if there are Key Modifiers such like Shift Ctrl or Alt.
         //Inserts the rows using the specified animation.
         int i= 0;
         for (NSURL *pastedItem in files) {
