@@ -177,6 +177,7 @@
                                                     </tableColumn>
                                                 </tableColumns>
                                                 <connections>
+                                                    <action selector="tableSelected:" target="-2" id="gJD-vr-VM6"/>
                                                     <outlet property="dataSource" destination="-2" id="mT6-xG-dgd"/>
                                                     <outlet property="delegate" destination="-2" id="Vbl-au-7cv"/>
                                                 </connections>
@@ -355,6 +356,7 @@
                                                     </tableColumn>
                                                 </tableColumns>
                                                 <connections>
+                                                    <action selector="tableSelected:" target="-2" id="Oyg-o0-lxC"/>
                                                     <binding destination="-2" name="doubleClickTarget" keyPath="self" id="fil-af-ElK">
                                                         <dictionary key="options">
                                                             <string key="NSSelectorName">TableDoubleClickEvent:</string>

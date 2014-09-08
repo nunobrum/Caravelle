@@ -345,7 +345,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
-        //NSLog(@"Table Selection Changed");
         _focusedView = _myTableView;
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[aNotification userInfo]];
     }
@@ -389,6 +388,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 	}
 }
 
+#pragma mark Action Selectors
+
+- (IBAction)tableSelected:(id)sender {
+    _focusedView = _myTableView;
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
+}
 
 /* This action is associated manually with the setDoubleAction */
 - (IBAction)TableDoubleClickEvent:(id)sender {
