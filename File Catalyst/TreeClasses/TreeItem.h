@@ -32,7 +32,6 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 
 @property (weak) TreeItem                  *parent;
 @property NSURL                     *url;
-@property TreeItemTagEnum           tag;
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 
@@ -46,6 +45,12 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(NSDate*)   dateModified;
 -(NSString*) path ;
 -(long long) filesize ;
+
+-(void) setTag:(TreeItemTagEnum)tag;
+-(void) resetTag:(TreeItemTagEnum)tag;
+-(TreeItemTagEnum) tag;
+-(BOOL) hasTags:(TreeItemTagEnum) tag;
+
 /*
  * File manipulation methods
  */

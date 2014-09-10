@@ -43,6 +43,19 @@
     return nil;
 }
 
+-(void) setTag:(TreeItemTagEnum)tag {
+    _tag |= tag;
+}
+-(void) resetTag:(TreeItemTagEnum)tag {
+    _tag &= tag;
+}
+-(TreeItemTagEnum) tag {
+    return _tag;
+}
+
+-(BOOL) hasTags:(TreeItemTagEnum) tag {
+    return (_tag & tag)!=0 ? YES : NO;
+}
 
 -(BOOL) isBranch {
     NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
@@ -130,7 +143,11 @@
 }
 
 - (NSPasteboardWritingOptions)writingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
-    if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
+    if ([type isEqualToString:kTreeBranchType]) {
+        // !!! Todo What to do here
+        return NSPasteboardWritingPromised;
+    }
+    else if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
         return [self.url writingOptionsForType:type pasteboard:pasteboard];
     } else {
         return 0;
