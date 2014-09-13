@@ -340,7 +340,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
         if (selectedFiles != nil) {
             NSInteger num_files=0;
-            NSInteger total_size=0;
+            NSInteger files_size=0;
+            NSInteger folders_size=0;
             NSInteger num_directories=0;
             if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
                 dupShow++;
@@ -369,11 +370,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 for (TreeItem *item in selectedFiles ) {
                     if ([item isKindOfClass:[TreeLeaf class]]) {
                         num_files++;
-                        total_size += [(TreeLeaf*)item filesize];
+                        files_size += [(TreeLeaf*)item filesize];
                     }
                     else if ([item isKindOfClass:[TreeBranch class]]) {
                         num_directories++;
-                        total_size += [(TreeBranch*)item filesize];
+                        folders_size += [(TreeBranch*)item filesize];
                     }
                 }
                 [self.toolbarDeleteButton setEnabled:YES];
@@ -386,13 +387,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     [self.toolbarCopyLeftButton setEnabled:YES];
                 }
                 if ([(BrowserController*)selectedView viewMode]==BViewBrowserMode) {
-                    statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories",
-                                  num_files, num_directories];
-
+                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
+                    statusText = [NSString stringWithFormat:@"%lu Directories, %lu Files adding up to %@ bytes",
+                                  num_directories, num_files, sizeText];
                 }
                 else {
-                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
-                    statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
+                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size+folders_size countStyle:NSByteCountFormatterCountStyleFile];
+                    statusText = [NSString stringWithFormat:@"%lu Files and %lu Directories, Total Size %@",
                                   num_files, num_directories, sizeText];
                 }
 
