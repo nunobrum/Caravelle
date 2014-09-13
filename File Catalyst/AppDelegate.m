@@ -29,6 +29,10 @@ NSString *kDropOperationKey =@"OperationKey";
 NSString *kDropDestinationKey =@"DestinationKey";
 NSString *kDroppedFilesKey=@"FilesSelected";
 
+#ifdef USE_UTI
+const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
+#endif
+
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
 NSString *opEraseOperation =@"EraseOperation";

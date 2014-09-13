@@ -17,6 +17,15 @@ extern NSString *kDropDestinationKey;
 /* Used for Both Drag&Drop and for Status Notifications */
 extern NSString *kDroppedFilesKey;
 
+//#define USE_UTI
+#ifdef USE_UTI
+/*Used for the internal Pasteboard*/
+extern const CFStringRef kTreeItemDropUTI;
+#define OwnUTITypes  (__bridge id)kTreeItemDropUTI,
+#else
+#define OwnUTITypes
+#endif
+
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
 extern NSString *opEraseOperation;

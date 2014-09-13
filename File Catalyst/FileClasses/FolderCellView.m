@@ -26,7 +26,7 @@
     self->url = folderURL;
     /* Sign for receiving drops of files */
     //NSLog(@"Registering the Drag capability %@", self.textField);
-    [self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
+    //[self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
 }
 
 //- (void)drawRect:(NSRect)dirtyRect
@@ -56,15 +56,25 @@
 
     sourceDragMask = [sender draggingSourceOperationMask];
     pboard = [sender draggingPasteboard];
-
-//    if ( [[pboard types] containsObject:NSColorPboardType] ) {
-//        if (sourceDragMask & NSDragOperationGeneric) {
-//            return NSDragOperationGeneric;
-//        }
-//    }
+#ifdef USE_UTI
+    if ( [[pboard types] containsObject:kTreeItemDropUTI] ) {
+        if (sourceDragMask & NSDragOperationCopy) {
+            return NSDragOperationCopy;
+        }
+        if (sourceDragMask & NSDragOperationMove) {
+            return NSDragOperationMove;
+        }
+        if (sourceDragMask & NSDragOperationGeneric) {
+            return NSDragOperationGeneric;
+        }
+    }
+#endif
     if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
         if (sourceDragMask & NSDragOperationCopy) {
             return NSDragOperationCopy;
+        }
+        if (sourceDragMask & NSDragOperationMove) {
+            return NSDragOperationMove;
         }
         else if (sourceDragMask & NSDragOperationMove) {
             return NSDragOperationMove;

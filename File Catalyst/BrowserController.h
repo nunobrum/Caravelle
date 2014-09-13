@@ -19,16 +19,11 @@ extern NSString *notificationCatalystRootUpdate;
 
 
 @interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
-    NSMutableArray *tableData;
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
-    NSMutableArray *tableInfo;
-    NSSortDescriptor *TableSortDesc;
-    NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_sharedOperationQueue;
     BViewMode _viewMode;
-    NSTableView *_focusedView; // Contains the currently selected view
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;

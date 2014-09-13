@@ -9,12 +9,7 @@
 #import "FileUtils.h"
 #import "Definitions.h"
 
-//static NSOperationQueue *localOperationsQueue() {
-//    static NSOperationQueue *queue= nil;
-//    if (queue==nil)
-//        queue= [[NSOperationQueue alloc] init];
-//    return queue;
-//}
+
 
 BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;

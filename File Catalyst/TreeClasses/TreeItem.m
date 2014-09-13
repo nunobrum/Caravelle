@@ -135,31 +135,51 @@
 #pragma mark NSPasteboardWriting support
 
 - (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+#ifdef USE_UTI
+    /* Adding the TreeType */
+    NSMutableArray *answer =[NSMutableArray arrayWithObject:(__bridge id)kTreeItemDropUTI];
+    [answer addObjectsFromArray:[self.url writableTypesForPasteboard:pasteboard]];
+    return answer;
+#else
     return [self.url writableTypesForPasteboard:pasteboard];
+#endif
 }
-
 - (id)pasteboardPropertyListForType:(NSString *)type {
-    return [self.url pasteboardPropertyListForType:type];
+    id answer;
+#ifdef USE_UTI
+    if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
+        answer = self;
+    }
+    else
+#endif
+        answer = [self.url pasteboardPropertyListForType:type];
+    return answer;
 }
 
 - (NSPasteboardWritingOptions)writingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
-    if ([type isEqualToString:kTreeBranchType]) {
+    NSPasteboardWritingOptions answer;
+#ifdef USE_UTI
+    if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
         // !!! Todo What to do here
-        return NSPasteboardWritingPromised;
+        answer = 0;
     }
-    else if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
-        return [self.url writingOptionsForType:type pasteboard:pasteboard];
+    else
+#endif
+        if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
+        answer = [self.url writingOptionsForType:type pasteboard:pasteboard];
     } else {
-        return 0;
+        answer = 0;
     }
+    return answer;
 }
 
 #pragma mark -
 #pragma mark  NSPasteboardReading support
 
 + (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
-    // We allow creation from folder and image URLs only, but there is no way to specify just file URLs that contain images
-    return [NSArray arrayWithObjects:(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem, nil];
+    return [NSArray arrayWithObjects: //(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem,
+            (id)NSFilenamesPboardType, (id)NSURLPboardType, OwnUTITypes nil];
+
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
@@ -168,9 +188,18 @@
 
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {
     // We recreate the appropriate object
-    // We only have URLs accepted. Create the URL
-    NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
-    return [TreeItem treeItemForURL:url parent:nil];
+#ifdef USE_UTI
+    if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
+        // !!! Todo What to do here
+        return propertyList; // !!! TODO check if this works
+    }
+    else 
+#endif
+    {
+        // We only have URLs accepted. Create the URL
+        NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
+        return [TreeItem treeItemForURL:url parent:nil];
+    }
 }
 
 #pragma mark -
