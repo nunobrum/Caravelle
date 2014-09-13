@@ -135,7 +135,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         firstAppActivation = NO;
         NSString *homeDir = NSHomeDirectory();
         [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
-        [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+        [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
         [(BrowserController*)myRightView selectFirstRoot];
         if (1) {
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
@@ -151,7 +151,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         }
         else {
             [myLeftView setViewMode:BViewBrowserMode];
-            [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL URLWithString:homeDir]]];
+            [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
         }
         [(BrowserController*)myLeftView selectFirstRoot];
     }
@@ -309,9 +309,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     else {
         // Get from Operation the status Text
         NSArray *operations = [operationsQueue operations];
-        AppOperation *currOperation = operations[0];
-        NSString *status = [currOperation statusText];
-        [self.statusProgressLabel setStringValue:status];
+        NSOperation *currOperation = operations[0];
+        if ([currOperation isKindOfClass:[AppOperation class]]) {
+            NSString *status = [(AppOperation*)currOperation statusText];
+            [self.statusProgressLabel setStringValue:status];
+        }
     }
 
 }
@@ -377,16 +379,22 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 [self.toolbarDeleteButton setEnabled:YES];
                 if (selectedView==myLeftView) {
                     [self.toolbarCopyRightButton setEnabled:YES];
-                    [self.toolbarCopyLeftButton setEnabled:NO];
+                    //[self.toolbarCopyLeftButton setEnabled:NO];
                 }
                 else if (selectedView==myRightView) {
-                    [self.toolbarCopyRightButton setEnabled:NO];
+                    //[self.toolbarCopyRightButton setEnabled:NO];
                     [self.toolbarCopyLeftButton setEnabled:YES];
                 }
+                if ([(BrowserController*)selectedView viewMode]==BViewBrowserMode) {
+                    statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories",
+                                  num_files, num_directories];
 
-                NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
-                statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
-                              num_files, num_directories, sizeText];
+                }
+                else {
+                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:total_size countStyle:NSByteCountFormatterCountStyleFile];
+                    statusText = [NSString stringWithFormat:@"%lu Files, %lu Directories, Total Size %@",
+                                  num_files, num_directories, sizeText];
+                }
 
             }
             [_StatusBar setTitle: statusText];
