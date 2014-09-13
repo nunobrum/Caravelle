@@ -46,6 +46,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSMutableArray *tableColumnInfo;
     NSSortDescriptor *TableSortDesc;
     NSMutableArray *_observedVisibleItems;
+    NSOperationQueue *_browserOperationQueue;
     /* Internal Storage for Drag and Drop Operations */
     NSDragOperation _validatedOperation; // Passed from Validate Drop to Accept Drop Method
     NSIndexSet *_draggedIndexSet;
@@ -69,9 +70,9 @@ void DateFormatter(NSDate *date, NSString **output) {
     [self->tableColumnInfo addObjectsFromArray:[NSArray arrayWithObjects: DEFAULT_COLUMNS, nil]];
     self->TableSortDesc = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
-    _sharedOperationQueue = [[NSOperationQueue alloc] init];
+    _browserOperationQueue = [[NSOperationQueue alloc] init];
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
-    [_sharedOperationQueue setMaxConcurrentOperationCount:2];
+    [_browserOperationQueue setMaxConcurrentOperationCount:2];
     NSLog(@"Init Browser Controller");
     return self;
 }
@@ -124,7 +125,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     // Use KVO to observe for changes of its children Array
     [self observeItem:ret];
     if (_viewMode==BViewBrowserMode) {
-        [(TreeBranch*)ret refreshContentsOnQueue:_sharedOperationQueue];
+        [(TreeBranch*)ret refreshContentsOnQueue:_browserOperationQueue];
     }
     else {
         [self refreshDataView];
@@ -274,7 +275,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
             if (_viewMode==BViewBrowserMode) {
-                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
             }
             else {
                 [self refreshDataView];
@@ -310,7 +311,6 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
             cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
-            //[cellView registerForDraggedTypes:[NSArray arrayWithObjects: (id)kUTTypeFileURL, nil]];
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
@@ -428,7 +428,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
             if (_viewMode==BViewBrowserMode) {
-                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_sharedOperationQueue];
+                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
             }
             else {
                 [self refreshDataView];
@@ -777,7 +777,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     }
     else {
         for (TreeRoot *tree in BaseDirectoriesArray) {
-            [tree refreshContentsOnQueue:_sharedOperationQueue];
+            [tree refreshContentsOnQueue:_browserOperationQueue];
         }
     }
     // !!! Todo Add condition : if number of roots = 1 then

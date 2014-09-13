@@ -16,6 +16,16 @@
 
 NSString *const kvoTreeBranchPropertyChildren = @"childrenArray";
 
+//static NSOperationQueue *localOperationsQueue() {
+//    static NSOperationQueue *queue= nil;
+//    if (queue==nil)
+//        queue= [[NSOperationQueue alloc] init];
+// We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
+//[queue setMaxConcurrentOperationCount:2];
+
+//    return queue;
+//}
+
 NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     NSMutableArray *children = [[NSMutableArray alloc] init];
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewBrowserMode];
@@ -446,19 +456,16 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        //if (self->children==nil) { // !!! TODO Will have to solve this. Sync problems with Children. Hint use Refreshing property to block all methods that enumerate children.
-            // We would have to keep track of the block with an NSBlockOperation, if we wanted to later support cancelling operations that have scrolled offscreen and are no longer needed. That will be left as an exercise to the user.
-            [queue addOperationWithBlock:^(void) {
-                NSMutableArray *newChildren = [self childrenRefreshed];
-                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-                // We synchronize access to the image/imageLoading pair of variables
-                @synchronized (self) {
-                    self->children = newChildren;
-                }
-                [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+        [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
+            NSMutableArray *newChildren = [self childrenRefreshed];
+            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+            // We synchronize access to the image/imageLoading pair of variables
+            @synchronized (self) {
+                self->children = newChildren;
+            }
+            [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
 
-            }];
-    //    }
+        }];
     }
 }
 
