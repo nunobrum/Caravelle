@@ -151,6 +151,18 @@ BOOL sendItemsToRecycleBin(NSArray *items) {
     return answer;
 }
 
+BOOL eraseItems(NSArray *items) {
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opEraseOperation, kDropOperationKey,
+                              items, kDroppedFilesKey,
+                              nil];
+    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
+    BOOL answer = [operation isReady];
+    [operationsQueue addOperation:operation];
+    return answer;
+}
+
+
 
 BOOL copyItemToBranch(TreeItem *item, TreeBranch *folder) {
     NSArray *items = [NSArray arrayWithObject:item];
@@ -165,4 +177,9 @@ BOOL moveItemToBranch(TreeItem *item, TreeBranch *folder) {
 BOOL sendItemToRecycleBin(TreeItem *item) {
     NSArray *items = [NSArray arrayWithObject:item];
     return sendItemsToRecycleBin(items);
+}
+
+BOOL eraseItem(TreeItem *item) {
+    NSArray *items = [NSArray arrayWithObject:item];
+    return eraseItems(items);
 }
