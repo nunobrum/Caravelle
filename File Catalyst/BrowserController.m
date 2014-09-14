@@ -49,6 +49,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSOperationQueue *_browserOperationQueue;
     /* Internal Storage for Drag and Drop Operations */
     NSDragOperation _validatedOperation; // Passed from Validate Drop to Accept Drop Method
+    TreeItem *_validatedDestinationItem;
     NSIndexSet *_draggedIndexSet;
 }
 
@@ -78,11 +79,11 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (void)dealloc {
-//    // Stop any observations that we may have
+    //  Stop any observations that we may have
     for (TreeItem *item in _observedVisibleItems) {
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
     }
-//    [super dealloc];
+    //    [super dealloc];
 }
 
 //- (void)awakeFromNib {
@@ -207,7 +208,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     //    }
     CGFloat answer;
     if (_viewMode!=BViewBrowserMode) {
-         answer = [outlineView rowHeight];
+        answer = [outlineView rowHeight];
     }
     else {
         answer = 17;
@@ -280,7 +281,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             else {
                 [self refreshDataView];
             }
-       }
+        }
         else {
             NSLog(@"Houston we have a problem");
             return;
@@ -444,14 +445,13 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 #pragma mark - Drag and Drop Support
 /*
- * Drag and Drop Methods 
+ * Drag and Drop Methods
  */
 
 - (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
     NSArray *ptypes;
-    TreeItem *targetItem;
     NSUInteger modifiers = [NSEvent modifierFlags];
 
     sourceDragMask = [info draggingSourceOperationMask];
@@ -461,15 +461,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (aTableView!=_myTableView) { /* Protection , just in case */
         NSLog(@"Ooops! This isnt supposed to happen");
         return NSDragOperationNone;
-    }
-    @try { // If the row is not valid, it will assume the tree node being displayed.
-        targetItem = [tableData objectAtIndex:row];
-    }
-    @catch (NSException *exception) {
-        targetItem = _treeNodeSelected;
-    }
-    @finally {
-        // Go away... nothing to see here
     }
     /* Limit the options in function of the dropped Element */
     if ( [ptypes containsObject:NSFilenamesPboardType] ) {
@@ -487,17 +478,33 @@ void DateFormatter(NSDate *date, NSString **output) {
         sourceDragMask = NSDragOperationNone;
     }
 
+    if (operation == NSTableViewDropAbove) { // This is on the folder being displayed
+        _validatedDestinationItem = _treeNodeSelected;
+    }
+    else if (operation == NSTableViewDropOn) {
+
+        @try { // If the row is not valid, it will assume the tree node being displayed.
+            _validatedDestinationItem = [tableData objectAtIndex:row];
+        }
+        @catch (NSException *exception) {
+            _validatedDestinationItem = _treeNodeSelected;
+        }
+        @finally {
+            // Go away... nothing to see here
+        }
+    }
     /* Limit the Operations depending on the Destination Item Class*/
-    if ([targetItem isKindOfClass:[TreeBranch class]]) {
+    if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
         sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
         // !!! TODO : Put here a timer for opening the Folder
     }
-    else if ([targetItem isKindOfClass:[TreeLeaf class]]) {
+    else if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
         sourceDragMask &= (NSDragOperationGeneric);
     }
     else {
         sourceDragMask = NSDragOperationNone;
     }
+
     /* Use the modifiers keys to select */
     //if (modifiers & NSShiftKeyMask) {
     //}
@@ -543,60 +550,48 @@ void DateFormatter(NSDate *date, NSString **output) {
 
     if (aTableView!=_myTableView) {
         // For the moment only accept drops into the table View.
-        fireNotfication =  NO; // This instruction is useless. The answer is by default NO.
-        // Only to make the code more clear.
+        return NO;
     }
-    else if (dropOperationLocation == NSTableViewDropAbove) {
-        //Inserts the rows using the specified animation.
-        if (_validatedOperation & (NSDragOperationCopy | NSDragOperationMove)) {
-            int i= 0;
-            for (id pastedItem in files) {
-                TreeItem *newItem=nil;
-                if ([pastedItem isKindOfClass:[NSURL class]]) {
-                //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
-                    newItem = [TreeItem treeItemForURL: pastedItem parent:_treeNodeSelected];
-                    [newItem setTag:tagTreeItemDropped];
-                }
-                else if ([pastedItem isKindOfClass:[TreeItem class]]){
-                    newItem = pastedItem;
-                }
-                if (newItem) {
-                    [tableData insertObject:newItem atIndex:row+i];
-                    [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
-                    //NSLog(@"Copy Item %@", [pastedItem lastPathComponent]);
-                    i++;
-                }
-            }
-            if (_validatedOperation==NSDragOperationCopy)
-                copyItemsToBranch(files, _treeNodeSelected);
-            else if (_validatedOperation==NSDragOperationMove)
-                moveItemsToBranch(files, _treeNodeSelected);
-            
-            fireNotfication= YES;
-        }
-    }
-    else if (dropOperationLocation == NSTableViewDropOn){
-        TreeItem *targetItem = [tableData objectAtIndex:row];
-        if ([targetItem isKindOfClass:[TreeBranch class]]) {
-            if (_validatedOperation == NSDragOperationCopy) {
-                copyItemsToBranch(files, (TreeBranch*)targetItem);
-                fireNotfication = YES;
-            }
-            else if (_validatedOperation == NSDragOperationMove) {
-                moveItemsToBranch(files, (TreeBranch*)targetItem);
-                fireNotfication = YES;            }
-            else if (_validatedOperation == NSDragOperationLink) {
-                // TODO !!! Operation Link
-            }
-            else {
-                // Unsupported !!!
-            }
 
+    if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
+        // !!! TODO Dropping Application on top of file or File on top of Application
+        NSLog(@"Not impplemented open the file with the application");
+        // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
+    }
+    else if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
+        if (_validatedOperation == NSDragOperationCopy) {
+            copyItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
+            fireNotfication = YES;
         }
-        else if ([targetItem isKindOfClass:[TreeLeaf class]]) {
-            // !!! TODO Dropping Application on top of file or File on top of Application
-            NSLog(@"Not impplemented open the file with the application");
-            // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
+        else if (_validatedOperation == NSDragOperationMove) {
+            moveItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
+            fireNotfication = YES;            }
+        else if (_validatedOperation == NSDragOperationLink) {
+            // TODO !!! Operation Link
+        }
+        else {
+            // Unsupported !!!
+        }
+
+        if (_validatedDestinationItem == _treeNodeSelected && fireNotfication==YES) {
+            //Inserts the rows using the specified animation.
+            if (_validatedOperation & (NSDragOperationCopy | NSDragOperationMove)) {
+                int i= 0;
+                for (id pastedItem in files) {
+                    TreeItem *newItem=nil;
+                    if ([pastedItem isKindOfClass:[NSURL class]]) {
+                        //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
+                        newItem = [TreeItem treeItemForURL: pastedItem parent:_treeNodeSelected];
+                        [newItem setTag:tagTreeItemDropped];
+                    }
+                    if (newItem) {
+                        [tableData insertObject:newItem atIndex:row+i];
+                        [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
+                        NSLog(@"Copy Item %@ creating line %ld", [pastedItem lastPathComponent], row+i);
+                        i++;
+                    }
+                }
+            }
         }
     }
     if (fireNotfication==YES) {
@@ -716,7 +711,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         tableData = nil;
         [_myTableView reloadData];
         [self startBusyAnimations];
-    _viewMode = viewMode;
+        _viewMode = viewMode;
     }
 }
 -(BViewMode) viewMode {
@@ -773,7 +768,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(void) refreshTrees {
     if (_viewMode!=BViewBrowserMode) {
-       // In catalyst Mode, there is no automatic Update
+        // In catalyst Mode, there is no automatic Update
     }
     else {
         for (TreeRoot *tree in BaseDirectoriesArray) {
