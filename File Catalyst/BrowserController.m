@@ -178,6 +178,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             [[cellView imageView] setImage:icon];
             [[cellView textField] setStringValue:[item name]];
 
+            if ([item hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
+                [cellView.textField setAlphaValue:0.5]; // Sets transparency when the file was dropped or dirty
+            }
+            else {
+                [cellView.textField setAlphaValue:1];
+            }
         }
     }
     return cellView;
