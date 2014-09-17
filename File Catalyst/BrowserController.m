@@ -50,7 +50,9 @@ void DateFormatter(NSDate *date, NSString **output) {
     /* Internal Storage for Drag and Drop Operations */
     NSDragOperation _validatedOperation; // Passed from Validate Drop to Accept Drop Method
     TreeItem *_validatedDestinationItem;
-    NSIndexSet *_draggedIndexSet;
+    BOOL _didRegisterDraggedTypes;
+    NSIndexSet *_draggedItemsIndexSet;
+    TreeBranch *_draggedOutlineItem;
 }
 
 @end
@@ -65,12 +67,13 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->_focusedView = nil;
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
-    self->_viewMode = BViewBrowserMode;
+    self->_viewMode = 0; // This is an invalid view mode. This forces the App to change it.
     self->_filterText = @"";
     self->tableColumnInfo = [NSMutableArray arrayWithObjects: SYSTEM_COLUMNS, nil];
     [self->tableColumnInfo addObjectsFromArray:[NSArray arrayWithObjects: DEFAULT_COLUMNS, nil]];
     self->TableSortDesc = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
+    self->_didRegisterDraggedTypes = NO;
     _browserOperationQueue = [[NSOperationQueue alloc] init];
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_browserOperationQueue setMaxConcurrentOperationCount:2];
@@ -86,9 +89,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     //    [super dealloc];
 }
 
-//- (void)awakeFromNib {
-//    NSLog(@"Browser Controller : awakeFromNib");
-//}
 
 /* Method overriding the default for the NSView
  This is done to accelerate the redrawing of the contents */
@@ -265,11 +265,15 @@ void DateFormatter(NSDate *date, NSString **output) {
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         NSInteger SelectedCount = [rowsSelected count];
         _focusedView = _myOutlineView;
+        if (!_didRegisterDraggedTypes) {
+            [_myOutlineView registerForDraggedTypes:[NSArray arrayWithObjects: OwnUTITypes (id)kUTTypeFolder, NSFilenamesPboardType, nil]];
+            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: OwnUTITypes (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
+            _didRegisterDraggedTypes = YES;
+        }
         if (SelectedCount ==0) {
             [_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
-            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: OwnUTITypes (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             [self setPathBarToItem:_treeNodeSelected];
             //[self refreshDataView];
@@ -278,9 +282,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             if (_viewMode==BViewBrowserMode) {
                 [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
             }
-            else {
-                [self refreshDataView];
-            }
+            [self refreshDataView];
         }
         else {
             NSLog(@"Houston we have a problem");
@@ -312,6 +314,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
             cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
+            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
+                [cellView.textField setAlphaValue:0.5]; // Sets transparency when the file was dropped or dirty
+            }
+            else {
+                [cellView.textField setAlphaValue:1];
+            }
         }
     }
     else if ([identifier isEqualToString:COL_SIZE]) {
@@ -448,7 +456,63 @@ void DateFormatter(NSDate *date, NSString **output) {
  * Drag and Drop Methods
  */
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation {
+
+//- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
+//    return YES;
+//}
+
+- (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
+    NSLog(@"write to paste board, passing handle to item at row %ld",row);
+    return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
+}
+
+- (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(id)item {
+    return (id <NSPasteboardWriting>) item;
+}
+
+
+- (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forRowIndexes:(NSIndexSet *)rowIndexes {
+    _draggedItemsIndexSet = rowIndexes; // Save the Indexes for later deleting or moving
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forItems:(NSArray *)draggedItems {
+    _draggedOutlineItem = [draggedItems firstObject]; // Only needs to store the one Item
+}
+
+- (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation {
+    NSPasteboard *pboard = [session draggingPasteboard];
+    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+    if (operation == (NSDragOperationMove)) {
+        [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];
+    }
+    else if (operation ==  NSDragOperationDelete) {
+        // Send to RecycleBin.
+        [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];
+        sendItemsToRecycleBin(files); // TODO !!! Check whether the recycle bin deletes the
+    }
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation {
+    NSPasteboard *pboard = [session draggingPasteboard];
+    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+    TreeBranch *parent = [outlineView parentForItem:_draggedOutlineItem];
+    NSUInteger idx = [outlineView rowForItem:_draggedOutlineItem] - [outlineView rowForItem:parent];
+    _draggedItemsIndexSet = [NSIndexSet indexSetWithIndex:idx];
+    if (operation == (NSDragOperationMove)) {
+        [outlineView removeItemsAtIndexes:_draggedItemsIndexSet inParent:parent withAnimation:NSTableViewAnimationEffectFade];
+    }
+    else if (operation ==  NSDragOperationDelete) {
+        // Send to RecycleBin.
+        [outlineView removeItemsAtIndexes:_draggedItemsIndexSet inParent:parent withAnimation:NSTableViewAnimationEffectFade];
+        sendItemsToRecycleBin(files); // TODO !!! Check whether the recycle bin deletes the
+    }
+}
+
+//- (void)tableView:(NSTableView *)tableView updateDraggingItemsForDrag:(id < NSDraggingInfo >)draggingInfo {
+//    NSLog(@"info : update dragging items");
+//}
+- (NSDragOperation) validateDrop:(id < NSDraggingInfo >)info  {
+
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
     NSArray *ptypes;
@@ -458,10 +522,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     pboard = [info draggingPasteboard];
     ptypes =[pboard types];
 
-    if (aTableView!=_myTableView) { /* Protection , just in case */
-        NSLog(@"Ooops! This isnt supposed to happen");
-        return NSDragOperationNone;
-    }
     /* Limit the options in function of the dropped Element */
     if ( [ptypes containsObject:NSFilenamesPboardType] ) {
         sourceDragMask &= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
@@ -478,25 +538,9 @@ void DateFormatter(NSDate *date, NSString **output) {
         sourceDragMask = NSDragOperationNone;
     }
 
-    if (operation == NSTableViewDropAbove) { // This is on the folder being displayed
-        _validatedDestinationItem = _treeNodeSelected;
-    }
-    else if (operation == NSTableViewDropOn) {
-
-        @try { // If the row is not valid, it will assume the tree node being displayed.
-            _validatedDestinationItem = [tableData objectAtIndex:row];
-        }
-        @catch (NSException *exception) {
-            _validatedDestinationItem = _treeNodeSelected;
-        }
-        @finally {
-            // Go away... nothing to see here
-        }
-    }
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
         sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
-        // !!! TODO : Put here a timer for opening the Folder
     }
     else if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
         sourceDragMask &= (NSDragOperationGeneric);
@@ -542,16 +586,40 @@ void DateFormatter(NSDate *date, NSString **output) {
     return _validatedOperation;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id < NSDraggingInfo >)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperationLocation {
-    NSLog(@"accept row %ld", row);
+
+- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation {
+    if (operation == NSTableViewDropAbove) { // This is on the folder being displayed
+        _validatedDestinationItem = _treeNodeSelected;
+    }
+    else if (operation == NSTableViewDropOn) {
+
+        @try { // If the row is not valid, it will assume the tree node being displayed.
+            _validatedDestinationItem = [tableData objectAtIndex:row];
+        }
+        @catch (NSException *exception) {
+            _validatedDestinationItem = _treeNodeSelected;
+        }
+        @finally {
+            // Go away... nothing to see here
+        }
+    }
+
+    /* Limit the Operations depending on the Destination Item Class*/
+    if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
+        // !!! TODO : Put here a timer for opening the Folder
+    }
+    return [self validateDrop:info];
+}
+
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
+    _validatedDestinationItem = item;
+    return [self validateDrop:info];
+}
+
+- (BOOL) acceptDrop:(id < NSDraggingInfo >)info  {
     BOOL fireNotfication = NO;
     NSPasteboard *pboard = [info draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
-
-    if (aTableView!=_myTableView) {
-        // For the moment only accept drops into the table View.
-        return NO;
-    }
 
     if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
         // !!! TODO Dropping Application on top of file or File on top of Application
@@ -573,26 +641,6 @@ void DateFormatter(NSDate *date, NSString **output) {
             // Unsupported !!!
         }
 
-        if (_validatedDestinationItem == _treeNodeSelected && fireNotfication==YES) {
-            //Inserts the rows using the specified animation.
-            if (_validatedOperation & (NSDragOperationCopy | NSDragOperationMove)) {
-                int i= 0;
-                for (id pastedItem in files) {
-                    TreeItem *newItem=nil;
-                    if ([pastedItem isKindOfClass:[NSURL class]]) {
-                        //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
-                        newItem = [TreeItem treeItemForURL: pastedItem parent:_treeNodeSelected];
-                        [newItem setTag:tagTreeItemDropped];
-                    }
-                    if (newItem) {
-                        [tableData insertObject:newItem atIndex:row+i];
-                        [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
-                        NSLog(@"Copy Item %@ creating line %ld", [pastedItem lastPathComponent], row+i);
-                        i++;
-                    }
-                }
-            }
-        }
     }
     if (fireNotfication==YES) {
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:nil];
@@ -602,35 +650,40 @@ void DateFormatter(NSDate *date, NSString **output) {
     return fireNotfication;
 }
 
-//- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
-//    return YES;
-//}
 
-- (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
-    NSLog(@"write to paste board, passing handle to item at row %ld",row);
-    return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
-}
+- (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id < NSDraggingInfo >)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperationLocation {
+    BOOL opDone = [self acceptDrop:info];
 
-- (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forRowIndexes:(NSIndexSet *)rowIndexes {
-    _draggedIndexSet = rowIndexes; // Save the Indexes for later deleting or moving
-}
+    if (_validatedDestinationItem == _treeNodeSelected && opDone==YES) {
+        //Inserts the rows using the specified animation.
+        if (_validatedOperation & (NSDragOperationCopy | NSDragOperationMove)) {
+            NSPasteboard *pboard = [info draggingPasteboard];
+            NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
-- (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation {
-    NSPasteboard *pboard = [session draggingPasteboard];
-    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
-    if (operation == (NSDragOperationMove)) {
-        [tableView removeRowsAtIndexes:_draggedIndexSet withAnimation:NSTableViewAnimationEffectFade];
+            int i= 0;
+            for (id pastedItem in files) {
+                TreeItem *newItem=nil;
+                if ([pastedItem isKindOfClass:[NSURL class]]) {
+                    //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
+                    newItem = [TreeItem treeItemForURL: pastedItem parent:_treeNodeSelected];
+                    [newItem setTag:tagTreeItemDropped];
+                }
+                if (newItem) {
+                    [tableData insertObject:newItem atIndex:row+i];
+                    [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
+                    NSLog(@"Copy Item %@ creating line %ld", [pastedItem lastPathComponent], row+i);
+                    i++;
+                }
+            }
+        }
     }
-    else if (operation ==  NSDragOperationDelete) {
-        // Send to RecycleBin.
-        [tableView removeRowsAtIndexes:_draggedIndexSet withAnimation:NSTableViewAnimationEffectFade];
-        sendItemsToRecycleBin(files); // TODO !!! Check whether the recycle bin deletes the
-    }
+    return opDone;
 }
 
-- (void)tableView:(NSTableView *)tableView updateDraggingItemsForDrag:(id < NSDraggingInfo >)draggingInfo {
-    NSLog(@"info : update dragging items");
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
+    return [self acceptDrop:info];
 }
+
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
@@ -670,7 +723,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         // Find the row and reload it.
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
-        [self performSelectorOnMainThread:@selector(_reloadRowForEntity:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
+        [self performSelectorOnMainThread:@selector(_reloadRowForEntity:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
     }
 }
 

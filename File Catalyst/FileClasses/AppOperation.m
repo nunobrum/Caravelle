@@ -19,6 +19,8 @@ NSString *kSenderKey = @"Sender";
 
 NSString *kModeKey = @"Mode";
 
+static NSUInteger appOperationCounter = 0;
+
 @implementation AppOperation
 
 - (id)initWithInfo:(NSDictionary*)info {
@@ -26,7 +28,10 @@ NSString *kModeKey = @"Mode";
     if (self)
     {
         _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
-        operationCount = [info objectForKey:kOperationCountKey];
+        appOperationCounter++;
+        _operationID = [NSNumber numberWithInteger: appOperationCounter];
+        //[_taskInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:operationCount forKey:kOperationCountKey]];
+        _taskInfo[kOperationCountKey] = _operationID;
         statusCount = 0;
     }
     return self;

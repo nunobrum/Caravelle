@@ -45,7 +45,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     ApplicationwMode applicationMode;
     id  selectedView;
 	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
-    NSNumber *operationCounter;
+    NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     FileCollection *duplicates;
 
@@ -61,7 +61,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	if (self)
     {
         operationsQueue = [[NSOperationQueue alloc] init];
-        operationCounter= [NSNumber numberWithInteger:0];
         appFileManager = [[NSFileManager alloc] init];
         [appFileManager setDelegate:self];
 	}
@@ -137,12 +136,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
         [(BrowserController*)myRightView selectFirstRoot];
-        if (1) {
+        if (0) {
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       homeDir,kRootPathKey,
                                       myLeftView, kSenderKey,
-                                      operationCounter, kOperationCountKey,
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
@@ -166,16 +164,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     BrowserController *BrowserView = [theNotification object];
     /* In a normal mode the Browser only has one Root */
     [BrowserView removeRootWithIndex:0];
-    /* Increment the Scan Count */
-    NSInteger aux = [operationCounter integerValue]+1;
-    operationCounter = [NSNumber numberWithInteger:aux];
-    [notifInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:operationCounter forKey:kOperationCountKey]];
+
     /* Add the Job to the Queue */
 	//[queue cancelAllOperations];
 
 	// start the GetPathsOperation with the root path to start the search
 	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
-
+    treeUpdateOperationID = [treeScanOp operationID];
 	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
 
 }
@@ -195,7 +190,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSNumber *loadScanCountNum = [notifData valueForKey:kOperationCountKey];
 
     // make sure the current scan matches the scan of our loaded image
-    if (operationCounter == loadScanCountNum)
+    if (treeUpdateOperationID == loadScanCountNum)
     {
         TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
         BrowserController *BView =[notifData valueForKey: kSenderKey];

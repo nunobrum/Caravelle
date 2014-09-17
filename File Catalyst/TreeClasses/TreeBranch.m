@@ -411,6 +411,9 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         if (item==nil) { /* If not found creates a new one */
             item = [TreeItem treeItemForURL:theURL parent:self];
         }
+        else {
+            [item resetTag:tagTreeItemAll];
+        }
         [newChildren addObject:item];
 
     } // for
@@ -457,13 +460,33 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
         [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
-            NSMutableArray *newChildren = [self childrenRefreshed];
-            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-            // We synchronize access to the image/imageLoading pair of variables
-            @synchronized (self) {
-                self->children = newChildren;
+            NSMutableArray *newChildren = [[NSMutableArray new] init];
+            BOOL new_files=NO;
+
+            NSLog(@"Scanning directory %@", self.path);
+            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
+
+            for (NSURL *theURL in dirEnumerator) {
+                TreeItem *item = [self itemWithURL:theURL]; /* Retrieves existing Element */
+                if (item==nil) { /* If not found creates a new one */
+                    item = [TreeItem treeItemForURL:theURL parent:self];
+                    new_files = YES;
+                }
+                else {
+                    [item resetTag:tagTreeItemAll];
+                }
+                [newChildren addObject:item];
+                
+            } // for
+            if (new_files==YES || // There are new Files OR
+                [newChildren count] < [self->children count]) { // There are deletions
+                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+                // We synchronize access to the image/imageLoading pair of variables
+                @synchronized (self) {
+                    self->children = newChildren;
+                }
+                [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
             }
-            [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
 
         }];
     }

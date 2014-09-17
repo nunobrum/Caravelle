@@ -15,6 +15,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemMarked  = (1UL << 1),
     tagTreeItemDropped = (1UL << 2),
     tagTreeItemToMove  = (1UL << 3),
+    tagTreeItemAll     = NSUIntegerMax
 };
 
 @protocol TreeProtocol <NSObject>

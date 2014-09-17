@@ -13,14 +13,18 @@ extern NSString *kModeKey;
 extern NSString *kOperationCountKey;
 extern NSString *kRootPathKey;
 
+//extern NSUInteger appOperationCounter;
+
 
 @interface AppOperation : NSOperation {
     NSMutableDictionary *_taskInfo;
-    NSNumber *operationCount;
+    NSNumber *_operationID;
 @public
     NSUInteger statusCount;
     NSUInteger statusTotal;
 }
+
+@property (readonly) NSNumber* operationID;
 
 - (id)initWithInfo:(NSDictionary*)info;
 -(NSString*) statusText;

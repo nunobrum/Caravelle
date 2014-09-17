@@ -46,7 +46,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
             {
                 NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                       rootDir, kTreeRootKey,
-                                      operationCount, kOperationCountKey,  // pass back to check if user cancelled/started a new scan
+                                      _operationID, kOperationCountKey,  // pass back to check if user cancelled/started a new scan
                                       nil];
                 // for the purposes of this sample, we're just going to post the information
                 // out there and let whoever might be interested receive it (in our case its MyWindowController).
