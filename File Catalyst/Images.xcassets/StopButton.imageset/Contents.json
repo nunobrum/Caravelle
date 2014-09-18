@@ -3,11 +3,7 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "pauseButton.png"
-    },
-    {
-      "idiom" : "universal",
-      "scale" : "2x"
+      "filename" : "StopButton.png"
     }
   ],
   "info" : {

@@ -144,6 +144,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
+            treeUpdateOperationID = [Op operationID];
             [operationsQueue addOperation:Op];
             [self _startOperationBusyIndication];
         }

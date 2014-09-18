@@ -767,7 +767,20 @@ CA
                                     </segments>
                                 </segmentedCell>
                             </segmentedControl>
+                            <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="685-pk-2bz">
+                                <rect key="frame" x="0.0" y="-2" width="854" height="5"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                                <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <font key="titleFont" metaFont="system"/>
+                            </box>
                         </subviews>
+                        <constraints>
+                            <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
+                            <constraint firstAttribute="trailing" secondItem="685-pk-2bz" secondAttribute="trailing" id="Jyr-L0-vZi"/>
+                            <constraint firstItem="685-pk-2bz" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="36" id="il6-Bv-eOs"/>
+                            <constraint firstAttribute="bottom" secondItem="685-pk-2bz" secondAttribute="bottom" id="zFc-K0-gVw"/>
+                        </constraints>
                     </customView>
                     <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB">
                         <rect key="frame" x="1" y="22" width="854" height="600"/>
@@ -804,7 +817,7 @@ CA
                     <button hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bPg-b7-DdD">
                         <rect key="frame" x="587" y="4" width="17" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="pauseButton" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rm2-QV-uSj">
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="StopButton" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rm2-QV-uSj">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem"/>
                         </buttonCell>
@@ -844,7 +857,7 @@ CA
         <image name="NSBookmarksTemplate" width="17" height="12"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="StopButton" width="11" height="11"/>
         <image name="myTrashIcon32" width="16" height="16"/>
-        <image name="pauseButton" width="11" height="11"/>
     </resources>
 </document>
