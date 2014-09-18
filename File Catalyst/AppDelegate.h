@@ -26,19 +26,13 @@
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 
 @property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
-@property (weak) IBOutlet NSToolbarItem *toolbarCopyLeftButton;
-@property (weak) IBOutlet NSToolbarItem *toolbarCopyRightButton;
+@property (weak) IBOutlet NSToolbarItem *toolbarCopySegmentedButton;
 
-
-//- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
-- (IBAction)RemoveSelected:(id)sender; // Remove Selected Items
 
 - (IBAction)FindDuplicates:(id)sender;
 
 - (IBAction)toolbarDelete:(id)sender;
-- (IBAction)toolbarCatalystSwitch:(id)sender;
-- (IBAction)toolbarCopyRightAction:(id)sender;
-- (IBAction)toolbarCopyLeftAction:(id)sender;
+- (IBAction)toolbarCopyAction:(id)sender;
 
 - (void) statusUpdate:(NSNotification*)theNotification;
 - (void)   rootUpdate:(NSNotification*)theNotification;

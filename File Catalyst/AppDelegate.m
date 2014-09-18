@@ -247,28 +247,23 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSLog(@"Menu Delete clicked");
 }
 
-- (IBAction)toolbarCatalystSwitch:(id)sender {
-}
 
-- (IBAction)toolbarCopyRightAction:(id)sender {
-    if (selectedView == myLeftView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+- (IBAction)toolbarCopyAction:(id)sender {
+    NSInteger LeftORight1 = [(NSSegmentedControl*)sender selectedSegment];
+
+    if (LeftORight1==1) {
+        if (selectedView == myLeftView) {
+            NSArray *selectedFiles = [selectedView getSelectedItems];
+            copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+        }
     }
-    NSLog(@"Menu Copy Right clicked");
-}
-
-- (IBAction)toolbarCopyLeftAction:(id)sender {
-    if (selectedView == myRightView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+    else
+    {
+        if (selectedView == myRightView) {
+            NSArray *selectedFiles = [selectedView getSelectedItems];
+            copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+        }
     }
-    NSLog(@"Menu Copy Left clicked");
-}
-
-
-- (IBAction)RemoveSelected:(id)sender {
-    [_toolbarDeleteButton setEnabled:NO];
 }
 
 
@@ -353,12 +348,12 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             }
             if ([selectedFiles count]==0) {
                 [self.toolbarDeleteButton setEnabled:NO];
-                if (selectedView==myLeftView) {
-                    [self.toolbarCopyRightButton setEnabled:NO];
-                }
-                else if (selectedView==myRightView) {
-                    [self.toolbarCopyLeftButton setEnabled:NO];
-                }
+//                if (selectedView==myLeftView) {
+//                    [self.toolbarCopySegmentedButton setEnabled:NO];
+//                }
+//                else if (selectedView==myRightView) {
+//                    [self.toolbarCopySegmentedButton setEnabled:NO];
+//                }
                 statusText = [NSString stringWithFormat:@"No Files Selected"];
             }
             else {
@@ -373,14 +368,14 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     }
                 }
                 [self.toolbarDeleteButton setEnabled:YES];
-                if (selectedView==myLeftView) {
-                    [self.toolbarCopyRightButton setEnabled:YES];
-                    //[self.toolbarCopyLeftButton setEnabled:NO];
-                }
-                else if (selectedView==myRightView) {
-                    //[self.toolbarCopyRightButton setEnabled:NO];
-                    [self.toolbarCopyLeftButton setEnabled:YES];
-                }
+//                if (selectedView==myLeftView) {
+//                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
+//                    //[self.toolbarCopyLeftButton setEnabled:NO];
+//                }
+//                else if (selectedView==myRightView) {
+//                    //[self.toolbarCopyRightButton setEnabled:NO];
+//                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
+//                }
                 if ([(BrowserController*)selectedView viewMode]==BViewBrowserMode) {
                     NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
                     statusText = [NSString stringWithFormat:@"%lu Directories, %lu Files adding up to %@ bytes",
