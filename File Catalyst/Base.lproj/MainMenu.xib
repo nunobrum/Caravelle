@@ -662,6 +662,7 @@ CA
                 <outlet property="ContentSplitView" destination="6MC-cR-BWB" id="70s-Di-Uy4"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
+                <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>
                 <outlet property="statusProgressLabel" destination="Clz-g3-ghw" id="bjP-th-9Hn"/>
                 <outlet property="window" destination="2037" id="2039"/>
@@ -677,18 +678,18 @@ CA
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" showsToolbarButton="NO" animationBehavior="default" id="2037">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="95" y="99" width="852" height="658"/>
+            <rect key="contentRect" x="95" y="99" width="856" height="660"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="2038">
-                <rect key="frame" x="0.0" y="0.0" width="852" height="658"/>
+                <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="l3N-JB-c9m">
-                        <rect key="frame" x="0.0" y="623" width="852" height="35"/>
+                        <rect key="frame" x="1" y="623" width="854" height="37"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1gr-uk-pbS">
-                                <rect key="frame" x="18" y="5" width="71" height="24"/>
+                                <rect key="frame" x="18" y="7" width="71" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="momentary" id="gli-Mt-Phx">
                                     <font key="font" metaFont="system"/>
@@ -699,7 +700,7 @@ CA
                                 </segmentedCell>
                             </segmentedControl>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="221" y="0.0" width="44" height="32"/>
+                                <rect key="frame" x="221" y="2" width="44" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" bezelStyle="rounded" image="myTrashIcon32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -710,7 +711,7 @@ CA
                                 </connections>
                             </button>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kPy-bX-dze">
-                                <rect key="frame" x="114" y="4" width="49" height="26"/>
+                                <rect key="frame" x="114" y="6" width="49" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="hLU-ib-cHg" id="dzh-CD-Gfu">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -725,7 +726,7 @@ CA
                                 </popUpButtonCell>
                             </popUpButton>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H8C-NH-YAG">
-                                <rect key="frame" x="474" y="4" width="49" height="26"/>
+                                <rect key="frame" x="474" y="6" width="49" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="iii-fd-bTl" id="OMO-kB-tgl">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -740,7 +741,7 @@ CA
                                 </popUpButtonCell>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ua4-kF-Fji">
-                                <rect key="frame" x="281" y="5" width="71" height="24"/>
+                                <rect key="frame" x="281" y="7" width="71" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="momentary" id="Zo9-HH-KPc">
                                     <font key="font" metaFont="system"/>
@@ -754,7 +755,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WqO-XS-6QS">
-                                <rect key="frame" x="659" y="5" width="137" height="24"/>
+                                <rect key="frame" x="659" y="7" width="137" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="selectOne" id="bOE-Sc-XQl">
                                     <font key="font" metaFont="system"/>
@@ -769,7 +770,7 @@ CA
                         </subviews>
                     </customView>
                     <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB">
-                        <rect key="frame" x="1" y="22" width="850" height="600"/>
+                        <rect key="frame" x="1" y="22" width="854" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" placeholderIntrinsicWidth="321" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
@@ -782,17 +783,17 @@ CA
                         </textFieldCell>
                     </textField>
                     <progressIndicator hidden="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="8BL-5Q-1hY">
-                        <rect key="frame" x="609" y="2" width="96" height="20"/>
+                        <rect key="frame" x="611" y="2" width="96" height="20"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="96" id="6VE-G1-lyA"/>
                         </constraints>
                     </progressIndicator>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Clz-g3-ghw">
-                        <rect key="frame" x="736" y="4" width="100" height="17"/>
+                        <rect key="frame" x="716" y="3" width="124" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="96" id="heI-IR-83E"/>
+                            <constraint firstAttribute="width" constant="120" id="heI-IR-83E"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="Label" id="JuP-4D-DiO">
                             <font key="font" metaFont="system"/>
@@ -800,29 +801,36 @@ CA
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6OO-t2-oE5">
-                        <rect key="frame" x="705" y="-7" width="30" height="30"/>
+                    <button hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bPg-b7-DdD">
+                        <rect key="frame" x="587" y="4" width="17" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="round" bezelStyle="circular" image="NSStopProgressFreestandingTemplate" imagePosition="above" alignment="left" controlSize="mini" borderStyle="border" imageScaling="proportionallyDown" id="lqZ-iJ-362">
+                        <buttonCell key="cell" type="square" bezelStyle="shadowlessSquare" image="pauseButton" imagePosition="only" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="rm2-QV-uSj">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="miniSystem"/>
+                            <font key="font" metaFont="smallSystem"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="operationCancel:" target="494" id="kCP-5m-hQL"/>
+                        </connections>
                     </button>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="36" id="Abh-U8-a0L"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="2038" secondAttribute="top" constant="38" id="Abh-U8-a0L"/>
+                    <constraint firstItem="bPg-b7-DdD" firstAttribute="leading" secondItem="L75-zs-bdV" secondAttribute="trailing" constant="262" id="B0B-hP-pvV"/>
                     <constraint firstItem="l3N-JB-c9m" firstAttribute="top" secondItem="2038" secondAttribute="top" id="CpY-9F-7KN"/>
                     <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="Ehx-zg-ePr"/>
+                    <constraint firstAttribute="bottom" secondItem="bPg-b7-DdD" secondAttribute="bottom" constant="4" id="JBA-Rk-pA3"/>
                     <constraint firstItem="6MC-cR-BWB" firstAttribute="centerX" secondItem="2038" secondAttribute="centerX" id="Qtq-mv-wQg"/>
                     <constraint firstAttribute="bottom" secondItem="8BL-5Q-1hY" secondAttribute="bottom" constant="3" id="Rhj-s9-wzI"/>
+                    <constraint firstItem="bPg-b7-DdD" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="3" id="TaW-0q-z2X"/>
+                    <constraint firstItem="8BL-5Q-1hY" firstAttribute="leading" secondItem="bPg-b7-DdD" secondAttribute="trailing" constant="7" id="Y3K-UO-m0G"/>
                     <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="bottom" constant="1" id="Yx6-CX-gj4"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="Z5S-y4-t0r"/>
-                    <constraint firstItem="Clz-g3-ghw" firstAttribute="baseline" secondItem="L75-zs-bdV" secondAttribute="baseline" id="aFc-H8-Sf5"/>
+                    <constraint firstItem="Clz-g3-ghw" firstAttribute="baseline" secondItem="L75-zs-bdV" secondAttribute="baseline" constant="1" id="aFc-H8-Sf5"/>
                     <constraint firstAttribute="trailing" secondItem="Clz-g3-ghw" secondAttribute="trailing" constant="18" id="e4Z-Mp-jI0"/>
                     <constraint firstAttribute="bottom" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="22" id="hQC-UH-yRb"/>
-                    <constraint firstItem="l3N-JB-c9m" firstAttribute="leading" secondItem="2038" secondAttribute="leading" id="kQA-5m-vya"/>
-                    <constraint firstAttribute="trailing" secondItem="l3N-JB-c9m" secondAttribute="trailing" id="opM-Ar-sbj"/>
-                    <constraint firstItem="Clz-g3-ghw" firstAttribute="leading" secondItem="8BL-5Q-1hY" secondAttribute="trailing" constant="33" id="r7a-ox-54N"/>
+                    <constraint firstItem="l3N-JB-c9m" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="kQA-5m-vya"/>
+                    <constraint firstAttribute="trailing" secondItem="l3N-JB-c9m" secondAttribute="trailing" constant="1" id="opM-Ar-sbj"/>
+                    <constraint firstItem="Clz-g3-ghw" firstAttribute="leading" secondItem="8BL-5Q-1hY" secondAttribute="trailing" constant="11" id="r7a-ox-54N"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="uJf-ro-GFu"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="top" secondItem="6MC-cR-BWB" secondAttribute="bottom" constant="1" id="wfa-Hm-x70"/>
                 </constraints>
@@ -836,7 +844,7 @@ CA
         <image name="NSBookmarksTemplate" width="17" height="12"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
-        <image name="NSStopProgressFreestandingTemplate" width="83" height="83"/>
         <image name="myTrashIcon32" width="16" height="16"/>
+        <image name="pauseButton" width="11" height="11"/>
     </resources>
 </document>

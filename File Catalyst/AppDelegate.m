@@ -136,7 +136,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
         [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
         [(BrowserController*)myRightView selectFirstRoot];
-        if (0) {
+        if (1) {
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       homeDir,kRootPathKey,
@@ -266,6 +266,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 }
 
+- (IBAction)operationCancel:(id)sender {
+    NSArray *operations = [operationsQueue operations];
+    [(NSOperation*)[operations firstObject] cancel];
+}
+
 
 #pragma mark Operations Handling
 -(void) handleOperationInformation: (NSNotification*) note
@@ -287,6 +292,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];
     [self.statusProgressLabel setStringValue:@"..."];
+    [self.statusCancelButton setHidden:NO];
+
 }
 
 - (void)_operationsInfoFired:(NSTimer *)timer {
@@ -318,6 +325,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [self.statusProgressIndicator stopAnimation:self];
     [self.statusProgressIndicator setHidden:YES];
     [self.statusProgressLabel setHidden:YES];
+    [self.statusCancelButton setHidden:YES];
 }
 
 - (void) statusUpdate:(NSNotification*)theNotification {
