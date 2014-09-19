@@ -103,5 +103,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
 -(NSArray*) getSelectedItems;
+-(void) backSelectedFolder;
+-(void) forwardSelectedFolder;
 
 @end

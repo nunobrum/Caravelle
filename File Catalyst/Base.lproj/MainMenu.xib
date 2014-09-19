@@ -689,14 +689,17 @@ CA
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <subviews>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1gr-uk-pbS">
-                                <rect key="frame" x="18" y="7" width="71" height="24"/>
+                                <rect key="frame" x="18" y="7" width="59" height="24"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <segmentedCell key="cell" alignment="left" style="rounded" trackingMode="momentary" id="gli-Mt-Phx">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment image="NSLeftFacingTriangleTemplate" width="32"/>
-                                        <segment image="NSRightFacingTriangleTemplate" width="32" tag="1"/>
+                                        <segment image="NSLeftFacingTriangleTemplate" width="26"/>
+                                        <segment image="NSRightFacingTriangleTemplate" width="26" tag="1"/>
                                     </segments>
+                                    <connections>
+                                        <action selector="mruBackForwardAction:" target="494" id="f4o-Bu-7KK"/>
+                                    </connections>
                                 </segmentedCell>
                             </segmentedControl>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
@@ -711,16 +714,31 @@ CA
                                 </connections>
                             </button>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kPy-bX-dze">
-                                <rect key="frame" x="114" y="6" width="49" height="26"/>
+                                <rect key="frame" x="135" y="6" width="50" height="26"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="hLU-ib-cHg" id="dzh-CD-Gfu">
-                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="dzh-CD-Gfu">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" title="OtherViews" id="NGq-8I-C9o">
                                         <items>
-                                            <menuItem state="on" image="NSBookmarksTemplate" id="hLU-ib-cHg"/>
+                                            <menuItem image="NSBookmarksTemplate" hidden="YES" id="hLU-ib-cHg"/>
                                             <menuItem title="Item 2" id="6e6-z3-rQQ"/>
                                             <menuItem title="Item 3" id="nuz-jk-TQM"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mMu-yz-VVZ">
+                                <rect key="frame" x="83" y="6" width="50" height="26"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="17A-oB-X2m" id="fZP-L3-qbp">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" title="OtherViews" id="Kzx-Er-ryJ">
+                                        <items>
+                                            <menuItem image="NSPathTemplate" hidden="YES" id="17A-oB-X2m"/>
+                                            <menuItem title="Item 2" id="du3-nR-d0I"/>
+                                            <menuItem title="Item 3" id="1HK-go-rXC"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -856,6 +874,7 @@ CA
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSBookmarksTemplate" width="17" height="12"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
+        <image name="NSPathTemplate" width="13" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
         <image name="StopButton" width="11" height="11"/>
         <image name="myTrashIcon32" width="16" height="16"/>

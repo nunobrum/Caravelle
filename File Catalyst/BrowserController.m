@@ -53,6 +53,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     BOOL _didRegisterDraggedTypes;
     NSIndexSet *_draggedItemsIndexSet;
     TreeBranch *_draggedOutlineItem;
+    NSMutableArray *_mruLocation;
+    NSUInteger _mruPointer;
 }
 
 @end
@@ -75,6 +77,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
     _browserOperationQueue = [[NSOperationQueue alloc] init];
+    _mruLocation = [[NSMutableArray alloc] init];
+    _mruPointer = 0;
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_browserOperationQueue setMaxConcurrentOperationCount:2];
     NSLog(@"Init Browser Controller");
@@ -97,6 +101,28 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
+
+-(void) mruSet:(NSURL*) url {
+    NSUInteger mruCount = [_mruLocation count];
+    _mruPointer++;
+    if (_mruPointer < mruCount) { // There where back movements before
+        if (![url isEqual:_mruLocation[_mruPointer]]) {// the url is different so all the following MRU will be discarded
+            NSRange follwingMRUs;
+            follwingMRUs.location = _mruPointer+1;
+            follwingMRUs.length = mruCount - _mruPointer;
+            if (follwingMRUs.length!=0) {
+                [_mruLocation removeObjectsInRange:follwingMRUs];
+            }
+        }
+    }
+    else { // Just add the MRU to the last position
+        // but first check if it isn't the same
+        if ([url isEqual:_mruLocation[_mruPointer]])
+            _mruPointer--;
+        else
+            [_mruLocation addObject:url];
+    }
+}
 
 
 #pragma mark - Tree Outline DataSource Protocol
@@ -277,11 +303,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             _didRegisterDraggedTypes = YES;
         }
         if (SelectedCount ==0) {
-            [_myTableView unregisterDraggedTypes];
+            //[_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
             _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             [self setPathBarToItem:_treeNodeSelected];
+
             //[self refreshDataView];
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
@@ -943,6 +970,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         [_myPathBarControl setURL: [[item parent] url]];
     }
+    [self mruSet:[_treeNodeSelected url]];
 }
 
 -(TreeBranch*) selectFirstRoot {
@@ -1096,6 +1124,42 @@ void DateFormatter(NSDate *date, NSString **output) {
         answer = [tableData objectsAtIndexes:rowsSelected];
     }
     return answer;
+}
+
+-(void) backSelectedFolder {
+    if (_mruPointer>0) {
+        _mruPointer--;
+        NSURL *url = _mruLocation[_mruPointer];
+        TreeItem *item = [self getItemByURL:url];
+        if (item==nil) {
+            // !!! TODO: Create a separate class for the tree container.
+            if (_viewMode == BViewBrowserMode) {
+                item = [TreeItem treeItemForURL:url parent:nil];
+                [self selectFolderByItem:item];
+            }
+        }
+        else {
+            [self selectFolderByItem:item];
+        }
+    }
+}
+
+-(void) forwardSelectedFolder {
+    if (_mruPointer < [_mruLocation count]-1) {
+        _mruPointer++;
+        NSURL *url = _mruLocation[_mruPointer];
+        TreeItem *item = [self getItemByURL:url];
+        if (item==nil) {
+            // !!! TODO: Create a separate class for the tree container.
+            if (_viewMode == BViewBrowserMode) {
+                item = [TreeItem treeItemForURL:url parent:nil];
+                [self selectFolderByItem:item];
+            }
+        }
+        else {
+            [self selectFolderByItem:item];
+        }
+    }
 }
 
 @end

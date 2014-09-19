@@ -252,7 +252,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)toolbarCopyAction:(id)sender {
     NSInteger LeftORight1 = [(NSSegmentedControl*)sender selectedSegment];
 
-    if (LeftORight1==1) {
+    if (LeftORight1==1) { // Right
         if (selectedView == myLeftView) {
             NSArray *selectedFiles = [selectedView getSelectedItems];
             copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
@@ -272,6 +272,19 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [(NSOperation*)[operations firstObject] cancel];
 }
 
+- (IBAction)mruBackForwardAction:(id)sender {
+    NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
+
+    // !!! TODO When App Modes are implemented
+    // Make sure this is done properly
+    BrowserController *focused_browser = selectedView;
+    if (backOrForward==0) { // Backward
+        [focused_browser backSelectedFolder];
+    }
+    else {
+        [focused_browser forwardSelectedFolder];
+    }
+}
 
 #pragma mark Operations Handling
 -(void) handleOperationInformation: (NSNotification*) note

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C29460C18F9B570002B633C /* Accounts.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E718F9B570002B633C /* Accounts.icns */; };
 		3C29460D18F9B570002B633C /* AlertStopIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E818F9B570002B633C /* AlertStopIcon.icns */; };
 		3C29460E18F9B570002B633C /* BackwardArrowIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */; };
@@ -89,6 +90,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C20FCC719CB7FAE00826246 /* Automator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Automator.framework; path = System/Library/Frameworks/Automator.framework; sourceTree = SDKROOT; };
 		3C2945E718F9B570002B633C /* Accounts.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Accounts.icns; sourceTree = "<group>"; };
 		3C2945E818F9B570002B633C /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
 		3C2945E918F9B570002B633C /* BackwardArrowIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BackwardArrowIcon.icns; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */,
 				3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +287,7 @@
 		3CEA674118F87C2F0080C4FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3C20FCC719CB7FAE00826246 /* Automator.framework */,
 				3CEA674218F87C2F0080C4FC /* Cocoa.framework */,
 				3CEA676118F87C2F0080C4FC /* XCTest.framework */,
 				3CEA674418F87C2F0080C4FC /* Other Frameworks */,
