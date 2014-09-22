@@ -173,6 +173,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
     treeUpdateOperationID = [treeScanOp operationID];
 	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
+    [self _startOperationBusyIndication];
 
 }
 

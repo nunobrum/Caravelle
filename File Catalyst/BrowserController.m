@@ -103,24 +103,28 @@ void DateFormatter(NSDate *date, NSString **output) {
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
 -(void) mruSet:(NSURL*) url {
+    // but first check if it isn't the same
     NSUInteger mruCount = [_mruLocation count];
-    _mruPointer++;
-    if (_mruPointer < mruCount) { // There where back movements before
-        if (![url isEqual:_mruLocation[_mruPointer]]) {// the url is different so all the following MRU will be discarded
-            NSRange follwingMRUs;
-            follwingMRUs.location = _mruPointer+1;
-            follwingMRUs.length = mruCount - _mruPointer;
-            if (follwingMRUs.length!=0) {
-                [_mruLocation removeObjectsInRange:follwingMRUs];
-            }
-        }
+    if (mruCount==0) {
+        [_mruLocation addObject:url];
     }
-    else { // Just add the MRU to the last position
-        // but first check if it isn't the same
-        if ([url isEqual:_mruLocation[_mruPointer]])
-            _mruPointer--;
+    // Then checking if its changing
+    else if (![url isEqual:_mruLocation[_mruPointer]]) { // Don't want two URLS repeated in a sequence
+        _mruPointer++;
+        if (_mruPointer < mruCount) { // There where back movements before
+            if (![url isEqual:_mruLocation[_mruPointer]]) { // not just moving forward
+                NSRange follwingMRUs;
+                follwingMRUs.location = _mruPointer+1;
+                follwingMRUs.length = mruCount - _mruPointer;
+                _mruLocation[_mruPointer] = url;
+                if (follwingMRUs.length!=0) {
+                    [_mruLocation removeObjectsInRange:follwingMRUs];
+                }
+            }
+            // There is no else : on else We are just moving forward
+        }
         else
-            [_mruLocation addObject:url];
+            [_mruLocation addObject:url]; // Adding to the last position
     }
 }
 
@@ -306,16 +310,19 @@ void DateFormatter(NSDate *date, NSString **output) {
             //[_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
-            _treeNodeSelected = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
-            [self setPathBarToItem:_treeNodeSelected];
+            TreeBranch *tb = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            if (tb != _treeNodeSelected) { // !!! WARNING This workaround might raise problems in the future depending on the implementation of the folder change notification. Best is to see why this function is being called twice.
+                _treeNodeSelected = tb;
+                [self setPathBarToItem:_treeNodeSelected];
 
-            //[self refreshDataView];
-            // Use KVO to observe for changes of its children Array
-            [self observeItem:_treeNodeSelected];
-            if (_viewMode==BViewBrowserMode) {
-                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                //[self refreshDataView];
+                // Use KVO to observe for changes of its children Array
+                [self observeItem:_treeNodeSelected];
+                if (_viewMode==BViewBrowserMode) {
+                    [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                }
+                [self refreshDataView];
             }
-            [self refreshDataView];
         }
         else {
             NSLog(@"Houston we have a problem");
@@ -970,7 +977,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else {
         [_myPathBarControl setURL: [[item parent] url]];
     }
-    [self mruSet:[_treeNodeSelected url]];
+    [self mruSet:[item url]];
 }
 
 -(TreeBranch*) selectFirstRoot {
