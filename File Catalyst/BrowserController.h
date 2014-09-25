@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "FileCollection.h"
 #import "TreeRoot.h"
-#import "PathControlManager.h"
 #include "Definitions.h"
 
 extern NSString *notificationStatusUpdate;

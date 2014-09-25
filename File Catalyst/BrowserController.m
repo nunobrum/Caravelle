@@ -60,7 +60,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
-    NSString *_currentRootPath; // !!! Is this needed. We hav rootNodeSelected
 }
 
 @end
@@ -83,10 +82,11 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
     _treeNodeSelected = nil;
+    _rootNodeSelected = nil;
     _browserOperationQueue = [[NSOperationQueue alloc] init];
     _mruLocation = [[NSMutableArray alloc] init];
     _mruPointer = 0;
-    _currentRootPath = nil;
+
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_browserOperationQueue setMaxConcurrentOperationCount:2];
 
