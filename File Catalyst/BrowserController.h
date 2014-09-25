@@ -29,15 +29,17 @@ extern NSString *notificationCatalystRootUpdate;
 @property (weak) IBOutlet NSOutlineView *myOutlineView;
 @property (weak) IBOutlet NSTableView *myTableView;
 @property (weak) IBOutlet NSPathCell *myPathBarCell;
-@property (strong) IBOutlet PathControlManager *myPathBarControl;
+@property (strong) IBOutlet NSPathControl *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
+@property (strong) IBOutlet NSPopUpButton *myPathPopDownButton;
+@property (strong) IBOutlet NSMenu *myPathPopDownMenu;
+
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 @property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
 
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
-@property TreeBranch *treeNodeSelected;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
@@ -69,6 +71,7 @@ extern NSString *notificationCatalystRootUpdate;
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification;
 /* Binding is done manually in the initialization procedure */
+- (IBAction)OutlineDoubleClickEvent:(id)sender;
 - (IBAction)TableDoubleClickEvent:(id)sender;
 
 /*
@@ -84,6 +87,9 @@ extern NSString *notificationCatalystRootUpdate;
 
 -(void) setViewMode:(BViewMode)viewMode;
 -(BViewMode) viewMode;
+
+-(TreeBranch*) treeNodeSelected;
+
 
 -(NSOutlineView*) treeOutlineView;
 -(id) getFileAtIndex:(NSUInteger)index;

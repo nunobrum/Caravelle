@@ -298,7 +298,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     return nil;
 }
 
--(TreeItem*) itemWithName:(NSString*) name class:(id)cls {
+-(TreeItem*) childWithName:(NSString*) name class:(id)cls {
     @synchronized(self) {
         for (TreeItem *item in self->children) {
             if ([[item name] isEqualToString: name] && [item isKindOfClass:cls]) {
@@ -309,7 +309,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     return nil;
 }
 
--(TreeItem*) itemWithURL:(NSURL*) aURL {
+-(TreeItem*) childWithURL:(NSURL*) aURL {
     @synchronized(self) {
         for (TreeItem *item in self->children) {
             if ([[item url] isEqualTo: aURL]) {
@@ -320,6 +320,28 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     return nil;
 }
 
+-(TreeItem*) treeItemWithURL:(NSURL*)url {
+    if ([self containsURL:url]) {
+        /* The URL is already contained in this tree */
+        /* Start climbing tree */
+        NSArray *pcomps = [url pathComponents]; // Get the component Names
+        NSUInteger level = [[[self url] pathComponents] count]; // Get the current level
+        NSUInteger top_level = [pcomps count];
+        TreeBranch *cursor = self;
+        while (level < top_level) {
+            TreeItem *child = [cursor childWithName:pcomps[level] class:[TreeBranch class]];
+            if ((child!=nil) && ([child isKindOfClass:[TreeBranch class]])) {
+                cursor = (TreeBranch*)child;
+                level++;
+            }
+            else
+                break;
+        }
+        if ([url isEqual:[cursor url]]) // This doesnt Work with TreeRoots:-( !!!
+            return cursor;
+    }
+    return nil;
+}
 
 /* Private Method : This is so that we don't have @synchronized clauses inside. All calling methods should have it */
 -(BOOL) addURL:(NSURL*)theURL {
@@ -341,7 +363,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     unsigned long level = [[_url pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
-        TreeItem *child = [cursor itemWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
+        TreeItem *child = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeBranch class]];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
             NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
@@ -407,7 +429,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
     for (NSURL *theURL in dirEnumerator) {
-        TreeItem *item = [self itemWithURL:theURL]; /* Retrieves existing Element */
+        TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
         if (item==nil) { /* If not found creates a new one */
             item = [TreeItem treeItemForURL:theURL parent:self];
         }
@@ -467,7 +489,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
             for (NSURL *theURL in dirEnumerator) {
-                TreeItem *item = [self itemWithURL:theURL]; /* Retrieves existing Element */
+                TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
                 if (item==nil) { /* If not found creates a new one */
                     item = [TreeItem treeItemForURL:theURL parent:self];
                     new_files = YES;

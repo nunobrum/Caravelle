@@ -53,7 +53,9 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 -(BOOL) isExpandable;
 
--(TreeItem*) itemWithName:(NSString*) name class:(id)cls;
+-(TreeItem*) childWithName:(NSString*) name class:(id)cls;
+-(TreeItem*) childWithURL:(NSURL*)url;
+-(TreeItem*) treeItemWithURL:(NSURL*)url;
 
 //-(NSMutableArray*) branchesInBranch;
 
