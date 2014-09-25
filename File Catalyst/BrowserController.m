@@ -1184,7 +1184,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(TreeBranch*) selectFirstRoot {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
-        TreeRoot *root = BaseDirectoriesArray[0];
+        TreeBranch *root = BaseDirectoriesArray[0];
         _rootNodeSelected = root;
         [self setPathBarToItem:root];
         [self outlineExpandNode:root];
@@ -1195,12 +1195,12 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
-        NSArray *treeComps = [treeNode treeComponents];
 
         for (TreeRoot *root in BaseDirectoriesArray) {
-            if (root==treeComps[0]){ // Search for Root Node
+            if ([root containsURL:[treeNode url]]){ // Search for Root Node
                 _rootNodeSelected = root;
-                TreeBranch *lastBranch;
+                TreeBranch *lastBranch = nil;
+                NSArray *treeComps= [treeNode treeComponentsToParent:root];
                 for (TreeItem *node in treeComps) {
                     if ([node isKindOfClass:[TreeBranch class]] ||
                         [node isKindOfClass:[TreeRoot   class]])
@@ -1209,11 +1209,15 @@ void DateFormatter(NSDate *date, NSString **output) {
                         [_myOutlineView reloadData];
                         lastBranch = (TreeBranch*)node;
                     }
+                    else
+                        lastBranch = nil;
                 }
-                [self setPathBarToItem:lastBranch];
-                [self outlineExpandNode:lastBranch];
-                [self refreshDataView];
-                return YES;
+                if (lastBranch) {
+                    [self setPathBarToItem:lastBranch];
+                    [self outlineExpandNode:lastBranch];
+                    [self refreshDataView];
+                    return YES;
+                }
             }
         }
     }

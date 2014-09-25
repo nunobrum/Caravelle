@@ -40,6 +40,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 - (TreeItem*) root;
 
 -(NSArray *) treeComponents;
+-(NSArray *) treeComponentsToParent:(id)parent;
 
 -(BOOL) isBranch;
 -(NSString*) name;
