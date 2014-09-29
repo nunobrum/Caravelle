@@ -9,10 +9,17 @@
 #import <Foundation/Foundation.h>
 #import "TreeBranch.h"
 
-@interface TreeManager : NSMutableArray
+@interface TreeManager : NSObject {
+    NSMutableArray *iArray;
+}
 
--(TreeBranch*) addTreeBranch:(NSURL*)url;
--(void) removeTree:(TreeBranch*)node;
--(TreeItem*) getItemWithURL:(NSURL*)url;
+-(TreeManager*) init;
+
+-(TreeBranch*) addTreeBranchWithURL:(NSURL*)url;
+-(TreeItem*) getTreeItemWithURL:(NSURL*)url;
+
+-(void) addTreeBranch:(TreeBranch*)node;
+-(void) removeTreeBranch:(TreeBranch*)node;
+
 
 @end
