@@ -12,6 +12,7 @@
 #import "TreeItem.h"
 #import "TreeLeaf.h"
 #import "TreeBranch.h"
+#import "TreeManager.h"
 #import "TreeRoot.h"
 #import "FileInformation.h"
 #import "fileOperation.h"
@@ -668,11 +669,11 @@ void DateFormatter(NSDate *date, NSString **output) {
         if (NULL == node ) {
             /* The path is not contained existing roots */
             if (_viewMode==BViewBrowserMode) {
-                // !!! TODO: make this on a dedicated class
-                /* Instead of making a clever update of the tree
-                 Just remove the existing one and creates one from scratch */
+                /* Will get a new node from shared tree Manager and add it to the root */
+                /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
+                node = [appTreeManager addTreeBranchWithURL:newURL];
                 [self removeRootWithIndex:0];
-                [self addTreeRoot:[TreeRoot treeWithURL:newURL]];
+                [self addTreeRoot:node];
                 node = [BaseDirectoriesArray objectAtIndex:0];
             }
         }
@@ -1072,9 +1073,9 @@ void DateFormatter(NSDate *date, NSString **output) {
     [self refreshDataView];
 }
 
--(void) addTreeRoot:(TreeRoot*)theRoot {
+-(void) addTreeRoot:(TreeBranch*)theRoot {
     if (theRoot!=nil) {
-        NSInteger answer = [self canAddRoot:[theRoot rootPath]];
+        NSInteger answer = [self canAddRoot:[theRoot path]];
         if (answer == pathsHaveNoRelation) {
             [BaseDirectoriesArray addObject: theRoot];
         }

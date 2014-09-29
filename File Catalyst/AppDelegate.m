@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
+#import "TreeManager.h"
 #import "TreeScanOperation.h"
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
@@ -40,6 +41,7 @@ NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
+id appTreeManager;
 
 @implementation AppDelegate {
     ApplicationwMode applicationMode;
@@ -62,6 +64,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     {
         operationsQueue = [[NSOperationQueue alloc] init];
         appFileManager = [[NSFileManager alloc] init];
+        appTreeManager = [[TreeManager alloc] init];
         [appFileManager setDelegate:self];
 	}
 	return self;
@@ -91,6 +94,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+    /* Setting up user defaults */
+    NSString *userDefaultsValuesPath=[[NSBundle mainBundle] pathForResource:@"UserDefaults"
+                                                           ofType:@"plist"];
+    NSDictionary *userDefaultsValuesDict=[NSDictionary dictionaryWithContentsOfFile:userDefaultsValuesPath];
+    // set them in the standard user defaults
+    [[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+
+    /* Now setting notifications */
+
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -132,14 +144,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
-        NSString *homeDir = NSHomeDirectory();
+        //NSString *homeDir = NSHomeDirectory();
+        NSString *homeDir = @"/Users/vika/Downloads";
+        NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
+        id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
         [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
-        [(BrowserController*)myRightView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
+        [(BrowserController*)myRightView addTreeRoot: item];
         [(BrowserController*)myRightView selectFirstRoot];
-        if (1) {
+        if (0) {
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      homeDir,kRootPathKey,
+                                      //homeDir,kRootPathKey,
+                                      @"/Users/vika/Documents/",kRootPathKey,
                                       myLeftView, kSenderKey,
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
@@ -149,8 +165,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             [self _startOperationBusyIndication];
         }
         else {
+            url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
+            item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
             [myLeftView setViewMode:BViewBrowserMode];
-            [(BrowserController*)myLeftView addTreeRoot: [TreeRoot treeWithURL:[NSURL fileURLWithPath:homeDir isDirectory:YES]]];
+            [(BrowserController*)myLeftView addTreeRoot: item];
         }
         [(BrowserController*)myLeftView selectFirstRoot];
     }
@@ -200,7 +218,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [BView stopBusyAnimations];
         [BView selectFolderByItem: receivedTree];
         // set the number of images found indicator string
-        [_StatusBar setTitle:@"Received data from Thread"];
+        [_StatusBar setTitle:@"Updated"];
     }
 }
 

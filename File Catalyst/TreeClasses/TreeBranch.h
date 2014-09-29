@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 -(NSInteger) relationTo:(NSString*) otherPath;
 -(BOOL) containsURL:(NSURL*)url;
+-(BOOL) containedInURL:(NSURL*) url;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

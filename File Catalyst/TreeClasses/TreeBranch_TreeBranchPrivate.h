@@ -12,7 +12,7 @@
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector;
 -(void) _harvestLeafsInBranch:(NSMutableArray*)collector;
--(BOOL) addURL:(NSURL*)theURL;
+-(TreeItem*) addURL:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
 
 @end

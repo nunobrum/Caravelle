@@ -95,7 +95,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(void) set_filterText:(NSString *) filterText;
 -(void) refreshDataView;
 -(void) refreshTrees;
--(void) addTreeRoot:(TreeRoot*)theRoot;
+-(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 -(void) removeSelectedDirectory;

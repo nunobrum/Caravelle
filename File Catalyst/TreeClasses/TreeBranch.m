@@ -343,22 +343,26 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     return nil;
 }
 
-/* Private Method : This is so that we don't have @synchronized clauses inside. All calling methods should have it */
--(BOOL) addURL:(NSURL*)theURL {
+/* Private Method : This is so that we don't have Manual KVO clauses inside. All calling methods should have it */
+-(TreeItem*) addURL:(NSURL*)theURL {
     /* Check first if base path is common */
     NSRange result;
     if (theURL==nil) {
         NSLog(@"OOOOPSS! Something went deadly wrong here.\nThe URL is null");
-        return FALSE;
+        return nil;
     }
     result = [[theURL path] rangeOfString:[self path]];
     if (NSNotFound==result.location) {
         // The new root is already contained in the existing trees
-        return FALSE;
+        return nil;
     }
-    TreeBranch *cursor = self;
+
+    @synchronized(self) {
     if (self->children == nil)
         self->children = [[NSMutableArray alloc] init];
+        [self setTag:tagTreeItemDirty];
+    }
+    TreeBranch *cursor = self;
     NSArray *pcomps = [theURL pathComponents];
     unsigned long level = [[_url pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
@@ -368,17 +372,27 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
             /* This is a new Branch Item that will contain the URL*/
             NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
             child = [[TreeBranch new] initWithURL:pathURL parent:cursor];
-            [cursor->children addObject:child];
+            @synchronized(cursor) {
+                [cursor->children addObject:child];
+                [cursor setTag:tagTreeItemDirty];
+            }
         }
         cursor = (TreeBranch*)child;
         if (cursor->children==nil) {
             cursor->children = [[NSMutableArray alloc] init];
+            [cursor setTag:tagTreeItemDirty];
         }
         level++;
     }
-    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
-    [cursor->children addObject:newObj];
-    return TRUE; /* Stops here Nothing More to Add */
+    // Checks if it exists
+    TreeItem *newObj = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeItem class]];
+    if  (newObj==nil)
+        newObj = [TreeItem treeItemForURL:theURL parent:cursor];
+    @synchronized(cursor) {
+        [cursor->children addObject:newObj];
+        [cursor setTag:tagTreeItemDirty];
+    }
+    return newObj; /* Stops here Nothing More to Add */
 }
 
 
@@ -478,9 +492,24 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     }
 }
 
+-(BOOL) containedInURL: (NSURL*) url {
+    NSRange result;
+    result = [[self path] rangeOfString:[url path]];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
 
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
+    if (_tag & tagTreeItemUpdating) {
+        return; // If its already updating.... exit here.
+    }
     @synchronized (self) {
+        _tag |= tagTreeItemUpdating;
         [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
             NSMutableArray *newChildren = [[NSMutableArray new] init];
             BOOL new_files=NO;
@@ -506,6 +535,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
                 // We synchronize access to the image/imageLoading pair of variables
                 @synchronized (self) {
                     self->children = newChildren;
+                    _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
                 }
                 [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
             }

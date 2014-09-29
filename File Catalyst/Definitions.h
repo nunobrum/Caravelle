@@ -34,6 +34,7 @@ extern NSString *opSendRecycleBinOperation;
 
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
+extern id appTreeManager;
 
 typedef NS_ENUM(NSInteger, BViewMode) {
     BViewBrowserMode = 1,

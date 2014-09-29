@@ -61,6 +61,7 @@
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
 		3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD788A819D52DEE0042E8B9 /* TreeManager.m */; };
+		3CD788AB19D9C7E80042E8B9 /* UserDefault.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */; };
 		3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA674F18F87C2F0080C4FC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
@@ -160,6 +161,7 @@
 		3CA7DFC419B611E100600F41 /* FileOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileOperation.m; path = "File Catalyst/OperationClasses/FileOperation.m"; sourceTree = SOURCE_ROOT; };
 		3CD788A719D52DEE0042E8B9 /* TreeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeManager.h; sourceTree = "<group>"; };
 		3CD788A819D52DEE0042E8B9 /* TreeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeManager.m; sourceTree = "<group>"; };
+		3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefault.plist; sourceTree = "<group>"; };
 		3CEA673F18F87C2F0080C4FC /* File Catalyst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Catalyst.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -334,6 +336,7 @@
 				3CEA674E18F87C2F0080C4FC /* main.m */,
 				3CEA675018F87C2F0080C4FC /* File Catalyst-Prefix.pch */,
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
+				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -502,6 +505,7 @@
 			files = (
 				3C29462318F9B570002B633C /* ToolbarDeleteIcon.icns in Resources */,
 				3C29462A18F9B570002B633C /* ToolbarLibraryFolderIcon.icns in Resources */,
+				3CD788AB19D9C7E80042E8B9 /* UserDefault.plist in Resources */,
 				3C29460C18F9B570002B633C /* Accounts.icns in Resources */,
 				3C29460F18F9B570002B633C /* BurningIcon.icns in Resources */,
 				3C29462718F9B570002B633C /* ToolbarFavoritesIcon.icns in Resources */,

@@ -28,7 +28,8 @@
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
     NSString *typeIdentifier;
     if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
-        if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder]) {
+        if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
+            [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
         NSArray *imageUTIs = [NSImage imageTypes];

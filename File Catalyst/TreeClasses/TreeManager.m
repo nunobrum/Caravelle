@@ -20,42 +20,56 @@
 -(TreeBranch*) addTreeBranchWithURL:(NSURL*)url {
     NSUInteger index=0;
     TreeBranch *answer=nil;
+    id parent =  nil;
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
         NSUInteger comparison = [item relationTo:[url path]];
         if (comparison == pathIsChild) {
-            NSUInteger level = [[[item url] pathComponents] count]; // Get the level of the root;
-            NSArray *pathComponents = [url pathComponents];
-            NSUInteger top_level = [pathComponents count];
-            TreeBranch *cursor=item;
-            while (level < top_level) {
-                NSString *path = pathComponents[level];
-                TreeItem *child = [cursor childWithName:path class:[TreeBranch class]];
-                if (child==nil) {
-                    NSRange rng;
-                    rng.location=0;
-                    rng.length = level;
-                    NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
-                    @synchronized(cursor) {
-                        [cursor addURL:newURL];
-                        [cursor setTag:tagTreeItemDirty];
-                    }
-                    [cursor refreshContentsOnQueue:operationsQueue];
-                }
-                if ([child isBranch]) {
-                    cursor = (TreeBranch*)child;
-                    level++;
-                }
-                else
-                    return nil; //Failing here is serious . Giving up search
-            }
-            answer = cursor;
+            id aux = [item addURL:url];
+            if ([aux isKindOfClass:[TreeBranch class]])
+                answer = aux;
             index++;
         }
         else if (comparison==pathIsParent) {
             /* Will add this to the node being inserted */
-            
+            NSUInteger level = [[url pathComponents] count]; // Get the level above the new root;
+            NSArray *pathComponents = [[item url] pathComponents];
+            NSUInteger top_level = [pathComponents count]-1;
+            if (parent==nil) {
+                parent =[TreeItem treeItemForURL:url parent:nil];
+            }
+            if ([parent isKindOfClass:[TreeBranch class]]) {
+                answer = parent;
+                TreeBranch *cursor = parent;
+                while (level < top_level) {
+                    NSString *path = pathComponents[level];
+                    TreeItem *child = [cursor childWithName:path class:[TreeBranch class]];
+                    if (child==nil) {
+                        NSRange rng;
+                        rng.location=0;
+                        rng.length = level+1;
+                        NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
+                        child = [cursor addURL:newURL];
+                        [cursor setTag:tagTreeItemDirty];
+                    }
+                    if ([child isBranch]) {
+                        cursor = (TreeBranch*)child;
+                        level++;
+                    }
+                    else
+                        return nil; //Failing here is serious . Giving up search
+                }
+                [cursor addItem:item]; // Finally add the node
+                @synchronized(self) {
+                    [self->iArray removeObjectAtIndex:index]; // Remove the node, It will
+                }
+            }
+            else {
+                index++;
+            }
         }
+        else
+            index++;
     }
     if (answer==nil) { // If not found in existing trees will create it
         id aux = [TreeItem treeItemForURL:url parent:nil];
@@ -66,6 +80,11 @@
                 [self->iArray addObject:answer];
             }
 
+        }
+    }
+    else if (parent!=nil) { // There is a new parent
+        @synchronized(self) {
+            [self->iArray addObject:parent];
         }
     }
     return answer;
@@ -105,6 +124,7 @@
                 child = [TreeItem treeItemForURL:newURL parent:cursor];
                 [child setTag:tagTreeItemDirty];
             }
+            level++;
             cursor = (TreeBranch*)child;
         }
         [cursor addItem:node]; // Finally add the node
