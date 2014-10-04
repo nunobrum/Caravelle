@@ -95,7 +95,7 @@ id appTreeManager;
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     /* Setting up user defaults */
-    NSString *userDefaultsValuesPath=[[NSBundle mainBundle] pathForResource:@"UserDefaults"
+    NSString *userDefaultsValuesPath=[[NSBundle mainBundle] pathForResource:@"UserDefault"
                                                            ofType:@"plist"];
     NSDictionary *userDefaultsValuesDict=[NSDictionary dictionaryWithContentsOfFile:userDefaultsValuesPath];
     // set them in the standard user defaults

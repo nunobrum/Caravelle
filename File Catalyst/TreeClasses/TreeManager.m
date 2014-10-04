@@ -24,7 +24,10 @@
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
         NSUInteger comparison = [item relationTo:[url path]];
-        if (comparison == pathIsChild) {
+        if (comparison == pathIsSame) {
+            return item;
+        }
+        else if (comparison == pathIsChild) {
             id aux = [item addURL:url];
             if ([aux isKindOfClass:[TreeBranch class]])
                 answer = aux;

@@ -14,9 +14,10 @@ extern NSString *const kvoTreeBranchPropertyChildren;
 
 /* Enumerate to be used on the result of the path relation compare method */
 typedef NS_ENUM(NSInteger, enumPathCompare) {
+    pathIsSame = 0,
     pathsHaveNoRelation = 1,
-    pathIsChild = 0,
-    pathIsParent = -1
+    pathIsParent = 2,
+    pathIsChild = 3
 };
 
 

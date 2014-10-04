@@ -638,10 +638,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationCatalystRootUpdate object:self userInfo:answer];
         }
         else {
+            /* Will get a new node from shared tree Manager and add it to the root */
+            /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
+            TreeBranch *node = [appTreeManager addTreeBranchWithURL:[SelectDirectoryDialog URL]];
             [self removeRootWithIndex:0];
-            // !!! TODO : Pass this to a Tree Manager Class
-            [self addTreeRoot:[TreeRoot treeWithURL:[SelectDirectoryDialog URL]]];
-            TreeRoot *node = [BaseDirectoriesArray objectAtIndex:0];
+            [self addTreeRoot:node];
+            node = [BaseDirectoriesArray objectAtIndex:0];
             if (NULL != node){
                 [self selectFolderByItem:node];
             }
@@ -851,7 +853,13 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
-    _validatedDestinationItem = item;
+    if (item==nil) {
+        NSLog(@"This corresponds to the root level !!!! This needs a special condition here");
+        assert(false);
+    }
+    else {
+        _validatedDestinationItem = item;
+    }
     return [self validateDrop:info];
 }
 

@@ -346,20 +346,20 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 /* Private Method : This is so that we don't have Manual KVO clauses inside. All calling methods should have it */
 -(TreeItem*) addURL:(NSURL*)theURL {
     /* Check first if base path is common */
-    NSRange result;
+    //NSRange result;
     if (theURL==nil) {
         NSLog(@"OOOOPSS! Something went deadly wrong here.\nThe URL is null");
         return nil;
     }
-    result = [[theURL path] rangeOfString:[self path]];
-    if (NSNotFound==result.location) {
-        // The new root is already contained in the existing trees
-        return nil;
-    }
+//    result = [[theURL path] rangeOfString:[self path]];
+//    if (NSNotFound==result.location) {
+//        // The new root is already contained in the existing trees
+//        return nil;
+//    }
 
     @synchronized(self) {
-    if (self->children == nil)
-        self->children = [[NSMutableArray alloc] init];
+        if (self->children == nil)
+            self->children = [[NSMutableArray alloc] init];
         [self setTag:tagTreeItemDirty];
     }
     TreeBranch *cursor = self;
@@ -384,13 +384,14 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
         }
         level++;
     }
-    // Checks if it exists
+    // Checks if it exists ; The base class is provided TreeItem so that it can match anything
     TreeItem *newObj = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeItem class]];
-    if  (newObj==nil)
+    if  (newObj==nil) {
         newObj = [TreeItem treeItemForURL:theURL parent:cursor];
-    @synchronized(cursor) {
-        [cursor->children addObject:newObj];
-        [cursor setTag:tagTreeItemDirty];
+        @synchronized(cursor) {
+            [cursor->children addObject:newObj];
+            [cursor setTag:tagTreeItemDirty];
+        }
     }
     return newObj; /* Stops here Nothing More to Add */
 }
@@ -459,7 +460,12 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
 -(NSInteger) relationTo:(NSString*) otherPath {
     NSRange result;
     NSInteger answer = pathsHaveNoRelation;
-    result = [otherPath rangeOfString:[self path]];
+    NSString *myPath = [self path];
+
+    if ([myPath isEqualToString:otherPath])
+        return pathIsSame;
+
+    result = [otherPath rangeOfString:myPath];
     if (NSNotFound!=result.location) {
         // The new root is already contained in the existing trees
         answer = pathIsChild;
@@ -468,7 +474,7 @@ NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
     }
     else {
         /* The new contains exiting */
-        result = [[self path] rangeOfString:otherPath];
+        result = [myPath rangeOfString:otherPath];
         if (NSNotFound!=result.location) {
             // Will need to replace current position
             answer = pathIsParent;

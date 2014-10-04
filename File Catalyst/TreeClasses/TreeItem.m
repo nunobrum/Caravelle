@@ -32,6 +32,17 @@
             [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
+        else if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
+                 //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
+                 [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
+            if (!isFolder(url)) {
+                NSLog(@"Ai Ai As aplicações não são folders");
+            }
+            id appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowseAppsAsFolder"];
+            if (appsAsFolders) {
+                return [[TreeBranch alloc] initWithURL:url parent:parent];
+            }
+        }
         NSArray *imageUTIs = [NSImage imageTypes];
         if ([imageUTIs containsObject:typeIdentifier]) {
             // !!! TODO : Treat here other file types other than just not folders
