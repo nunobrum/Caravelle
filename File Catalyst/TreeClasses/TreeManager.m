@@ -7,7 +7,7 @@
 //
 
 #import "TreeManager.h"
-#import "TreeBranch_TreeBranchPrivate.h"
+//#import "TreeBranch_TreeBranchPrivate.h"
 
 @implementation TreeManager
 
@@ -53,7 +53,6 @@
                         rng.length = level+1;
                         NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
                         child = [cursor addURL:newURL];
-                        [cursor setTag:tagTreeItemDirty];
                     }
                     if ([child isBranch]) {
                         cursor = (TreeBranch*)child;

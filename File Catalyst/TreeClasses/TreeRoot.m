@@ -53,7 +53,7 @@
 
         /* Refresh the Trees so that the trees are displayed */
         for (FileInformation *finfo in fileCollection.fileArray) {
-            [rootDir addURL:finfo.getURL];
+            [rootDir _addURLnoRecurr:finfo.getURL];
             fileno++;
 
         } // for
