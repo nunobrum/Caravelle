@@ -133,15 +133,24 @@ id appTreeManager;
     [_ContentSplitView addSubview:myLeftView.view];
     [_ContentSplitView addSubview:myRightView.view];
 
+    /* Registering for receiving services */
+    NSArray *sendTypes = [NSArray arrayWithObjects:NSURLPboardType,
+                          NSFilenamesPboardType, nil];
+    NSArray *returnTypes = [NSArray arrayWithObjects:NSURLPboardType,
+                            NSFilenamesPboardType, nil];
+    [NSApp registerServicesMenuSendTypes:sendTypes
+                             returnTypes:returnTypes];
+
 
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
-    firstAppActivation = YES;
 
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
+    static BOOL firstAppActivation = YES;
+
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
         //NSString *homeDir = NSHomeDirectory();
@@ -176,6 +185,47 @@ id appTreeManager;
     [_ContentSplitView adjustSubviews];
     [_ContentSplitView setNeedsDisplay:YES];
 }
+
+#pragma mark Services Support
+/* Services Pasteboard Operations */
+
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    if ([sendType isEqual:NSFilenamesPboardType] ||
+        [sendType isEqual:NSURLPboardType]) {
+        NSLog(@"The return type is %@", returnType);
+        return self;
+    }
+    //return [super validRequestorForSendType:sendType returnType:returnType];
+    return nil;
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
+                             types:(NSArray *)types
+{
+    NSArray *typesDeclared;
+
+    if ([types containsObject:NSFilenamesPboardType] == YES) {
+        typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
+        [pboard declareTypes:typesDeclared owner:nil];
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
+        NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
+        return [pboard writeObjects:selectedPaths];
+    }
+    else if ([types containsObject:NSURLPboardType] == YES) {
+        typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
+        [pboard declareTypes:typesDeclared owner:nil];
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
+        return [pboard writeObjects:selectedURLs];
+    }
+
+    return NO;
+}
+
+#pragma mark - Notifications
 
 /* Receives the notification from the BrowserView to reload the Tree */
 - (void) rootUpdate:(NSNotification*)theNotification {

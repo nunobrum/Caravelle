@@ -14,10 +14,10 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <menu title="AMainMenu" systemMenu="main" id="29">
             <items>
-                <menuItem title="FileCatalyst1" id="56">
-                    <menu key="submenu" title="FileCatalyst1" systemMenu="apple" id="57">
+                <menuItem title="FileCatalyst" id="56">
+                    <menu key="submenu" title="FileCatalyst" systemMenu="apple" id="57">
                         <items>
-                            <menuItem title="About FileCatalyst1" id="58">
+                            <menuItem title="About FileCatalyst" id="58">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="orderFrontStandardAboutPanel:" target="-2" id="142"/>
@@ -647,7 +647,7 @@ CA
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="491">
                         <items>
-                            <menuItem title="FileCatalyst1 Help" keyEquivalent="?" id="492">
+                            <menuItem title="FileCatalyst Help" keyEquivalent="?" id="492">
                                 <connections>
                                     <action selector="showHelp:" target="-1" id="493"/>
                                 </connections>

@@ -15,7 +15,6 @@
     BrowserController *myLeftView;
     BrowserController *myRightView;
     //__weak LeftDataSource *_RightDataSrc;
-    BOOL firstAppActivation;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;

@@ -467,6 +467,10 @@
                 <menuItem title="Delete" id="AiJ-65-eUG">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
+                <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
+                <menuItem title="Cut" keyEquivalent="x" id="say-To-m67"/>
+                <menuItem title="Copy" keyEquivalent="c" id="Fn1-51-4VD"/>
+                <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO"/>
             </items>
             <accessibility description="fileContextMenu"/>
         </menu>
