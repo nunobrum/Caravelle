@@ -20,11 +20,12 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
     pathIsChild = 3
 };
 
+extern NSString* commonPathFromItems(NSArray* itemArray);
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
 
 @private
-    NSMutableArray *children;
+    NSMutableArray *_children;
 }
 
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
@@ -55,6 +56,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 -(BOOL) isExpandable;
 
 -(TreeItem*) childWithName:(NSString*) name class:(id)cls;
+-(TreeItem*) childWithURL:(NSURL*)url;
 -(TreeItem*) childContainingURL:(NSURL*)url;
 -(TreeItem*) treeItemWithURL:(NSURL*)url;
 -(TreeItem*) addURL:(NSURL*)theURL;
@@ -69,9 +71,6 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 -(void)refreshContentsOnQueue: (NSOperationQueue *) queue;
 
--(NSInteger) relationTo:(NSString*) otherPath;
--(BOOL) containsURL:(NSURL*)url;
--(BOOL) containedInURL:(NSURL*) url;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

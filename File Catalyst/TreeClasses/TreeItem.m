@@ -154,6 +154,57 @@
 }
 
 #pragma mark -
+#pragma mark URL comparison methods
+
+-(NSInteger) relationTo:(NSString*) otherPath {
+    NSRange result;
+    NSInteger answer = pathsHaveNoRelation;
+    NSString *myPath = [self path];
+
+    if ([myPath isEqualToString:otherPath])
+        return pathIsSame;
+
+    result = [otherPath rangeOfString:myPath];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        answer = pathIsChild;
+    }
+    else {
+        /* The new contains exiting */
+        result = [myPath rangeOfString:otherPath];
+        if (NSNotFound!=result.location) {
+            // Will need to replace current position
+            answer = pathIsParent;
+        }
+    }
+    return answer;
+}
+
+-(BOOL) containsURL:(NSURL*)url {
+    NSRange result;
+    result = [[url path] rangeOfString:[self path]];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
+-(BOOL) containedInURL: (NSURL*) url {
+    NSRange result;
+    result = [[self path] rangeOfString:[url path]];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+
+#pragma mark -
 #pragma mark NSPasteboardWriting support
 
 - (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {

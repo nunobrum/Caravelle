@@ -14,6 +14,7 @@
 -(void) _harvestLeafsInBranch:(NSMutableArray*)collector;
 -(TreeItem*) _addURLnoRecurr:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
+-(void) _setChildren:(NSMutableArray*) children;
 
 @end
 

@@ -60,5 +60,14 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(BOOL) openFile;
 -(BOOL) removeItem;
 
+/*
+ * URL Comparison methods
+ */
+
+-(NSInteger) relationTo:(NSString*) otherPath;
+-(BOOL) containsURL:(NSURL*)url;
+-(BOOL) containedInURL:(NSURL*) url;
+
+
 
 @end
