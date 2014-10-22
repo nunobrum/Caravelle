@@ -14,6 +14,7 @@
 #import "TreeBranch.h"
 #import "TreeManager.h"
 #import "TreeRoot.h"
+#import "filterBranch.h"
 #import "FileInformation.h"
 #import "fileOperation.h"
 
@@ -211,20 +212,28 @@ void DateFormatter(NSDate *date, NSString **output) {
             else {
                 cellView= [outlineView makeViewWithIdentifier:[tableColumn identifier] owner:self];
             }
+            if ([item isKindOfClass:[filterBranch class]]) {
+                NSImage *icon = [NSImage imageNamed:@"SearchFolder"];
+                [[cellView imageView] setImage:icon];
+                [[cellView textField] setStringValue:[item name]];
+            }
+            else {
+                // Display the directory name followed by the number of files inside
+                NSString *path = [(TreeBranch*)item path];
+                NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
 
-            // Display the directory name followed by the number of files inside
-            NSString *path = [(TreeBranch*)item path];
-            NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-
-            [[cellView imageView] setImage:icon];
-            [[cellView textField] setStringValue:[item name]];
-
+                [[cellView imageView] setImage:icon];
+                [[cellView textField] setStringValue:[item name]];
+            }
             if ([item hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
                 [cellView.textField setAlphaValue:0.5]; // Sets transparency when the file was dropped or dirty
             }
             else {
                 [cellView.textField setAlphaValue:1];
             }
+        }
+        else {
+            NSLog(@"What else?");
         }
     }
     return cellView;
@@ -941,6 +950,14 @@ void DateFormatter(NSDate *date, NSString **output) {
         [self refreshDataView];
     }
     if (row != NSNotFound) {
+        // !!! Consider calling the viewForTableColumn: method here.
+        NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
+        if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
+            [nameView.textField setAlphaValue:0.5];
+        }
+        else {
+            [nameView.textField setAlphaValue:1.0];
+        }
         [_myOutlineView reloadItem:object reloadChildren:YES];
         //NSLog(@"Reloading %@", [object name]);
 //        if (0) { // This is a very nice effect to consider later !!! TO CONSIDER

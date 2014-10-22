@@ -24,7 +24,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
 
-@private
+@protected
     NSMutableArray *_children;
 }
 
@@ -83,5 +83,14 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(BOOL) removeItem:(TreeItem*)item;
 -(BOOL) moveItem:(TreeItem*)item;
 
-
+/*
+ * Tag manipulation
+ */
+-(void) setTagsInNode:(TreeItemTagEnum)tags;
+-(void) setTagsInBranch:(TreeItemTagEnum)tags;
+-(void) resetTagsInNode:(TreeItemTagEnum)tags;
+-(void) resetTagsInBranch:(TreeItemTagEnum)tags;
+-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags;
+-(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags;
+-(void) purgeDirtyItems;
 @end

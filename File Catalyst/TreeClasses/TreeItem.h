@@ -32,7 +32,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
 }
 
-@property (weak) TreeItem                  *parent;
+@property (weak) TreeItem           *parent;
 @property NSURL                     *url;
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;

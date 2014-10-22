@@ -13,10 +13,15 @@
 #import "TreeLeaf.h"
 #import "TreeManager.h"
 #import "TreeScanOperation.h"
+#import "searchTree.h"
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
 
 #import "DuplicateFindSettingsViewController.h"
+
+
+// Debug CODE !!! To delete
+#import "filterBranch.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 
@@ -153,14 +158,21 @@ id appTreeManager;
 
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
+        if(0) {// Right side
         //NSString *homeDir = NSHomeDirectory();
+        // !!! Debug code
         NSString *homeDir = @"/Users/vika/Downloads";
         NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
         id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+        // !!! Debug Code
+        //NSPredicate *filter = [NSPredicate predicateWithFormat:@"SELF.filesize < 1000"];
+        //filterBranch *fb = [[filterBranch alloc] initWithFilter:filter name:@"teste" parent:nil];
+        //[(TreeBranch*)item addItem:fb];
         [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
         [(BrowserController*)myRightView addTreeRoot: item];
         [(BrowserController*)myRightView selectFirstRoot];
-        if (0) {
+        }
+        if (0) { // Left Side
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
@@ -174,10 +186,13 @@ id appTreeManager;
             [self _startOperationBusyIndication];
         }
         else {
-            url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
-            item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+            NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
+            //item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+            searchTree *st = [[searchTree alloc] initWithSearch:@"Convite*" name:@"Convite" parent:nil];
+            [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+            [st createSearchPredicate];
             [myLeftView setViewMode:BViewBrowserMode];
-            [(BrowserController*)myLeftView addTreeRoot: item];
+            [(BrowserController*)myLeftView addTreeRoot: st];
         }
         [(BrowserController*)myLeftView selectFirstRoot];
     }

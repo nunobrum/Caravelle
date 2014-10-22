@@ -9,9 +9,13 @@
 #import "TreeBranch.h"
 
 @interface filterBranch : TreeBranch {
-    NSPredicate *filter;
+    NSPredicate *_filter;
+    NSString *_name;
 }
 
--(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
+-(TreeBranch*) initWithFilter:(NSPredicate*)filt name:(NSString*)name parent:(TreeBranch*)parent;
+//-(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
+
+-(void) setParent:(TreeItem *)parent;
 
 @end

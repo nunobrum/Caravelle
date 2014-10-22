@@ -82,6 +82,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
+    self->_tag = tagTreeItemDirty; // The directories are initially dirty to force them to be updated
     return self;
 }
 
@@ -136,6 +137,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(BOOL) removeItem:(TreeItem*)item {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
+        // Leaving this code here as it may come later to clean up the class
+        //if ([item isKindOfClass:[TreeBranch class]]) {
+        //    [item dealloc];
+        //}
         [self->_children removeObject:item];
     }
     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
@@ -190,15 +195,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(TreeItem*) childContainingURL:(NSURL*) aURL {
-    NSRange result;
-    NSString *path = [aURL path];
     @synchronized(self) {
-        for (TreeItem *item in self->_children) {
-            NSString *ipath = [item path];
-            result = [path rangeOfString:ipath];
-            // The URL must contain the total length of 
-            if (0==result.location && result.length == [ipath length]) {
-                if ([item isBranch] || [aURL isEqual:[item url]]) {
+        if ([self containsURL:aURL]) {
+            for (TreeItem *item in self->_children) {
+                if ([item containsURL:aURL]) {
                     return item;
                 }
             }
@@ -237,8 +237,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark Refreshing contents
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        if (_tag & tagTreeItemUpdating) {
-            // If its already updating.... do nothing exit here.
+        if ((_tag & tagTreeItemUpdating)!=0 || (_tag&tagTreeItemDirty)==0) {
+            // If its already updating or not dirty.... do nothing exit here.
         }
         else { // else make the update
         _tag |= tagTreeItemUpdating;
@@ -250,19 +250,20 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
             for (NSURL *theURL in dirEnumerator) {
-                TreeItem *item = [self childContainingURL:theURL]; /* Retrieves existing Element */
+                TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
                 if (item==nil) { /* If not found creates a new one */
                     item = [TreeItem treeItemForURL:theURL parent:self];
                     new_files = YES;
                 }
                 else {
-                    [item resetTag:tagTreeItemAll];
+                    [item resetTag:tagTreeItemDirty];
                 }
                 [newChildren addObject:item];
 
             } // for
             if (new_files==YES || // There are new Files OR
-                [newChildren count] < [self->_children count]) { // There are deletions
+                [newChildren count] < [self->_children count] || // There are deletions
+                [newChildren count]==0) { // The folder is empty
                 [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
                 // We synchronize access to the image/imageLoading pair of variables
                 @synchronized (self) {
@@ -293,6 +294,41 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return child;
 }
 
+// TODO : !!! Optimize code
+//-(TreeItem*) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pcomps inLevel:(NSUInteger) level {
+//    id child = [self childContainingURL:theURL];
+//    if (child!=nil) {
+//        if ([child isKindOfClass:[TreeBranch class]]) {
+//            return [(TreeBranch*)child addURL:theURL];
+//        }
+//        else {
+//            NSLog(@"Agony!!! Something went wrong");
+//        }
+//    }
+//    @synchronized(self) {
+//        if (self->_children == nil)
+//            self->_children = [[NSMutableArray alloc] init];
+//        [self setTag:tagTreeItemDirty];
+//    }
+//    unsigned long leaf_level = [pcomps count]-1;
+//    if (level < leaf_level) {
+//        NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
+//        child = [[TreeBranch new] initWithURL:pathURL parent:self];
+//        [self addItem:child];
+//        return [(TreeBranch*)child addURL:theURL withPathComponents:pcomps inLevel:level+1];
+//    }
+//    else if (level == leaf_level) {
+//        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
+//        [self addItem:newObj];
+//        return newObj; /* Stops here Nothing More to Add */
+//    }
+//    else if ([[self url] isEqualTo:theURL]) {
+//        return self; // This condition is equal to level-1==leaf_level
+//    }
+//    NSLog(@"Ai Caramba!!! This Item can't contain this URL !!! ");
+//    return nil; // Ai Caramba !!!
+//}
+
 -(TreeItem*) addURL:(NSURL*)theURL {
     id child = [self childContainingURL:theURL];
     if (child!=nil) {
@@ -300,9 +336,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             return [(TreeBranch*)child addURL:theURL];
         }
         else {
-            if ([theURL isEqual:[self url]]) {
-                return self; // The URL already exists
-            }
             NSLog(@"Agony!!! Something went wrong");
         }
     }
@@ -324,6 +357,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
         [self addItem:newObj];
         return newObj; /* Stops here Nothing More to Add */
+    }
+    else if ([[self url] isEqualTo:theURL]) {
+        return self; // This condition is equal to level-1==leaf_level
     }
     NSLog(@"Ai Caramba!!! This Item can't contain this URL !!! ");
     return nil; // Ai Caramba !!!
@@ -361,7 +397,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             child = [[TreeBranch new] initWithURL:pathURL parent:cursor];
             @synchronized(cursor) {
                 [cursor->_children addObject:child];
-                [cursor setTag:tagTreeItemDirty];
+                //[cursor setTag:tagTreeItemDirty];
             }
         }
         cursor = (TreeBranch*)child;
@@ -377,7 +413,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         newObj = [TreeItem treeItemForURL:theURL parent:cursor];
         @synchronized(cursor) {
             [cursor->_children addObject:newObj];
-            [cursor setTag:tagTreeItemDirty];
+            //[cursor setTag:tagTreeItemDirty];
         }
     }
     return newObj; /* Stops here Nothing More to Add */
@@ -636,7 +672,95 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
+#pragma mark -
+#pragma mark Tag Manipulation
 
+/*
+ * Tag manipulation
+ */
+-(void) setTagsInNode:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            [item setTag:tags];
+        }
+    }
+}
+-(void) setTagsInBranch:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            [item setTag:tags];
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item setTagsInBranch:tags];
+            }
+        }
+    }
+}
+-(void) resetTagsInNode:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            [item resetTag:tags];
+        }
+    }
+}
+-(void) resetTagsInBranch:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            [item setTag:tags];
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item resetTagsInBranch:tags];
+            }
+        }
+    }
+}
+
+-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (id item in self->_children) {
+            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
+                [item performSelector:selector];
+            }
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item performSelector:selector inTreeItemsWithTag:tags];
+            }
+        }
+    }
+}
+-(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags {
+    @synchronized(self) {
+        for (id item in self->_children) {
+            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
+                [item performSelector:selector withObject:param];
+            }
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item performSelector:selector withObject:param inTreeItemsWithTag:tags];
+            }
+        }
+    }
+}
+
+-(void) purgeDirtyItems {
+    NSMutableIndexSet *indexesToDelete = [NSMutableIndexSet indexSet];
+    NSUInteger index = 0;
+    @synchronized (self) {
+        for (id item in self->_children) {
+            if ([item hasTags:tagTreeItemDirty]) {
+                [indexesToDelete addIndex:index];
+            }
+            else if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item purgeDirtyItems];
+            }
+            index++;
+        }
+    }
+    if ([indexesToDelete count]>0) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        // We synchronize access to the image/imageLoading pair of variables
+        @synchronized (self) {
+            [_children removeObjectsAtIndexes:indexesToDelete];
+        }
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+    }
+}
 
 //-(FileCollection*) duplicatesInNode {
 //    FileCollection *answer = [[FileCollection new] init];

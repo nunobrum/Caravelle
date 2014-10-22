@@ -6,10 +6,17 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
-#import "TreeBranch.h"
+#import "filterBranch.h"
 
-@interface searchTree : TreeBranch {
-
+@interface searchTree : filterBranch <NSMetadataQueryDelegate> {
+    NSSearchPathDirectory *_pathDirectory;
+    NSMetadataQuery *_query;
+    BOOL searchContent;
+    NSString *_searchKey;
 }
+
+-(searchTree*) initWithSearch:(NSString*)searchKey  name:(NSString*)name parent:(TreeBranch*)parent;
+
+- (void)createSearchPredicate;
 
 @end

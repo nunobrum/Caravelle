@@ -11,9 +11,14 @@
 @implementation filterBranch
 
 #pragma mark Initializers
--(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent filter:(NSPredicate*)filt {
-    self = [super initWithURL:url parent:parent];
-    self->filter = filt;
+
+-(filterBranch*) initWithFilter:(NSPredicate*)filt  name:(NSString*)name  parent:(TreeBranch*)parent {
+    self = [super initWithURL:nil parent:parent];
+    self->_url = [parent url]; // This is needed for compatibility with other methods
+                                // such as childContainingURL. The filter is supposed to be used on
+                                // filters on the contents of a parent.
+    self->_filter = filt;
+    self->_name = name;
     return self;
 }
 
@@ -21,62 +26,36 @@
 //    searchTree *tree = [searchTree alloc];
 //    return [tree initFromEnumerator:dirEnum URL:rootURL parent:parent cancelBlock:cancelBlock];
 //}
+//
+//-(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
+//    self = [self initWithURL:nil parent:parent];
+//    /* Since the instance is created now, there is no problem with thread synchronization */
+//    for (NSURL *theURL in dirEnum) {
+//        [self addURL:theURL];
+//        if (cancelBlock())
+//            break;
+//    }
+//    return self;
+//}
 
--(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
-    self = [self initWithURL:nil parent:parent];
-    /* Since the instance is created now, there is no problem with thread synchronization */
-    for (NSURL *theURL in dirEnum) {
-        [self addURL:theURL];
-        if (cancelBlock())
-            break;
-    }
-    return self;
+-(void) setParent:(TreeItem *)parent {
+    self->_parent = parent;
+    self->_url = [parent url]; // This is needed for compatibility with other methods
+    // such as childContainingURL. The filter is supposed to be used on
+    // filters on the contents of a parent.
+}
+
+-(NSString*) name {
+    return self->_name;
 }
 
 #pragma mark -
-//#pragma mark Refreshing contents
-//- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
-//    @synchronized (self) {
-//        if (_tag & tagTreeItemUpdating) {
-//            // If its already updating.... do nothing exit here.
-//        }
-//        else { // else make the update
-//            _tag |= tagTreeItemUpdating;
-//            [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
-//                NSMutableArray *newChildren = [[NSMutableArray new] init];
-//                BOOL new_files=NO;
-//
-//                NSLog(@"Scanning directory %@", self.path);
-//                MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
-//
-//                for (NSURL *theURL in dirEnumerator) {
-//                    TreeItem *item = [self childContainingURL:theURL]; /* Retrieves existing Element */
-//                    if (item==nil) { /* If not found creates a new one */
-//                        item = [TreeItem treeItemForURL:theURL parent:self];
-//                        new_files = YES;
-//                    }
-//                    else {
-//                        [item resetTag:tagTreeItemAll];
-//                    }
-//                    [newChildren addObject:item];
-//
-//                } // for
-//                if (new_files==YES || // There are new Files OR
-//                    [newChildren count] < [self->children count]) { // There are deletions
-//                    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-//                    // We synchronize access to the image/imageLoading pair of variables
-//                    @synchronized (self) {
-//                        self->children = newChildren;
-//                        _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
-//                    }
-//                    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
-//                }
-//
-//            }];
-//        }
-//    }
-//}
-//
+#pragma mark Refreshing contents
+- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
+    // This method is overriden to do nothing. The filterBranch has no implementation for this method.
+    // It has no URL
+}
+
 
 #pragma mark Tree Access
 /*
@@ -84,19 +63,58 @@
  */
 
 -(TreeItem*) childContainingURL:(NSURL*)url {
-    // TODO : !!!
-    return [super childWithURL:url];
-}
-
--(TreeItem*) addURL:(NSURL*)theURL {
-    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
-    BOOL result = [self->filter evaluateWithObject:self];
-    if (result) {
-        [self addItem:newObj];
-        return  newObj;
+    /* In contrary to the normal class this will search in all subfolders */
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if ([item isKindOfClass:[filterBranch class]]) {
+                return [self childContainingURL:url];
+            }
+            if ([[item url] isEqual:url]) {
+                return item;
+            }
+        }
     }
     return nil;
 }
 
+-(TreeItem*) addURL:(NSURL*)theURL {
+    TreeItem *answer=nil;
+    @synchronized(self) {
+        /* Will also check if exists before adding */
+        for (TreeItem *item in self->_children) {
+            if ([item isKindOfClass:[filterBranch class]]) {
+                answer =  [self addURL:theURL];
+            }
+            if ([[item url] isEqual:theURL]) {
+                answer = item; // if matches, return it
+            }
+            if (answer) break; // If exists in subSearch return it
+        } // for
+    } // @synchronized
+    if (answer==nil) {
+        /* Didn't find it, so creating it */
+        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
+        BOOL OK = [self->_filter evaluateWithObject:newObj];
+        if (OK) {
+            answer = newObj;
+            [self addItem:newObj];
+        }
+    }
+    else
+        [self addItem:answer];
+    return answer;
+}
+
+-(BOOL) containsURL:(NSURL *)url {
+    TreeItem *newObj = [TreeItem treeItemForURL:url parent:nil];
+    BOOL result = [self->_filter evaluateWithObject:newObj];
+    if (result) {
+        for (TreeItem *item in _children) {
+            if ([[item url] isEqual:url])
+                return YES;
+        }
+    }
+    return NO;
+}
 
 @end
