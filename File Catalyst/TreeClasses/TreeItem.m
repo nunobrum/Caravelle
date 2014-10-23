@@ -148,7 +148,7 @@
 
 -(BOOL) removeItem {
     if (_parent) {
-        [(TreeBranch*)_parent removeItem:self];
+        [(TreeBranch*)_parent removeChild:self];
     }
     return YES;
 }

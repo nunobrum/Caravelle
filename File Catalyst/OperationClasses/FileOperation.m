@@ -80,7 +80,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 else if ([item isKindOfClass:[TreeItem class]])
                                     newURL = copyFileTo([item url], [dest url]);
                                 if (newURL) {
-                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
+                                    [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                 }
                                 else {
                                     // Just refresh the Folder
@@ -98,7 +98,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 else if ([item isKindOfClass:[TreeItem class]])
                                     newURL = moveFileTo([item url], [dest url]);
                                 if (newURL) {
-                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
+                                    [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                     opDone++;
                                 }
                                 if ([self isCancelled]) break;

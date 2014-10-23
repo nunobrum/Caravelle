@@ -134,7 +134,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 }
 
--(BOOL) removeItem:(TreeItem*)item {
+-(BOOL) removeChild:(TreeItem*)item {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         // Leaving this code here as it may come later to clean up the class
@@ -147,7 +147,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return YES;
 }
 
--(BOOL) addItem:(TreeItem*)item {
+-(BOOL) addChild:(TreeItem*)item {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         if (self->_children==nil)
@@ -159,11 +159,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return YES;
 }
 
--(BOOL) moveItem:(TreeItem*)item {
+-(BOOL) moveChild:(TreeItem*)item {
     TreeBranch *old_parent = (TreeBranch*)[item parent];
-    [self addItem:item];
+    [self addChild:item];
     if (old_parent) { // Remove from old parent
-        [old_parent removeItem:item];
+        [old_parent removeChild:item];
     }
     return YES;
 }
@@ -350,12 +350,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if (level < leaf_level) {
         NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
         child = [[TreeBranch new] initWithURL:pathURL parent:self];
-        [self addItem:child];
+        [self addChild:child];
         return [(TreeBranch*)child addURL:theURL];
     }
     else if (level == leaf_level) {
         TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
-        [self addItem:newObj];
+        [self addChild:newObj];
         return newObj; /* Stops here Nothing More to Add */
     }
     else if ([[self url] isEqualTo:theURL]) {

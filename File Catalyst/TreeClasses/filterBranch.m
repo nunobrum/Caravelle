@@ -97,11 +97,11 @@
         BOOL OK = [self->_filter evaluateWithObject:newObj];
         if (OK) {
             answer = newObj;
-            [self addItem:newObj];
+            [self addChild:newObj];
         }
     }
     else
-        [self addItem:answer];
+        [self addChild:answer];
     return answer;
 }
 

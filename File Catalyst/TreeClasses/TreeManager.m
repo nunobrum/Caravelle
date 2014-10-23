@@ -61,7 +61,7 @@
                     else
                         return nil; //Failing here is serious . Giving up search
                 }
-                [cursor addItem:item]; // Finally add the node
+                [cursor addChild:item]; // Finally add the node
                 @synchronized(self) {
                     [self->iArray removeObjectAtIndex:index]; // Remove the node, It will
                 }
@@ -129,7 +129,7 @@
             level++;
             cursor = (TreeBranch*)child;
         }
-        [cursor addItem:node]; // Finally add the node
+        [cursor addChild:node]; // Finally add the node
     }
     else {
         [self->iArray addObject:node];

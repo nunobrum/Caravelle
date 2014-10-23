@@ -79,9 +79,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
  * Item Manipulation methods
  */
 
--(BOOL) addItem:(TreeItem*)item;
--(BOOL) removeItem:(TreeItem*)item;
--(BOOL) moveItem:(TreeItem*)item;
+-(BOOL) addChild:(TreeItem*)item;
+-(BOOL) removeChild:(TreeItem*)item;
+-(BOOL) moveChild:(TreeItem*)item;
 
 /*
  * Tag manipulation
