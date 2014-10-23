@@ -86,6 +86,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return self;
 }
 
+-(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
+    self = [super initWithMDItem:mdItem parent:parent];
+    self->_children = nil;
+    self->_tag = tagTreeItemDirty; // The directories are initially dirty to force them to be updated
+    return self;
+}
+
+
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock {
     TreeBranch *tree = [TreeBranch alloc];
     return [tree initFromEnumerator:dirEnum URL:rootURL parent:parent cancelBlock:cancelBlock];
@@ -284,11 +292,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  * All these methods must be changed for recursive in order to support the searchBranches
  */
 
--(TreeItem*) treeItemWithURL:(NSURL*)url {
+-(TreeItem*) getNodeWithURL:(NSURL*)url {
     id child = [self childContainingURL:url];
     if (child!=nil) {
         if ([child isKindOfClass:[TreeBranch class]]) {
-            return [(TreeBranch*)child treeItemWithURL:url];
+            return [(TreeBranch*)child getNodeWithURL:url];
         }
     }
     return child;

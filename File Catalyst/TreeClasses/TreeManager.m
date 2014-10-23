@@ -92,11 +92,11 @@
     return answer;
 }
 
--(TreeItem*) getTreeItemWithURL:(NSURL*)url {
+-(TreeItem*) getNodeWithURL:(NSURL*)url {
     TreeItem *answer=nil;
     for (TreeBranch *item in self->iArray) {
         if ([item containsURL:url]) {
-            answer = [item treeItemWithURL:url];
+            answer = [item getNodeWithURL:url];
             break;
         }
     }

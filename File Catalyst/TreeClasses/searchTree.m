@@ -111,9 +111,10 @@
         NSLog(@"Finished gathering");
         for (NSMetadataItem *item in self->_query.results) {
             NSLog(@"QR:%@",[item valueForAttribute:(id)kMDItemPath]);
-            NSArray *a = [item attributes];
-            for (NSString *s in a)
-                NSLog(@"%@ - %@",s, [item valueForAttribute:s]);
+            //NSArray *a = [item attributes];
+            //for (NSString *s in a)
+             //   NSLog(@"%@ - %@",s, [item valueForAttribute:s]);
+            [self addMDItem:item];
         }
     } else if ([[note name] isEqualToString:NSMetadataQueryGatheringProgressNotification]) {
         // The query is still gatherint results...
@@ -225,11 +226,11 @@
  * All these methods must be changed for recursive in order to support the searchBranches
  */
 
--(TreeItem*) treeItemWithURL:(NSURL*)url {
+-(TreeItem*) getNodeWithURL:(NSURL*)url {
     id child = [self childContainingURL:url];
     if (child!=nil) {
         if ([child isKindOfClass:[TreeBranch class]]) {
-            return [(TreeBranch*)child treeItemWithURL:url];
+            return [(TreeBranch*)child getNodeWithURL:url];
         }
     }
     return child;

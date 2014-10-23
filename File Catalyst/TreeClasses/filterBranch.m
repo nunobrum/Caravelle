@@ -82,11 +82,11 @@
     @synchronized(self) {
         /* Will also check if exists before adding */
         for (TreeItem *item in self->_children) {
-            if ([item isKindOfClass:[filterBranch class]]) {
-                answer =  [self addURL:theURL];
-            }
             if ([[item url] isEqual:theURL]) {
                 answer = item; // if matches, return it
+            }
+            else if ([item isKindOfClass:[filterBranch class]]) {
+                answer =  [self addURL:theURL];
             }
             if (answer) break; // If exists in subSearch return it
         } // for
@@ -116,5 +116,55 @@
     }
     return NO;
 }
+
+-(TreeItem*) addMDItem:(NSMetadataItem*)mdItem {
+    TreeItem *answer=nil;
+    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    @synchronized(self) {
+        /* Will also check if exists before adding */
+        /* For safety the test is done with a created URL */
+        for (TreeItem *item in self->_children) {
+            if ([[item url] isEqual:url]) {
+                answer = item; // if matches, return it
+            }
+            else if ([item isKindOfClass:[filterBranch class]]) {
+                answer =  [self addMDItem:mdItem];
+            }
+            if (answer) break; // If exists in subSearch return it
+        } // for
+    } // @synchronized
+    if (answer==nil) {
+        /* Didn't find it, so creating it */
+        TreeItem *newObj = [TreeItem treeItemForMDItem:mdItem parent:self];
+        BOOL OK=YES; // Sets it to YES as default if filter is not set
+        if (self->_filter)
+            OK = [self->_filter evaluateWithObject:newObj];
+        if (OK){
+            answer = newObj;
+            [self addChild:newObj];
+        }
+    }
+    else
+        [self addChild:answer];
+    return answer;
+}
+
+-(BOOL) containsMDItem:(NSMetadataItem *)mdItem {
+    /* The URL is created because I consider it safer to compare URLs,
+     May revise this premise later on */
+    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
+    NSURL *url = [NSURL fileURLWithPath:path];
+    TreeItem *newObj = [TreeItem treeItemForMDItem:mdItem parent:nil];
+    BOOL result = [self->_filter evaluateWithObject:newObj];
+    if (result) {
+        for (TreeItem *item in _children) {
+            if ([[item url] isEqual:url])
+                return YES;
+        }
+    }
+    return NO;
+}
+
 
 @end

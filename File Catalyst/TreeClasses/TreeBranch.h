@@ -29,6 +29,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 }
 
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
+-(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
+
 
 -(BOOL)      isBranch;
 -(NSInteger) numberOfLeafsInNode;
@@ -58,7 +60,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(TreeItem*) childWithName:(NSString*) name class:(id)cls;
 -(TreeItem*) childWithURL:(NSURL*)url;
 -(TreeItem*) childContainingURL:(NSURL*)url;
--(TreeItem*) treeItemWithURL:(NSURL*)url;
+-(TreeItem*) getNodeWithURL:(NSURL*)url;
 -(TreeItem*) addURL:(NSURL*)theURL;
 
 

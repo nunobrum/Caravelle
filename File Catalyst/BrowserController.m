@@ -1271,7 +1271,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         /* Checks if rootPath in root */
         if ([root containsURL:theURL]) {
             /* The URL is already contained in this tree */
-            return [root treeItemWithURL:theURL];
+            return [root getNodeWithURL:theURL];
         }
     }
     return NULL;
