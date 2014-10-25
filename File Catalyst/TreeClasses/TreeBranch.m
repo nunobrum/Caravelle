@@ -357,9 +357,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     unsigned long leaf_level = [pcomps count]-1;
     if (level < leaf_level) {
         NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        child = [[TreeBranch new] initWithURL:pathURL parent:self];
+        child = [TreeItem treeItemForURL:theURL parent:self];
         [self addChild:child];
-        return [(TreeBranch*)child addURL:theURL];
+        if ([child isKindOfClass:[TreeBranch class]]) {
+            return [(TreeBranch*)child addURL:pathURL];
+        }
     }
     else if (level == leaf_level) {
         TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
@@ -369,7 +371,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     else if ([[self url] isEqualTo:theURL]) {
         return self; // This condition is equal to level-1==leaf_level
     }
-    NSLog(@"Ai Caramba!!! This Item can't contain this URL !!! ");
+    NSLog(@"%@ is not added to %@", theURL, self->_url);
     return nil; // Ai Caramba !!!
 }
 
@@ -402,16 +404,25 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         TreeItem *child = [cursor childContainingURL:pathURL];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
-            child = [[TreeBranch new] initWithURL:pathURL parent:cursor];
+            child = [TreeItem treeItemForURL:theURL parent:self];
             @synchronized(cursor) {
                 [cursor->_children addObject:child];
                 //[cursor setTag:tagTreeItemDirty];
             }
         }
-        cursor = (TreeBranch*)child;
-        if (cursor->_children==nil) {
-            cursor->_children = [[NSMutableArray alloc] init];
-            [cursor setTag:tagTreeItemDirty];
+        if ([child isKindOfClass:[TreeBranch class]])
+        {
+            cursor = (TreeBranch*)child;
+            if (cursor->_children==nil) {
+                cursor->_children = [[NSMutableArray alloc] init];
+                [cursor setTag:tagTreeItemDirty];
+            }
+        }
+        else {
+            // Will ignore this child and just addd the size to the current node
+            // TODO !!!! Once the size is again on the class, update the size here
+            NSLog(@"%@ is not added to %@", theURL, self->_url);
+            return nil;
         }
         level++;
     }

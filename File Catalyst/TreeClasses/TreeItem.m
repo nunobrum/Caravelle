@@ -38,29 +38,39 @@
 
 +(TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
+
     NSString *typeIdentifier;
     if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
-        if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
-            [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
+        if (isFolder(url)) {
+            BOOL ispackage = isPackage(url);
+            if (ispackage) {
+                if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
+                    //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
+                    [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
+                    id appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowseAppsAsFolder"];
+                    if (appsAsFolders==NO) {
+                        return [[TreeLeaf alloc] initWithURL:url parent:parent];
+                    }
+                }
+                /* Debug Code */
+                else if ([typeIdentifier isEqualToString:@"com.apple.xcode.project"] ||
+                         [typeIdentifier isEqualToString:@"com.apple.dt.document.workspace"]) {
+                    return [[TreeLeaf alloc] initWithURL:url parent:parent];
+                }
+            }
+            if (//[typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
+                [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
+                NSLog(@"This is a Volume. TODO !!! Create a dedicated class" );
+            }
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
-        else if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
-                 //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
-                 [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-            if (!isFolder(url)) {
-                NSLog(@"Ai Ai As aplicações não são folders");
-            }
-            id appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowseAppsAsFolder"];
-            if (appsAsFolders) {
-                return [[TreeBranch alloc] initWithURL:url parent:parent];
-            }
-        }
-        NSArray *imageUTIs = [NSImage imageTypes];
-        if ([imageUTIs containsObject:typeIdentifier]) {
-            // !!! TODO : Treat here other file types other than just not folders
-            return [[TreeLeaf alloc] initWithURL:url parent:parent];
-        }
         else {
+            /* Check if it is an image type */
+            NSArray *imageUTIs = [NSImage imageTypes];
+            if ([imageUTIs containsObject:typeIdentifier]) {
+                // !!! TODO : Treat here other file types other than just not folders
+                return [[TreeLeaf alloc] initWithURL:url parent:parent];
+            }
             return [[TreeLeaf alloc] initWithURL:url parent:parent];
         }
     }
@@ -69,7 +79,10 @@
 
 +(TreeItem *)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
-    NSString *typeIdentifier = [mdItem valueForAttribute:(id)kMDItemKind];
+    NSString *typeIdentifier = [mdItem valueForAttribute:(id)kMDItemContentType];
+    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
+    //NSURL *url = [NSURL fileURLWithPath:path];
+    NSLog(@"%@ - %@", path, typeIdentifier);
         if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] || // !!! TODO: Correct this conditions
             [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
             return [[TreeBranch alloc] initWithMDItem:mdItem parent:parent];
