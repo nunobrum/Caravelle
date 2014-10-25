@@ -17,6 +17,19 @@ BOOL isFolder(NSURL* url) {
     return [isDirectory boolValue];
 }
 
+BOOL isPackage(NSURL* url) {
+    NSNumber *isPackage;
+    [url getResourceValue:&isPackage forKey:NSURLIsPackageKey error:NULL];
+    return [isPackage boolValue];
+}
+
+NSString* utiType(NSURL* url) {
+    NSString *typeIdentifier=nil;
+    [url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL];
+    return typeIdentifier;
+}
+
+
 inline NSString* name(NSURL*url) {
     return [url lastPathComponent];
 }
