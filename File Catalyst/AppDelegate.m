@@ -22,6 +22,8 @@
 
 // Debug CODE !!! To delete
 #import "filterBranch.h"
+#import "CatalogBranch.h"
+#import "myValueTransformers.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 
@@ -158,7 +160,7 @@ id appTreeManager;
 
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
-        if(0) {// Right side
+        if(1) {// Right side
             //NSString *homeDir = NSHomeDirectory();
             // !!! Debug code
             NSString *homeDir = @"/Users/vika/Downloads";
@@ -184,21 +186,35 @@ id appTreeManager;
         else {
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
             //item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
-            searchTree *st = [[searchTree alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
-            [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
-            // !!! Debug Code
-            NSPredicate *filter;
-            filterBranch *fb;
-            for (int sz=1; sz < 10; sz+=1) {
-                NSString *pred = [NSString stringWithFormat:@"SELF.filesize < %d", sz*1000000];
-                filter = [NSPredicate predicateWithFormat:pred];
-                NSString *predname = [NSString stringWithFormat:@"Less Than %dMB", sz];
-                fb = [[filterBranch alloc] initWithFilter:filter name:predname parent:nil];
-                [st addChild:fb];
+            if(0) { // Debug Code
+                searchTree *st = [[searchTree alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
+                [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+                NSPredicate *filter;
+                filterBranch *fb;
+                filter = [NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"];
+                [st setFilter:filter];
+                for (int sz=1; sz < 10; sz+=1) {
+                    NSString *pred = [NSString stringWithFormat:@"SELF.filesize < %d", sz*1000000];
+                    filter = [NSPredicate predicateWithFormat:pred];
+                    NSString *predname = [NSString stringWithFormat:@"Less Than %dMB", sz];
+                    fb = [[filterBranch alloc] initWithFilter:filter name:predname parent:nil];
+                    [st addChild:fb];
+                }
+                [st createSearchPredicate];
+                [myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView addTreeRoot: st];
             }
-            [st createSearchPredicate];
-            [myLeftView setViewMode:BViewBrowserMode];
-            [(BrowserController*)myLeftView addTreeRoot: st];
+            else {
+                CatalogBranch *st = [[CatalogBranch alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
+                [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+                [st setFilter:[NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"]];
+                [st setCatalogKey:@"dateModified"];
+                [st setValueTransformer:DateToYearTransformer()];
+                [st createSearchPredicate];
+                [myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView addTreeRoot: st];
+
+            }
         }
         [(BrowserController*)myLeftView selectFirstRoot];
     }
