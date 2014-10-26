@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
 		3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C29460C18F9B570002B633C /* Accounts.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E718F9B570002B633C /* Accounts.icns */; };
 		3C29460D18F9B570002B633C /* AlertStopIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C2945E818F9B570002B633C /* AlertStopIcon.icns */; };
@@ -73,6 +74,7 @@
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
+		3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
 		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
 		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
 		3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
@@ -93,6 +95,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myValueTransformers.h; sourceTree = "<group>"; };
+		3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myValueTransformers.m; sourceTree = "<group>"; };
 		3C20FCC719CB7FAE00826246 /* Automator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Automator.framework; path = System/Library/Frameworks/Automator.framework; sourceTree = SDKROOT; };
 		3C2945E718F9B570002B633C /* Accounts.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Accounts.icns; sourceTree = "<group>"; };
 		3C2945E818F9B570002B633C /* AlertStopIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AlertStopIcon.icns; sourceTree = "<group>"; };
@@ -183,6 +187,8 @@
 		3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File CatalystTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
+		3CF32B9619FCED7700B14A85 /* CatalogBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatalogBranch.h; sourceTree = "<group>"; };
+		3CF32B9719FCED7700B14A85 /* CatalogBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CatalogBranch.m; sourceTree = "<group>"; };
 		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeScanOperation.h; path = ../TreeScanOperation.h; sourceTree = "<group>"; };
 		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeScanOperation.m; path = ../TreeScanOperation.m; sourceTree = "<group>"; };
 		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
@@ -244,17 +250,10 @@
 		3C29463218F9B833002B633C /* TreeClasses */ = {
 			isa = PBXGroup;
 			children = (
-				3CF8466319EB21FB008C691E /* searchTree.h */,
-				3CF8466419EB21FB008C691E /* searchTree.m */,
-				3CF8466619EB30D2008C691E /* filterBranch.h */,
-				3CF8466719EB30D2008C691E /* filterBranch.m */,
-				3C29463318F9B86A002B633C /* TreeBranch.h */,
-				3C29463418F9B86A002B633C /* TreeBranch.m */,
-				3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */,
+				3CF32B9A19FCEE0600B14A85 /* Searches */,
+				3CF32B9919FCEDF800B14A85 /* Branches */,
 				3C29463518F9B86A002B633C /* TreeLeaf.h */,
 				3C29463618F9B86A002B633C /* TreeLeaf.m */,
-				3C29463718F9B86A002B633C /* TreeRoot.h */,
-				3C29463818F9B86A002B633C /* TreeRoot.m */,
 				3C29463918F9B86A002B633C /* TreeItem.h */,
 				3C29463A18F9B86A002B633C /* TreeItem.m */,
 				3CD788A719D52DEE0042E8B9 /* TreeManager.h */,
@@ -334,6 +333,8 @@
 				3CF645BF19AB6DA300DD53F5 /* DuplicatedFindClasses */,
 				3CEA677618F87CE50080C4FC /* IconResources */,
 				3CEA674918F87C2F0080C4FC /* Supporting Files */,
+				3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */,
+				3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */,
 			);
 			path = "File Catalyst";
 			sourceTree = "<group>";
@@ -412,6 +413,31 @@
 				3C29460B18F9B570002B633C /* ToolbarUtilitiesFolderIcon.icns */,
 			);
 			path = IconResources;
+			sourceTree = "<group>";
+		};
+		3CF32B9919FCEDF800B14A85 /* Branches */ = {
+			isa = PBXGroup;
+			children = (
+				3C29463318F9B86A002B633C /* TreeBranch.h */,
+				3C29463418F9B86A002B633C /* TreeBranch.m */,
+				3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */,
+				3C29463718F9B86A002B633C /* TreeRoot.h */,
+				3C29463818F9B86A002B633C /* TreeRoot.m */,
+			);
+			name = Branches;
+			sourceTree = "<group>";
+		};
+		3CF32B9A19FCEE0600B14A85 /* Searches */ = {
+			isa = PBXGroup;
+			children = (
+				3CF32B9619FCED7700B14A85 /* CatalogBranch.h */,
+				3CF32B9719FCED7700B14A85 /* CatalogBranch.m */,
+				3CF8466319EB21FB008C691E /* searchTree.h */,
+				3CF8466419EB21FB008C691E /* searchTree.m */,
+				3CF8466619EB30D2008C691E /* filterBranch.h */,
+				3CF8466719EB30D2008C691E /* filterBranch.m */,
+			);
+			name = Searches;
 			sourceTree = "<group>";
 		};
 		3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */ = {
@@ -577,6 +603,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3C29464D18F9B87C002B633C /* MD5.c in Sources */,
+				3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */,
 				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,
 				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
 				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
@@ -588,6 +615,7 @@
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
+				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
 				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
