@@ -21,7 +21,7 @@
 -(instancetype) initWithSearch:(NSString*)searchKey name:(NSString*)name parent:(TreeBranch*)parent {
     self = [super initWithURL:nil parent:parent];
     self->_query = [[NSMetadataQuery alloc] init];
-    self->_name = name;
+    self->_branchName = name;
     self->_searchKey = searchKey;
     self->searchContent = NO;
     // To watch results send by the query, add an observer to the NSNotificationCenter
@@ -220,20 +220,7 @@
 //}
 //
 //#pragma mark -
-#pragma mark Tree Access
-/*
- * All these methods must be changed for recursive in order to support the searchBranches
- */
 
--(TreeItem*) getNodeWithURL:(NSURL*)url {
-    id child = [self childContainingURL:url];
-    if (child!=nil) {
-        if ([child isKindOfClass:[TreeBranch class]]) {
-            return [(TreeBranch*)child getNodeWithURL:url];
-        }
-    }
-    return child;
-}
 
 
 @end

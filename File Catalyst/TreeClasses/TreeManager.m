@@ -75,6 +75,7 @@
     }
     if (answer==nil) { // If not found in existing trees will create it
         id aux = [TreeItem treeItemForURL:url parent:nil];
+        [aux setTag:tagTreeItemDirty]; // Forcing its update
         // But will only return it if is a Branch Like
         if ([aux isBranch]) {
             answer = aux;
@@ -95,7 +96,7 @@
 -(TreeItem*) getNodeWithURL:(NSURL*)url {
     TreeItem *answer=nil;
     for (TreeBranch *item in self->iArray) {
-        if ([item containsURL:url]) {
+        if ([item canContainURL:url]) {
             answer = [item getNodeWithURL:url];
             break;
         }
@@ -106,7 +107,7 @@
 -(void) addTreeBranch:(TreeBranch*)node {
     TreeBranch *cursor=nil;
     for (TreeBranch *item in self->iArray) {
-        if ([item containsURL:[node url]]) {
+        if ([item canContainURL:[node url]]) {
             cursor = item;
             break;
         }

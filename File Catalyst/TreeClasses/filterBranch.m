@@ -18,7 +18,7 @@
                                 // such as childContainingURL. The filter is supposed to be used on
                                 // filters on the contents of a parent.
     self->_filter = filt;
-    self->_name = name;
+    self->_branchName = name;
     return self;
 }
 
@@ -38,6 +38,10 @@
 //    return self;
 //}
 
+-(NSString*) name {
+    return _branchName;
+}
+
 -(void) setParent:(TreeItem *)parent {
     self->_parent = parent;
     self->_url = [parent url]; // This is needed for compatibility with other methods
@@ -45,8 +49,8 @@
     // filters on the contents of a parent.
 }
 
--(NSString*) name {
-    return self->_name;
+-(NSString*) branchName {
+    return self->_branchName;
 }
 
 #pragma mark -
@@ -62,23 +66,13 @@
  * All these methods must be changed for recursive in order to support the searchBranches
  */
 
--(TreeItem*) childContainingURL:(NSURL*)url {
-    /* In contrary to the normal class this will search in all subfolders */
-    @synchronized(self) {
-        for (TreeItem *item in self->_children) {
-            if ([item isKindOfClass:[filterBranch class]]) {
-                return [self childContainingURL:url];
-            }
-            if ([[item url] isEqual:url]) {
-                return item;
-            }
-        }
-    }
-    return nil;
+-(BOOL) canContainTreeItem:(TreeItem *)treeItem {
+    return (self->_filter ==nil || [self->_filter evaluateWithObject:treeItem]);
+
 }
 
 -(BOOL) addTreeItem:(TreeItem*)treeItem {
-    if (self->_filter ==nil || [self->_filter evaluateWithObject:treeItem]) {
+    if ([self canContainTreeItem:treeItem]) {
         NSURL *theURL = [treeItem url];
         @synchronized(self) {
             /* Will also check if exists before adding */
@@ -107,16 +101,9 @@
         return nil;
 }
 
--(BOOL) containsURL:(NSURL *)url {
-    TreeItem *newObj = [TreeItem treeItemForURL:url parent:nil];
-    BOOL result = [self->_filter evaluateWithObject:newObj];
-    if (result) {
-        for (TreeItem *item in _children) {
-            if ([[item url] isEqual:url])
-                return YES;
-        }
-    }
-    return NO;
+-(BOOL) canContainURL:(NSURL *)url {
+    TreeItem *testObj = [TreeItem treeItemForURL:url parent:nil];
+    return [self canContainTreeItem:testObj];
 }
 
 -(TreeItem*) addMDItem:(NSMetadataItem*)mdItem {
@@ -127,21 +114,48 @@
         return nil;
 }
 
--(BOOL) containsMDItem:(NSMetadataItem *)mdItem {
-    /* The URL is created because I consider it safer to compare URLs,
-     May revise this premise later on */
-    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-    NSURL *url = [NSURL fileURLWithPath:path];
-    TreeItem *newObj = [TreeItem treeItemForMDItem:mdItem parent:nil];
-    BOOL result = [self->_filter evaluateWithObject:newObj];
-    if (result) {
-        for (TreeItem *item in _children) {
-            if ([[item url] isEqual:url])
-                return YES;
+-(BOOL) canContainMDItem:(NSMetadataItem *)mdItem {
+    TreeItem *testObj = [TreeItem treeItemForMDItem:mdItem parent:nil];
+    return [self canContainTreeItem:testObj];
+}
+
+/* Redefining this method just for optimization as each
+ * iteration will create a test object */
+-(TreeItem*) childContainingURL:(NSURL*) aURL {
+    TreeItem *testObj = [TreeItem treeItemForURL:aURL parent:nil];
+    if ([self canContainTreeItem:testObj]) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item isKindOfClass:[filterBranch class]]) {
+                    if ([(filterBranch*)item canContainTreeItem:testObj])
+                        return item;
+                }
+                else if ([item canContainURL:aURL]) {
+                    return item;
+                }
+            }
         }
     }
-    return NO;
+    return nil;
 }
+
+#pragma mark -
+#pragma mask KVO Validation
+-(BOOL)validateBranchName:(id *)ioValue error:(NSError * __autoreleasing *)outError {
+    // The name must not be nil, and must be at least 1 characters long.
+    if ((*ioValue == nil) || ([(NSString *)*ioValue length] < 1)) {
+        if (outError != NULL) {
+            //NSString *errorString = NSLocalizedString(
+            //                                          @"A Person's name must be at least two characters long",
+            //                                          @"validation: Person, too short name error");
+            //NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString };
+            *outError = [[NSError alloc] initWithDomain:@"FilterBranch Errors"
+                                                   code:01
+                                               userInfo:nil ]; //userInfoDict];
+        }
+        return NO;
+    }
+    return YES;}
 
 
 @end

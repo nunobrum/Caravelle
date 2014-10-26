@@ -51,6 +51,9 @@
                     if (appsAsFolders==NO) {
                         return [[TreeLeaf alloc] initWithURL:url parent:parent];
                     }
+                    else {
+                        return [[TreeBranch alloc] initWithURL:url parent:parent];
+                    }
                 }
                 /* Debug Code */
                 else if ([typeIdentifier isEqualToString:@"com.apple.xcode.project"] ||
@@ -213,7 +216,8 @@
     return answer;
 }
 
--(BOOL) containsURL:(NSURL*)url {
+/* This is a test if it can contain the URL. !!! Change it to canContainURL */
+-(BOOL) canContainURL:(NSURL*)url {
     NSRange result;
     result = [[url path] rangeOfString:[self path]];
     if (NSNotFound!=result.location) {

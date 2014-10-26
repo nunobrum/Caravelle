@@ -67,7 +67,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
  */
 
 -(NSInteger) relationTo:(NSString*) otherPath;
--(BOOL) containsURL:(NSURL*)url;
+-(BOOL) canContainURL:(NSURL*)url;
 -(BOOL) containedInURL:(NSURL*) url;
 
 

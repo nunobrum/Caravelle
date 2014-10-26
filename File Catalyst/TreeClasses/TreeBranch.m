@@ -202,9 +202,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 -(TreeItem*) childContainingURL:(NSURL*) aURL {
     @synchronized(self) {
-        if ([self containsURL:aURL]) {
+        if ([self canContainURL:aURL]) {
             for (TreeItem *item in self->_children) {
-                if ([item containsURL:aURL]) {
+                if ([item canContainURL:aURL]) {
                     return item;
                 }
             }
@@ -243,10 +243,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark Refreshing contents
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        if ((_tag & tagTreeItemUpdating)!=0 || (_tag&tagTreeItemDirty)==0) {
-            // If its already updating or not dirty.... do nothing exit here.
-        }
-        else { // else make the update
+        if (((_tag & tagTreeItemUpdating)==0) &&
+            (((_tag & tagTreeItemDirty)!=0) || (self->_children==nil))) {
         _tag |= tagTreeItemUpdating;
         [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
             NSMutableArray *newChildren = [[NSMutableArray new] init];
@@ -346,6 +344,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
         else {
             NSLog(@"Agony!!! Something went wrong");
+            assert(NO);
         }
     }
     @synchronized(self) {
@@ -382,6 +381,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     //NSRange result;
     if (theURL==nil) {
         NSLog(@"OOOOPSS! Something went deadly wrong here.\nThe URL is null");
+        assert(NO);
         return nil;
     }
     //    result = [[theURL path] rangeOfString:[self path]];
@@ -432,6 +432,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
     return newObj; /* Stops here Nothing More to Add */
+}
+
+-(BOOL) addTreeItem:(TreeItem*)treeItem {
+    assert(NO);
+    return NO;
 }
 
 #pragma mark -

@@ -63,6 +63,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
 -(TreeItem*) addURL:(NSURL*)theURL;
 
+-(BOOL) addTreeItem:(TreeItem*)treeItem;
+
 
 //-(NSMutableArray*) branchesInBranch;
 

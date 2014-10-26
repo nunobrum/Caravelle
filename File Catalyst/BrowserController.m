@@ -1223,7 +1223,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
 
         for (TreeRoot *root in BaseDirectoriesArray) {
-            if ([root containsURL:[treeNode url]]){ // Search for Root Node
+            if ([root canContainURL:[treeNode url]]){ // Search for Root Node
                 _rootNodeSelected = root;
                 TreeBranch *lastBranch = nil;
                 NSArray *treeComps= [treeNode treeComponentsToParent:root];
@@ -1255,7 +1255,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         return NULL;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
-        if ([root containsURL:theURL]) {
+        if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */
             return root;
         }
@@ -1269,7 +1269,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         return NULL;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
-        if ([root containsURL:theURL]) {
+        if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */
             return [root getNodeWithURL:theURL];
         }
