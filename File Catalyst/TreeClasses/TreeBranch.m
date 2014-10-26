@@ -82,14 +82,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
-    self->_tag = tagTreeItemDirty; // The directories are initially dirty to force them to be updated
     return self;
 }
 
 -(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     self = [super initWithMDItem:mdItem parent:parent];
     self->_children = nil;
-    self->_tag = tagTreeItemDirty; // The directories are initially dirty to force them to be updated
     return self;
 }
 
@@ -261,6 +259,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
                 if (item==nil) { /* If not found creates a new one */
                     item = [TreeItem treeItemForURL:theURL parent:self];
+                    if ([item isKindOfClass:[TreeBranch class]]) {
+                        [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
+                    }
                     new_files = YES;
                 }
                 else {
@@ -350,7 +351,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
-        [self setTag:tagTreeItemDirty];
     }
     NSArray *pcomps = [theURL pathComponents];
     unsigned long level = [[_url pathComponents] count];
@@ -393,7 +393,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
-        [self setTag:tagTreeItemDirty];
     }
     TreeBranch *cursor = self;
     NSArray *pcomps = [theURL pathComponents];
@@ -407,7 +406,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             child = [TreeItem treeItemForURL:theURL parent:self];
             @synchronized(cursor) {
                 [cursor->_children addObject:child];
-                //[cursor setTag:tagTreeItemDirty];
             }
         }
         if ([child isKindOfClass:[TreeBranch class]])
@@ -415,7 +413,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             cursor = (TreeBranch*)child;
             if (cursor->_children==nil) {
                 cursor->_children = [[NSMutableArray alloc] init];
-                [cursor setTag:tagTreeItemDirty];
             }
         }
         else {
@@ -432,7 +429,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         newObj = [TreeItem treeItemForURL:theURL parent:cursor];
         @synchronized(cursor) {
             [cursor->_children addObject:newObj];
-            //[cursor setTag:tagTreeItemDirty];
         }
     }
     return newObj; /* Stops here Nothing More to Add */
@@ -732,54 +728,54 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
--(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags {
-    @synchronized(self) {
-        for (id item in self->_children) {
-            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
-                [item performSelector:selector];
-            }
-            if ([item isKindOfClass:[TreeBranch class]]==YES) {
-                [(TreeBranch*)item performSelector:selector inTreeItemsWithTag:tags];
-            }
-        }
-    }
-}
--(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags {
-    @synchronized(self) {
-        for (id item in self->_children) {
-            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
-                [item performSelector:selector withObject:param];
-            }
-            if ([item isKindOfClass:[TreeBranch class]]==YES) {
-                [(TreeBranch*)item performSelector:selector withObject:param inTreeItemsWithTag:tags];
-            }
-        }
-    }
-}
-
--(void) purgeDirtyItems {
-    NSMutableIndexSet *indexesToDelete = [NSMutableIndexSet indexSet];
-    NSUInteger index = 0;
-    @synchronized (self) {
-        for (id item in self->_children) {
-            if ([item hasTags:tagTreeItemDirty]) {
-                [indexesToDelete addIndex:index];
-            }
-            else if ([item isKindOfClass:[TreeBranch class]]==YES) {
-                [(TreeBranch*)item purgeDirtyItems];
-            }
-            index++;
-        }
-    }
-    if ([indexesToDelete count]>0) {
-        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        // We synchronize access to the image/imageLoading pair of variables
-        @synchronized (self) {
-            [_children removeObjectsAtIndexes:indexesToDelete];
-        }
-        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
-    }
-}
+//-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags {
+//    @synchronized(self) {
+//        for (id item in self->_children) {
+//            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
+//                [item performSelector:selector];
+//            }
+//            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+//                [(TreeBranch*)item performSelector:selector inTreeItemsWithTag:tags];
+//            }
+//        }
+//    }
+//}
+//-(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags {
+//    @synchronized(self) {
+//        for (id item in self->_children) {
+//            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
+//                [item performSelector:selector withObject:param];
+//            }
+//            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+//                [(TreeBranch*)item performSelector:selector withObject:param inTreeItemsWithTag:tags];
+//            }
+//        }
+//    }
+//}
+//
+//-(void) purgeDirtyItems {
+//    NSMutableIndexSet *indexesToDelete = [NSMutableIndexSet indexSet];
+//    NSUInteger index = 0;
+//    @synchronized (self) {
+//        for (id item in self->_children) {
+//            if ([item hasTags:tagTreeItemDirty]) {
+//                [indexesToDelete addIndex:index];
+//            }
+//            else if ([item isKindOfClass:[TreeBranch class]]==YES) {
+//                [(TreeBranch*)item purgeDirtyItems];
+//            }
+//            index++;
+//        }
+//    }
+//    if ([indexesToDelete count]>0) {
+//        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+//        // We synchronize access to the image/imageLoading pair of variables
+//        @synchronized (self) {
+//            [_children removeObjectsAtIndexes:indexesToDelete];
+//        }
+//        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+//    }
+//}
 
 //-(FileCollection*) duplicatesInNode {
 //    FileCollection *answer = [[FileCollection new] init];

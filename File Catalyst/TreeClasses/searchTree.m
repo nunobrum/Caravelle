@@ -18,9 +18,8 @@
 
 #pragma mark Initializers
 
--(searchTree*) initWithSearch:(NSString*)searchKey name:(NSString*)name parent:(TreeBranch*)parent {
+-(instancetype) initWithSearch:(NSString*)searchKey name:(NSString*)name parent:(TreeBranch*)parent {
     self = [super initWithURL:nil parent:parent];
-    self->_tag = tagTreeItemDirty;
     self->_query = [[NSMetadataQuery alloc] init];
     self->_name = name;
     self->_searchKey = searchKey;
@@ -110,7 +109,7 @@
         // At this point, the gathering phase will be done. You may recieve an update later on.
         NSLog(@"Finished gathering");
         for (NSMetadataItem *item in self->_query.results) {
-            NSLog(@"QR:%@",[item valueForAttribute:(id)kMDItemPath]);
+            //NSLog(@"QR:%@",[item valueForAttribute:(id)kMDItemPath]);
             //NSArray *a = [item attributes];
             //for (NSString *s in a)
              //   NSLog(@"%@ - %@",s, [item valueForAttribute:s]);

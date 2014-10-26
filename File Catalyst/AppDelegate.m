@@ -159,18 +159,14 @@ id appTreeManager;
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
         if(0) {// Right side
-        //NSString *homeDir = NSHomeDirectory();
-        // !!! Debug code
-        NSString *homeDir = @"/Users/vika/Downloads";
-        NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
-        id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
-        // !!! Debug Code
-        //NSPredicate *filter = [NSPredicate predicateWithFormat:@"SELF.filesize < 1000"];
-        //filterBranch *fb = [[filterBranch alloc] initWithFilter:filter name:@"teste" parent:nil];
-        //[(TreeBranch*)item addItem:fb];
-        [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
-        [(BrowserController*)myRightView addTreeRoot: item];
-        [(BrowserController*)myRightView selectFirstRoot];
+            //NSString *homeDir = NSHomeDirectory();
+            // !!! Debug code
+            NSString *homeDir = @"/Users/vika/Downloads";
+            NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
+            id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+            [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
+            [(BrowserController*)myRightView addTreeRoot: item];
+            [(BrowserController*)myRightView selectFirstRoot];
         }
         if (0) { // Left Side
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
@@ -188,8 +184,18 @@ id appTreeManager;
         else {
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
             //item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
-            searchTree *st = [[searchTree alloc] initWithSearch:@"Convite*" name:@"Convite" parent:nil];
+            searchTree *st = [[searchTree alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
             [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+            // !!! Debug Code
+            NSPredicate *filter;
+            filterBranch *fb;
+            for (int sz=1; sz < 10; sz+=1) {
+                NSString *pred = [NSString stringWithFormat:@"SELF.filesize < %d", sz*1000000];
+                filter = [NSPredicate predicateWithFormat:pred];
+                NSString *predname = [NSString stringWithFormat:@"Less Than %dMB", sz];
+                fb = [[filterBranch alloc] initWithFilter:filter name:predname parent:nil];
+                [st addChild:fb];
+            }
             [st createSearchPredicate];
             [myLeftView setViewMode:BViewBrowserMode];
             [(BrowserController*)myLeftView addTreeRoot: st];

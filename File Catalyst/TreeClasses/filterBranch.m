@@ -77,32 +77,34 @@
     return nil;
 }
 
--(TreeItem*) addURL:(NSURL*)theURL {
-    TreeItem *answer=nil;
-    @synchronized(self) {
-        /* Will also check if exists before adding */
-        for (TreeItem *item in self->_children) {
-            if ([[item url] isEqual:theURL]) {
-                answer = item; // if matches, return it
-            }
-            else if ([item isKindOfClass:[filterBranch class]]) {
-                answer =  [self addURL:theURL];
-            }
-            if (answer) break; // If exists in subSearch return it
-        } // for
-    } // @synchronized
-    if (answer==nil) {
-        /* Didn't find it, so creating it */
-        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
-        BOOL OK = [self->_filter evaluateWithObject:newObj];
-        if (OK) {
-            answer = newObj;
-            [self addChild:newObj];
-        }
+-(BOOL) addTreeItem:(TreeItem*)treeItem {
+    if (self->_filter ==nil || [self->_filter evaluateWithObject:treeItem]) {
+        NSURL *theURL = [treeItem url];
+        @synchronized(self) {
+            /* Will also check if exists before adding */
+            for (TreeItem *item in self->_children) {
+                if ([[item url] isEqual:theURL]) {
+                    return YES; // if matches, no need to add just return YES
+                }
+                else if ([item isKindOfClass:[filterBranch class]]) {
+                    if ([(filterBranch*)item addTreeItem:treeItem]) {
+                         return YES;
+                    }
+                }
+            } // for
+        } // @synchronized
+        [self addChild:treeItem];
+        return YES;
     }
+    return NO;
+}
+
+-(TreeItem*) addURL:(NSURL*)theURL {
+    TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
+    if ([self addTreeItem:newObj])
+        return newObj;
     else
-        [self addChild:answer];
-    return answer;
+        return nil;
 }
 
 -(BOOL) containsURL:(NSURL *)url {
@@ -118,36 +120,11 @@
 }
 
 -(TreeItem*) addMDItem:(NSMetadataItem*)mdItem {
-    TreeItem *answer=nil;
-    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-    NSURL *url = [NSURL fileURLWithPath:path];
-    @synchronized(self) {
-        /* Will also check if exists before adding */
-        /* For safety the test is done with a created URL */
-        for (TreeItem *item in self->_children) {
-            if ([[item url] isEqual:url]) {
-                answer = item; // if matches, return it
-            }
-            else if ([item isKindOfClass:[filterBranch class]]) {
-                answer =  [self addMDItem:mdItem];
-            }
-            if (answer) break; // If exists in subSearch return it
-        } // for
-    } // @synchronized
-    if (answer==nil) {
-        /* Didn't find it, so creating it */
-        TreeItem *newObj = [TreeItem treeItemForMDItem:mdItem parent:self];
-        BOOL OK=YES; // Sets it to YES as default if filter is not set
-        if (self->_filter)
-            OK = [self->_filter evaluateWithObject:newObj];
-        if (OK){
-            answer = newObj;
-            [self addChild:newObj];
-        }
-    }
+    TreeItem *newObj = [TreeItem treeItemForMDItem:mdItem parent:self];
+    if ([self addTreeItem:newObj])
+        return newObj;
     else
-        [self addChild:answer];
-    return answer;
+        return nil;
 }
 
 -(BOOL) containsMDItem:(NSMetadataItem *)mdItem {

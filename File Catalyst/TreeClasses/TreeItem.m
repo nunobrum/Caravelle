@@ -17,7 +17,7 @@
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
-        self.tag = 0;
+        self->_tag = 0;
         self->_url = url;
         self->_parent = parent;
     }
@@ -28,7 +28,7 @@
     self = [super init];
     if (self) {
         NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-        self.tag = 0;
+        self->_tag = 0;
         self->_url = [NSURL fileURLWithPath:path];
         self->_parent = parent;
     }
@@ -36,7 +36,7 @@
 }
 
 
-+(TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent {
++(instancetype) treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
 
     NSString *typeIdentifier;
@@ -77,38 +77,13 @@
     return nil;
 }
 
-+(TreeItem *)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent {
++(instancetype)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
-    NSString *typeIdentifier = [mdItem valueForAttribute:(id)kMDItemContentType];
+    //NSString *typeIdentifier = [mdItem valueForAttribute:(id)kMDItemContentType];
     NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-    //NSURL *url = [NSURL fileURLWithPath:path];
-    NSLog(@"%@ - %@", path, typeIdentifier);
-        if ([typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] || // !!! TODO: Correct this conditions
-            [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
-            return [[TreeBranch alloc] initWithMDItem:mdItem parent:parent];
-        }
-        else if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
-                 //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
-                 [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-            NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-            NSURL *url = [NSURL fileURLWithPath:path];
-            if (!isFolder(url)) {
-                NSLog(@"Ai Ai As aplicações não são folders");
-            }
-            id appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowseAppsAsFolder"];
-            if (appsAsFolders) {
-                return [[TreeBranch alloc] initWithURL:url parent:parent];
-            }
-        }
-        NSArray *imageUTIs = [NSImage imageTypes];
-        if ([imageUTIs containsObject:typeIdentifier]) { // !!! TODO : Correct This condition
-            // !!! TODO : Treat here other file types other than just not folders
-            return [[TreeLeaf alloc] initWithMDItem:mdItem parent:parent];
-        }
-        else {
-            return [[TreeLeaf alloc] initWithMDItem:mdItem parent:parent];
-        }
-    return nil;
+    NSURL *url = [NSURL fileURLWithPath:path];
+    id answer = [self treeItemForURL:url parent:parent];
+    return answer;
 }
 
 

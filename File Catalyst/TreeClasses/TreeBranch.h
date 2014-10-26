@@ -92,7 +92,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(void) setTagsInBranch:(TreeItemTagEnum)tags;
 -(void) resetTagsInNode:(TreeItemTagEnum)tags;
 -(void) resetTagsInBranch:(TreeItemTagEnum)tags;
--(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags;
--(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags;
--(void) purgeDirtyItems;
+//-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags;
+//-(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags;
+//-(void) purgeDirtyItems;
 @end
