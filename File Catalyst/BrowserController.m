@@ -226,10 +226,10 @@ void DateFormatter(NSDate *date, NSString **output) {
                 [[cellView textField] setStringValue:[item name]];
             }
             if ([item hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
-                [cellView.textField setAlphaValue:0.5]; // Sets transparency when the file was dropped or dirty
+                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
             else {
-                [cellView.textField setAlphaValue:1];
+                [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
             }
         }
         else {
@@ -374,10 +374,10 @@ void DateFormatter(NSDate *date, NSString **output) {
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
             cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
             if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
-                [cellView.textField setAlphaValue:0.5]; // Sets transparency when the file was dropped or dirty
+                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
             else {
-                [cellView.textField setAlphaValue:1];
+                [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
             }
         }
     }
@@ -953,10 +953,10 @@ void DateFormatter(NSDate *date, NSString **output) {
         // !!! Consider calling the viewForTableColumn: method here.
         NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
         if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
-            [nameView.textField setAlphaValue:0.5];
+            [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
         }
         else {
-            [nameView.textField setAlphaValue:1.0];
+            [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
         }
         [_myOutlineView reloadItem:object reloadChildren:YES];
         //NSLog(@"Reloading %@", [object name]);
