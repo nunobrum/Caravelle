@@ -59,6 +59,10 @@
 		3C6A0D9C18FEA92E00550AED /* GenericFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3C6A0D9B18FEA92E00550AED /* GenericFolderIcon.icns */; };
 		3C717C06198D54720025E28A /* BrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C717C05198D54720025E28A /* BrowserView.xib */; };
 		3C717C09198D5B200025E28A /* BrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C717C08198D5B200025E28A /* BrowserController.m */; };
+		3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE11A05254A00ED6392 /* FileAttributesController.m */; };
+		3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
+		3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
+		3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
 		3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD788A819D52DEE0042E8B9 /* TreeManager.m */; };
@@ -160,6 +164,12 @@
 		3C717C07198D5B200025E28A /* BrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserController.h; sourceTree = "<group>"; };
 		3C717C08198D5B200025E28A /* BrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserController.m; sourceTree = "<group>"; };
 		3C717C0A198FB95F0025E28A /* Definitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Definitions.h; sourceTree = "<group>"; };
+		3C84EFE01A05254A00ED6392 /* FileAttributesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAttributesController.h; path = BrowserClasses/FileAttributesController.h; sourceTree = "<group>"; };
+		3C84EFE11A05254A00ED6392 /* FileAttributesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileAttributesController.m; path = BrowserClasses/FileAttributesController.m; sourceTree = "<group>"; };
+		3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileAttributesController.xib; path = BrowserClasses/FileAttributesController.xib; sourceTree = "<group>"; };
+		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
+		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
+		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
 		3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeBranch_TreeBranchPrivate.h; sourceTree = "<group>"; };
 		3CA7DFC019B5FE9D00600F41 /* AppOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppOperation.h; sourceTree = "<group>"; };
 		3CA7DFC119B5FE9D00600F41 /* AppOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppOperation.m; sourceTree = "<group>"; };
@@ -348,6 +358,7 @@
 				3CEA675018F87C2F0080C4FC /* File Catalyst-Prefix.pch */,
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
+				3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -446,6 +457,11 @@
 				3C717C05198D54720025E28A /* BrowserView.xib */,
 				3C717C07198D5B200025E28A /* BrowserController.h */,
 				3C717C08198D5B200025E28A /* BrowserController.m */,
+				3C84EFE01A05254A00ED6392 /* FileAttributesController.h */,
+				3C84EFE11A05254A00ED6392 /* FileAttributesController.m */,
+				3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */,
+				3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */,
+				3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */,
 			);
 			name = BrowserViewClasses;
 			sourceTree = "<group>";
@@ -575,6 +591,7 @@
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
 				3C29462218F9B570002B633C /* ToolbarCustomizeIcon.icns in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
+				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
 				3C29462518F9B570002B633C /* ToolbarDocumentsFolderIcon.icns in Resources */,
 				3C29461018F9B570002B633C /* DocumentsFolderIcon.icns in Resources */,
 				3C717C06198D54720025E28A /* BrowserView.xib in Resources */,
@@ -582,6 +599,7 @@
 				3C29461718F9B570002B633C /* GenericAirDiskIcon.icns in Resources */,
 				3C29461E18F9B570002B633C /* MusicFolderIcon.icns in Resources */,
 				3C29461818F9B570002B633C /* GenericApplicationIcon.icns in Resources */,
+				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
 				3C29462C18F9B570002B633C /* ToolbarMusicFolderIcon.icns in Resources */,
 				3C29462818F9B570002B633C /* ToolbarInfo.icns in Resources */,
 			);
@@ -605,6 +623,7 @@
 				3C29464D18F9B87C002B633C /* MD5.c in Sources */,
 				3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */,
 				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,
+				3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */,
 				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
 				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
 				3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */,
@@ -612,6 +631,7 @@
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
+				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,

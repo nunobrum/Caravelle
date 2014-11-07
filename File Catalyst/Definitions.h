@@ -32,6 +32,10 @@ extern NSString *opEraseOperation;
 extern NSString *opSendRecycleBinOperation;
 
 
+#define COL_SELECTED_KEY @"selected"
+#define COL_ID_KEY @"ID"
+#define COL_TITLE_KEY @"title"
+
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
 extern id appTreeManager;

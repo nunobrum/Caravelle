@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CustomTableHeaderView.h"
 #import "FileCollection.h"
 #import "TreeRoot.h"
 #include "Definitions.h"
@@ -27,6 +28,7 @@ extern NSString *notificationCatalystRootUpdate;
 @property (strong) IBOutlet NSSearchField *myFilterText;
 @property (weak) IBOutlet NSOutlineView *myOutlineView;
 @property (weak) IBOutlet NSTableView *myTableView;
+@property (strong) IBOutlet CustomTableHeaderView *myTableViewHeader;
 @property (weak) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet NSPathControl *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
@@ -80,6 +82,12 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
 
+/*
+ * Notifications Received 
+ */
+#ifdef COLUMN_NOTIFICATION
+-(void) selectColumnTitles:(NSNotification *) note ;
+#endif
 /*
  * Parent access routines
  */

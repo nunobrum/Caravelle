@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>COL_SIZE</key>
+	<dict>
+		<key>title</key>
+		<string>Size</string>
+		<key>accessor</key>
+		<string>filesize</string>
+		<key>selected</key>
+		<false/>
+	</dict>
+	<key>COL_DATE_MODIFIED</key>
+	<dict>
+		<key>title</key>
+		<string>Date Modified</string>
+		<key>accessor</key>
+		<string>date_modified</string>
+		<key>selected</key>
+		<false/>
+	</dict>
+	<key>COL_KIND</key>
+	<dict>
+		<key>title</key>
+		<string>Kind</string>
+		<key>accessor</key>
+		<string>fileKind</string>
+		<key>selected</key>
+		<false/>
+	</dict>
+	<key>COL_DATE_CREATED</key>
+	<dict>
+		<key>title</key>
+		<string>Date Created</string>
+		<key>accessor</key>
+		<string>date_created</string>
+		<key>selected</key>
+		<false/>
+	</dict>
+	<key>COL_DATE_ACCESSED</key>
+	<dict>
+		<key>title</key>
+		<string>Date Accessed</string>
+		<key>accessor</key>
+		<string>date_accessed</string>
+		<key>selected</key>
+		<false/>
+	</dict>
+</dict>
+</plist>

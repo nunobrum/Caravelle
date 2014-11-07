@@ -17,15 +17,16 @@
 #import "filterBranch.h"
 #import "FileInformation.h"
 #import "fileOperation.h"
+#import "FileAttributesController.h"
 
-#define COL_FILENAME @"NameID"
-#define COL_DATE_MOD @"ModifiedID"
-#define COL_SIZE     @"SizeID"
-#define COL_PATH     @"Path"
+#define COL_FILENAME @"COL_NAME"
+#define COL_DATE_MOD @"COL_DATE_MODIFIED"
+#define COL_SIZE     @"COL_SIZE"
+#define COL_PATH     @"COL_PATH"
 
-#define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE_MOD, COL_SIZE, COL_PATH
-#define SYSTEM_COLUMNS     COL_FILENAME
-#define DEFAULT_COLUMNS    COL_SIZE, COL_DATE_MOD
+//#define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE_MOD, COL_SIZE, COL_PATH
+//#define SYSTEM_COLUMNS     COL_FILENAME
+//#define DEFAULT_COLUMNS    COL_SIZE, COL_DATE_MOD
 
 const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;
@@ -48,7 +49,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 @interface BrowserController () {
     NSTableView *_focusedView; // Contains the currently selected view
     NSMutableArray *tableData;
-    NSMutableArray *tableColumnInfo;
     NSSortDescriptor *TableSortDesc;
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_browserOperationQueue;
@@ -64,6 +64,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSUInteger _mruPointer;
 }
 
+-(void) loadColumnsFromPLIST;
+
 @end
 
 @implementation BrowserController
@@ -78,8 +80,6 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->_foldersInTable = YES;
     self->_viewMode = 0; // This is an invalid view mode. This forces the App to change it.
     self->_filterText = @"";
-    self->tableColumnInfo = [NSMutableArray arrayWithObjects: SYSTEM_COLUMNS, nil];
-    [self->tableColumnInfo addObjectsFromArray:[NSArray arrayWithObjects: DEFAULT_COLUMNS, nil]];
     self->TableSortDesc = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
@@ -88,13 +88,41 @@ void DateFormatter(NSDate *date, NSString **output) {
     _browserOperationQueue = [[NSOperationQueue alloc] init];
     _mruLocation = [[NSMutableArray alloc] init];
     _mruPointer = 0;
-
+    
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
     [_browserOperationQueue setMaxConcurrentOperationCount:2];
 
+    //To Get Notifications from the Table Header
+#ifdef COLUMN_NOTIFICATION
+    [[NSNotificationCenter defaultCenter]
+            addObserver:self
+               selector:@selector(selectColumnTitles:)
+                   name:notificationColumnSelect
+                 object:_myTableViewHeader];
+#endif
     // Use the myPathPopDownMenu outlet to get the maximum tag number
+    // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
     NSLog(@"Init Browser Controller");
     return self;
+}
+
+-(void) loadColumnsFromPLIST {
+    if ([self myTableViewHeader ]!=nil) {
+        NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"AvailableColumns" ofType:@"plist"];
+        NSDictionary *availableColumns;
+        availableColumns = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+
+        /* Updading the selected variable depending on actual state of the Table */
+        //for (NSString *key in availableColumns) {
+        //    NSDictionary *colInfo = [availableColumns objectForKey:key];
+        //    [colInfo setValue:[NSNumber numberWithBool:NO] forKey:COL_SELECTED_KEY];
+        //}
+        for (NSTableColumn *col in [[self myTableView] tableColumns]) {
+            [[availableColumns objectForKey: [col identifier]] setValue:[NSNumber numberWithBool:YES] forKey:COL_SELECTED_KEY];
+        }
+        [[self myTableViewHeader ] setColumnControl:availableColumns];
+    }
+    
 }
 
 - (void)dealloc {
@@ -435,7 +463,11 @@ void DateFormatter(NSDate *date, NSString **output) {
 // -------------------------------------------------------------------------------
 - (void)tableView:(NSTableView *)inTableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-	NSArray *allColumns=[inTableView tableColumns];
+    // !!! TODO: if Control or Alt is presssed the new column is just added to the sortDescriptor
+    // NSUInteger modifierKeys = [NSEvent modifierFlags];
+    // test NSControlKeyMask and NSAlternateKeyMask
+
+    NSArray *allColumns=[inTableView tableColumns];
 	NSInteger i;
 	for (i=0; i<[inTableView numberOfColumns]; i++)
 	{
@@ -467,6 +499,37 @@ void DateFormatter(NSDate *date, NSString **output) {
 		[self sortWithDescriptor];
 	}
 }
+
+#ifdef COLUMN_NOTIFICATION
+
+-(void) selectColumnTitles:(NSNotification *) note {
+    // Get the needed informtion from the notification
+    NSNumber *colHeaderClicked = [[note userInfo] objectForKey:kReferenceViewKey];
+    NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
+    assert(changedColumnID); // Ooops !!! Problem in getting information from notification. Abort!!!
+    NSLog(@"Chissa mais uma vez");
+    NSDictionary *colInfo = [[[self myTableViewHeader] columnControl] objectForKey:changedColumnID];
+
+    assert (colInfo); // Ooops !!! Problem in getting
+    // Checks whether to add or to delete a column
+    if ([[colInfo objectForKey:COL_SELECTED_KEY] boolValue]==NO) {
+        // It was added
+        NSTableColumn *columnToAdd= [NSTableColumn alloc];
+        columnToAdd = [columnToAdd initWithIdentifier:changedColumnID];
+        [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
+        [[self myTableView] addTableColumn:columnToAdd];
+        [colInfo setValue:[NSNumber numberWithBool:YES] forKey:COL_SELECTED_KEY];
+    }
+    else {
+        // It was removed
+        NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:changedColumnID];
+        [[self myTableView] removeTableColumn:colToDelete];
+        [colInfo setValue:[NSNumber numberWithBool:NO] forKey:COL_SELECTED_KEY];
+    }
+}
+
+#endif
+
 
 #pragma mark Path Bar Handling
 -(TreeBranch*) treeNodeSelected {
@@ -566,7 +629,7 @@ void DateFormatter(NSDate *date, NSString **output) {
         [self.myPathBarControl setPathComponentCells:pathComponentCells];
         //[super setURL:aURL];
 
-        
+        // !!! TODO: MRU Option that only includes directories where operations have happned.
         [self mruSet:url];
         _treeNodeSelected = node;
     }
@@ -630,7 +693,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 
 
-- (IBAction) ChooseDirectory:(id)sender { // TODO !!! Change this to a pop up button
+- (IBAction) ChooseDirectory:(id)sender { // !!! TODO: Change this to a pop up button
     NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
     [SelectDirectoryDialog setTitle:@"Select a new Directory"];
     [SelectDirectoryDialog setCanChooseFiles:NO];
@@ -738,7 +801,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else if (operation ==  NSDragOperationDelete) {
         // Send to RecycleBin.
         [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];
-        sendItemsToRecycleBin(files); // TODO !!! Check whether the recycle bin deletes the
+        sendItemsToRecycleBin(files); // !!! TODO: Check whether the recycle bin deletes the
     }
 }
 
@@ -754,7 +817,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     else if (operation ==  NSDragOperationDelete) {
         // Send to RecycleBin.
         [outlineView removeItemsAtIndexes:_draggedItemsIndexSet inParent:parent withAnimation:NSTableViewAnimationEffectFade];
-        sendItemsToRecycleBin(files); // TODO !!! Check whether the recycle bin deletes the
+        sendItemsToRecycleBin(files); // !!! TODO: Check whether the recycle bin deletes the
     }
 }
 
@@ -856,7 +919,7 @@ void DateFormatter(NSDate *date, NSString **output) {
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
-        // !!! TODO : Put here a timer for opening the Folder
+        // !!! TODO: Put here a timer for opening the Folder
     }
     return [self validateDrop:info];
 }
@@ -878,7 +941,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
     if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
-        // !!! TODO Dropping Application on top of file or File on top of Application
+        // !!! TODO: Dropping Application on top of file or File on top of Application
         NSLog(@"Not impplemented open the file with the application");
         // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
     }
@@ -891,7 +954,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             moveItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
             fireNotfication = YES;            }
         else if (_validatedOperation == NSDragOperationLink) {
-            // TODO !!! Operation Link
+            // !!! TODO: Operation Link
         }
         else {
             // Unsupported !!!
@@ -1021,7 +1084,12 @@ void DateFormatter(NSDate *date, NSString **output) {
  * Parent access routines
  */
 
+
+/* This routine is serving as after load initialization */
 -(void) setViewMode:(BViewMode)viewMode {
+    if ([[self myTableViewHeader] columnControl]==nil) {
+        [self loadColumnsFromPLIST];
+    }
     if (viewMode!=_viewMode) {
         [self removeAll];
         [self refreshTrees];
@@ -1034,7 +1102,6 @@ void DateFormatter(NSDate *date, NSString **output) {
 -(BViewMode) viewMode {
     return _viewMode;
 }
-
 
 -(NSOutlineView*) treeOutlineView {
     return _myOutlineView;
@@ -1092,7 +1159,7 @@ void DateFormatter(NSDate *date, NSString **output) {
             [tree refreshContentsOnQueue:_browserOperationQueue];
         }
     }
-    // !!! Todo Add condition : if number of roots = 1 then
+    // !!! TODO: Add condition : if number of roots = 1 then
     // Expand the Root Node
     [_myOutlineView reloadData];
     [self refreshDataView];
@@ -1140,7 +1207,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     }
     else {
         // Will send the corresponding file to recycle bin
-        // !!! TODO
+        // !!! TODO: Routine to delete a directory
         TreeItem *fileOrDirectory = [_myOutlineView itemAtRow: fileSelected];
         [fileOrDirectory removeItem];
     }
