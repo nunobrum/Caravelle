@@ -81,7 +81,7 @@ void sendToRecycleBin(NSArray *urls) {
 NSURL* copyFileTo(NSURL*srcURL, NSURL *destURL) {
     NSError *error;
     NSURL *destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
-    // !!! TODO Check if File Exists and propose nameing
+    // !!! TODO: Check if File Exists and propose nameing
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
     if (error) { // In the event of errors the NSFileManagerDelegate is called
         NSLog(@"================ COPY ERROR =====================");

@@ -301,7 +301,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return child;
 }
 
-// TODO : !!! Optimize code
+// TODO: !!! Optimize code
 //-(TreeItem*) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pcomps inLevel:(NSUInteger) level {
 //    id child = [self childContainingURL:theURL];
 //    if (child!=nil) {
@@ -403,7 +403,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         TreeItem *child = [cursor childContainingURL:pathURL];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
-            child = [TreeItem treeItemForURL:theURL parent:self];
+            child = [TreeItem treeItemForURL:pathURL parent:self];
             @synchronized(cursor) {
                 [cursor->_children addObject:child];
             }
@@ -417,8 +417,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
         else {
             // Will ignore this child and just addd the size to the current node
-            // TODO !!!! Once the size is again on the class, update the size here
-            NSLog(@"%@ is not added to %@", theURL, self->_url);
+            // !!! TODO: Once the size is again on the class, update the size here
+            NSLog(@"%@ is not added to %@", theURL, pathURL);
             return nil;
         }
         level++;

@@ -83,7 +83,7 @@
     return NSDragOperationNone;
 }
 
-// TODO !!! Implement draggingUpdated to change the icon to reflect the operation
+// !!! TODO: Implement draggingUpdated to change the icon to reflect the operation
 // Consider also implementing draggingExited so that the icon is reverted to its original form.
 
 // prepareForDragOperation: message followed by performDragOperation: and concludeDragOperation:.

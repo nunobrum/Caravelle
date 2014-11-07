@@ -381,7 +381,7 @@ id appTreeManager;
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
 
-    // !!! TODO When App Modes are implemented
+    // !!! TODO: When App Modes are implemented
     // Make sure this is done properly
     BrowserController *focused_browser = selectedView;
     if (backOrForward==0) { // Backward
