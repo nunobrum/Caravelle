@@ -504,10 +504,10 @@ void DateFormatter(NSDate *date, NSString **output) {
 
 -(void) selectColumnTitles:(NSNotification *) note {
     // Get the needed informtion from the notification
-    NSNumber *colHeaderClicked = [[note userInfo] objectForKey:kReferenceViewKey];
     NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
     assert(changedColumnID); // Ooops !!! Problem in getting information from notification. Abort!!!
-    NSLog(@"Chissa mais uma vez");
+    NSInteger colHeaderClicked = [[[note userInfo] objectForKey:kReferenceViewKey] integerValue];
+    NSLog(@"Chissa mais uma vez"); // !!! TODO: Investigate why this is called two times. Block it.
     NSDictionary *colInfo = [[[self myTableViewHeader] columnControl] objectForKey:changedColumnID];
 
     assert (colInfo); // Ooops !!! Problem in getting
@@ -519,6 +519,10 @@ void DateFormatter(NSDate *date, NSString **output) {
         [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
         [[self myTableView] addTableColumn:columnToAdd];
         [colInfo setValue:[NSNumber numberWithBool:YES] forKey:COL_SELECTED_KEY];
+        NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
+        if (colHeaderClicked>=0 && colHeaderClicked<lastColumn-1) { // -1 so to avoid calling a move to the same position
+            [[self myTableView] moveColumn:lastColumn toColumn:colHeaderClicked+1]; // Inserts to the right
+        }
     }
     else {
         // It was removed
@@ -692,8 +696,8 @@ void DateFormatter(NSDate *date, NSString **output) {
 }
 
 
-
-- (IBAction) ChooseDirectory:(id)sender { // !!! TODO: Change this to a pop up button
+/* Called from the pop up button. Uses the Cocoa openPanel to navigate to a path */
+- (IBAction) ChooseDirectory:(id)sender {
     NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
     [SelectDirectoryDialog setTitle:@"Select a new Directory"];
     [SelectDirectoryDialog setCanChooseFiles:NO];
@@ -1083,7 +1087,9 @@ void DateFormatter(NSDate *date, NSString **output) {
 /*
  * Parent access routines
  */
-
+// !!! TODO: Create a initAfterLoad routine to decouple from the setView.
+// This routine should define the Column AutoSave
+// (See TableView setAutosaveTableColumns:)
 
 /* This routine is serving as after load initialization */
 -(void) setViewMode:(BViewMode)viewMode {

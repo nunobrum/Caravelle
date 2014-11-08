@@ -56,7 +56,7 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="42" id="7jf-Bc-Oop"/>
                     </constraints>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="3Sm-Pr-bFB">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="lpC-PD-1yv" id="3Sm-Pr-bFB">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
                         <menu key="menu" title="PathPopMenu" id="jSM-vN-xDZ" userLabel="PathPopMenuID">

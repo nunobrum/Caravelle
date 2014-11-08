@@ -39,7 +39,7 @@ NSString *kColumnChanged = @"columnChanged";
         if ([colTitle isEqualToString:menuTitle]) { // If matches
             NSNumber *colSelected = [NSNumber numberWithBool:(menuState==NSOnState)];
             [colInfo setValue:colSelected forKey:COL_SELECTED_KEY];
-            NSNumber *colClicked = [NSNumber numberWithInteger:columnClicked];
+            NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
             NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       colID, kColumnChanged,
                                       colClicked, kReferenceViewKey,
@@ -55,7 +55,9 @@ NSString *kColumnChanged = @"columnChanged";
     /* This function creates a menu depending on the actual column selection */
 
     // Will store the clicked position, so that it is used to insert the new column (always to the right)
-    columnClicked = [self columnAtPoint:[theEvent locationInWindow]];
+    NSPoint event_location = [theEvent locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    self->columnClicked = [self columnAtPoint: local_point];
     // Create the menu
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Contextual Menu"];
     int index=0;
