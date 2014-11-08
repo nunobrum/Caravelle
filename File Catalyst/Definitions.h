@@ -41,6 +41,7 @@ extern NSOperationQueue *operationsQueue;
 extern id appTreeManager;
 
 typedef NS_ENUM(NSInteger, BViewMode) {
+    BViewModeVoid = 0,
     BViewBrowserMode = 1,
     BViewCatalystMode,
     BViewDuplicateMode

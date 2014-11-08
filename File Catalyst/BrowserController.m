@@ -78,7 +78,7 @@ void DateFormatter(NSDate *date, NSString **output) {
     self->_focusedView = nil;
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
-    self->_viewMode = 0; // This is an invalid view mode. This forces the App to change it.
+    self->_viewMode = BViewModeVoid; // This is an invalid view mode. This forces the App to change it.
     self->_filterText = @"";
     self->TableSortDesc = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
@@ -104,6 +104,13 @@ void DateFormatter(NSDate *date, NSString **output) {
     // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
     NSLog(@"Init Browser Controller");
     return self;
+}
+
+-(NSDictionary*) tableColumnsControl {
+    if ([[self myTableViewHeader] columnControl]==nil) {
+        [self loadColumnsFromPLIST];
+    }
+    return [[self myTableViewHeader] columnControl];
 }
 
 -(void) loadColumnsFromPLIST {
@@ -1091,11 +1098,14 @@ void DateFormatter(NSDate *date, NSString **output) {
 // This routine should define the Column AutoSave
 // (See TableView setAutosaveTableColumns:)
 
-/* This routine is serving as after load initialization */
--(void) setViewMode:(BViewMode)viewMode {
+-(void) afterLoadInitialization {
     if ([[self myTableViewHeader] columnControl]==nil) {
         [self loadColumnsFromPLIST];
     }
+}
+
+/* This routine is serving as after load initialization */
+-(void) setViewMode:(BViewMode)viewMode {
     if (viewMode!=_viewMode) {
         [self removeAll];
         [self refreshTrees];

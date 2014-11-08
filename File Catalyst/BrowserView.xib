@@ -56,7 +56,7 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="42" id="7jf-Bc-Oop"/>
                     </constraints>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="lpC-PD-1yv" id="3Sm-Pr-bFB">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="xJy-Gr-AlN" id="3Sm-Pr-bFB">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
                         <menu key="menu" title="PathPopMenu" id="jSM-vN-xDZ" userLabel="PathPopMenuID">
@@ -132,7 +132,7 @@
                                                         </textFieldCell>
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
-                                                            <tableCellView id="ixn-tP-krw" customClass="FolderCellView">
+                                                            <tableCellView identifier="CatalystView" id="ixn-tP-krw" customClass="FolderCellView">
                                                                 <rect key="frame" x="1" y="1" width="155" height="34"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
@@ -285,7 +285,7 @@
                                                         </textFieldCell>
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
-                                                            <tableCellView id="Q4u-W9-Vpz">
+                                                            <tableCellView identifier="COL_NAME" id="Q4u-W9-Vpz">
                                                                 <rect key="frame" x="1" y="1" width="161" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
@@ -332,7 +332,7 @@
                                                         </textFieldCell>
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
-                                                            <tableCellView id="QuQ-Gs-YVk">
+                                                            <tableCellView identifier="COL_SIZE" id="QuQ-Gs-YVk">
                                                                 <rect key="frame" x="165" y="1" width="100" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
@@ -368,7 +368,7 @@
                                                         </textFieldCell>
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
-                                                            <tableCellView id="1Di-6N-TQX">
+                                                            <tableCellView identifier="COL_DATE_MODIFIED" id="1Di-6N-TQX">
                                                                 <rect key="frame" x="268" y="1" width="171" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>

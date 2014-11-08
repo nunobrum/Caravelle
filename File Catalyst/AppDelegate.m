@@ -127,12 +127,10 @@ id appTreeManager;
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
     if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [myLeftView setViewMode:BViewBrowserMode];
         [myLeftView setFoldersDisplayed:YES];
         //[myLeftView setParent:self];
     }
     if ([myRightView isKindOfClass:[BrowserController class]]) {
-        [myRightView setViewMode:BViewBrowserMode];
         [myRightView setFoldersDisplayed:YES];
         //[myRightView setParent:self];
     }
@@ -167,6 +165,7 @@ id appTreeManager;
             NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
             id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
             [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
+            [(BrowserController*)myRightView afterLoadInitialization];
             [(BrowserController*)myRightView addTreeRoot: item];
             [(BrowserController*)myRightView selectFirstRoot];
         }
@@ -201,7 +200,8 @@ id appTreeManager;
                     [st addChild:fb];
                 }
                 [st createSearchPredicate];
-                [myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView afterLoadInitialization];
+                [(BrowserController*)myLeftView setViewMode:BViewBrowserMode];
                 [(BrowserController*)myLeftView addTreeRoot: st];
             }
             else {
@@ -211,7 +211,8 @@ id appTreeManager;
                 [st setCatalogKey:@"dateModified"];
                 [st setValueTransformer:DateToYearTransformer()];
                 [st createSearchPredicate];
-                [myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView afterLoadInitialization];
+                [(BrowserController*)myLeftView setViewMode:BViewBrowserMode];
                 [(BrowserController*)myLeftView addTreeRoot: st];
 
             }

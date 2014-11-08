@@ -92,6 +92,8 @@ extern NSString *notificationCatalystRootUpdate;
  * Parent access routines
  */
 
+-(void) afterLoadInitialization;
+
 -(void) setViewMode:(BViewMode)viewMode;
 -(BViewMode) viewMode;
 
