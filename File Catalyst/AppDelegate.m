@@ -73,6 +73,13 @@ id appTreeManager;
         appFileManager = [[NSFileManager alloc] init];
         appTreeManager = [[TreeManager alloc] init];
         [appFileManager setDelegate:self];
+        /* Registering Transformers */
+        // !!! TODO: Put formats in the User Definitions
+        NSValueTransformer *date_transformer = [[DateToStringTransformer alloc] init];
+        [NSValueTransformer setValueTransformer:date_transformer forName:@"date"];
+        NSValueTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
+        [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
+
 	}
 	return self;
 }
@@ -96,6 +103,7 @@ id appTreeManager;
 - (void)awakeFromNib
 {
     NSLog(@"App Delegate: awakeFromNib");
+
 }
 
 
@@ -107,6 +115,7 @@ id appTreeManager;
     NSDictionary *userDefaultsValuesDict=[NSDictionary dictionaryWithContentsOfFile:userDefaultsValuesPath];
     // set them in the standard user defaults
     [[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
+
 
     /* Now setting notifications */
 
@@ -208,7 +217,7 @@ id appTreeManager;
                 CatalogBranch *st = [[CatalogBranch alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
                 [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
                 [st setFilter:[NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"]];
-                [st setCatalogKey:@"dateModified"];
+                [st setCatalogKey:@"date_modified"];
                 [st setValueTransformer:DateToYearTransformer()];
                 [st createSearchPredicate];
                 [(BrowserController*)myLeftView afterLoadInitialization];

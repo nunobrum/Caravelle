@@ -473,6 +473,16 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return total;
 }
 
+-(NSNumber*) fileSize {
+    NSNumber *total;
+    @synchronized(self) {
+        if (self->_children!=nil)
+            total = [self->_children valueForKeyPath:@"@sum.filesize"];
+        else
+            total = [NSNumber numberWithInt:0];
+    }
+    return total;
+}
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
     @synchronized(self) {

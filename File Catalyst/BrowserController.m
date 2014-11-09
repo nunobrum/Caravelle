@@ -20,9 +20,11 @@
 #import "FileAttributesController.h"
 
 #define COL_FILENAME @"COL_NAME"
-#define COL_DATE_MOD @"COL_DATE_MODIFIED"
-#define COL_SIZE     @"COL_SIZE"
-#define COL_PATH     @"COL_PATH"
+#define COL_TEXT_ONLY @"COL_TEXT"
+
+//#define COL_DATE_MOD @"COL_DATE_MODIFIED"
+//#define COL_SIZE     @"COL_SIZE"
+//#define COL_PATH     @"COL_PATH"
 
 //#define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE_MOD, COL_SIZE, COL_PATH
 //#define SYSTEM_COLUMNS     COL_FILENAME
@@ -31,20 +33,6 @@
 const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;
 
-
-void DateFormatter(NSDate *date, NSString **output) {
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setTimeStyle:NSDateFormatterMediumStyle];
-    [dateFormatter setDateStyle:NSDateFormatterMediumStyle];
-
-    //NSLocale *systemLocale = [[NSLocale alloc] init];
-    //[dateFormatter setLocale:systemLocale];
-
-    *output = [dateFormatter stringFromDate:date];
-    // Output:
-    // Date for locale en_US: Jan 2, 2001
-
-}
 
 @interface BrowserController () {
     NSTableView *_focusedView; // Contains the currently selected view
@@ -247,19 +235,12 @@ void DateFormatter(NSDate *date, NSString **output) {
             else {
                 cellView= [outlineView makeViewWithIdentifier:[tableColumn identifier] owner:self];
             }
-            if ([item isKindOfClass:[filterBranch class]]) {
-                NSImage *icon = [NSImage imageNamed:@"SearchFolder"];
-                [[cellView imageView] setImage:icon];
-                [[cellView textField] setStringValue:[item name]];
-            }
-            else {
-                // Display the directory name followed by the number of files inside
-                NSString *path = [(TreeBranch*)item path];
-                NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
 
-                [[cellView imageView] setImage:icon];
-                [[cellView textField] setStringValue:[item name]];
-            }
+            // Display the directory name followed by the number of files inside
+            NSImage *icon =  [(TreeBranch*)item image];
+            [[cellView imageView] setImage:icon];
+            [[cellView textField] setStringValue:[item name]];
+
             if ([item hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
                 [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
@@ -399,15 +380,17 @@ void DateFormatter(NSDate *date, NSString **output) {
     TreeItem *theFile = [tableData objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
     NSString *identifier = [aTableColumn identifier];
-    // We pass us as the owner so we can setup target/actions into this main controller object
-    NSTableCellView *cellView = [aTableView makeViewWithIdentifier:identifier owner:self];
+
+    NSTableCellView *cellView = nil;
 
     if ([identifier isEqualToString:COL_FILENAME]) {
+        // We pass us as the owner so we can setup target/actions into this main controller object
+        cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
         NSString *path = [[theFile url] path];
         if (path) {
             // Then setup properties on the cellView based on the column
             cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
-            cellView.imageView.objectValue = [[NSWorkspace sharedWorkspace] iconForFile:path];
+            cellView.imageView.objectValue = [theFile image];
             if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
                 [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
@@ -416,26 +399,70 @@ void DateFormatter(NSDate *date, NSString **output) {
             }
         }
     }
-    else if ([identifier isEqualToString:COL_SIZE]) {
-        if (_viewMode==BViewBrowserMode && [theFile isKindOfClass:[TreeBranch class]]){
-            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
-            cellView.textField.objectValue = @"--";
-        }
-        else
-            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
+    else { // All other cases are handled here
+        // We pass us as the owner so we can setup target/actions into this main controller object
+        cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
 
-    } else if ([identifier isEqualToString:COL_DATE_MOD]) {
-        NSString *result=nil;
-        DateFormatter([theFile dateModified], &result);
-        if (result == nil)
-            cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
-        else
-            cellView.textField.stringValue = result;
+        NSDictionary *colControl = [[[self myTableViewHeader] columnControl] objectForKey:identifier];
+        if (colControl!=nil) { // The column exists
+            NSString *prop_name = colControl[COL_ACCESSOR_KEY];
+            id prop = nil;
+            @try {
+                prop = [theFile valueForKey:prop_name];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"property '%@' not found", prop_name);
+            }
+
+            if (prop){
+                if ([prop isKindOfClass:[NSString class]])
+                    cellView.textField.objectValue = prop;
+                else { // Need to use one of the NSValueTransformers
+                    NSString *trans_name = [colControl objectForKey:COL_TRANS_KEY];
+                    if (trans_name) {
+                        NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
+                        if (trans) {
+                            NSString *text = [trans transformedValue:prop];
+                            if (text)
+                                cellView.textField.objectValue = text;
+                            else
+                                cellView.textField.objectValue = @"error transforming value";
+                        }
+                        else
+                            cellView.textField.objectValue = @"invalid transformer";
+                    }
+                    else
+                        cellView.textField.objectValue = @"no transformer found";
+                }
+            }
+            else
+                cellView.textField.objectValue = @"--";
+        }
+        else {
+            cellView.textField.objectValue = @"Invalid Column";
+        }
+
     }
-    else {
-        /* Debug code for further implementation */
-        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
-    }
+//        if ([identifier isEqualToString:COL_SIZE]) {
+//        if (_viewMode==BViewBrowserMode && [theFile isKindOfClass:[TreeBranch class]]){
+//            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
+//            cellView.textField.objectValue = @"--";
+//        }
+//        else
+//            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
+//
+//    } else if ([identifier isEqualToString:COL_DATE_MOD]) {
+//        NSString *result=nil;
+//        DateFormatter([theFile date_modified], &result);
+//        if (result == nil)
+//            cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
+//        else
+//            cellView.textField.stringValue = result;
+//    }
+//    else {
+//        /* Debug code for further implementation */
+//        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
+//    }
     return cellView;
 }
 
@@ -488,10 +515,8 @@ void DateFormatter(NSDate *date, NSString **output) {
     NSString *key;
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME])
         key = @"name";
-    else if ([[tableColumn identifier] isEqualToString:COL_SIZE])
-        key = @"filesize";
-    else if ([[tableColumn identifier] isEqualToString:COL_DATE_MOD])
-        key = @"name";
+    else // Else uses the identifier that is linked to the treeItem KVO property
+        key = [[[[self myTableViewHeader] columnControl] objectForKey:[tableColumn identifier]] objectForKey:COL_ACCESSOR_KEY];
 
 	if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
 	{

@@ -119,7 +119,7 @@
     return nameStr;
 }
 
--(NSDate*) dateModified {
+-(NSDate*) date_modified {
     NSDate *date=nil;
     NSError *errorCode;
     if ([_url isFileURL]) {
@@ -142,6 +142,30 @@
     //[_url getResourceValue:&path     forKey:NSURLPathKey error:NULL];
     return [_url path];
 }
+
+-(NSImage*) image {
+    return[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
+}
+
+-(long long) filesize {
+    NSNumber *filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
+    return [filesize longLongValue];
+}
+
+-(NSNumber*) fileSize {
+    NSNumber *filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
+    return filesize;
+
+}
+
+-(NSString*) fileKind {
+    NSString *kind;
+    [_url getResourceValue:&kind     forKey:NSURLLocalizedTypeDescriptionKey error:NULL];
+    return kind;
+}
+
 
 -(TreeItem*) root {
     TreeItem *cursor = self;
@@ -170,13 +194,6 @@
     }
     return answer;
 }
-
--(long long) filesize {
-    NSNumber *filesize;
-    [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
-    return [filesize longLongValue];
-}
-
 
 -(BOOL) openFile {
     [[NSWorkspace sharedWorkspace] openFile:[self path]];

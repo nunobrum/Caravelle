@@ -15,6 +15,11 @@
 
 @end
 
+
+@interface SizeToStringTransformer : NSValueTransformer 
+
+@end
+
 extern DateToStringTransformer *DateToYearTransformer();
 extern DateToStringTransformer *DateToMonthTransformer();
 extern DateToStringTransformer *DateToDayTransformer();

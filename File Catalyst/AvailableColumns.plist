@@ -7,7 +7,9 @@
 		<key>title</key>
 		<string>Size</string>
 		<key>accessor</key>
-		<string>filesize</string>
+		<string>fileSize</string>
+		<key>transformer</key>
+		<string>size</string>
 		<key>selected</key>
 		<false/>
 	</dict>
@@ -17,6 +19,8 @@
 		<string>Date Modified</string>
 		<key>accessor</key>
 		<string>date_modified</string>
+		<key>transformer</key>
+		<string>date</string>
 		<key>selected</key>
 		<false/>
 	</dict>

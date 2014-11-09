@@ -42,6 +42,18 @@
     return _branchName;
 }
 
+-(NSImage*) image {
+    return [NSImage imageNamed:@"SearchFolder"];
+}
+
+-(NSDate*) date_modified {
+    return nil;
+}
+
+-(NSString*) fileKind {
+    return @"Search Folder";
+}
+
 -(void) setParent:(TreeItem *)parent {
     self->_parent = parent;
     self->_url = [parent url]; // This is needed for compatibility with other methods

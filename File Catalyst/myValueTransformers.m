@@ -17,6 +17,13 @@
     return NO;
 }
 
+-(instancetype) init {
+    self->transformer = [[NSDateFormatter alloc] init];
+    [self->transformer setTimeStyle:NSDateFormatterMediumStyle];
+    [self->transformer setDateStyle:NSDateFormatterMediumStyle];
+    return self;
+}
+
 -(instancetype) initWithFormat:(NSString*)format {
     self->transformer = [[NSDateFormatter alloc] init];
     [self->transformer setDateFormat:format];
@@ -50,3 +57,23 @@ DateToStringTransformer *DateToDayTransformer() {
     return DateTransformer ;
 }
 
+
+@implementation SizeToStringTransformer
+
++ (Class)transformedValueClass {
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+    return NO;
+}
+
+- (id)transformedValue:(id)value {
+    if ([value isKindOfClass:[NSNumber class] ]) {
+        long long v = [(NSNumber*) value longLongValue];
+        return [NSByteCountFormatter stringFromByteCount:v countStyle:NSByteCountFormatterCountStyleFile];
+    }
+    return nil;
+}
+
+@end

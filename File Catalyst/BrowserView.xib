@@ -355,8 +355,8 @@
                                                             </tableCellView>
                                                         </prototypeCellViews>
                                                     </tableColumn>
-                                                    <tableColumn identifier="COL_DATE_MODIFIED" width="171.40234375" minWidth="10" maxWidth="200" id="etb-qf-ePq">
-                                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Date">
+                                                    <tableColumn identifier="COL_TEXT" width="171.40234375" minWidth="10" maxWidth="200" hidden="YES" id="etb-qf-ePq">
+                                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Title">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
@@ -368,7 +368,7 @@
                                                         </textFieldCell>
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
-                                                            <tableCellView identifier="COL_DATE_MODIFIED" id="1Di-6N-TQX">
+                                                            <tableCellView identifier="COL_TEXT" id="1Di-6N-TQX">
                                                                 <rect key="frame" x="268" y="1" width="171" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
