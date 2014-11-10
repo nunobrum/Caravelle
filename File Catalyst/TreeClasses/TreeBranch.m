@@ -292,13 +292,17 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  */
 
 -(TreeItem*) getNodeWithURL:(NSURL*)url {
-    id child = [self childContainingURL:url];
-    if (child!=nil) {
-        if ([child isKindOfClass:[TreeBranch class]]) {
-            return [(TreeBranch*)child getNodeWithURL:url];
+    if ([[self url] isEqual:url])
+        return self;
+    else {
+        id child = [self childContainingURL:url];
+        if (child!=nil) {
+            if ([child isKindOfClass:[TreeBranch class]]) {
+                return [(TreeBranch*)child getNodeWithURL:url];
+            }
         }
+        return child;
     }
-    return child;
 }
 
 // TODO: !!! Optimize code
