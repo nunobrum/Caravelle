@@ -15,30 +15,46 @@ NSString *kReferenceViewKey = @"columnClicked";
 NSString *kColumnChanged = @"columnChanged";
 #endif
 
-@implementation CustomTableHeaderView
 
-@synthesize columnControl;
+NSDictionary *columnInfo () {
+    static NSDictionary *columnInfo = nil;
+    if (columnInfo==nil) {
+        NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"AvailableColumns" ofType:@"plist"];
+        columnInfo = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+    }
+    return columnInfo;
+}
+
+@implementation CustomTableHeaderView
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
-    
-    // Drawing code here.
+    // Blocks the system menu
+    [NSApp registerServicesMenuSendTypes:nil
+                             returnTypes:nil];
+}
+// Create an array of names sorted by alphabetic order
+-(NSArray*) sortedNames {
+    static NSArray *sortedNames=nil;
+    if (sortedNames==nil) {
+    sortedNames = [columnInfo() keysSortedByValueUsingComparator: ^(NSDictionary *obj1, NSDictionary *obj2) {
+        return [[obj1 objectForKey:COL_TITLE_KEY ] localizedCompare:[obj2 objectForKey:COL_TITLE_KEY ]];
+    }];
+    }
+    return sortedNames;
 }
 
 
 -(void)columnSelect:(id)obj {
     NSString *menuTitle = [(NSMenuItem*)obj title];
-    NSInteger menuState = [(NSMenuItem*)obj state];
 
     // Look up the column control structure to match by the title
-    for (NSString *colID in [self columnControl]) {
+    for (NSString *colID in columnInfo()) {
 
-        NSDictionary *colInfo = [[self columnControl] objectForKey:colID];
+        NSDictionary *colInfo = [columnInfo() objectForKey:colID];
         NSString *colTitle = [colInfo objectForKey:COL_TITLE_KEY];
 
         if ([colTitle isEqualToString:menuTitle]) { // If matches
-            NSNumber *colSelected = [NSNumber numberWithBool:(menuState==NSOnState)];
-            [colInfo setValue:colSelected forKey:COL_SELECTED_KEY];
             NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
             NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       colID, kColumnChanged,
@@ -61,17 +77,13 @@ NSString *kColumnChanged = @"columnChanged";
     // Create the menu
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Contextual Menu"];
     int index=0;
-    // Create an array of names sorted by alphabetic order
-    NSArray *names = [[self columnControl] keysSortedByValueUsingComparator: ^(NSDictionary *obj1, NSDictionary *obj2) {
-        return [[obj1 objectForKey:COL_TITLE_KEY ] localizedCompare:[obj2 objectForKey:COL_TITLE_KEY ]];
-    }];
 
     // Creates the menu
-    for (NSString *colID in names) {
-        NSDictionary *colInfo = [[self columnControl] objectForKey:colID];
+    for (NSString *colID in [self sortedNames]) {
+        NSDictionary *colInfo = [columnInfo() objectForKey:colID];
         NSString *desc = [colInfo objectForKey:COL_TITLE_KEY];
         [theMenu insertItemWithTitle:desc action:@selector(columnSelect:) keyEquivalent:@"" atIndex:index];
-        if ([[colInfo objectForKey:COL_SELECTED_KEY] boolValue]) {
+        if ([[self tableView] columnWithIdentifier:colID]!=-1) { // is present in tableColumns
             [[theMenu itemAtIndex:index] setState:NSOnState];
         }
         else {
@@ -79,7 +91,8 @@ NSString *kColumnChanged = @"columnChanged";
         }
         index++;
     }
-    // et voila' : add the menu to the vuew
+
+    // et voila' : add the menu to the view
     [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
 }
 

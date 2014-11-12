@@ -52,8 +52,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSUInteger _mruPointer;
 }
 
--(void) loadColumnsFromPLIST;
-
 @end
 
 @implementation BrowserController
@@ -94,31 +92,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return self;
 }
 
--(NSDictionary*) tableColumnsControl {
-    if ([[self myTableViewHeader] columnControl]==nil) {
-        [self loadColumnsFromPLIST];
-    }
-    return [[self myTableViewHeader] columnControl];
-}
 
--(void) loadColumnsFromPLIST {
-    if ([self myTableViewHeader ]!=nil) {
-        NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"AvailableColumns" ofType:@"plist"];
-        NSDictionary *availableColumns;
-        availableColumns = [NSDictionary dictionaryWithContentsOfFile:plistPath];
-
-        /* Updading the selected variable depending on actual state of the Table */
-        //for (NSString *key in availableColumns) {
-        //    NSDictionary *colInfo = [availableColumns objectForKey:key];
-        //    [colInfo setValue:[NSNumber numberWithBool:NO] forKey:COL_SELECTED_KEY];
-        //}
-        for (NSTableColumn *col in [[self myTableView] tableColumns]) {
-            [[availableColumns objectForKey: [col identifier]] setValue:[NSNumber numberWithBool:YES] forKey:COL_SELECTED_KEY];
-        }
-        [[self myTableViewHeader ] setColumnControl:availableColumns];
-    }
-    
-}
 
 - (void)dealloc {
     //  Stop any observations that we may have
@@ -403,7 +377,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // We pass us as the owner so we can setup target/actions into this main controller object
         cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
 
-        NSDictionary *colControl = [[[self myTableViewHeader] columnControl] objectForKey:identifier];
+        NSDictionary *colControl = [columnInfo() objectForKey:identifier];
         if (colControl!=nil) { // The column exists
             NSString *prop_name = colControl[COL_ACCESSOR_KEY];
             id prop = nil;
@@ -516,7 +490,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME])
         key = @"name";
     else // Else uses the identifier that is linked to the treeItem KVO property
-        key = [[[[self myTableViewHeader] columnControl] objectForKey:[tableColumn identifier]] objectForKey:COL_ACCESSOR_KEY];
+        key = [[columnInfo() objectForKey:[tableColumn identifier]] objectForKey:COL_ACCESSOR_KEY];
 
 	if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
 	{
@@ -535,32 +509,33 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 #ifdef COLUMN_NOTIFICATION
 
 -(void) selectColumnTitles:(NSNotification *) note {
-    // Get the needed informtion from the notification
-    NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
-    assert(changedColumnID); // Ooops !!! Problem in getting information from notification. Abort!!!
-    NSInteger colHeaderClicked = [[[note userInfo] objectForKey:kReferenceViewKey] integerValue];
-    NSLog(@"Chissa mais uma vez"); // !!! TODO: Investigate why this is called two times. Block it.
-    NSDictionary *colInfo = [[[self myTableViewHeader] columnControl] objectForKey:changedColumnID];
+    // first checks the object sender is ours
+    if ([note object]==_myTableViewHeader) {
 
-    assert (colInfo); // Ooops !!! Problem in getting
-    // Checks whether to add or to delete a column
-    if ([[colInfo objectForKey:COL_SELECTED_KEY] boolValue]==NO) {
-        // It was added
-        NSTableColumn *columnToAdd= [NSTableColumn alloc];
-        columnToAdd = [columnToAdd initWithIdentifier:changedColumnID];
-        [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
-        [[self myTableView] addTableColumn:columnToAdd];
-        [colInfo setValue:[NSNumber numberWithBool:YES] forKey:COL_SELECTED_KEY];
-        NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
-        if (colHeaderClicked>=0 && colHeaderClicked<lastColumn-1) { // -1 so to avoid calling a move to the same position
-            [[self myTableView] moveColumn:lastColumn toColumn:colHeaderClicked+1]; // Inserts to the right
+        // Get the needed informtion from the notification
+        NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
+        assert(changedColumnID); // Ooops !!! Problem in getting information from notification. Abort!!!
+        NSInteger colHeaderClicked = [[[note userInfo] objectForKey:kReferenceViewKey] integerValue];
+        NSDictionary *colInfo = [columnInfo() objectForKey:changedColumnID];
+
+        assert (colInfo); // Ooops !!! Problem in getting
+        // Checks whether to add or to delete a column
+        if ([[self myTableView] columnWithIdentifier:changedColumnID]==-1) { // column not existing
+            // It was added
+            NSTableColumn *columnToAdd= [NSTableColumn alloc];
+            columnToAdd = [columnToAdd initWithIdentifier:changedColumnID];
+            [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
+            [[self myTableView] addTableColumn:columnToAdd];
+            NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
+            if (colHeaderClicked>=0 && colHeaderClicked<lastColumn-1) { // -1 so to avoid calling a move to the same position
+                [[self myTableView] moveColumn:lastColumn toColumn:colHeaderClicked+1]; // Inserts to the right
+            }
         }
-    }
-    else {
-        // It was removed
-        NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:changedColumnID];
-        [[self myTableView] removeTableColumn:colToDelete];
-        [colInfo setValue:[NSNumber numberWithBool:NO] forKey:COL_SELECTED_KEY];
+        else {
+            // It was removed
+            NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:changedColumnID];
+            [[self myTableView] removeTableColumn:colToDelete];
+        }
     }
 }
 
@@ -1124,9 +1099,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 // (See TableView setAutosaveTableColumns:)
 
 -(void) afterLoadInitialization {
-    if ([[self myTableViewHeader] columnControl]==nil) {
-        [self loadColumnsFromPLIST];
-    }
 }
 
 /* This routine is serving as after load initialization */

@@ -16,9 +16,17 @@ extern NSString *kReferenceViewKey;
 extern NSString *kColumnChanged;
 #endif
 
+
+// Class accessor to the ColumnInfo read from PLIST
+// It has a static variable so that the PLIST is only read once by the application
+// and it is shared between Browsers
+
+extern NSDictionary *columnInfo();
+
 @interface CustomTableHeaderView : NSTableHeaderView {
     NSInteger columnClicked;
+    NSDictionary *_columnSelected;
+
 }
 
-@property NSDictionary *columnControl;
 @end
