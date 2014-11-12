@@ -12,10 +12,8 @@
 
 @protocol FileAttributesControllerDelegate;
 
-@interface FileAttributesController : NSViewController <NSTableViewDelegate, NSTableViewDataSource, NSPopoverDelegate> {
+@interface FileAttributesController : NSWindowController <NSTokenFieldDelegate> {
 @private
-    IBOutlet NSTableView *_tableAttributeList;
-
     //NSColorList *_colorList;
     NSArray *_attributeNames;
     id <FileAttributesControllerDelegate> _delegate;
@@ -27,7 +25,6 @@
 
 + (FileAttributesController *)sharedFileAttributeController;
 
-- (void)selectAttribute:(NSArray *)selectedAttributes withPositioningView:(NSView *)positioningView;
 
 @property(readonly) NSArray *selectedAttributes;
 
