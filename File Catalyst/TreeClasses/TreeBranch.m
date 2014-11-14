@@ -101,6 +101,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     self = [self initWithURL:rootURL parent:parent];
     /* Since the instance is created now, there is no problem with thread synchronization */
     for (NSURL *theURL in dirEnum) {
+        //NSLog(@"%@",theURL);
         [self _addURLnoRecurr:theURL];
         if (cancelBlock())
             break;
@@ -250,7 +251,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             NSMutableArray *newChildren = [[NSMutableArray new] init];
             BOOL new_files=NO;
 
-            NSLog(@"Scanning directory %@", self.path);
+            //NSLog(@"Scanning directory %@", self.path);
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
             for (NSURL *theURL in dirEnumerator) {
@@ -408,8 +409,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
             child = [TreeItem treeItemForURL:pathURL parent:self];
+            if (child!=nil) {
             @synchronized(cursor) {
                 [cursor->_children addObject:child];
+            }
+            }
+            else {
+                NSLog(@"Couldn't create path %@",pathURL);
             }
         }
         if ([child isKindOfClass:[TreeBranch class]])
@@ -429,10 +435,15 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
     // Checks if it exists ; The base class is provided TreeItem so that it can match anything
     TreeItem *newObj = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeItem class]];
-    if  (newObj==nil) {
+    if  (newObj==nil) { // It doesn't exist
         newObj = [TreeItem treeItemForURL:theURL parent:cursor];
-        @synchronized(cursor) {
-            [cursor->_children addObject:newObj];
+        if (newObj!=nil) {
+            @synchronized(cursor) {
+                [cursor->_children addObject:newObj];
+            }
+        }
+        else {
+            NSLog(@"Couldn't create item %@",theURL);
         }
     }
     return newObj; /* Stops here Nothing More to Add */

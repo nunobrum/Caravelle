@@ -42,6 +42,7 @@
                 parent =[TreeItem treeItemForURL:url parent:nil];
             }
             if ([parent isKindOfClass:[TreeBranch class]]) {
+                [parent setTag:tagTreeItemDirty]; // Will force the refresh
                 answer = parent;
                 TreeBranch *cursor = parent;
                 while (level < top_level) {
