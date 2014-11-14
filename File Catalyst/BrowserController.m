@@ -111,9 +111,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 // NSWorkspace Class Reference - (NSImage *)iconForFile:(NSString *)fullPath
 
+/* the Most Recent URLs make a List of all most recent locations.
+ It protects that two equal URLS are not placed in a sequence.
+ When the user navigates backward pointer moves back. When a forward is the requested,
+ the pointer is moved forward. */
 -(void) mruSet:(NSURL*) url {
-    // but first check if it isn't the same
+    // gets the pointer to the last position
     NSUInteger mruCount = [_mruLocation count];
+
+    // if its the first just adds it
     if (mruCount==0) {
         [_mruLocation addObject:url];
     }
@@ -124,7 +130,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             if (![url isEqual:_mruLocation[_mruPointer]]) { // not just moving forward
                 NSRange follwingMRUs;
                 follwingMRUs.location = _mruPointer+1;
-                follwingMRUs.length = mruCount - _mruPointer;
+                follwingMRUs.length = mruCount - _mruPointer - 1;
                 _mruLocation[_mruPointer] = url;
                 if (follwingMRUs.length!=0) {
                     [_mruLocation removeObjectsInRange:follwingMRUs];
@@ -649,10 +655,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark Action Selectors
 
-- (IBAction)tableSelected:(id)sender {
-    _focusedView = _myTableView;
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
-}
+//- (IBAction)tableSelected:(id)sender {
+//    _focusedView = _myTableView;
+//    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
+//}
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)OutlineDoubleClickEvent:(id)sender {
@@ -663,6 +669,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         if ([node isKindOfClass: [TreeBranch class]]) { // It is a Folder : Will make it a root
             index = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
             BaseDirectoriesArray[index] = node;
+
+            /* This is needed to force the update of the path bar on setPathBarToItem.
+             other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange, 
+             that was called prior to this method will update _treeNodeSelected. */
+            _treeNodeSelected = nil;
             [self selectFolderByItem:node];
         }
         else
