@@ -57,6 +57,7 @@
                     }
                     if ([child isBranch]) {
                         cursor = (TreeBranch*)child;
+                        [cursor setTag:tagTreeItemDirty];
                         level++;
                     }
                     else
