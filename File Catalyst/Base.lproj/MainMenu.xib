@@ -700,71 +700,110 @@ CA
                                     </connections>
                                 </segmentedCell>
                             </segmentedControl>
-                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="221" y="2" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" bezelStyle="rounded" image="myTrashIcon32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
+                            <button toolTip="Trash (F5)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
+                                <rect key="frame" x="289" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Trash" bezelStyle="rounded" image="trashcanman32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kPy-bX-dze">
-                                <rect key="frame" x="135" y="6" width="50" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="dzh-CD-Gfu">
+                            <button toolTip="Information (F1)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                                <rect key="frame" x="143" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
-                                    <menu key="menu" title="OtherViews" id="NGq-8I-C9o">
-                                        <items>
-                                            <menuItem image="NSBookmarksTemplate" hidden="YES" id="hLU-ib-cHg"/>
-                                            <menuItem title="Item 2" id="6e6-z3-rQQ"/>
-                                            <menuItem title="Item 3" id="nuz-jk-TQM"/>
-                                        </items>
-                                    </menu>
-                                </popUpButtonCell>
-                            </popUpButton>
-                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mMu-yz-VVZ">
-                                <rect key="frame" x="83" y="6" width="50" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="17A-oB-X2m" id="fZP-L3-qbp">
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="KSz-dw-Rj0"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
+                                <rect key="frame" x="177" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Rename" bezelStyle="rounded" image="NSFontPanel" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
-                                    <menu key="menu" title="OtherViews" id="Kzx-Er-ryJ">
-                                        <items>
-                                            <menuItem image="NSPathTemplate" hidden="YES" id="17A-oB-X2m"/>
-                                            <menuItem title="Item 2" id="du3-nR-d0I"/>
-                                            <menuItem title="Item 3" id="1HK-go-rXC"/>
-                                        </items>
-                                    </menu>
-                                </popUpButtonCell>
-                            </popUpButton>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="hlm-U6-jVW"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
+                                <rect key="frame" x="211" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Search" bezelStyle="rounded" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="Qbm-bS-p3f"/>
+                                </connections>
+                            </button>
+                            <button toolTip="View (F4)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
+                                <rect key="frame" x="245" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="View" bezelStyle="rounded" image="NSIconViewTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="eOi-q2-A6Q"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Information (F1)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
+                                <rect key="frame" x="391" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Edit" bezelStyle="rounded" image="NSBookmarksTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="R2Y-bC-Hqt"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
+                                <rect key="frame" x="323" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Copy" bezelStyle="rounded" image="mancopy32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarCopy:" target="494" id="2fw-od-Cqu"/>
+                                </connections>
+                            </button>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H8C-NH-YAG">
-                                <rect key="frame" x="474" y="6" width="49" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="iii-fd-bTl" id="OMO-kB-tgl">
+                                <rect key="frame" x="517" y="5" width="49" height="26"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" allowsMixedState="YES" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="x5F-dX-II9" id="OMO-kB-tgl">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" title="OtherViews" id="7nt-k6-vje">
                                         <items>
-                                            <menuItem state="on" image="NSActionTemplate" id="iii-fd-bTl"/>
-                                            <menuItem title="Item 2" id="FZR-2S-vIq"/>
-                                            <menuItem title="Item 3" id="4ow-E6-EXN"/>
+                                            <menuItem image="NSPreferencesGeneral" hidden="YES" id="iii-fd-bTl">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Labels" tag="1" id="FZR-2S-vIq"/>
+                                            <menuItem title="Columns" tag="2" id="VV0-AJ-bYE">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Clipboard" tag="3" id="x5F-dX-II9">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Bookmarks" id="bPS-sC-jh3">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
+                                            <menuItem title="Preview" id="xe5-26-tUN">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
-                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ua4-kF-Fji">
-                                <rect key="frame" x="281" y="7" width="71" height="24"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="Zo9-HH-KPc">
-                                    <font key="font" metaFont="system"/>
-                                    <segments>
-                                        <segment toolTip="Copy Left" image="CopyLeftTemplate" width="32"/>
-                                        <segment toolTip="Copy Right" image="CopyRightTemplate" width="32" tag="1"/>
-                                    </segments>
-                                </segmentedCell>
-                                <connections>
-                                    <action selector="toolbarCopyAction:" target="494" id="txq-45-5XG"/>
-                                </connections>
-                            </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WqO-XS-6QS">
                                 <rect key="frame" x="659" y="7" width="137" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="bOE-Sc-XQl">
@@ -783,6 +822,53 @@ CA
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
+                            <button toolTip="Move (F7)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
+                                <rect key="frame" x="357" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Move" bezelStyle="rounded" image="manmove32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarMove:" target="494" id="OtL-cV-86f"/>
+                                </connections>
+                            </button>
+                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kPy-bX-dze">
+                                <rect key="frame" x="87" y="5" width="50" height="26"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="dzh-CD-Gfu">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="menu"/>
+                                    <menu key="menu" title="OtherViews" id="NGq-8I-C9o">
+                                        <items>
+                                            <menuItem image="footprint32" hidden="YES" id="hLU-ib-cHg"/>
+                                            <menuItem title="Item 2" id="6e6-z3-rQQ"/>
+                                            <menuItem title="Item 3" id="nuz-jk-TQM"/>
+                                        </items>
+                                    </menu>
+                                </popUpButtonCell>
+                            </popUpButton>
+                            <button toolTip="Refresh (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KMp-P2-P6G">
+                                <rect key="frame" x="435" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Refresh" bezelStyle="rounded" image="NSRefreshFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GPw-8d-L0Y">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="GIW-rK-EnJ"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Home (F10)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZK-HF-vxx">
+                                <rect key="frame" x="469" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Labels" bezelStyle="rounded" image="NSHomeTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nfH-kR-Z60">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarDelete:" target="494" id="yIZ-Ph-cNj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
@@ -855,14 +941,20 @@ CA
         </window>
     </objects>
     <resources>
-        <image name="CopyLeftTemplate" width="32" height="32"/>
-        <image name="CopyRightTemplate" width="32" height="32"/>
-        <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSBookmarksTemplate" width="17" height="12"/>
+        <image name="NSFontPanel" width="32" height="32"/>
+        <image name="NSHomeTemplate" width="14" height="13"/>
+        <image name="NSIconViewTemplate" width="11" height="10"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
-        <image name="NSPathTemplate" width="13" height="10"/>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
+        <image name="NSQuickLookTemplate" width="21" height="16"/>
+        <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
+        <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
         <image name="StopButton" width="11" height="11"/>
-        <image name="myTrashIcon32" width="16" height="16"/>
+        <image name="footprint32" width="100.17391204833984" height="100.17391204833984"/>
+        <image name="mancopy32" width="32" height="32"/>
+        <image name="manmove32" width="32" height="32"/>
+        <image name="trashcanman32" width="32" height="32"/>
     </resources>
 </document>

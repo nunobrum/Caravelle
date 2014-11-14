@@ -178,7 +178,7 @@ id appTreeManager;
             [(BrowserController*)myRightView addTreeRoot: item];
             [(BrowserController*)myRightView selectFirstRoot];
         }
-        if (0) { // Left Side
+        if (1) { // Left Side
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
@@ -365,7 +365,7 @@ id appTreeManager;
 }
 
 
-- (IBAction)toolbarCopyAction:(id)sender {
+- (IBAction)toolbarCopy:(id)sender {
     NSInteger LeftORight1 = [(NSSegmentedControl*)sender selectedSegment];
 
     if (LeftORight1==1) { // Right
@@ -381,6 +381,9 @@ id appTreeManager;
             copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
         }
     }
+}
+
+- (IBAction)toolbarMove:(id)sender {
 }
 
 - (IBAction)operationCancel:(id)sender {

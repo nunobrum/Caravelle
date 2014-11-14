@@ -32,7 +32,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
         else {
             NSURL *rootURL = [NSURL fileURLWithPath:rootPath isDirectory:YES];
 
-            NSLog(@"From thread ! Scanning directory %@", rootPath);
+            //NSLog(@"From thread ! Scanning directory %@", rootPath);
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootURL WithMode:[mode integerValue]];
             TreeRoot *rootDir = [TreeRoot treeFromEnumerator:dirEnumerator
                                                          URL:rootURL
