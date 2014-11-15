@@ -25,14 +25,14 @@
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 @property (weak) IBOutlet NSButton *statusCancelButton;
 
-@property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
-@property (weak) IBOutlet NSToolbarItem *toolbarCopySegmentedButton;
-
-
 - (IBAction)FindDuplicates:(id)sender;
 
+
+/* Toolbar Actions */
 - (IBAction)toolbarDelete:(id)sender;
-- (IBAction)toolbarCopyAction:(id)sender;
+- (IBAction)toolbarCopy:(id)sender;
+- (IBAction)toolbarMove:(id)sender;
+
 - (IBAction)operationCancel:(id)sender;
 
 - (void) statusUpdate:(NSNotification*)theNotification;

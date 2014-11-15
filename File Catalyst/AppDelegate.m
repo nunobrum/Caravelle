@@ -488,7 +488,7 @@ id appTreeManager;
                 [myRightView selectFirstRoot];
             }
             if ([selectedFiles count]==0) {
-                [self.toolbarDeleteButton setEnabled:NO];
+                //[self.toolbarDeleteButton setEnabled:NO];
 //                if (selectedView==myLeftView) {
 //                    [self.toolbarCopySegmentedButton setEnabled:NO];
 //                }
@@ -508,7 +508,7 @@ id appTreeManager;
                         folders_size += [(TreeBranch*)item filesize];
                     }
                 }
-                [self.toolbarDeleteButton setEnabled:YES];
+                //[self.toolbarDeleteButton setEnabled:YES];
 //                if (selectedView==myLeftView) {
 //                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
 //                    //[self.toolbarCopyLeftButton setEnabled:NO];
