@@ -93,13 +93,21 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                         else if ([op isEqualToString:opMoveOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
-                                if ([item isKindOfClass:[NSURL class]])
+                                if ([item isKindOfClass:[NSURL class]]) {
                                     newURL = moveFileTo(item, [dest url]);
-                                else if ([item isKindOfClass:[TreeItem class]])
+                                    if (newURL) {
+                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        opDone++;
+                                    }
+                                }
+                                else if ([item isKindOfClass:[TreeItem class]]) {
                                     newURL = moveFileTo([item url], [dest url]);
-                                if (newURL) {
-                                    [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
-                                    opDone++;
+                                    if (newURL) {
+                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        // Remove itself from the former parent
+                                        [(TreeItem*)item removeItem];
+                                        opDone++;
+                                    }
                                 }
                                 if ([self isCancelled]) break;
                             }

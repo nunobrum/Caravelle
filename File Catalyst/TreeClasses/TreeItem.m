@@ -47,12 +47,12 @@
                 if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
                     //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
                     [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-                    id appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowseAppsAsFolder"];
-                    if (appsAsFolders==NO) {
-                        return [[TreeLeaf alloc] initWithURL:url parent:parent];
+                    NSNumber *appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"prefBrowseAppsAsFolder"];
+                    if ([appsAsFolders boolValue]) {
+                        return [[TreeBranch alloc] initWithURL:url parent:parent];
                     }
                     else {
-                        return [[TreeBranch alloc] initWithURL:url parent:parent];
+                        return [[TreeLeaf alloc] initWithURL:url parent:parent];
                     }
                 }
                 /* Debug Code */

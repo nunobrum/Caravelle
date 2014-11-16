@@ -719,7 +719,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="KSz-dw-Rj0"/>
+                                    <action selector="toolbarInformation:" target="494" id="5zS-0N-Yez"/>
                                 </connections>
                             </button>
                             <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
@@ -730,7 +730,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="hlm-U6-jVW"/>
+                                    <action selector="toolbarRename:" target="494" id="6My-yD-mQw"/>
                                 </connections>
                             </button>
                             <button toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
@@ -741,7 +741,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="Qbm-bS-p3f"/>
+                                    <action selector="toolbarSearch:" target="494" id="7Y3-Xw-frd"/>
                                 </connections>
                             </button>
                             <button toolTip="View (F4)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
@@ -752,7 +752,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="eOi-q2-A6Q"/>
+                                    <action selector="toolbarGrouping:" target="494" id="9e8-dC-0ID"/>
                                 </connections>
                             </button>
                             <button toolTip="Information (F1)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
@@ -763,7 +763,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="R2Y-bC-Hqt"/>
+                                    <action selector="toolbarOpen:" target="494" id="Fsb-mF-g3v"/>
                                 </connections>
                             </button>
                             <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
@@ -778,7 +778,7 @@ CA
                                 </connections>
                             </button>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H8C-NH-YAG">
-                                <rect key="frame" x="517" y="5" width="49" height="26"/>
+                                <rect key="frame" x="516" y="5" width="50" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" allowsMixedState="YES" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="x5F-dX-II9" id="OMO-kB-tgl">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -855,7 +855,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="GIW-rK-EnJ"/>
+                                    <action selector="toolbarRefresh:" target="494" id="B1S-Xg-mp0"/>
                                 </connections>
                             </button>
                             <button toolTip="Home (F10)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZK-HF-vxx">
@@ -866,7 +866,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarDelete:" target="494" id="yIZ-Ph-cNj"/>
+                                    <action selector="toolbarHome:" target="494" id="Pee-5S-Vw4"/>
                                 </connections>
                             </button>
                         </subviews>

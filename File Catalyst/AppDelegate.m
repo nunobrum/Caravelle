@@ -84,6 +84,32 @@ id appTreeManager;
 	return self;
 }
 
+#pragma mark auxiliary functions
+
+-(void) goHome:(id) view {
+    // Change the selected view to go Home in Browser Mode
+    // !!! TODO: Set a User Defined Parameter that defines Home.
+    // Nil defaults to User/Documents folder
+
+    if ([view isKindOfClass:[BrowserController class]]) {
+        NSString *homepath;
+        if (view == myLeftView) {
+            homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserLeft"] objectForKey:@"prefHomeDir"];
+        }
+        else if (view == myRightView) {
+            homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserRight"] objectForKey:@"prefHomeDir"];
+        }
+        if (homepath == nil || [homepath isEqualToString:@""])
+            homepath = NSHomeDirectory();
+
+        NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
+        id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+        [(BrowserController*)view removeAll];
+        [(BrowserController*)view setViewMode:BViewBrowserMode];
+        [(BrowserController*)view addTreeRoot: item];
+        [(BrowserController*)view selectFirstRoot];
+    }
+}
 
 // -------------------------------------------------------------------------------
 //	applicationShouldTerminateAfterLastWindowClosed:sender
@@ -135,14 +161,13 @@ id appTreeManager;
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myLeftView];
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
-    if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [myLeftView setFoldersDisplayed:YES];
-        //[myLeftView setParent:self];
-    }
-    if ([myRightView isKindOfClass:[BrowserController class]]) {
-        [myRightView setFoldersDisplayed:YES];
-        //[myRightView setParent:self];
-    }
+
+    [myLeftView setFoldersDisplayed:
+            [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
+                                      objectForKey:@"prefDisplayFoldersInTable"] boolValue]];
+    [myRightView setFoldersDisplayed:
+            [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
+                                      objectForKey:@"prefDisplayFoldersInTable"] boolValue]];
 
     [_ContentSplitView addSubview:myLeftView.view];
     [_ContentSplitView addSubview:myRightView.view];
@@ -167,18 +192,12 @@ id appTreeManager;
 
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
-        if(1) {// Right side
-            //NSString *homeDir = NSHomeDirectory();
-            // !!! Debug code
-            NSString *homeDir = @"/Users/vika/Downloads";
-            NSURL *url = [NSURL fileURLWithPath:homeDir isDirectory:YES];
-            id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
-            [(BrowserController*)myRightView setViewMode:BViewBrowserMode];
-            [(BrowserController*)myRightView afterLoadInitialization];
-            [(BrowserController*)myRightView addTreeRoot: item];
-            [(BrowserController*)myRightView selectFirstRoot];
-        }
-        if (1) { // Left Side
+        // Right side
+        [self goHome: myRightView]; // Display the User Preferences Left Home
+
+        // Left Side
+        [self goHome: myLeftView]; // Display the User Preferences Left Home
+        if (0) { // Testing Catalyst Mode
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
@@ -191,7 +210,7 @@ id appTreeManager;
             [operationsQueue addOperation:Op];
             [self _startOperationBusyIndication];
         }
-        else {
+        if (0) { // Testing filter and catalog Branches
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
             //item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
             if(0) { // Debug Code
@@ -225,8 +244,8 @@ id appTreeManager;
                 [(BrowserController*)myLeftView addTreeRoot: st];
 
             }
+            [(BrowserController*)myLeftView selectFirstRoot];
         }
-        [(BrowserController*)myLeftView selectFirstRoot];
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
@@ -358,6 +377,24 @@ id appTreeManager;
 
 #pragma mark Action Outlets
 
+
+- (IBAction)toolbarInformation:(id)sender {
+    // !!! TODO: Implement Call to System Information Window
+}
+
+- (IBAction)toolbarRename:(id)sender {
+    // !!! TODO: File Rename, if Multi-Selection, open dialog ?
+}
+
+- (IBAction)toolbarSearch:(id)sender {
+    // !!! TODO: Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
+}
+
+- (IBAction)toolbarGrouping:(id)sender {
+    // !!! TODO: Grouping pointer, select column to use for grouping
+}
+
+
 - (IBAction)toolbarDelete:(id)sender {
     NSArray *selectedFiles = [selectedView getSelectedItems];
     sendItemsToRecycleBin(selectedFiles);
@@ -366,24 +403,45 @@ id appTreeManager;
 
 
 - (IBAction)toolbarCopy:(id)sender {
-    NSInteger LeftORight1 = [(NSSegmentedControl*)sender selectedSegment];
-
-    if (LeftORight1==1) { // Right
-        if (selectedView == myLeftView) {
-            NSArray *selectedFiles = [selectedView getSelectedItems];
-            copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
-        }
+    if (selectedView == myLeftView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
     }
-    else
-    {
-        if (selectedView == myRightView) {
-            NSArray *selectedFiles = [selectedView getSelectedItems];
-            copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
-        }
+    else if (selectedView == myRightView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
     }
 }
 
 - (IBAction)toolbarMove:(id)sender {
+    if (selectedView == myLeftView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        moveItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+    }
+    else if (selectedView == myRightView) {
+        NSArray *selectedFiles = [selectedView getSelectedItems];
+        moveItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+    }
+}
+
+- (IBAction)toolbarOpen:(id)sender {
+    NSArray *selectedFiles = [selectedView getSelectedItems];
+    for (TreeItem *item in selectedFiles) {
+        [[NSWorkspace sharedWorkspace] openFile:[item path]];
+    }
+}
+
+- (IBAction)toolbarRefresh:(id)sender {
+    if ([myLeftView isKindOfClass:[BrowserController class]]) {
+        [(BrowserController*)myLeftView refreshTrees];
+    }
+    if ([myRightView isKindOfClass:[BrowserController class]]) {
+        [(BrowserController*)myRightView refreshTrees];
+    }
+}
+
+- (IBAction)toolbarHome:(id)sender {
+    [self goHome:selectedView];
 }
 
 - (IBAction)operationCancel:(id)sender {
@@ -406,16 +464,10 @@ id appTreeManager;
 }
 
 #pragma mark Operations Handling
+/* Called for the notificationDoFileOperation notification */
 -(void) handleOperationInformation: (NSNotification*) note
 {
-    //    NSDictionary *notifData = [note userInfo];
-    //    NSString *operation = [notifData objectForKey:kDropOperationKey];
-    //    NSArray *files = [notifData objectForKey:kSelectedFilesKey];
-    //
-    //    if ([operation isEqualToString:opCopyOperation]) {
-    //        NSURL *toDirectory = [notifData objectForKey:kDropDestinationKey];
-    //
-    //    }
+    // Presently this only starts the Busy indications on the statusBar.
     [self _startOperationBusyIndication];
 }
 

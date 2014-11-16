@@ -655,6 +655,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark Action Selectors
 
+// !!! TODO: Put here the code for the after Grouping/search button
 //- (IBAction)tableSelected:(id)sender {
 //    _focusedView = _myTableView;
 //    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
@@ -1176,7 +1177,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) refreshTrees {
     if (_viewMode!=BViewBrowserMode) {
-        // In catalyst Mode, there is no automatic Update
+        // !!! TODO: In catalyst Mode, there is no automatic Update
     }
     else {
         for (TreeRoot *tree in BaseDirectoriesArray) {
@@ -1214,7 +1215,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) removeAll {
-    BaseDirectoriesArray = [[NSMutableArray alloc] init]; /* Garbage collection will release everything */
+    if (BaseDirectoriesArray==nil)
+        BaseDirectoriesArray = [[NSMutableArray alloc] init]; /* Garbage collection will release everything */
+    else
+        [BaseDirectoriesArray removeAllObjects];
+    tableData = nil;
 }
 
 - (void) removeSelectedDirectory {
@@ -1280,11 +1285,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 
--(void) outlineExpandNode:(TreeBranch*) cursor {
+-(void) outlineSelectExpandNode:(TreeBranch*) cursor {
     int retries = 2;
     while (retries) {
         NSInteger row = [_myOutlineView rowForItem:cursor];
-        if (row!=-1) {
+        if (row != -1) {
             [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
             retries = 0; /* Finished, dont need to retry any more. */
         }
@@ -1292,7 +1297,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             retries--;
         }
         // The object was not found, will need to force the expand
-        [_myOutlineView expandItem:[_myOutlineView itemAtRow:[_myOutlineView selectedRow]]];
+        row = [_myOutlineView selectedRow];
+        if (row == -1)
+            row = 0;
+        [_myOutlineView expandItem:[_myOutlineView itemAtRow:row]];
         [_myOutlineView reloadData];
 
     }
@@ -1304,7 +1312,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         TreeBranch *root = BaseDirectoriesArray[0];
         _rootNodeSelected = root;
         [self setPathBarToItem:root];
-        [self outlineExpandNode:root];
+        [self outlineSelectExpandNode:root];
         return root;
     }
     return NULL;
@@ -1331,7 +1339,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
                 if (lastBranch) {
                     [self setPathBarToItem:lastBranch];
-                    [self outlineExpandNode:lastBranch];
+                    [self outlineSelectExpandNode:lastBranch];
                     [self refreshDataView];
                     return YES;
                 }

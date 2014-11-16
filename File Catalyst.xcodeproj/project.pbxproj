@@ -78,6 +78,8 @@
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
+		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
+		3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
 		3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
 		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
 		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
@@ -197,6 +199,9 @@
 		3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File CatalystTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
+		3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileExistsChoice.xib; path = "File Catalyst/OperationClasses/FileExistsChoice.xib"; sourceTree = SOURCE_ROOT; };
+		3CF17D211A18C9E50082A9B0 /* FileExistsChoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileExistsChoice.h; path = "File Catalyst/OperationClasses/FileExistsChoice.h"; sourceTree = SOURCE_ROOT; };
+		3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileExistsChoice.m; path = "File Catalyst/OperationClasses/FileExistsChoice.m"; sourceTree = SOURCE_ROOT; };
 		3CF32B9619FCED7700B14A85 /* CatalogBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatalogBranch.h; sourceTree = "<group>"; };
 		3CF32B9719FCED7700B14A85 /* CatalogBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CatalogBranch.m; sourceTree = "<group>"; };
 		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeScanOperation.h; path = ../TreeScanOperation.h; sourceTree = "<group>"; };
@@ -275,6 +280,9 @@
 		3CA7DFC619B6121000600F41 /* OperationClasses */ = {
 			isa = PBXGroup;
 			children = (
+				3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */,
+				3CF17D211A18C9E50082A9B0 /* FileExistsChoice.h */,
+				3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */,
 				3CA7DFC019B5FE9D00600F41 /* AppOperation.h */,
 				3CA7DFC119B5FE9D00600F41 /* AppOperation.m */,
 				3CA7DFC319B611E100600F41 /* FileOperation.h */,
@@ -571,6 +579,7 @@
 				3C29460E18F9B570002B633C /* BackwardArrowIcon.icns in Resources */,
 				3C29461618F9B570002B633C /* FullTrashIcon.icns in Resources */,
 				3C29461518F9B570002B633C /* ForwardArrowIcon.icns in Resources */,
+				3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */,
 				3C29462E18F9B570002B633C /* ToolbarPublicFolderIcon.icns in Resources */,
 				3C29461F18F9B570002B633C /* SystemFolderIcon.icns in Resources */,
 				3C29461C18F9B570002B633C /* KeepArrangedIcon.icns in Resources */,
@@ -635,6 +644,7 @@
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
+				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
 				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,

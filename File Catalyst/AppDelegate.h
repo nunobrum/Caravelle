@@ -27,11 +27,19 @@
 
 - (IBAction)FindDuplicates:(id)sender;
 
-
 /* Toolbar Actions */
+- (IBAction)toolbarInformation:(id)sender;
+- (IBAction)toolbarRename:(id)sender;
+- (IBAction)toolbarSearch:(id)sender;
+- (IBAction)toolbarGrouping:(id)sender;
+
 - (IBAction)toolbarDelete:(id)sender;
 - (IBAction)toolbarCopy:(id)sender;
 - (IBAction)toolbarMove:(id)sender;
+- (IBAction)toolbarOpen:(id)sender;
+
+- (IBAction)toolbarRefresh:(id)sender;
+- (IBAction)toolbarHome:(id)sender;
 
 - (IBAction)operationCancel:(id)sender;
 
