@@ -19,6 +19,15 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemAll     = NSUIntegerMax
 };
 
+/* Enumerate to be used on the result of the path relation compare method */
+typedef NS_ENUM(NSInteger, enumPathCompare) {
+    pathIsSame = 0,
+    pathsHaveNoRelation = 1,
+    pathIsParent = 2,
+    pathIsChild = 3
+};
+
+
 @protocol TreeProtocol <NSObject>
 
 -(BOOL) isBranch;
@@ -69,7 +78,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
  * URL Comparison methods
  */
 
--(NSInteger) relationTo:(NSString*) otherPath;
+-(enumPathCompare) relationToPath:(NSString*) otherPath;
+-(enumPathCompare) compareTo:(TreeItem*) otherItem;
 -(BOOL) canContainURL:(NSURL*)url;
 -(BOOL) containedInURL:(NSURL*) url;
 

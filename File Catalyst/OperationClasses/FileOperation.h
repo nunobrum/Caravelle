@@ -23,3 +23,9 @@ extern BOOL copyItemToBranch(TreeItem *item, TreeBranch *folder);
 extern BOOL moveItemToBranch(TreeItem *item, TreeBranch *folder);
 extern BOOL sendItemToRecycleBin(TreeItem* item);
 extern BOOL eraseItem(TreeItem *item);
+
+extern BOOL copyURLToBranch(NSURL* item, TreeBranch *folder);
+extern BOOL moveURLToBranch(NSURL* item, TreeBranch *folder);
+
+extern BOOL copyURLToURL(NSURL *source, NSURL *dest);
+extern BOOL moveURLToURL(NSURL *source, NSURL *dest);

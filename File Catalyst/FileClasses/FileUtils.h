@@ -18,11 +18,17 @@ extern inline NSDate* dateModified(NSURL*url);
 extern inline NSString* path(NSURL*url);
 extern inline long long filesize(NSURL*url);
 
+// Support Routines
+NSString *pathWithRename(NSString *original, NSString *new_name);
+NSURL *urlWithRename(NSURL* original, NSString *new_name);
+
 // File Operations
 extern void sendToRecycleBin(NSArray *urls);
 extern BOOL eraseFile(NSURL*url);
-extern NSURL *copyFileTo(NSURL*srcURL, NSURL *destURL);
-extern NSURL *moveFileTo(NSURL*srcURL, NSURL *destURL);
+extern NSURL *copyFileToDirectory(NSURL*srcURL, NSURL *destURL);
+extern NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL);
+BOOL copyFileTo(NSURL*srcURL, NSURL *destURL);
+BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) ;
 extern BOOL openFile(NSURL*url);
 
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory);

@@ -69,16 +69,18 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     }
                 }
                 else {
-                    TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
+                     id destObj = [_taskInfo objectForKey:kDropDestinationKey];
 
-                    if (dest!=nil && [dest isKindOfClass:[TreeBranch class]]) {
+                    if (destObj!=nil && [destObj isKindOfClass:[TreeBranch class]]) {
+                        TreeBranch *dest = destObj;
+
                         if ([op isEqualToString:opCopyOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]])
-                                    newURL = copyFileTo(item, [dest url]);
+                                    newURL = copyFileToDirectory(item, [dest url]);
                                 else if ([item isKindOfClass:[TreeItem class]])
-                                    newURL = copyFileTo([item url], [dest url]);
+                                    newURL = copyFileToDirectory([item url], [dest url]);
                                 if (newURL) {
                                     [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                 }
@@ -94,14 +96,14 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]]) {
-                                    newURL = moveFileTo(item, [dest url]);
+                                    newURL = moveFileToDirectory(item, [dest url]);
                                     if (newURL) {
                                         [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                         opDone++;
                                     }
                                 }
                                 else if ([item isKindOfClass:[TreeItem class]]) {
-                                    newURL = moveFileTo([item url], [dest url]);
+                                    newURL = moveFileToDirectory([item url], [dest url]);
                                     if (newURL) {
                                         [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                         // Remove itself from the former parent
@@ -111,6 +113,27 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 }
                                 if ([self isCancelled]) break;
                             }
+                        }
+                    }
+                    else if (destObj!=nil && [destObj isKindOfClass:[NSURL class]]) {
+                        NSURL *dest = destObj;
+                        if ([op isEqualToString:opCopyOperation]) {
+                            id item = [items firstObject];
+                            BOOL OK;
+                            if ([item isKindOfClass:[NSURL class]])
+                                OK=copyFileTo(item, dest);
+                            else if ([item isKindOfClass:[TreeItem class]])
+                                OK=copyFileTo([item url], dest);
+                            opDone++;
+                        }
+                        else if ([op isEqualToString:opMoveOperation]) {
+                            id item = [items firstObject];
+                            BOOL OK;
+                            if ([item isKindOfClass:[NSURL class]])
+                                OK=moveFileTo(item, dest);
+                            else if ([item isKindOfClass:[TreeItem class]])
+                                OK=moveFileTo([item url], dest);
+                            opDone++;
                         }
                     }
                 }
@@ -141,6 +164,32 @@ BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder) {
                               opMoveOperation, kDropOperationKey,
                               items, kDroppedFilesKey,
                               folder, kDropDestinationKey,
+                              nil];
+    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
+    BOOL answer = [operation isReady];
+    [operationsQueue addOperation:operation];
+    return answer;
+}
+
+BOOL copyURLToURL(NSURL *source, NSURL *dest) {
+    NSArray *items = [NSArray arrayWithObject:source];
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opCopyOperation, kDropOperationKey,
+                              items, kDroppedFilesKey,
+                              dest, kDropDestinationKey,
+                              nil];
+    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
+    BOOL answer = [operation isReady];
+    [operationsQueue addOperation:operation];
+    return answer;
+}
+
+BOOL moveURLToURL(NSURL *source, NSURL *dest) {
+    NSArray *items = [NSArray arrayWithObject:source];
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opMoveOperation, kDropOperationKey,
+                              items, kDroppedFilesKey,
+                              dest, kDropDestinationKey,
                               nil];
     FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
     BOOL answer = [operation isReady];
@@ -191,3 +240,14 @@ BOOL eraseItem(TreeItem *item) {
     NSArray *items = [NSArray arrayWithObject:item];
     return eraseItems(items);
 }
+
+BOOL copyURLToBranch(NSURL* item, TreeBranch *folder) {
+    NSArray *items = [NSArray arrayWithObject:item];
+    return copyItemsToBranch(items, folder);
+}
+
+BOOL moveURLToBranch(NSURL* item, TreeBranch *folder) {
+    NSArray *items = [NSArray arrayWithObject:item];
+    return moveItemsToBranch(items, folder);
+}
+

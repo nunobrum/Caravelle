@@ -23,7 +23,7 @@
     id parent =  nil;
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
-        NSUInteger comparison = [item relationTo:[url path]];
+        NSUInteger comparison = [item relationToPath:[url path]];
         if (comparison == pathIsSame) {
             return item;
         }

@@ -14,8 +14,10 @@
 #import "TreeManager.h"
 #import "TreeScanOperation.h"
 #import "searchTree.h"
+#import "FileUtils.h"
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
+#import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
 
@@ -50,12 +52,23 @@ NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 id appTreeManager;
 
+
+@interface AppDelegate (Privates)
+
+- (void)     statusUpdate:(NSNotification*)theNotification;
+- (void)       rootUpdate:(NSNotification*)theNotification;
+- (void) processNextError:(NSNotification*)theNotification;
+
+@end
+
 @implementation AppDelegate {
     ApplicationwMode applicationMode;
     id  selectedView;
 	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
+    FileExistsChoice *fileExistsWindow;
+    NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
 
 }
@@ -88,12 +101,11 @@ id appTreeManager;
 
 -(void) goHome:(id) view {
     // Change the selected view to go Home in Browser Mode
-    // !!! TODO: Set a User Defined Parameter that defines Home.
-    // Nil defaults to User/Documents folder
 
     if ([view isKindOfClass:[BrowserController class]]) {
         NSString *homepath;
         if (view == myLeftView) {
+            // Get from User Parameters
             homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserLeft"] objectForKey:@"prefHomeDir"];
         }
         else if (view == myRightView) {
@@ -103,7 +115,7 @@ id appTreeManager;
             homepath = NSHomeDirectory();
 
         NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
-        id item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
+        id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
         [(BrowserController*)view removeAll];
         [(BrowserController*)view setViewMode:BViewBrowserMode];
         [(BrowserController*)view addTreeRoot: item];
@@ -153,6 +165,7 @@ id appTreeManager;
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
     [center addObserver:self selector:@selector(handleOperationInformation:) name:notificationDoFileOperation object:nil];
+    [center addObserver:self selector:@selector(processNextError:) name:notificationClosedFileExistsWindow object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
@@ -452,14 +465,17 @@ id appTreeManager;
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
 
-    // !!! TODO: When App Modes are implemented
-    // Make sure this is done properly
-    BrowserController *focused_browser = selectedView;
-    if (backOrForward==0) { // Backward
-        [focused_browser backSelectedFolder];
+    id focused_browser = selectedView;
+    if ([focused_browser isKindOfClass:[BrowserController class]]) {
+        if (backOrForward==0) { // Backward
+            [focused_browser backSelectedFolder];
+        }
+        else {
+            [focused_browser forwardSelectedFolder];
+        }
     }
     else {
-        [focused_browser forwardSelectedFolder];
+        // !!! TODO: When App Modes are implemented
     }
 }
 
@@ -646,12 +662,103 @@ id appTreeManager;
 }
 
 #pragma mark File Manager Delegate
+-(void) processNextError:(NSNotification*)theNotification {
+    NSArray *note = pendingOperationErrors[0]; // Fifo Like structure
+    NSURL* sourceURL = note[0];
+    NSURL* destinationURL = note[1];
+    NSError *error = note[2];
+    NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
+
+
+    if (theNotification!=nil) { // It cames from the window closing
+        NSString *new_name;
+        // Lauch the new Operation based on the user choice
+        fileExistsQuestionResult answer = [fileExistsWindow answer];
+        switch (answer) {
+            case FileExistsRename:
+                new_name = [fileExistsWindow new_filename];
+                // Creating the renamed URL
+                destinationURL = urlWithRename(destinationURL, new_name) ;
+                if ([operation isEqualToString:@"Copy"]) {
+                    copyURLToURL(sourceURL, destinationURL);
+                }
+                else if ([operation isEqualToString:@"Move"]) {
+                    moveURLToURL(sourceURL, destinationURL);
+
+                }
+                // !!! TODO: Its important now to put the notification from file system to work
+                // Otherwise this won't be reflected on the Browser
+                //[(TreeManager*)appTreeManager addTreeItemWithURL:destinationURL];
+                break;
+            case FileExistsSkip:
+                /* Basically we don't do nothing */
+                break;
+            case FileExistsReplace:
+                /* Erase the file */
+                /* ... and copy again  */
+
+                break;
+
+            default:
+                break;
+        }
+        [pendingOperationErrors removeObjectAtIndex:0];
+    }
+    if ([pendingOperationErrors count]>=1) { // If only one open the
+        if (error.code==516) { // File already exists
+            if (fileExistsWindow==nil) {
+                fileExistsWindow = [[FileExistsChoice alloc] initWithWindowNibName:@"FileExistsChoice"];
+                [fileExistsWindow loadWindow]; //This is needed to load the window
+            }
+            TreeItem *sourceItem=nil, *destItem=nil;
+            // Tries to retrieve first from treeManager. Preferred way as parent is taken
+            sourceItem = [(TreeManager*)appTreeManager getNodeWithURL:sourceURL];
+            if (sourceItem==nil) // If it fails
+                sourceItem = [TreeItem treeItemForURL:sourceURL parent:nil];
+            // Tries to retrieve first from treeManager
+            destItem = [(TreeManager*)appTreeManager getNodeWithURL:destinationURL];
+            if (destItem==nil) // If it fails
+                destItem = [TreeItem treeItemForURL:destinationURL parent:nil];
+
+            if (sourceItem!=nil && destItem!=nil) {
+                BOOL OK = [fileExistsWindow makeTableWithSource:sourceItem andDestination:destItem];
+                if (OK)
+                    [fileExistsWindow showWindow:self];
+            }
+            else {
+                // TODO: Messagebox with alert
+            }
+        }
+        else {
+            NSLog(@"Error %@", error); // Don't comment this, before all tests are completed.
+        }
+
+    }
+
+}
+
+-(void) mainThreadErrorHandler:(NSArray*) note {
+
+    if (pendingOperationErrors==nil) {
+        pendingOperationErrors = [[NSMutableArray alloc] init];
+    }
+    [pendingOperationErrors addObject:note];
+    if ([pendingOperationErrors count] == 1) { // Call it if there aren't more pending
+        [self processNextError:nil];
+    }
+
+}
 
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after copy error");
-    NSLog(@"-------------------------------");
+    NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
+    [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
+    return NO;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
+    NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
+    [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
     return NO;
 }
 
@@ -665,12 +772,6 @@ id appTreeManager;
     NSLog(@"FileManagerDelegate -----------");
     NSLog(@"Not proceeding after move error");
     NSLog(@"-------------------------------");    return NO;
-}
-- (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after move error");
-    NSLog(@"-------------------------------");
-    return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path {

@@ -1250,7 +1250,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger answer = pathsHaveNoRelation;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
-        answer =[root relationTo: rootPath];
+        answer =[root relationToPath: rootPath];
         if (answer!=pathsHaveNoRelation) break;
     }
     return answer;

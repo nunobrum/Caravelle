@@ -15,7 +15,7 @@
 
 -(TreeManager*) init;
 
--(TreeBranch*) addTreeBranchWithURL:(NSURL*)url;
+-(TreeBranch*) addTreeItemWithURL:(NSURL*)url;
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
 
 -(void) addTreeBranch:(TreeBranch*)node;

@@ -88,6 +88,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
             NSURL *rootURL = [SelectDirectoryDialog URL];
             NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL forKey:@"path"];
             [_pathContents addObject:newItem];
+            [_pathContents commitEditing];
         }
     }
     else { /* This is a subtract */
@@ -97,7 +98,6 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         NSIndexSet *selected = [_pathContents selectionIndexes];
         [_pathContents removeObjectsAtArrangedObjectIndexes:selected];
         [_pathContents commitEditing];
-
     }
 }
 

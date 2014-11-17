@@ -210,7 +210,7 @@
 #pragma mark -
 #pragma mark URL comparison methods
 
--(NSInteger) relationTo:(NSString*) otherPath {
+-(enumPathCompare) relationToPath:(NSString*) otherPath {
     NSRange result;
     NSInteger answer = pathsHaveNoRelation;
     NSString *myPath = [self path];
@@ -232,6 +232,10 @@
         }
     }
     return answer;
+}
+
+-(enumPathCompare) compareTo:(TreeItem*) otherItem {
+    return [self relationToPath:[otherItem path]];
 }
 
 /* This is a test if it can contain the URL. !!! Change it to canContainURL */
