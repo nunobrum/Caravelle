@@ -93,12 +93,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 
-
 - (void)dealloc {
     //  Stop any observations that we may have
-    for (TreeItem *item in _observedVisibleItems) {
-        [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
-    }
+    [self unobserveAll];
     //    [super dealloc];
 }
 
@@ -708,7 +705,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             break; /* Only one Folder can be Opened */
         }
         else
-            NSLog(@"Can't open this");
+            NSLog(@"Can't open this TreeClass: %@",[node class]);
         index = [rowsSelected indexGreaterThanIndex:index];
 
     }
@@ -735,7 +732,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else {
             /* Will get a new node from shared tree Manager and add it to the root */
             /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
-            TreeBranch *node = [appTreeManager addTreeBranchWithURL:[SelectDirectoryDialog URL]];
+            TreeBranch *node = [appTreeManager addTreeItemWithURL:[SelectDirectoryDialog URL]];
             [self removeRootWithIndex:0];
             [self addTreeRoot:node];
             node = [BaseDirectoriesArray objectAtIndex:0];
@@ -768,7 +765,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             if (_viewMode==BViewBrowserMode) {
                 /* Will get a new node from shared tree Manager and add it to the root */
                 /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
-                node = [appTreeManager addTreeBranchWithURL:newURL];
+                node = [appTreeManager addTreeItemWithURL:newURL];
                 [self removeRootWithIndex:0];
                 [self addTreeRoot:node];
                 node = [BaseDirectoriesArray objectAtIndex:0];
@@ -1035,7 +1032,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         /*If it is the selected Folder make a refresh*/
         [self refreshDataView];
     }
-    if (row != NSNotFound) {
+    if (row >= 0 && row != NSNotFound) {
         // !!! Consider calling the viewForTableColumn: method here.
         NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
         if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
@@ -1099,6 +1096,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+-(void) unobserveAll {
+    for (TreeBranch* item in _observedVisibleItems) {
+        [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
+    }
+    [_observedVisibleItems removeAllObjects];
+}
 
 #pragma mark - Interface Methods
 
@@ -1180,8 +1183,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // !!! TODO: In catalyst Mode, there is no automatic Update
     }
     else {
-        for (TreeRoot *tree in BaseDirectoriesArray) {
+        // Refresh first the Roots
+        for (TreeBranch *tree in BaseDirectoriesArray) {
+            [tree setTag:tagTreeItemDirty];
             [tree refreshContentsOnQueue:_browserOperationQueue];
+        }
+        // Then the observed items
+        for (TreeBranch *tree in _observedVisibleItems) {
+            // But avoiding repeating the refreshes already done
+            if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
+                [tree setTag:tagTreeItemDirty];
+                [tree refreshContentsOnQueue:_browserOperationQueue];
+            }
         }
     }
     // !!! TODO: Add condition : if number of roots = 1 then
@@ -1205,20 +1218,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) removeRootWithIndex:(NSInteger)index {
     if (index < [BaseDirectoriesArray count]) {
+        [self unobserveItem:[BaseDirectoriesArray objectAtIndex:index]];
         [BaseDirectoriesArray removeObjectAtIndex:index];
     }
     //[self refreshTrees];
 }
 
 -(void) removeRoot: (TreeRoot*) root {
+    [self unobserveItem:root];
     [BaseDirectoriesArray removeObjectIdenticalTo:root];
 }
 
 -(void) removeAll {
     if (BaseDirectoriesArray==nil)
         BaseDirectoriesArray = [[NSMutableArray alloc] init]; /* Garbage collection will release everything */
-    else
+    else {
+        [self unobserveAll];
         [BaseDirectoriesArray removeAllObjects];
+    }
     tableData = nil;
 }
 

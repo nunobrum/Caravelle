@@ -25,8 +25,8 @@ NSURL *urlWithRename(NSURL* original, NSString *new_name);
 // File Operations
 extern void sendToRecycleBin(NSArray *urls);
 extern BOOL eraseFile(NSURL*url);
-extern NSURL *copyFileToDirectory(NSURL*srcURL, NSURL *destURL);
-extern NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL);
+extern NSURL *copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName);
+extern NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName);
 BOOL copyFileTo(NSURL*srcURL, NSURL *destURL);
 BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) ;
 extern BOOL openFile(NSURL*url);

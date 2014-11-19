@@ -17,7 +17,7 @@
 }
 
 
--(TreeBranch*) addTreeBranchWithURL:(NSURL*)url {
+-(TreeBranch*) addTreeItemWithURL:(NSURL*)url {
     NSUInteger index=0;
     TreeBranch *answer=nil;
     id parent =  nil;

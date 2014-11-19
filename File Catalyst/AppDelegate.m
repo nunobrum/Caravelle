@@ -37,6 +37,7 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 NSString *notificationDoFileOperation = @"DoOperation";
 NSString *kDropOperationKey =@"OperationKey";
 NSString *kDropDestinationKey =@"DestinationKey";
+NSString *kRenameFileKey = @"RenameKey";
 NSString *kDroppedFilesKey=@"FilesSelected";
 
 #ifdef USE_UTI
@@ -464,7 +465,10 @@ id appTreeManager;
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-
+    // !!! TODO: Disable Back at the beginning Disable Forward
+    // Create isABackFlag for the forward highlight and to test the Back
+    // isAForward will make sure that the Forward is highlighted
+    // otherwise Forward is disabled and Back Enabled
     id focused_browser = selectedView;
     if ([focused_browser isKindOfClass:[BrowserController class]]) {
         if (backOrForward==0) { // Backward
