@@ -145,4 +145,32 @@
     }
 }
 
+-(void) refreshPath:(NSString*)path flags:(NSUInteger)flags {
+    NSURL *aURL = [NSURL fileURLWithPath:path isDirectory:YES]; // Assuming that we are always going to receive directories.
+    id itemToRefresh = [self getNodeWithURL:aURL];
+
+    if  (itemToRefresh != nil) { // Its already being monitored
+        /* Checks :
+         kFSEventStreamEventFlagMustScanSubDirs // Whether the directory structure suffered radical changes
+         kFSEventStreamEventFlagRootChanged  // When the root was copied, moved or deleted
+         kFSEventStreamEventFlagEventIdsWrapped // Whether the ID rolled over (not likely)
+         FSEventStreamCopyPathsBeingWatched // Don't really understand why. It seems that we will receive just information about the directories being watched.
+         */
+        BOOL scanSubdirs = (flags & kFSEventStreamEventFlagMustScanSubDirs)!=0;
+        if (scanSubdirs) {
+            // !!! TODO: Implement this.
+            // Easiest is to make an Catalyst enumerator
+        }
+        else {
+            if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
+                [itemToRefresh setTag:tagTreeItemDirty];
+                [itemToRefresh refreshContentsOnQueue:operationsQueue];
+            }
+            else { // TODO: Scan the parent directory
+                NSLog(@"Not implemented ! Not expected to receive files.");
+            }
+        }
+    }
+}
+
 @end

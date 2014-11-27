@@ -80,6 +80,8 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 
 -(enumPathCompare) relationToPath:(NSString*) otherPath;
 -(enumPathCompare) compareTo:(TreeItem*) otherItem;
+-(BOOL) canContainPath:(NSString*)path;
+-(BOOL) containedInPath: (NSString*) path;
 -(BOOL) canContainURL:(NSURL*)url;
 -(BOOL) containedInURL:(NSURL*) url;
 

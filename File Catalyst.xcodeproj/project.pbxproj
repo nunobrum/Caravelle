@@ -63,6 +63,7 @@
 		3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
 		3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
 		3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
+		3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */; };
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
 		3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD788A819D52DEE0042E8B9 /* TreeManager.m */; };
@@ -172,6 +173,8 @@
 		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
 		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
 		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
+		3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemMonitoring.h; path = "File Catalyst/OperationClasses/FileSystemMonitoring.h"; sourceTree = SOURCE_ROOT; };
+		3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileSystemMonitoring.m; path = "File Catalyst/OperationClasses/FileSystemMonitoring.m"; sourceTree = SOURCE_ROOT; };
 		3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeBranch_TreeBranchPrivate.h; sourceTree = "<group>"; };
 		3CA7DFC019B5FE9D00600F41 /* AppOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppOperation.h; sourceTree = "<group>"; };
 		3CA7DFC119B5FE9D00600F41 /* AppOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppOperation.m; sourceTree = "<group>"; };
@@ -291,6 +294,8 @@
 				3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */,
 				3CF6C8D719ACA4D100968765 /* DuplicateFindOperation.h */,
 				3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */,
+				3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */,
+				3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */,
 			);
 			name = OperationClasses;
 			path = FileClasses;
@@ -641,6 +646,7 @@
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
+				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,

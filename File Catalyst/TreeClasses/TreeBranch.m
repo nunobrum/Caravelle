@@ -214,6 +214,18 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
+-(TreeItem*) childContainingPath:(NSString*) aPath {
+    @synchronized(self) {
+        if ([self canContainPath:aPath]) {
+            for (TreeItem *item in self->_children) {
+                if ([item canContainPath:aPath]) {
+                    return item;
+                }
+            }
+        }
+    }
+    return nil;
+}
 
 /*
  * Deprecated Method 

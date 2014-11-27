@@ -17,6 +17,7 @@
 #import "FileUtils.h"
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
+#import "FileSystemMonitoring.h"
 #import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
@@ -71,6 +72,8 @@ id appTreeManager;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
+    //FileSystemMonitoring *FSMonitorThread;
+    FSEventStreamRef stream;
 
 }
 
@@ -93,6 +96,8 @@ id appTreeManager;
         [NSValueTransformer setValueTransformer:date_transformer forName:@"date"];
         NSValueTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
+
+        //FSMonitorThread = [[FileSystemMonitoring alloc] init];
 
 	}
 	return self;
@@ -175,6 +180,7 @@ id appTreeManager;
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myLeftView];
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
+    [center addObserver:self selector:@selector(fileSystemChanged:) name:notificationDirectoryChange object:nil];
 
     [myLeftView setFoldersDisplayed:
             [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
@@ -198,7 +204,8 @@ id appTreeManager;
     //[_chkMP3_ID setEnabled:NO];
     //[_chkPhotoEXIF setEnabled:NO];
     //[_pbRemove setEnabled:NO];
-
+    //[FSMonitorThread initFSEventStream:[NSArray arrayWithObject:@"/Users/vika/Downloads"]];
+    //[FSMonitorThread start];
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
@@ -259,6 +266,9 @@ id appTreeManager;
 
             }
             [(BrowserController*)myLeftView selectFirstRoot];
+        }
+        if (1) {
+            [NSThread detachNewThreadSelector:@selector(configureFileSystemWatch:) toTarget:self withObject:nil];
         }
     }
     /* Ajust the subView window Sizes */
@@ -367,6 +377,15 @@ id appTreeManager;
 	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
 }
 
+-(void) fileSystemChanged:(NSNotification *)note {
+    NSDictionary *info = [note userInfo];
+    NSString *changedPath = [info objectForKey:pathsKey];
+    NSNumber *pathFlag = [info objectForKey:flagsKey];
+    [(TreeManager*)appTreeManager refreshPath:changedPath flags:[pathFlag integerValue]];
+
+}
+
+#pragma mark Application Delegate
 
 // -------------------------------------------------------------------------------
 //	windowShouldClose:sender
@@ -663,6 +682,39 @@ id appTreeManager;
 {
 	// update our table view on the main thread
 	[self performSelectorOnMainThread:@selector(mainThread_duplicateFindFinish:) withObject:note waitUntilDone:NO];
+}
+
+-(void) configureFileSystemWatch:(id) obj {
+    BOOL shouldKeepRunning = YES;        // global
+
+    CFStringRef mypath = CFSTR("/Users/vika/Downloads");
+
+    CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&mypath, 1, NULL);
+    //CFArrayRef pathsToWatch = CFBridgingRetain(pathsToMonitor);
+    void *callbackInfo = NULL; // could put stream-specific data here.
+
+    CFAbsoluteTime latency = 3.0; /* Latency in seconds */
+
+    /* Create the stream, passing in a callback */
+    stream = FSEventStreamCreate(NULL,
+                                 &myCallbackFunction,
+                                 callbackInfo,
+                                 pathsToWatch,
+                                 kFSEventStreamEventIdSinceNow, /* Or a previous event ID */
+                                 latency,
+                                 0x0
+                                 //kFSEventStreamCreateFlagNone /* Flags explained in reference */
+                                 | kFSEventStreamCreateFlagWatchRoot /* Monitors if the Root disappears*/
+                                 | kFSEventStreamCreateFlagUseCFTypes
+                                 );
+    CFRunLoopRef cfRunLoop  = CFRunLoopGetCurrent();
+    FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
+    BOOL OK = FSEventStreamStart(stream);
+    NSLog(@"The task was created %d", OK);
+    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+    [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode]; // adding some input source, that is required for runLoop to runing
+    while (shouldKeepRunning && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]); // starting infinite loop which can be stopped by changing the shouldKeepRunning's value
+
 }
 
 #pragma mark File Manager Delegate

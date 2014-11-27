@@ -238,10 +238,10 @@
     return [self relationToPath:[otherItem path]];
 }
 
-/* This is a test if it can contain the URL. !!! Change it to canContainURL */
--(BOOL) canContainURL:(NSURL*)url {
+/* This is a test if it can contain the URL */
+-(BOOL) canContainPath:(NSString*)path {
     NSRange result;
-    result = [[url path] rangeOfString:[self path]];
+    result = [path rangeOfString:[self path]];
     if (NSNotFound!=result.location) {
         // The new root is already contained in the existing trees
         return YES;
@@ -249,20 +249,28 @@
     else {
         return NO;
     }
+}
+
+-(BOOL) containedInPath: (NSString*) path {
+    NSRange result;
+    result = [[self path] rangeOfString:path];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        return YES;
+    }
+    else {
+        return NO;
+    }
+}
+/* This is a test if it can contain the URL */
+-(BOOL) canContainURL:(NSURL*)url {
+    return [self canContainPath:[url path]];
 }
 
 -(BOOL) containedInURL: (NSURL*) url {
-    NSRange result;
-    result = [[self path] rangeOfString:[url path]];
-    if (NSNotFound!=result.location) {
-        // The new root is already contained in the existing trees
-        return YES;
-    }
-    else {
-        return NO;
-    }
-}
+    return [self containedInPath:[url path]];
 
+}
 #pragma mark -
 #pragma mark NSPasteboardWriting support
 

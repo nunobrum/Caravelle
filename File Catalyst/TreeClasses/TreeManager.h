@@ -21,5 +21,6 @@
 -(void) addTreeBranch:(TreeBranch*)node;
 -(void) removeTreeBranch:(TreeBranch*)node;
 
+-(void) refreshPath:(NSString*)path flags:(NSUInteger)flags;
 
 @end
