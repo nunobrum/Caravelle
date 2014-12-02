@@ -114,6 +114,7 @@ extern NSString *notificationCatalystRootUpdate;
 //-(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFirstRoot;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;
+-(BOOL) selectFolderByURL:(NSURL*)theURL;
 -(TreeBranch*) getItemByURL:(NSURL*)theURL;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;

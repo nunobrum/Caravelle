@@ -1183,10 +1183,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // !!! TODO: In catalyst Mode, there is no automatic Update
     }
     else {
-        // Refresh first the Roots
-        for (TreeBranch *tree in BaseDirectoriesArray) {
-            [tree setTag:tagTreeItemDirty];
-            [tree refreshContentsOnQueue:_browserOperationQueue];
+        // Refresh first the Roots, deletes the ones tagged for deletion
+        NSUInteger idx=0;
+        while (idx < [BaseDirectoriesArray count]) {
+            TreeBranch *tree = [BaseDirectoriesArray objectAtIndex:idx];
+            if ([tree hasTags:tagTreeItemDelete]) {  // Deletes the ones tagged for deletion.
+                [BaseDirectoriesArray removeObjectAtIndex:idx];
+            }
+            else { // Refreshes all the others
+                [tree setTag:tagTreeItemDirty];
+                [tree refreshContentsOnQueue:_browserOperationQueue];
+                idx++;
+            }
         }
         // Then the observed items
         for (TreeBranch *tree in _observedVisibleItems) {
@@ -1197,8 +1205,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
     }
-    // !!! TODO: Add condition : if number of roots = 1 then
-    // Expand the Root Node
+    if ([BaseDirectoriesArray count]==1) {
+        // Expand the Root Node
+        [_myOutlineView expandItem:BaseDirectoriesArray[0]];
+    }
+
     [_myOutlineView reloadData];
     [self refreshDataView];
 }
@@ -1366,6 +1377,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return NO;
 }
 
+-(BOOL) selectFolderByURL:(NSURL*)theURL {
+    TreeItem *item = [self getItemByURL:theURL];
+    if (item==nil) {
+        if (_viewMode == BViewBrowserMode) {
+            // Replaces current root
+            item = [appTreeManager addURL:theURL];
+            [self selectFolderByItem:item];
+            [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
+            return (NULL!=[self selectFirstRoot]);
+        }
+        else
+            return NO;
+    }
+    else {
+        return [self selectFolderByItem:item];
+    }
+}
+
 -(TreeBranch*) getRootWithURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
@@ -1416,17 +1445,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (_mruPointer>0) {
         _mruPointer--;
         NSURL *url = _mruLocation[_mruPointer];
-        TreeItem *item = [self getItemByURL:url];
-        if (item==nil) {
-            // !!! TODO: Create a separate class for the tree container.
-            if (_viewMode == BViewBrowserMode) {
-                item = [TreeItem treeItemForURL:url parent:nil];
-                [self selectFolderByItem:item];
-            }
-        }
-        else {
-            [self selectFolderByItem:item];
-        }
+        [self selectFolderByURL:url];
     }
 }
 
@@ -1434,17 +1453,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (_mruPointer < [_mruLocation count]-1) {
         _mruPointer++;
         NSURL *url = _mruLocation[_mruPointer];
-        TreeItem *item = [self getItemByURL:url];
-        if (item==nil) {
-            // !!! TODO: Create a separate class for the tree container.
-            if (_viewMode == BViewBrowserMode) {
-                item = [TreeItem treeItemForURL:url parent:nil];
-                [self selectFolderByItem:item];
-            }
-        }
-        else {
-            [self selectFolderByItem:item];
-        }
+        [self selectFolderByURL:url];
     }
 }
 

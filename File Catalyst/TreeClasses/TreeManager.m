@@ -9,10 +9,13 @@
 #import "TreeManager.h"
 //#import "TreeBranch_TreeBranchPrivate.h"
 
+NSString *notificationRefreshViews = @"RefreshViews";
+
 @implementation TreeManager
 
 -(TreeManager*) init {
     self->iArray = [[NSMutableArray alloc] init];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileSystemChangePath:) name:notificationDirectoryChange object:nil];
     return self;
 }
 
@@ -20,6 +23,7 @@
 -(TreeBranch*) addTreeItemWithURL:(NSURL*)url {
     NSUInteger index=0;
     TreeBranch *answer=nil;
+    BOOL iArrayChanged = NO;
     id parent =  nil;
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
@@ -66,6 +70,7 @@
                 [cursor addChild:item]; // Finally add the node
                 @synchronized(self) {
                     [self->iArray removeObjectAtIndex:index]; // Remove the node, It will
+                    iArrayChanged = YES;
                 }
             }
             else {
@@ -84,12 +89,29 @@
             @synchronized(self) {
                 [self->iArray addObject:answer];
             }
-
+            iArrayChanged = YES;
         }
     }
     else if (parent!=nil) { // There is a new parent
         @synchronized(self) {
             [self->iArray addObject:parent];
+        }
+        iArrayChanged = YES;
+    }
+    if (iArrayChanged) { // Will changed the monitored directories
+
+        // If the thread does't exist create it
+        if (FSMonitorThread==nil) {
+            FSMonitorThread = [[FileSystemMonitoring alloc] init];
+
+            // Change the list of surveilances
+            [FSMonitorThread configureFSEventStream:iArray];
+            //Start the loop
+            [FSMonitorThread start];
+        }
+        else {
+            // Just reconfigures the stream
+            [FSMonitorThread configureFSEventStream:iArray];
         }
     }
     return answer;
@@ -145,29 +167,74 @@
     }
 }
 
--(void) refreshPath:(NSString*)path flags:(NSUInteger)flags {
-    NSURL *aURL = [NSURL fileURLWithPath:path isDirectory:YES]; // Assuming that we are always going to receive directories.
-    id itemToRefresh = [self getNodeWithURL:aURL];
+-(void) fileSystemChangePath:(NSNotification *)note {
+    NSDictionary *info = [note userInfo];
+    NSString *changedPath = [info objectForKey:pathsKey];
+    NSInteger flags = [[info objectForKey:flagsKey] integerValue];
 
-    if  (itemToRefresh != nil) { // Its already being monitored
-        /* Checks :
-         kFSEventStreamEventFlagMustScanSubDirs // Whether the directory structure suffered radical changes
-         kFSEventStreamEventFlagRootChanged  // When the root was copied, moved or deleted
-         kFSEventStreamEventFlagEventIdsWrapped // Whether the ID rolled over (not likely)
-         FSEventStreamCopyPathsBeingWatched // Don't really understand why. It seems that we will receive just information about the directories being watched.
-         */
-        BOOL scanSubdirs = (flags & kFSEventStreamEventFlagMustScanSubDirs)!=0;
-        if (scanSubdirs) {
-            // !!! TODO: Implement this.
-            // Easiest is to make an Catalyst enumerator
+    if (flags & kFSEventStreamEventFlagRootChanged) { // When the parent is moved deleted or renamed.
+        // !!! TODO: delete this from iArray and send messages to BrowserControllers for the objects to be deleted
+        // Strategy : Mark item with a deletion mark and notify App->Browser Views
+        NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
+        TreeItem *itemToDelete = [self getNodeWithURL:aURL];
+        if ([itemToDelete parent]!=nil)
+            [itemToDelete removeItem]; // Removes it from its parent
+        else { // otherwise its on iArray
+            [iArray removeObject:itemToDelete]; // In this case BrowserTrees must be updated
+            [itemToDelete setTag:tagTreeItemDelete]; // In case there are objects using it it will be deleted
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
         }
-        else {
-            if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
-                [itemToRefresh setTag:tagTreeItemDirty];
-                [itemToRefresh refreshContentsOnQueue:operationsQueue];
+
+    }
+    else if (flags & ( // Ignored Flags
+            kFSEventStreamEventFlagEventIdsWrapped | //When the EventId wraps around on the 64 bit counter
+            kFSEventStreamEventFlagHistoryDone     | // When using the "EventsSinceDate" Not used.
+            kFSEventStreamEventFlagMount           | // When a mount is done underneath the paths being monitored. Ignored for the time being !!!
+            kFSEventStreamEventFlagUnmount // When a device is unmounted underneath the path being monitored. Ignored for the time being !!!
+                      )) {
+
+        /* Do Nothing Here. This condition is here for further implementation */
+
+    }
+    else { // Will make a refresh
+        /* Other events that can be processed
+         kFSEventStreamEventFlagItemCreated,
+         kFSEventStreamEventFlagItemRemoved,
+         kFSEventStreamEventFlagItemInodeMetaMod,
+         kFSEventStreamEventFlagItemRenamed ,
+         kFSEventStreamEventFlagItemModified,
+         kFSEventStreamEventFlagItemFinderInfoMod,
+         kFSEventStreamEventFlagItemChangeOwner,
+         kFSEventStreamEventFlagItemXattrMod,
+         kFSEventStreamEventFlagItemIsFile,
+         kFSEventStreamEventFlagItemIsDir,
+         kFSEventStreamEventFlagItemIsSymlink,
+
+         kFSEventStreamEventFlagOwnEvent */
+
+
+        NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
+        id itemToRefresh = [self getNodeWithURL:aURL];
+
+        if  (itemToRefresh != nil) { // Its already being monitored
+
+
+            BOOL scanSubdirs = (flags &
+                                (kFSEventStreamEventFlagMustScanSubDirs |
+                                 kFSEventStreamEventFlagUserDropped |
+                                 kFSEventStreamEventFlagKernelDropped))!=0;
+            if (scanSubdirs) {
+                // !!! TODO: Implement this.
+                // Easiest is to make an Catalyst enumerator
             }
-            else { // TODO: Scan the parent directory
-                NSLog(@"Not implemented ! Not expected to receive files.");
+            else {
+                if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
+                    [itemToRefresh setTag:tagTreeItemDirty];
+                    [itemToRefresh refreshContentsOnQueue:operationsQueue];
+                }
+                else { // TODO: Scan the parent directory
+                    NSLog(@"Not implemented ! Not expected to receive files.");
+                }
             }
         }
     }

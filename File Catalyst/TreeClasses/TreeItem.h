@@ -11,11 +11,12 @@
 
 
 typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
-    tagTreeItemDirty   = (1UL << 0),
+    tagTreeItemDirty   = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
     tagTreeItemMarked  = (1UL << 1),
-    tagTreeItemDropped = (1UL << 2),
+    tagTreeItemDropped = (1UL << 2), // Used for drag&drop operations
     tagTreeItemToMove  = (1UL << 3),
     tagTreeItemUpdating= (1UL << 4),
+    tagTreeItemDelete  = (1UL << 5), // Used inform BrowserControllers to remove items from Root
     tagTreeItemAll     = NSUIntegerMax
 };
 

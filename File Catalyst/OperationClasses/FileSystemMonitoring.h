@@ -15,10 +15,11 @@ extern NSString *flagsKey;
 
 extern void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBackInfo, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[]);
 
-//@interface FileSystemMonitoring : NSThread {
-//    FSEventStreamRef stream;
-//}
-//
-//-(FSEventStreamRef) initFSEventStream:(NSArray*) pathsToMonitor;
-//
-//@end
+@interface FileSystemMonitoring : NSThread {
+    FSEventStreamRef stream;
+    CFMutableArrayRef monitoredPaths;
+}
+
+-(FileSystemMonitoring*) configureFSEventStream:(NSArray*) pathsToMonitor;
+
+@end

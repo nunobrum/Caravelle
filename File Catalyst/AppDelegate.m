@@ -17,7 +17,6 @@
 #import "FileUtils.h"
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
-#import "FileSystemMonitoring.h"
 #import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
@@ -57,6 +56,7 @@ id appTreeManager;
 
 @interface AppDelegate (Privates)
 
+- (void)  refreshAllViews:(NSNotification*)theNotification;
 - (void)     statusUpdate:(NSNotification*)theNotification;
 - (void)       rootUpdate:(NSNotification*)theNotification;
 - (void) processNextError:(NSNotification*)theNotification;
@@ -72,9 +72,6 @@ id appTreeManager;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
-    //FileSystemMonitoring *FSMonitorThread;
-    FSEventStreamRef stream;
-
 }
 
 // -------------------------------------------------------------------------------
@@ -175,12 +172,12 @@ id appTreeManager;
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
-    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myLeftView];
-    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
-    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myLeftView];
-    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
+    [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:nil];
+    //[center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
+    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:nil];
+    //[center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
-    [center addObserver:self selector:@selector(fileSystemChanged:) name:notificationDirectoryChange object:nil];
+    [center addObserver:self selector:@selector(refreshAllViews:) name:notificationRefreshViews object:nil];
 
     [myLeftView setFoldersDisplayed:
             [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
@@ -267,9 +264,6 @@ id appTreeManager;
             }
             [(BrowserController*)myLeftView selectFirstRoot];
         }
-        if (1) {
-            [NSThread detachNewThreadSelector:@selector(configureFileSystemWatch:) toTarget:self withObject:nil];
-        }
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
@@ -316,6 +310,17 @@ id appTreeManager;
 }
 
 #pragma mark - Notifications
+
+/* Received when a complete refresh of views is needed */
+
+-(void) refreshAllViews:(NSNotification*) theNotification {
+    if ([myLeftView isKindOfClass:[BrowserController class]]) {
+        [(BrowserController*)myLeftView refreshTrees];
+    }
+    if ([myRightView isKindOfClass:[BrowserController class]]) {
+        [(BrowserController*)myRightView refreshTrees];
+    }
+}
 
 /* Receives the notification from the BrowserView to reload the Tree */
 - (void) rootUpdate:(NSNotification*)theNotification {
@@ -377,13 +382,6 @@ id appTreeManager;
 	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
 }
 
--(void) fileSystemChanged:(NSNotification *)note {
-    NSDictionary *info = [note userInfo];
-    NSString *changedPath = [info objectForKey:pathsKey];
-    NSNumber *pathFlag = [info objectForKey:flagsKey];
-    [(TreeManager*)appTreeManager refreshPath:changedPath flags:[pathFlag integerValue]];
-
-}
 
 #pragma mark Application Delegate
 
@@ -465,12 +463,7 @@ id appTreeManager;
 }
 
 - (IBAction)toolbarRefresh:(id)sender {
-    if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [(BrowserController*)myLeftView refreshTrees];
-    }
-    if ([myRightView isKindOfClass:[BrowserController class]]) {
-        [(BrowserController*)myRightView refreshTrees];
-    }
+    [self refreshAllViews:nil];
 }
 
 - (IBAction)toolbarHome:(id)sender {
@@ -684,38 +677,6 @@ id appTreeManager;
 	[self performSelectorOnMainThread:@selector(mainThread_duplicateFindFinish:) withObject:note waitUntilDone:NO];
 }
 
--(void) configureFileSystemWatch:(id) obj {
-    BOOL shouldKeepRunning = YES;        // global
-
-    CFStringRef mypath = CFSTR("/Users/vika/Downloads");
-
-    CFArrayRef pathsToWatch = CFArrayCreate(NULL, (const void **)&mypath, 1, NULL);
-    //CFArrayRef pathsToWatch = CFBridgingRetain(pathsToMonitor);
-    void *callbackInfo = NULL; // could put stream-specific data here.
-
-    CFAbsoluteTime latency = 3.0; /* Latency in seconds */
-
-    /* Create the stream, passing in a callback */
-    stream = FSEventStreamCreate(NULL,
-                                 &myCallbackFunction,
-                                 callbackInfo,
-                                 pathsToWatch,
-                                 kFSEventStreamEventIdSinceNow, /* Or a previous event ID */
-                                 latency,
-                                 0x0
-                                 //kFSEventStreamCreateFlagNone /* Flags explained in reference */
-                                 | kFSEventStreamCreateFlagWatchRoot /* Monitors if the Root disappears*/
-                                 | kFSEventStreamCreateFlagUseCFTypes
-                                 );
-    CFRunLoopRef cfRunLoop  = CFRunLoopGetCurrent();
-    FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
-    BOOL OK = FSEventStreamStart(stream);
-    NSLog(@"The task was created %d", OK);
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode]; // adding some input source, that is required for runLoop to runing
-    while (shouldKeepRunning && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]); // starting infinite loop which can be stopped by changing the shouldKeepRunning's value
-
-}
 
 #pragma mark File Manager Delegate
 -(void) processNextError:(NSNotification*)theNotification {

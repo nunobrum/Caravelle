@@ -8,9 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "TreeBranch.h"
+#import "FileSystemMonitoring.h"
+
+extern NSString *notificationRefreshViews;
 
 @interface TreeManager : NSObject {
     NSMutableArray *iArray;
+    FileSystemMonitoring *FSMonitorThread;
 }
 
 -(TreeManager*) init;
@@ -21,6 +25,6 @@
 -(void) addTreeBranch:(TreeBranch*)node;
 -(void) removeTreeBranch:(TreeBranch*)node;
 
--(void) refreshPath:(NSString*)path flags:(NSUInteger)flags;
+-(void) fileSystemChangePath:(NSNotification *)note;
 
 @end
