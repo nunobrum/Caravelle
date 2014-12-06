@@ -262,8 +262,9 @@
 
     NSRect imageRect = [self imageRectForBounds:bounds];
     if (iImage != nil) {
-        [iImage setFlipped:[controlView isFlipped]];
-        [iImage drawInRect:imageRect fromRect:NSZeroRect operation:NSCompositeSourceIn fraction:1.0];
+        //[iImage setFlipped:[controlView isFlipped]];
+        //[iImage drawInRect:imageRect fromRect:NSZeroRect operation:NSCompositeSourceIn fraction:1.0];
+        [iImage drawInRect:imageRect fromRect:NSZeroRect operation:NSCompositeSourceIn fraction:1.0 respectFlipped:YES hints:NULL];
     } else {
         NSBezierPath *path = [NSBezierPath bezierPathWithRect:imageRect];
     CGFloat pattern[2] = { 4.0, 2.0 };
@@ -287,8 +288,9 @@
 
     NSRect infoButtonRect = [self infoButtonRectForBounds:bounds];
     NSImage *image = [self infoButtonImage];
-    [image setFlipped:[controlView isFlipped]];
-    [image drawInRect:infoButtonRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
+    //[image setFlipped:[controlView isFlipped]];
+    //[image drawInRect:infoButtonRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0];
+    [image drawInRect:infoButtonRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1.0 respectFlipped:YES hints:NULL];
 }
 
 #if HIT_TEST

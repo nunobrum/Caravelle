@@ -12,6 +12,7 @@
 
 extern NSString *notificationRefreshViews;
 
+
 @interface TreeManager : NSObject {
     NSMutableArray *iArray;
     FileSystemMonitoring *FSMonitorThread;
@@ -28,3 +29,5 @@ extern NSString *notificationRefreshViews;
 -(void) fileSystemChangePath:(NSNotification *)note;
 
 @end
+
+extern TreeManager *appTreeManager;

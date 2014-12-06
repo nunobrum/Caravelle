@@ -276,7 +276,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                     new_files = YES;
                 }
                 else {
-                    [item resetTag:tagTreeItemDirty];
+                    [item resetTag:tagTreeItemDirty+tagTreeItemDelete];
                 }
                 [newChildren addObject:item];
 
@@ -485,31 +485,53 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 /* Computes the total size of all the files contains in all subdirectories */
+/* If one directory is not completed, it will return -1 which invalidates the sum */
 -(long long) filesize {
     long long total=0;
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                total+= [item filesize];
+                long long size = [item filesize];
+                if (size>=0)
+                    total+= size;
+                else {
+                    size = -1;
+                    break;
+                }
             }
         }
-        //    NSNumber *amountSum = [self->children valueForKeyPath:@"@sum.filesize"];
-        //    if (total != [amountSum longLongValue])
-        //        NSLog(@"comparing two calculations %lld == %@", total, amountSum);
     }
     return total;
 }
 
+/* Computes the total size of all the files contains in all subdirectories */
+/* If one directory is not completed, it will return nil which invalidates the sum */
 -(NSNumber*) fileSize {
-    NSNumber *total;
+    long long total=0;
+    BOOL invalid = false;
     @synchronized(self) {
-        if (self->_children!=nil)
-            total = [self->_children valueForKeyPath:@"@sum.filesize"];
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                NSNumber *size = [item fileSize];
+                if (size) {
+                    total += [size longLongValue];
+                }
+                else {
+                     invalid = true;
+                    break;
+                }
+            }
+            //total = [self->_children valueForKeyPath:@"@sum.filesize"];
+        }
         else
-            total = [NSNumber numberWithInt:0];
+            invalid = true;
     }
-    return total;
+    if (invalid)
+        return nil;
+    else
+        return [NSNumber numberWithLongLong: total];
 }
+
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
     @synchronized(self) {

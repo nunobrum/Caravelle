@@ -1382,9 +1382,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (item==nil) {
         if (_viewMode == BViewBrowserMode) {
             // Replaces current root
-            item = [appTreeManager addURL:theURL];
-            [self selectFolderByItem:item];
+            item = [appTreeManager addTreeItemWithURL:theURL];
             [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
+            [item setTag:tagTreeItemDirty];
+            [self selectFolderByItem:item];
             return (NULL!=[self selectFirstRoot]);
         }
         else

@@ -11,6 +11,8 @@
 
 NSString *notificationRefreshViews = @"RefreshViews";
 
+TreeManager *appTreeManager;
+
 @implementation TreeManager
 
 -(TreeManager*) init {
@@ -176,12 +178,14 @@ NSString *notificationRefreshViews = @"RefreshViews";
         // !!! TODO: delete this from iArray and send messages to BrowserControllers for the objects to be deleted
         // Strategy : Mark item with a deletion mark and notify App->Browser Views
         NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
+
         TreeItem *itemToDelete = [self getNodeWithURL:aURL];
+        [itemToDelete setTag:tagTreeItemDelete]; // In case there are objects using it it will be deleted
+
         if ([itemToDelete parent]!=nil)
             [itemToDelete removeItem]; // Removes it from its parent
         else { // otherwise its on iArray
             [iArray removeObject:itemToDelete]; // In this case BrowserTrees must be updated
-            [itemToDelete setTag:tagTreeItemDelete]; // In case there are objects using it it will be deleted
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
         }
 
@@ -228,6 +232,7 @@ NSString *notificationRefreshViews = @"RefreshViews";
                 // Easiest is to make an Catalyst enumerator
             }
             else {
+                NSLog(@"Refreshing %@", [itemToRefresh url]);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];

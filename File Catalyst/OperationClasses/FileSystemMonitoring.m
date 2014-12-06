@@ -176,8 +176,8 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
         NSString *nspath = [NSString stringWithString:tollfreestring]; // This is to resolve a BAD_EXEC problem
                                                                         // A copy needs to be done to avoid conflicts between ARC and CoreFoundation
         /* flags are unsigned long, IDs are uint64_t */
-        NSLog(@"Change %llu in %@\n", eventIds[i], path);
-        LogFlags((unsigned int)eventFlags[i]);
+        //NSLog(@"Change %llu in %@\n", eventIds[i], path);
+        //LogFlags((unsigned int)eventFlags[i]);
 
 
     /* Checks :

@@ -51,7 +51,7 @@ NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
-id appTreeManager;
+
 
 
 @interface AppDelegate (Privates)
