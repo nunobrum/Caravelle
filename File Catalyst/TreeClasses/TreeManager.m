@@ -34,9 +34,15 @@ TreeManager *appTreeManager;
             return item;
         }
         else if (comparison == pathIsChild) {
-            id aux = [item addURL:url];
-            if ([aux isKindOfClass:[TreeBranch class]])
-                answer = aux;
+            TreeItem *aux = [item addURL:url];
+            if (aux) {
+                if ([aux isKindOfClass:[TreeBranch class]])
+                    return (TreeBranch*)aux;
+                else if ([aux parent]) {
+                    if ([[aux parent] isKindOfClass:[TreeBranch class]])
+                    return (TreeBranch*)[aux parent];
+                }
+            }
             index++;
         }
         else if (comparison==pathIsParent) {
@@ -179,13 +185,13 @@ TreeManager *appTreeManager;
         // Strategy : Mark item with a deletion mark and notify App->Browser Views
         NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
 
-        TreeItem *itemToDelete = [self getNodeWithURL:aURL];
-        [itemToDelete setTag:tagTreeItemDelete]; // In case there are objects using it it will be deleted
+        TreeItem *itemToRelease = [self getNodeWithURL:aURL];
+        [itemToRelease setTag:tagTreeItemRelease]; // In case there are objects using it it will be deleted
 
-        if ([itemToDelete parent]!=nil)
-            [itemToDelete removeItem]; // Removes it from its parent
+        if ([itemToRelease parent]!=nil)
+            [itemToRelease removeItem]; // Removes it from its parent
         else { // otherwise its on iArray
-            [iArray removeObject:itemToDelete]; // In this case BrowserTrees must be updated
+            [iArray removeObject:itemToRelease]; // In this case BrowserTrees must be updated
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
         }
 

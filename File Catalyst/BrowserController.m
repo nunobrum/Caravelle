@@ -1187,7 +1187,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSUInteger idx=0;
         while (idx < [BaseDirectoriesArray count]) {
             TreeBranch *tree = [BaseDirectoriesArray objectAtIndex:idx];
-            if ([tree hasTags:tagTreeItemDelete]) {  // Deletes the ones tagged for deletion.
+            if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
                 [BaseDirectoriesArray removeObjectAtIndex:idx];
             }
             else { // Refreshes all the others

@@ -276,7 +276,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                     new_files = YES;
                 }
                 else {
-                    [item resetTag:tagTreeItemDirty+tagTreeItemDelete];
+                    [item resetTag:tagTreeItemDirty+tagTreeItemRelease];
                 }
                 [newChildren addObject:item];
 

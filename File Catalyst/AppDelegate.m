@@ -414,6 +414,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (IBAction)toolbarRename:(id)sender {
+    NSArray *selectedFiles = [selectedView getSelectedItems];
+    NSUInteger numberOfFiles = [selectedFiles count];
+    if (numberOfFiles == 1) {
+        // If only one file, with edit in place
+    }
+    else if (numberOfFiles > 1) {
+        // If more than one file, will invoke the multi-rename dialog
+
+    }
     // !!! TODO: File Rename, if Multi-Selection, open dialog ?
 }
 
