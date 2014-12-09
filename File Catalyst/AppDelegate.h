@@ -10,7 +10,7 @@
 #import "FileCollection.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSFileManagerDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSFileManagerDelegate, NSTextFieldDelegate> {
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
@@ -42,6 +42,14 @@
 - (IBAction)toolbarHome:(id)sender;
 
 - (IBAction)operationCancel:(id)sender;
+
+/* Rename Dialog */
+@property (weak) IBOutlet NSTextField *ebRenameHead;
+@property (weak) IBOutlet NSTextField *ebRenameExtension;
+@property (weak) IBOutlet NSPanel *panelRename;
+
+- (IBAction) renameAction:(id) sender;
+- (IBAction) renameCancel:(id) sender;
 
 
 @end

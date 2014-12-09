@@ -104,4 +104,16 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
     return cellView;
 }
 
+/*
+ * NSTextDelegate
+ */
+
+//- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
+//    return YES;
+//}
+
+- (void)controlTextDidEndEditing:(NSNotification *)obj {
+    [self pbRename:nil];
+}
+
 @end

@@ -28,7 +28,8 @@ extern BOOL eraseFile(NSURL*url);
 extern NSURL *copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName);
 extern NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName);
 BOOL copyFileTo(NSURL*srcURL, NSURL *destURL);
-BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) ;
+BOOL moveFileTo(NSURL*srcURL, NSURL *destURL);
+BOOL renameFile(NSURL*url, NSString *newName);
 extern BOOL openFile(NSURL*url);
 
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory);

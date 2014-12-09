@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, fileExistsQuestionResult) {
 
 extern NSString *notificationClosedFileExistsWindow;
 
-@interface FileExistsChoice : NSWindowController <NSTableViewDataSource,NSTableViewDelegate> {
+@interface FileExistsChoice : NSWindowController <NSTableViewDataSource,NSTableViewDelegate, NSTextFieldDelegate> {
     //fileExistsQuestionResult _answer;
     NSMutableArray *attributesTable;
 }

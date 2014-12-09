@@ -140,6 +140,12 @@ BOOL openFile(NSURL*url) {
     [[NSWorkspace sharedWorkspace] openFile:[url path]];
     return YES;
 }
+
+BOOL renameFile(NSURL*url, NSString *newName) {
+    BOOL isDirectory = isFolder(url);
+    NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName isDirectory:isDirectory];
+    return moveFileTo(url, newURL);
+}
 //
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory) {
 //    NSString *toDir;

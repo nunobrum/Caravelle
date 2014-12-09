@@ -417,13 +417,19 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSArray *selectedFiles = [selectedView getSelectedItems];
     NSUInteger numberOfFiles = [selectedFiles count];
     if (numberOfFiles == 1) {
-        // If only one file, with edit in place
+        // If only one file, with edit with dialogSingleRename
+        NSString *path = [[selectedFiles firstObject] path];
+        NSString *fileNameExt = [path pathExtension];
+        NSString *fileName = [[path lastPathComponent] stringByDeletingPathExtension];
+        [[self ebRenameExtension] setStringValue:fileNameExt];
+        [[self ebRenameHead] setStringValue:fileName];
+        [NSApp runModalForWindow: [self panelRename]];
     }
     else if (numberOfFiles > 1) {
+        // !!! TODO: Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
 
     }
-    // !!! TODO: File Rename, if Multi-Selection, open dialog ?
 }
 
 - (IBAction)toolbarSearch:(id)sender {
@@ -814,4 +820,29 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 
+/* NSTextFieldDelegate Notifications and Delegates */
+
+- (void)controlTextDidEndEditing:(NSNotification *)obj {
+    id object = [obj object];
+    if (object == _ebRenameHead || object == _ebRenameExtension) {
+        // Should validate and close the rename dialog
+        [self renameAction:object];
+    }
+}
+
+- (IBAction)renameAction:(id)sender {
+    NSString *fileName = [[self ebRenameHead] stringValue];
+    NSString *fileExt = [[self ebRenameExtension] stringValue];
+    if ([fileExt length]>0)
+        fileName = [fileName stringByAppendingPathExtension:fileExt];
+    NSURL *oldURL = [[[selectedView getSelectedItems] firstObject] url];
+    renameFile(oldURL, fileName);
+    [[self panelRename] close];
+    [NSApp stopModal];
+}
+
+- (IBAction)renameCancel:(id)sender {
+    [[self panelRename] close];
+    [NSApp stopModal];
+}
 @end

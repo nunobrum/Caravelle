@@ -42,6 +42,9 @@ TreeManager *appTreeManager;
                     if ([[aux parent] isKindOfClass:[TreeBranch class]])
                     return (TreeBranch*)[aux parent];
                 }
+                else {
+                    NSLog(@"Ooops! what happened here ?");
+                }
             }
             index++;
         }
