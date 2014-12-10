@@ -228,7 +228,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 /*
- * Deprecated Method 
+ * Deprecated Method
  */
 //
 ///* This is not to be used with Catalyst Mode */
@@ -254,47 +254,52 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //
 #pragma mark -
 #pragma mark Refreshing contents
+
+-(BOOL) needsRefresh {
+    return (((_tag & tagTreeItemUpdating)==0) &&
+            (((_tag & tagTreeItemDirty   )!=0) || (self->_children==nil)));
+}
+
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     @synchronized (self) {
-        if (((_tag & tagTreeItemUpdating)==0) &&
-            (((_tag & tagTreeItemDirty)!=0) || (self->_children==nil))) {
-        _tag |= tagTreeItemUpdating;
-        [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
-            NSMutableArray *newChildren = [[NSMutableArray new] init];
-            BOOL new_files=NO;
+        if ([self needsRefresh]) {
+            _tag |= tagTreeItemUpdating;
+            [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
+                NSMutableArray *newChildren = [[NSMutableArray new] init];
+                BOOL new_files=NO;
 
-            //NSLog(@"Scanning directory %@", self.path);
-            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
+                //NSLog(@"Scanning directory %@", self.path);
+                MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
-            for (NSURL *theURL in dirEnumerator) {
-                TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
-                if (item==nil) { /* If not found creates a new one */
-                    item = [TreeItem treeItemForURL:theURL parent:self];
-                    if ([item isKindOfClass:[TreeBranch class]]) {
-                        [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
+                for (NSURL *theURL in dirEnumerator) {
+                    TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
+                    if (item==nil) { /* If not found creates a new one */
+                        item = [TreeItem treeItemForURL:theURL parent:self];
+                        if ([item isKindOfClass:[TreeBranch class]]) {
+                            [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
+                        }
+                        new_files = YES;
                     }
-                    new_files = YES;
-                }
-                else {
-                    [item resetTag:tagTreeItemDirty+tagTreeItemRelease];
-                }
-                [newChildren addObject:item];
+                    else {
+                        [item resetTag:tagTreeItemDirty+tagTreeItemRelease];
+                    }
+                    [newChildren addObject:item];
 
-            } // for
-            if (new_files==YES || // There are new Files OR
-                [newChildren count] < [self->_children count] || // There are deletions
-                [newChildren count]==0) { // The folder is empty
-                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-                // We synchronize access to the image/imageLoading pair of variables
-                @synchronized (self) {
-                    self->_children = newChildren;
-                    _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
+                } // for
+                if (new_files==YES || // There are new Files OR
+                    [newChildren count] < [self->_children count] || // There are deletions
+                    [newChildren count]==0) { // The folder is empty
+                    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+                    // We synchronize access to the image/imageLoading pair of variables
+                    @synchronized (self) {
+                        self->_children = newChildren;
+                        _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
+                    }
+                    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
                 }
-                [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
-            }
-            
-        }];
-    }
+
+            }];
+        }
     }
 }
 
@@ -422,9 +427,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             /* This is a new Branch Item that will contain the URL*/
             child = [TreeItem treeItemForURL:pathURL parent:self];
             if (child!=nil) {
-            @synchronized(cursor) {
-                [cursor->_children addObject:child];
-            }
+                @synchronized(cursor) {
+                    [cursor->_children addObject:child];
+                }
             }
             else {
                 NSLog(@"Couldn't create path %@",pathURL);
@@ -517,7 +522,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                     total += [size longLongValue];
                 }
                 else {
-                     invalid = true;
+                    invalid = true;
                     break;
                 }
             }

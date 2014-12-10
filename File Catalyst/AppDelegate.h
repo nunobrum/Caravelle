@@ -16,13 +16,12 @@
     BrowserController *myRightView;
     //__weak LeftDataSource *_RightDataSrc;
 }
-@property (unsafe_unretained) IBOutlet NSWindow *window;
+@property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
 @property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
 @property (weak) IBOutlet NSTextField *statusProgressLabel;
 
-@property (unsafe_unretained) IBOutlet NSWindow *myWindow;
 @property (weak) IBOutlet NSButton *statusCancelButton;
 
 - (IBAction)FindDuplicates:(id)sender;

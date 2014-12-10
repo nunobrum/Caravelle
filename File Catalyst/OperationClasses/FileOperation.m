@@ -85,10 +85,10 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             if (newURL) {
                                 [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                             }
-                            else {
+                            //else {
                                 // Just refresh the Folder
-                                [dest refreshContentsOnQueue:operationsQueue];
-                            }
+                            //    [dest refreshContentsOnQueue:operationsQueue];
+                            //}
                             opDone++;
                             if ([self isCancelled]) break;
                         }

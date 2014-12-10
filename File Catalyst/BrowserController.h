@@ -18,7 +18,7 @@ extern NSString *notificationStatusUpdate;
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate>{
+@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol>{
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
@@ -116,10 +116,13 @@ extern NSString *notificationCatalystRootUpdate;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;
 -(BOOL) selectFolderByURL:(NSURL*)theURL;
 -(TreeBranch*) getItemByURL:(NSURL*)theURL;
--(void) startBusyAnimations;
+-(void) startAllBusyAnimations;
+-(void) startTableBusyAnimations;
 -(void) stopBusyAnimations;
 -(NSArray*) getSelectedItems;
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
+
+
 
 @end

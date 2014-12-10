@@ -670,7 +670,6 @@ CA
                 <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>
                 <outlet property="statusProgressLabel" destination="Clz-g3-ghw" id="bjP-th-9Hn"/>
-                <outlet property="window" destination="2037" id="2039"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>

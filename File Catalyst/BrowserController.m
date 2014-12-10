@@ -165,13 +165,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else {
         ret = [item branchAtIndex:index];
     }
-    // Use KVO to observe for changes of its children Array
-    [self observeItem:ret];
-    if (_viewMode==BViewBrowserMode) {
-        [(TreeBranch*)ret refreshContentsOnQueue:_browserOperationQueue];
-    }
-    else {
-        [self refreshDataView];
+    if ([ret isKindOfClass:[TreeBranch class]]) {
+        // Use KVO to observe for changes of its children Array
+        [self observeItem:ret];
+        if (_viewMode==BViewBrowserMode) {
+            if ([(TreeBranch*)ret needsRefresh]) {
+                [(TreeBranch*)ret refreshContentsOnQueue:_browserOperationQueue];
+            }
+        }
+        else {
+            [self refreshDataView];
+        }
     }
     return ret;
 }
@@ -331,7 +335,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 // Use KVO to observe for changes of its children Array
                 [self observeItem:_treeNodeSelected];
                 if (_viewMode==BViewBrowserMode) {
-                    [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                    if ([_treeNodeSelected needsRefresh]) {
+                        [self startTableBusyAnimations];
+                        [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                    }
                 }
                 [self refreshDataView];
             }
@@ -653,10 +660,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 #pragma mark Action Selectors
 
 // !!! TODO: Put here the code for the after Grouping/search button
-//- (IBAction)tableSelected:(id)sender {
-//    _focusedView = _myTableView;
+- (IBAction)tableSelected:(id)sender {
+    _focusedView = sender;
 //    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
-//}
+}
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)OutlineDoubleClickEvent:(id)sender {
@@ -697,7 +704,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // Use KVO to observe for changes of its children Array
             [self observeItem:_treeNodeSelected];
             if (_viewMode==BViewBrowserMode) {
-                [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                if ([_treeNodeSelected needsRefresh]) {
+                    [self startTableBusyAnimations];
+                    [_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                }
             }
             else {
                 [self refreshDataView];
@@ -1123,7 +1133,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self refreshTrees];
         tableData = nil;
         [_myTableView reloadData];
-        [self startBusyAnimations];
+        [self startAllBusyAnimations];
         _viewMode = viewMode;
     }
 }
@@ -1428,15 +1438,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_myFileViewProgressIndicator setHidden:YES];
 	[_myOutlineProgressIndicator stopAnimation:self];
     [_myFileViewProgressIndicator stopAnimation:self];
+    //NSLog(@"stop Busy animations %@", self);
 
 }
 
--(void) startBusyAnimations {
+-(void) startAllBusyAnimations {
     [_myOutlineProgressIndicator setHidden:NO];
     [_myFileViewProgressIndicator setHidden:NO];
 	[_myOutlineProgressIndicator startAnimation:self];
     [_myFileViewProgressIndicator startAnimation:self];
+    //NSLog(@"start All Busy animations %@", self);
 
+}
+
+-(void) startTableBusyAnimations {
+    [_myFileViewProgressIndicator setHidden:NO];
+    [_myFileViewProgressIndicator startAnimation:self];
+    //NSLog(@"start Table Busy animations %@", self);
+    
 }
 
 
@@ -1456,6 +1475,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSURL *url = _mruLocation[_mruPointer];
         [self selectFolderByURL:url];
     }
+}
+
+#pragma mark - MYViewProtocol
+-(NSString *) title {
+    NSURL *root_url = [_rootNodeSelected url];
+    return [root_url lastPathComponent];
 }
 
 @end

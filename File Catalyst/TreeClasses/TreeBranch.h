@@ -65,7 +65,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 
--(void)refreshContentsOnQueue: (NSOperationQueue *) queue;
+-(BOOL) needsRefresh;
+-(void) refreshContentsOnQueue: (NSOperationQueue *) queue;
 
 
 // Private Method

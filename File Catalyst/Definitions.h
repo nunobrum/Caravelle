@@ -67,5 +67,10 @@ typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
 };
 extern NSString *kOptionsKey;
 
+@protocol MYViewProtocol <NSObject>
+
+-(NSString*) title;
+
+@end
 
 #endif

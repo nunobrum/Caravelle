@@ -122,7 +122,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [(BrowserController*)view removeAll];
         [(BrowserController*)view setViewMode:BViewBrowserMode];
         [(BrowserController*)view addTreeRoot: item];
-        [(BrowserController*)view selectFirstRoot];
     }
 }
 
@@ -173,9 +172,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:nil];
-    //[center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:myRightView];
+
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:nil];
-    //[center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:myRightView];
 
     [center addObserver:self selector:@selector(refreshAllViews:) name:notificationRefreshViews object:nil];
 
@@ -210,11 +208,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
-        // Right side
-        [self goHome: myRightView]; // Display the User Preferences Left Home
 
         // Left Side
         [self goHome: myLeftView]; // Display the User Preferences Left Home
+        // Right side
+        [self goHome: myRightView]; // Display the User Preferences Left Home
+
+        NSLog(@"Finished Go Home");
+        [(BrowserController*)myLeftView selectFirstRoot];
+        [(BrowserController*)myRightView selectFirstRoot];
+        [(BrowserController*)myLeftView refreshTrees];
+        [(BrowserController*)myRightView refreshTrees];
+
         if (0) { // Testing Catalyst Mode
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -400,7 +405,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                                        alternateButton:nil
                                            otherButton:nil
                              informativeTextWithFormat:@"Please click the \"Stop\" button before closing."];
-		[alert beginSheetModalForWindow:[self window] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+		[alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 	}
 
 	return (numOperationsRunning == 0);
@@ -482,7 +487,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (IBAction)toolbarHome:(id)sender {
-    [self goHome:selectedView];
+    if ([sender isKindOfClass:[BrowserController class]]) {
+        [self goHome:selectedView];
+        [(BrowserController*)selectedView selectFirstRoot];
+        [(BrowserController*)selectedView refreshTrees];
+    }
 }
 
 - (IBAction)operationCancel:(id)sender {
@@ -564,6 +573,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     static NSUInteger dupShow = 0;
     NSString *statusText;
     selectedView = [theNotification object];
+    // Updates the window Title
+    NSArray *titleComponents = [NSArray arrayWithObjects:@"File Catalyst",
+                                [myLeftView title],
+                                [myRightView title], nil];
+    NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
+    [[self myWindow] setTitle:windowTitle];
+
     if ([selectedView isKindOfClass:[BrowserController class]]) {
 
         NSArray *selectedFiles = [selectedView getSelectedItems];
@@ -718,9 +734,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     moveURLToURL(sourceURL, destinationURL);
 
                 }
-                // !!! TODO: Its important now to put the notification from file system to work
-                // Otherwise this won't be reflected on the Browser
-                //[(TreeManager*)appTreeManager addTreeItemWithURL:destinationURL];
+                // The file system notifications will make sure that the views are updated
                 break;
             case FileExistsSkip:
                 /* Basically we don't do nothing */
@@ -758,6 +772,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     [fileExistsWindow showWindow:self];
             }
             else {
+                // Failed to created either the source or the destination. Not likely to happen but...
                 // TODO: Messagebox with alert
             }
         }
