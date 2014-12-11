@@ -97,4 +97,10 @@ NSDictionary *columnInfo () {
 }
 
 
+// This method is here so that service menu is blocked in the column headers
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType {
+    return nil;
+}
+
 @end
