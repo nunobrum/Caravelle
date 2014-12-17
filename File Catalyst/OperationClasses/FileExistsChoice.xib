@@ -38,7 +38,7 @@
                     </button>
                     <button toolTip="Press shift to apply to all remaining files" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oWX-a1-P95">
                         <rect key="frame" x="116" y="49" width="123" height="19"/>
-                        <buttonCell key="cell" type="roundRect" title="Source" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s1i-93-epH">
+                        <buttonCell key="cell" type="roundRect" title="Overwrite" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s1i-93-epH">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
                         </buttonCell>
@@ -64,7 +64,7 @@
                     </textField>
                     <button toolTip="Press shift to apply to all remaining files" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CrI-g6-RFo">
                         <rect key="frame" x="247" y="49" width="122" height="19"/>
-                        <buttonCell key="cell" type="roundRect" title="Destination" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
+                        <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
                         </buttonCell>

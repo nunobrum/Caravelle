@@ -317,13 +317,14 @@
 #pragma mark  NSPasteboardReading support
 
 + (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
-    return [NSArray arrayWithObjects: //(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem,
-            (id)NSFilenamesPboardType, (id)NSURLPboardType, OwnUTITypes nil];
-
+    //return [NSArray arrayWithObjects: //(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem,
+    //        (id)NSFilenamesPboardType, (id)NSURLPboardType, OwnUTITypes nil];
+    return [NSURL readableTypesForPasteboard:pasteboard];
 }
 
 + (NSPasteboardReadingOptions)readingOptionsForType:(NSString *)type pasteboard:(NSPasteboard *)pasteboard {
-    return NSPasteboardReadingAsString;
+    //return NSPasteboardReadingAsString;
+    return [NSURL readingOptionsForType:type pasteboard:pasteboard];
 }
 
 - (id)initWithPasteboardPropertyList:(id)propertyList ofType:(NSString *)type {

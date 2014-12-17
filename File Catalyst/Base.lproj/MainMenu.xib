@@ -63,8 +63,8 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="File" id="83">
-                    <menu key="submenu" title="File" id="81">
+                <menuItem title="Folders" id="83">
+                    <menu key="submenu" title="Folders" id="81">
                         <items>
                             <menuItem title="New" keyEquivalent="n" id="82">
                                 <connections>
@@ -86,25 +86,6 @@
                                         </menuItem>
                                     </items>
                                 </menu>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="79">
-                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
-                            </menuItem>
-                            <menuItem title="Close" keyEquivalent="w" id="73">
-                                <connections>
-                                    <action selector="performClose:" target="-1" id="193"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Save…" keyEquivalent="s" id="75">
-                                <connections>
-                                    <action selector="saveDocument:" target="-1" id="362"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Revert to Saved" id="112">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="revertDocumentToSaved:" target="-1" id="364"/>
-                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="LCy-Ep-2Zd"/>
                             <menuItem title="Duplicate Finder" id="qJs-p7-soh">
@@ -130,8 +111,8 @@
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="Edit" id="217">
-                    <menu key="submenu" title="Edit" id="205">
+                <menuItem title="Actions" id="217">
+                    <menu key="submenu" title="Actions" id="205">
                         <items>
                             <menuItem title="Undo" keyEquivalent="z" id="207">
                                 <connections>
@@ -144,7 +125,7 @@
                                     <action selector="redo:" target="-1" id="231"/>
                                 </connections>
                             </menuItem>
-                            <menuItem isSeparatorItem="YES" id="206">
+                            <menuItem isSeparatorItem="YES" title="Clipboard" id="206">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Cut" keyEquivalent="x" id="199">
@@ -162,11 +143,8 @@
                                     <action selector="paste:" target="-1" id="226"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Paste and Match Style" keyEquivalent="V" id="485">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="pasteAsPlainText:" target="-1" id="486"/>
-                                </connections>
+                            <menuItem isSeparatorItem="YES" title="Clipboard" id="xBp-D3-lSS">
+                                <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
                             <menuItem title="Delete" id="202">
                                 <string key="keyEquivalent" base64-UTF8="YES">
@@ -602,29 +580,17 @@ CA
                         </items>
                     </menu>
                 </menuItem>
-                <menuItem title="View" id="295">
-                    <menu key="submenu" title="View" id="296">
-                        <items>
-                            <menuItem title="Show Toolbar" keyEquivalent="t" id="297">
-                                <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                                <connections>
-                                    <action selector="toggleToolbarShown:" target="-1" id="366"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Customize Toolbar…" id="298">
-                                <connections>
-                                    <action selector="runToolbarCustomizationPalette:" target="-1" id="365"/>
-                                </connections>
-                            </menuItem>
-                        </items>
-                    </menu>
-                </menuItem>
                 <menuItem title="Window" id="19">
                     <menu key="submenu" title="Window" systemMenu="window" id="24">
                         <items>
                             <menuItem title="Minimize" keyEquivalent="m" id="23">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="37"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Close" keyEquivalent="w" id="73">
+                                <connections>
+                                    <action selector="performClose:" target="-1" id="193"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Zoom" id="239">
@@ -665,7 +631,6 @@ CA
                 <outlet property="ebRenameHead" destination="JWI-dr-kQs" id="aGE-nn-oEA"/>
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
                 <outlet property="panelRename" destination="RCG-M3-pEY" id="qTX-lu-rWU"/>
-                <outlet property="renameAction" destination="QjZ-z6-Zgc" id="jcS-Hx-bYt"/>
                 <outlet property="renameCancel" destination="gC1-cd-ic5" id="a34-jf-Cz5"/>
                 <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>

@@ -72,6 +72,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
+    BOOL isCutPending;
+    NSInteger generalPasteBoardChangeCount;
 }
 
 // -------------------------------------------------------------------------------
@@ -94,6 +96,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         NSValueTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
 
+        isCutPending = NO; // used for the Cut to Clipboard operations.
         //FSMonitorThread = [[FileSystemMonitoring alloc] init];
 
 	}
@@ -275,6 +278,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [_ContentSplitView setNeedsDisplay:YES];
 }
 
+-(void) applicationWillTerminate:(NSNotification *)aNotification {
+    // !!! TODO: applicationWillTerminate :Save Application State
+}
+//When the app is deactivated
+-(void) applicationWillResignActive:(NSNotification *)aNotification {
+    // !!! TODO: applicationWillResignActive :Save Application State
+}
+//When the user hides your app (
+-(void) applicationWillHide:(NSNotification *)aNotification {
+    // !!! TODO: applicationWillHide :Save Application State
+}
+
 #pragma mark Services Support
 /* Services Pasteboard Operations */
 
@@ -290,6 +305,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     return nil;
 }
 
+
+/* This function  is used for the Services Menu */
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
@@ -519,6 +536,86 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 }
 
+
+- (IBAction)cut:(id)sender {
+    // The cut: is identical to the copy: but the isCutPending is activated.
+    // Its on the paste operation that the a decision is taken whether the cut
+    // Can be done, if the application still maintains ownership of the pasteboard
+    [self copy:sender];
+    isCutPending = YES;
+}
+- (IBAction)copy:(id)sender {
+
+    // Get the urls from the view
+    NSArray* items = [selectedView getSelectedItems];
+    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+    // Will create name list for text application paste
+    NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
+    // Join the paths, one name per line
+    NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
+
+    // Get The clipboard
+    NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
+
+    // Store the Pasteboard counter for later to check ownership
+    generalPasteBoardChangeCount = [clipboard changeCount];
+    isCutPending = NO;
+
+    // !!! TODO: multi copy, where an additional copy will append items to the pasteboard
+
+    [clipboard clearContents];
+    [clipboard writeObjects:urls];
+    //Now add the pathsPerLine as a string
+    [clipboard setString:pathPerLine forType:NSStringPboardType];
+
+    NSUInteger count = [urls count];
+    NSString *statusText;
+    if (count==0) {
+        statusText = [NSString stringWithFormat:@"No files selected"];
+    } else if (count==1) {
+        statusText = [NSString stringWithFormat:@"%lu file copied", (unsigned long)count];
+    }
+    else {
+        statusText = [NSString stringWithFormat:@"%lu files copied", (unsigned long)count];
+    }
+    [_StatusBar setTitle:statusText];
+}
+
+- (IBAction)paste:(id)sender {
+    NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
+                             NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
+                             nil];
+    NSArray *files = [clipboard readObjectsForClasses:
+                      [NSArray arrayWithObjects: [NSURL class], nil]
+                                        options:options];
+    if (files!=nil && [files count]>0) {
+        if (isCutPending) {
+            if (generalPasteBoardChangeCount == [clipboard changeCount]) {
+                // Make the move
+                moveItemsToBranch(files, [selectedView treeNodeSelected]);
+                // TODO: Update the Status bar with the information of a copy
+            }
+            else {
+                // TODO: Display a warning saying that the application lost control of the clipboard
+                // and that the cut cannot be done. Will be aborted.
+            }
+        }
+        else { // Make a regular copy
+            copyItemsToBranch(files, [selectedView treeNodeSelected]);
+            // TODO: Update the Status bar with the information of a copy
+        }
+    }
+    else
+        [_StatusBar setTitle: @"Nothing to paste"];
+}
+
+-(IBAction)delete:(id)sender {
+    [self toolbarDelete:sender];
+}
+
 #pragma mark Operations Handling
 /* Called for the notificationDoFileOperation notification */
 -(void) handleOperationInformation: (NSNotification*) note
@@ -740,8 +837,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 /* Basically we don't do nothing */
                 break;
             case FileExistsReplace:
-                /* Erase the file */
-                /* ... and copy again  */
+                // !!! TODO:   Erase the file ... and copy again.
 
                 break;
 
@@ -837,12 +933,35 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 /* NSTextFieldDelegate Notifications and Delegates */
 
-- (void)controlTextDidEndEditing:(NSNotification *)obj {
-    id object = [obj object];
-    if (object == _ebRenameHead || object == _ebRenameExtension) {
-        // Should validate and close the rename dialog
-        [self renameAction:object];
+//- (void)controlTextDidEndEditing:(NSNotification *)obj {
+//    id object = [obj object];
+//    if (object == _ebRenameHead || object == _ebRenameExtension) {
+//        // Should validate and close the rename dialog
+//        [self renameAction:object];
+//    }
+//}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
+{
+    NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+    if (commandSelector == @selector(insertNewline:)) {
+        if (control == _ebRenameHead || control == _ebRenameExtension) {
+            //Do something against ENTER key
+            [self renameAction:nil];
+            return YES;
+        }
     }
+//    } else if (commandSelector == @selector(deleteForward:)) {
+//        //Do something against DELETE key
+//
+//    } else if (commandSelector == @selector(deleteBackward:)) {
+//        //Do something against BACKSPACE key
+//
+//    } else if (commandSelector == @selector(insertTab:)) {
+//        //Do something against TAB key
+//    }
+
+    return NO;
 }
 
 - (IBAction)renameAction:(id)sender {

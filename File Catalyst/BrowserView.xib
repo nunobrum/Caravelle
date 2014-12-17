@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6245"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
@@ -465,11 +466,26 @@
                 </menuItem>
                 <menuItem title="Delete" id="AiJ-65-eUG">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="delete:" target="-1" id="3jf-Kv-bR7"/>
+                    </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
-                <menuItem title="Cut" keyEquivalent="x" id="say-To-m67"/>
-                <menuItem title="Copy" keyEquivalent="c" id="Fn1-51-4VD"/>
-                <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO"/>
+                <menuItem title="Cut" keyEquivalent="x" id="say-To-m67">
+                    <connections>
+                        <action selector="cut:" target="-1" id="eQo-ko-r1k"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Copy" keyEquivalent="c" id="Fn1-51-4VD">
+                    <connections>
+                        <action selector="copy:" target="-1" id="aJg-us-Sug"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO">
+                    <connections>
+                        <action selector="paste:" target="-1" id="1Aa-yt-CCl"/>
+                    </connections>
+                </menuItem>
             </items>
         </menu>
     </objects>

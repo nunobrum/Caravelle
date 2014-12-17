@@ -42,6 +42,11 @@
 
 - (IBAction)operationCancel:(id)sender;
 
+- (IBAction)cut:(id)sender;
+- (IBAction)copy:(id)sender;
+- (IBAction)paste:(id)sender;
+- (IBAction)delete:(id)sender;
+
 /* Rename Dialog */
 @property (weak) IBOutlet NSTextField *ebRenameHead;
 @property (weak) IBOutlet NSTextField *ebRenameExtension;
