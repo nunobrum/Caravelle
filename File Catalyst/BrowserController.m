@@ -319,8 +319,19 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSInteger SelectedCount = [rowsSelected count];
         _focusedView = _myOutlineView;
         if (!_didRegisterDraggedTypes) {
-            [_myOutlineView registerForDraggedTypes:[NSArray arrayWithObjects: OwnUTITypes (id)kUTTypeFolder, NSFilenamesPboardType, nil]];
-            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects: OwnUTITypes (id)kUTTypeFolder, (id)kUTTypeFileURL, NSFilenamesPboardType, nil]];
+            [_myOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:
+                                                     //OwnUTITypes
+                                                     //(id)kUTTypeFolder,
+                                                     NSFilenamesPboardType,
+                                                     NSURLPboardType,
+                                                     nil]];
+            [_myTableView registerForDraggedTypes:[NSArray arrayWithObjects:
+                                                   //OwnUTITypes
+                                                   //(id)kUTTypeFolder,
+                                                   //(id)kUTTypeFileURL,
+                                                   NSFilenamesPboardType,
+                                                   NSURLPboardType,
+                                                   nil]];
             _didRegisterDraggedTypes = YES;
         }
         if (SelectedCount ==0) {
@@ -469,6 +480,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /*
  * Table Data View Delegate Protocol
  */
+
+
+/* 
+ * This will enable the View to respond to Keys and mouse events
+ * Will take what is interesting to process, such as normal keys for file navigation, 
+ * Copy, Cut and Paste : to decide if processed here if sent to AppDelegate.
+ */
+
+-(BOOL) acceptsFirstResponder {
+    return YES;
+}
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
