@@ -466,7 +466,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)toolbarDelete:(id)sender {
     NSArray *selectedFiles = [selectedView getSelectedItems];
     sendItemsToRecycleBin(selectedFiles);
-    NSLog(@"Menu Delete clicked");
 }
 
 
@@ -541,79 +540,98 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     // The cut: is identical to the copy: but the isCutPending is activated.
     // Its on the paste operation that the a decision is taken whether the cut
     // Can be done, if the application still maintains ownership of the pasteboard
-    [self copy:sender];
-    isCutPending = YES;
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
+        // First will mark the selected files to move
+        NSArray* items = [selectedView getSelectedItems];
+        for (TreeItem *item in items) {
+            [item setTag:tagTreeItemToMove+tagTreeItemDirty];
+        }
+        [(BrowserController*)sender refreshTableView];
+        [self copy:sender];
+        isCutPending = YES;
+    }
 }
 - (IBAction)copy:(id)sender {
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
 
-    // Get the urls from the view
-    NSArray* items = [selectedView getSelectedItems];
-    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
-    // Will create name list for text application paste
-    NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
-    // Join the paths, one name per line
-    NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
+        // Get the urls from the view
+        NSArray* items = [selectedView getSelectedItems];
+        NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+        // Will create name list for text application paste
+        NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
+        // Join the paths, one name per line
+        NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
 
-    // Get The clipboard
-    NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
+        // Get The clipboard
+        NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
 
-    // Store the Pasteboard counter for later to check ownership
-    generalPasteBoardChangeCount = [clipboard changeCount];
-    isCutPending = NO;
+        // Store the Pasteboard counter for later to check ownership
+        generalPasteBoardChangeCount = [clipboard changeCount];
+        isCutPending = NO;
 
-    // !!! TODO: multi copy, where an additional copy will append items to the pasteboard
+        // !!! TODO: multi copy, where an additional copy will append items to the pasteboard
 
-    [clipboard clearContents];
-    [clipboard writeObjects:urls];
-    //Now add the pathsPerLine as a string
-    [clipboard setString:pathPerLine forType:NSStringPboardType];
+        [clipboard clearContents];
+        [clipboard writeObjects:urls];
+        //Now add the pathsPerLine as a string
+        [clipboard setString:pathPerLine forType:NSStringPboardType];
 
-    NSUInteger count = [urls count];
-    NSString *statusText;
-    if (count==0) {
-        statusText = [NSString stringWithFormat:@"No files selected"];
-    } else if (count==1) {
-        statusText = [NSString stringWithFormat:@"%lu file copied", (unsigned long)count];
+        NSUInteger count = [urls count];
+        NSString *statusText;
+        if (count==0) {
+            statusText = [NSString stringWithFormat:@"No files selected"];
+        } else if (count==1) {
+            statusText = [NSString stringWithFormat:@"%lu file copied", (unsigned long)count];
+        }
+        else {
+            statusText = [NSString stringWithFormat:@"%lu files copied", (unsigned long)count];
+        }
+        [_StatusBar setTitle:statusText];
     }
-    else {
-        statusText = [NSString stringWithFormat:@"%lu files copied", (unsigned long)count];
-    }
-    [_StatusBar setTitle:statusText];
 }
 
 - (IBAction)paste:(id)sender {
-    NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
 
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
-                             NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
-                             nil];
-    NSArray *files = [clipboard readObjectsForClasses:
-                      [NSArray arrayWithObjects: [NSURL class], nil]
-                                        options:options];
-    if (files!=nil && [files count]>0) {
-        if (isCutPending) {
-            if (generalPasteBoardChangeCount == [clipboard changeCount]) {
-                // Make the move
-                moveItemsToBranch(files, [selectedView treeNodeSelected]);
+        NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+
+        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
+                                 NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
+                                 nil];
+        NSArray *files = [clipboard readObjectsForClasses:
+                          [NSArray arrayWithObjects: [NSURL class], nil]
+                                                  options:options];
+        if (files!=nil && [files count]>0) {
+            if (isCutPending) {
+                if (generalPasteBoardChangeCount == [clipboard changeCount]) {
+                    // Make the move
+                    moveItemsToBranch(files, [selectedView treeNodeSelected]);
+                    // TODO: Update the Status bar with the information of a copy
+                }
+                else {
+                    // TODO: Display a warning saying that the application lost control of the clipboard
+                    // and that the cut cannot be done. Will be aborted.
+                }
+            }
+            else { // Make a regular copy
+                copyItemsToBranch(files, [selectedView treeNodeSelected]);
                 // TODO: Update the Status bar with the information of a copy
             }
-            else {
-                // TODO: Display a warning saying that the application lost control of the clipboard
-                // and that the cut cannot be done. Will be aborted.
-            }
         }
-        else { // Make a regular copy
-            copyItemsToBranch(files, [selectedView treeNodeSelected]);
-            // TODO: Update the Status bar with the information of a copy
-        }
+        else
+            [_StatusBar setTitle: @"Nothing to paste"];
     }
-    else
-        [_StatusBar setTitle: @"Nothing to paste"];
 }
 
 -(IBAction)delete:(id)sender {
-    [self toolbarDelete:sender];
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
+        [self toolbarDelete:sender];
+    }
 }
 
 #pragma mark Operations Handling

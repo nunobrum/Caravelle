@@ -173,9 +173,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [(TreeBranch*)ret refreshContentsOnQueue:_browserOperationQueue];
             }
         }
-        else {
-            [self refreshDataView];
-        }
+//        else {
+//            [self refreshDataView];
+//        }
     }
     return ret;
 }
@@ -340,7 +340,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
                     }
                 }
-                [self refreshDataView];
+                // No need to keep the selection here since the folder is being changed
+                [self refreshTableView];
             }
         }
         else {
@@ -710,7 +711,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
             }
             else {
-                [self refreshDataView];
+                // No need to keep selection, since _treeNodeSelected is being updated
+                [self refreshTableView];
             }
             break; /* Only one Folder can be Opened */
         }
@@ -789,7 +791,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (IBAction)FilterChange:(id)sender {
     _filterText = [sender stringValue];
-    [self refreshDataView];
+    [self refreshTableViewKeepingSelections];
 }
 
 
@@ -950,19 +952,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
         // !!! TODO: Put here a timer for opening the Folder
+        // Recording time and first time
+        // if not first time and recorded time > 3 seconds => open folder
     }
     return [self validateDrop:info];
 }
 
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
-    if (item==nil) {
-        NSLog(@"This corresponds to the root level !!!! This needs a special condition here");
-        assert(false);
-    }
-    else {
+    if (item!=nil) {
         _validatedDestinationItem = item;
+        return [self validateDrop:info];
     }
-    return [self validateDrop:info];
+    return NSDragOperationNone;
 }
 
 - (BOOL) acceptDrop:(id < NSDraggingInfo >)info  {
@@ -971,7 +972,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
     if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
-        // !!! TODO: Dropping Application on top of file or File on top of Application
+        // TODO: !! Dropping Application on top of file or File on top of Application
         NSLog(@"Not impplemented open the file with the application");
         // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
     }
@@ -984,7 +985,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             moveItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
             fireNotfication = YES;            }
         else if (_validatedOperation == NSDragOperationLink) {
-            // !!! TODO: Operation Link
+            // TODO: !! Operation Link
         }
         else {
             // Unsupported !!!
@@ -992,6 +993,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     }
     if (fireNotfication==YES) {
+        // TODO: ! Optimization Replace this notification with a simpler method
+        // [NSApp sendAction:@selector(handleOperationInformation:)to:nil from:self];
+        // TODO: !! The copy and move operations done above, should be preferably be done in the AppDelegate
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:nil];
     }
     else
@@ -1040,7 +1044,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger row = [_myOutlineView rowForItem:object];
     if (object == _treeNodeSelected) {
         /*If it is the selected Folder make a refresh*/
-        [self refreshDataView];
+        [self refreshTableViewKeepingSelections];
     }
     if (row >= 0 && row != NSNotFound) {
         // !!! Consider calling the viewForTableColumn: method here.
@@ -1119,7 +1123,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /*
  * Parent access routines
  */
-// !!! TODO: Create a initAfterLoad routine to decouple from the setView.
+// TODO:! Create a initAfterLoad routine to decouple from the setView.
 // This routine should define the Column AutoSave
 // (See TableView setAutosaveTableColumns:)
 
@@ -1153,7 +1157,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_filterText = filterText;
 }
 
--(void) refreshDataView {
+-(void) refreshTableView {
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([_treeNodeSelected isKindOfClass:[TreeBranch class]]){
@@ -1188,9 +1192,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_myTableView reloadData];
 }
 
+-(void) refreshTableViewKeepingSelections {
+    // Storing Selected URLs
+    NSArray *selectedURLs = [self getTableViewSelectedURLs];
+    // Refreshing the View
+    [self refreshTableView];
+    // Reselect stored selections
+    [self setTableViewSelectedURLs:selectedURLs];
+}
+
 -(void) refreshTrees {
     if (_viewMode!=BViewBrowserMode) {
-        // !!! TODO: In catalyst Mode, there is no automatic Update
+        // TODO:! In catalyst Mode, there is no automatic Update
     }
     else {
         // Refresh first the Roots, deletes the ones tagged for deletion
@@ -1221,7 +1234,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 
     [_myOutlineView reloadData];
-    [self refreshDataView];
+    [self refreshTableViewKeepingSelections];
 }
 
 -(void) addTreeRoot:(TreeBranch*)theRoot {
@@ -1260,27 +1273,27 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     tableData = nil;
 }
 
-- (void) removeSelectedDirectory {
-    /* gets the selected item */
-    NSInteger fileSelected = [_myOutlineView selectedRow];
-    NSInteger level = [_myOutlineView levelForRow:fileSelected];
-    /* then finds the corresponding item */
-
-    if (level==0) {
-        /*If it is a root
-         Will delete the tree Root and sub Directories */
-        [self removeRoot: [_myOutlineView itemAtRow:fileSelected]];
-        // Redraws the outline view
-    }
-    else {
-        // Will send the corresponding file to recycle bin
-        // !!! TODO: Routine to delete a directory
-        TreeItem *fileOrDirectory = [_myOutlineView itemAtRow: fileSelected];
-        [fileOrDirectory removeItem];
-    }
-    [_myOutlineView reloadItem:nil reloadChildren:YES];
-
-}
+//  TODO:!!! Test how a removal of the root directory works
+//- (void) removeSelectedDirectory {
+//    /* gets the selected item */
+//    NSInteger fileSelected = [_myOutlineView selectedRow];
+//    NSInteger level = [_myOutlineView levelForRow:fileSelected];
+//    /* then finds the corresponding item */
+//
+//    if (level==0) {
+//        /*If it is a root
+//         Will delete the tree Root and sub Directories */
+//        [self removeRoot: [_myOutlineView itemAtRow:fileSelected]];
+//        // Redraws the outline view
+//    }
+//    else {
+//        // Will send the corresponding file to recycle bin
+//        TreeItem *fileOrDirectory = [_myOutlineView itemAtRow: fileSelected];
+//        [fileOrDirectory removeItem];
+//    }
+//    [_myOutlineView reloadItem:nil reloadChildren:YES];
+//
+//}
 
 
 // This method checks if a root can be added to existing set.
@@ -1302,6 +1315,45 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //    }
 //    return collection;
 //}
+
+-(NSURL*) getTreeViewSelectedURL {
+    NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
+    if ([rowsSelected count]==0)
+        return nil;
+    else {
+        // using collection operator to get the array of the URLs from the selected Items
+        return [[_myOutlineView itemAtRow:[rowsSelected firstIndex]] url];
+    }
+}
+
+-(NSArray*) getTableViewSelectedURLs {
+    NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
+    if ([rowsSelected count]==0)
+        return nil;
+    else {
+        // using collection operator to get the array of the URLs from the selected Items
+        NSArray *selectedItems = [tableData objectsAtIndexes:rowsSelected];
+        if (selectedItems!=nil && [selectedItems count]>0) {
+            return [selectedItems valueForKeyPath:@"@unionOfObjects.url"];
+        }
+        else {
+            return nil;
+        }
+    }
+}
+
+-(void) setTableViewSelectedURLs:(NSArray*) urls {
+    if (urls!=nil && [urls count]>0) {
+        NSIndexSet *select = [tableData indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+            NSLog(@"Test %@ %lu", [item path], index);
+            if ([urls indexOfObject:[item url]]!=NSNotFound)
+                return YES;
+            else
+                return NO;
+        }];
+        [_myTableView selectRowIndexes:select byExtendingSelection:NO];
+    }
+}
 
 -(NSArray*) getSelectedItems {
     NSArray* answer = nil;
@@ -1378,7 +1430,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 if (lastBranch) {
                     [self setPathBarToItem:lastBranch];
                     [self outlineSelectExpandNode:lastBranch];
-                    [self refreshDataView];
+                    [self refreshTableView];
                     return YES;
                 }
             }
