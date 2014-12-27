@@ -205,6 +205,14 @@ BOOL renameFile(NSURL*url, NSString *newName) {
 //    return YES;
 //}
 
+
+BOOL createDirectoryAtURL(NSString *name, NSURL *parent) {
+    NSError *error;
+    // TODO:!!! Check what are the attributes that must be set. see umask(2) documentation
+    BOOL OK = [appFileManager createDirectoryAtURL:parent withIntermediateDirectories:NO attributes:nil error:&error];
+    return OK;
+}
+
 NSDictionary *getDiskInformation(NSURL *diskPath) {
     static NSMutableDictionary *diskInfos = nil; /* Used to store all the queries */
     DASessionRef session = nil;
