@@ -9,6 +9,9 @@
 #import "FileOperation.h"
 #import "FileUtils.h"
 
+//#define UPDATE_TREE
+
+
 NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 
 @implementation FileOperation
@@ -39,11 +42,13 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                      recycleURLs:urls // Using the completion block to send the notification
                      completionHandler:^(NSDictionary *newurls, NSError *error) {
                          if (error==nil) {
+#ifdef UPDATE_TREE
                              for (id item in items) {
                                  if ([item isKindOfClass:[TreeItem class]]) {
                                      [item removeItem];
                                  }
                              }
+#endif //UPDATE_TREE
                          }
                          [[NSNotificationCenter defaultCenter]
                           postNotificationName:notificationFinishedFileOperation
@@ -59,9 +64,11 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                         ok = eraseFile(item);
                     else if ([item isKindOfClass:[TreeItem class]]) {
                         ok = eraseFile([item url]);
+#ifdef UPDATE_TREE
                         if (ok) {
                             [item removeItem];
                         }
+#endif //UPDATE_TREE
                         opDone++;
                     }
                     if ([self isCancelled]) break;
@@ -82,13 +89,11 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 newURL = copyFileToDirectory(item, [dest url], newName);
                             else if ([item isKindOfClass:[TreeItem class]])
                                 newURL = copyFileToDirectory([item url], [dest url], newName);
+#ifdef UPDATE_TREE
                             if (newURL) {
                                 [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                             }
-                            //else {
-                                // Just refresh the Folder
-                            //    [dest refreshContentsOnQueue:operationsQueue];
-                            //}
+#endif //UPDATE_TREE
                             opDone++;
                             if ([self isCancelled]) break;
                         }
@@ -98,19 +103,23 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             NSURL *newURL = NULL;
                             if ([item isKindOfClass:[NSURL class]]) {
                                 newURL = moveFileToDirectory(item, [dest url], newName);
+#ifdef UPDATE_TREE
                                 if (newURL) {
                                     [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
-                                    opDone++;
                                 }
+#endif //UPDATE_TREE
+                                opDone++;
                             }
                             else if ([item isKindOfClass:[TreeItem class]]) {
                                 newURL = moveFileToDirectory([item url], [dest url], newName);
+#ifdef UPDATE_TREE
                                 if (newURL) {
                                     [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                     // Remove itself from the former parent
                                     [(TreeItem*)item removeItem];
-                                    opDone++;
                                 }
+#endif //UPDATE_TREE
+                                opDone++;
                             }
                             if ([self isCancelled]) break;
                         }
