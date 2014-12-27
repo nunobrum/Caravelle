@@ -26,7 +26,11 @@
                             <menuItem isSeparatorItem="YES" id="236">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Preferences…" keyEquivalent="," id="129"/>
+                            <menuItem title="Preferences…" keyEquivalent="," id="129">
+                                <connections>
+                                    <action selector="orderPreferencePanel:" target="-1" id="8BH-Ob-8Ek"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="143">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
@@ -927,7 +931,7 @@ CA
                             <action selector="renameAction:" target="494" id="v2R-7S-Vhi"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="213-xs-Ach">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="213-xs-Ach">
                         <rect key="frame" x="14" y="7" width="131" height="32"/>
                         <buttonCell key="cell" type="push" title="Content Based" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="N9c-q8-eA9">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -947,7 +951,7 @@ Gw
                             <action selector="renameCancel:" target="494" id="vFw-Je-aWO"/>
                         </connections>
                     </button>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JWI-dr-kQs">
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JWI-dr-kQs">
                         <rect key="frame" x="20" y="43" width="258" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="5kZ-u3-roX">
                             <font key="font" metaFont="system"/>
@@ -970,11 +974,73 @@ Gw
                         </connections>
                     </textField>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="JWI-dr-kQs" firstAttribute="leading" secondItem="zAr-7S-P8k" secondAttribute="leading" constant="20" symbolic="YES" id="C4a-9c-i30"/>
+                    <constraint firstAttribute="trailing" secondItem="Kw1-17-RAv" secondAttribute="trailing" constant="20" symbolic="YES" id="MFu-ey-AQj"/>
+                    <constraint firstItem="gC1-cd-ic5" firstAttribute="leading" secondItem="QjZ-z6-Zgc" secondAttribute="trailing" constant="12" symbolic="YES" id="NOK-Dw-Rgn"/>
+                    <constraint firstItem="213-xs-Ach" firstAttribute="top" secondItem="JWI-dr-kQs" secondAttribute="bottom" constant="8" symbolic="YES" id="cpY-KN-v9s"/>
+                    <constraint firstItem="JWI-dr-kQs" firstAttribute="baseline" secondItem="Kw1-17-RAv" secondAttribute="baseline" id="d9C-ZF-bqa"/>
+                    <constraint firstItem="JWI-dr-kQs" firstAttribute="top" secondItem="zAr-7S-P8k" secondAttribute="top" constant="20" symbolic="YES" id="dJ6-kV-JYo"/>
+                    <constraint firstItem="Kw1-17-RAv" firstAttribute="trailing" secondItem="gC1-cd-ic5" secondAttribute="trailing" id="eg2-a5-8MZ"/>
+                    <constraint firstItem="213-xs-Ach" firstAttribute="baseline" secondItem="QjZ-z6-Zgc" secondAttribute="baseline" id="gPf-cC-5C1"/>
+                    <constraint firstItem="QjZ-z6-Zgc" firstAttribute="baseline" secondItem="gC1-cd-ic5" secondAttribute="baseline" id="hdq-pV-K7v"/>
+                    <constraint firstItem="Kw1-17-RAv" firstAttribute="leading" secondItem="JWI-dr-kQs" secondAttribute="trailing" constant="3" id="seg-pJ-zIu"/>
+                    <constraint firstItem="JWI-dr-kQs" firstAttribute="leading" secondItem="213-xs-Ach" secondAttribute="leading" id="y9X-Rx-3Oh"/>
+                </constraints>
             </view>
             <point key="canvasLocation" x="139.5" y="-299.5"/>
         </window>
+        <window title="New Folder" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="3DB-7R-cc6" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="120" y="65" width="276" height="90"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
+            <view key="contentView" id="ZVL-3E-5En">
+                <rect key="frame" x="0.0" y="0.0" width="276" height="90"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Oq-Yx-wS3">
+                        <rect key="frame" x="20" y="48" width="236" height="22"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="ND3-kX-XXe">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MqD-At-ymP">
+                        <rect key="frame" x="180" y="12" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AbR-jY-Vqz">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y3a-bX-EWw">
+                        <rect key="frame" x="20" y="19" width="21" height="21"/>
+                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NU4-0f-Ov3">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kW8-zJ-nIy">
+                        <rect key="frame" x="98" y="12" width="82" height="32"/>
+                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yV6-gy-zhJ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                    </button>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="139" y="-522"/>
+        </window>
     </objects>
     <resources>
+        <image name="NSAddTemplate" width="8" height="8"/>
         <image name="NSBookmarksTemplate" width="17" height="12"/>
         <image name="NSFontPanel" width="32" height="32"/>
         <image name="NSHomeTemplate" width="14" height="13"/>

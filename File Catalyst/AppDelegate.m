@@ -20,6 +20,7 @@
 #import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
+#import "UserPreferencesDialog.h"
 
 
 // Debug CODE !!! To delete
@@ -69,6 +70,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
+    UserPreferencesDialog *userPreferenceWindow;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
@@ -280,14 +282,17 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 -(void) applicationWillTerminate:(NSNotification *)aNotification {
     // !!! TODO: applicationWillTerminate :Save Application State
+    NSLog(@"Application Will Terminate");
 }
 //When the app is deactivated
 -(void) applicationWillResignActive:(NSNotification *)aNotification {
     // !!! TODO: applicationWillResignActive :Save Application State
+    NSLog(@"Application Will Resign Active");
 }
-//When the user hides your app (
+//When the user hides your app
 -(void) applicationWillHide:(NSNotification *)aNotification {
     // !!! TODO: applicationWillHide :Save Application State
+    NSLog(@"Application Will Hide");
 }
 
 #pragma mark Services Support
@@ -424,7 +429,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                              informativeTextWithFormat:@"Please click the \"Stop\" button before closing."];
 		[alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 	}
-
+    // TODO:!!! Put here the remaining conditions to close
 	return (numOperationsRunning == 0);
 }
 
@@ -511,7 +516,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (IBAction)toolbarNewFolder:(id)sender {
-    // TODO: Implementation of the new Folder
+    // TODO:!!! Implementation of the new Folder
+}
+
+- (IBAction)orderPreferencePanel:(id)sender {
+    NSLog(@"Preference Panel");
+    if (userPreferenceWindow==nil)
+        userPreferenceWindow =[[UserPreferencesDialog alloc] initWithWindowNibName:@"UserPreferencesDialog"];
+    [userPreferenceWindow showWindow:self];
+
 }
 
 - (IBAction)operationCancel:(id)sender {
@@ -631,8 +644,14 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     [_StatusBar setTitle: statusText];
                 }
                 else {
-                    // TODO:!!! Display a warning saying that the application lost control of the clipboard
+                    // Display a warning saying that the application lost control of the clipboard
                     // and that the cut cannot be done. Will be aborted.
+                    NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the Cut operation !"
+                                                     defaultButton:@"OK"
+                                                   alternateButton:nil
+                                                       otherButton:nil
+                                         informativeTextWithFormat:@"Another application changed the System Clipboard."];
+                    [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
                 }
             }
             else { // Make a regular copy
@@ -797,7 +816,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)FindDuplicates:(id)sender {
     if (duplicateSettingsWindow==nil)
         duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
-    //NSWindow *wnd = [duplicateSettingsWindow window];
     [duplicateSettingsWindow showWindow:self];
 
 }
@@ -919,6 +937,12 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             else {
                 // Failed to created either the source or the destination. Not likely to happen but...
                 // TODO: Messagebox with alert
+                NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the operation !"
+                                                 defaultButton:@"OK"
+                                               alternateButton:nil
+                                                   otherButton:nil
+                                     informativeTextWithFormat:@"Failed to allocate memory."];
+                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             }
         }
         else {
