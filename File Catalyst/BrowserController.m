@@ -574,6 +574,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #endif
 
+#pragma mark Menu Handling 
+
+
+
 
 #pragma mark Path Bar Handling
 -(TreeBranch*) treeNodeSelected {
@@ -1062,42 +1066,109 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 #pragma mark - KVO Methods
 
 - (void)_reloadRowForEntity:(id)object {
-    //NSLog(@"Reloading %@", [object name]);
+    //NSLog(@"Reloading %@", [object path]);
     NSInteger row = [_myOutlineView rowForItem:object];
-    if (object == _treeNodeSelected) {
-        /*If it is the selected Folder make a refresh*/
-        [self refreshTableViewKeepingSelections];
-    }
     if (row >= 0 && row != NSNotFound) {
-        // !!! Consider calling the viewForTableColumn: method here.
-        NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
-        if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
-            [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+        // If it was deleted
+        if ([object hasTags:tagTreeItemRelease]) {
+            NSUInteger level = [_myOutlineView levelForRow:row];
+
+            if (level==0) { // Its on the root
+                [BaseDirectoriesArray removeObject:object];
+            }
+
+            // TODO:! Animate updates on the TreeView
+            // Idea is have a separate method that replaces reloadData
+            // This method will cycle through all the rows and check if they exist on the
+            // DataSource. If they don't it will be deleted.
+            // On the same method, check whether new items were added to the data.
+            // Pondering on the solution of having two tagFlags for Observed on Right/Left
+
+//            This was a nice idea, but at this point the index is not easy to find since the
+//            object was already deleted from the array
+//            [_myOutlineView beginUpdates];
+//            // test if it is on the root
+//            if (level==0) { // Its on the root
+//                NSInteger index = [BaseDirectoriesArray indexOfObject:object];
+//                [_myOutlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]
+//                                            inParent:nil
+//                                       withAnimation:NSTableViewAnimationEffectFade];
+//            }
+//            else {
+//                // Calculate index
+//                TreeBranch *parent = [_myOutlineView parentForItem:object];
+//                NSInteger index = [parent indexOfChild:object];
+//                [_myOutlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]
+//                                            inParent:parent
+//                                       withAnimation:NSTableViewAnimationEffectFade];
+//            }
+//            [_myOutlineView endUpdates];
+
+            // forces the refresh of
+            [_myOutlineView reloadData];
         }
         else {
-            [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+            // !!! Consider calling the viewForTableColumn: method here.
+            NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
+            if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
+                [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+            }
+            else {
+                [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+            }
+            [_myOutlineView reloadItem:object reloadChildren:YES];
+
         }
-        [_myOutlineView reloadItem:object reloadChildren:YES];
-        //NSLog(@"Reloading %@", [object name]);
-//        if (0) { // This is a very nice effect to consider later !!! TO CONSIDER
-//            FolderCellView *cellView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:NO];
-//            if (cellView) {
-//                // Fade the imageView in, and fade the progress indicator out
-//                [NSAnimationContext beginGrouping];
-//                [[NSAnimationContext currentContext] setDuration:0.8];
-//                [cellView.imageView setAlphaValue:0];
-//                //cellView.imageView.image = entity.thumbnailImage;
-//                [cellView.imageView setHidden:NO];
-//                [[cellView.imageView animator] setAlphaValue:1.0];
-//                //[cellView.progessIndicator setHidden:YES];
-//                [NSAnimationContext endGrouping];
-//            }
-//        }
+        //    if ([_sharedOperationQueue operationCount]==0) {
+        //        NSLog(@"Finished all operations launched. Reloading data");
+        //        [_myOutlineView reloadData];
+        //    }
     }
-//    if ([_sharedOperationQueue operationCount]==0) {
-//        NSLog(@"Finished all operations launched. Reloading data");
-//        [_myOutlineView reloadData];
-//    }
+    if (object == _treeNodeSelected) {
+        // test if the object was released
+        if ([object hasTags:tagTreeItemRelease]) {
+            NSLog(@"Reloading Released %@", [object path]);
+
+            // Tries to jump into a valid parent
+            TreeItem *parent = [(TreeItem*)object parent];
+            while (parent !=nil && [parent hasTags:tagTreeItemRelease]){
+                parent = [parent parent];
+            }
+            if (parent) {
+                // found a parent, try to select it
+                BOOL OK = [self selectFolderByItem:parent];
+                if (!OK) {
+                    [self addTreeRoot:(TreeBranch*)parent];
+                    [self selectFolderByItem:parent];
+                }
+            }
+            else {
+                // parent not found. Detect if the root has disappeard
+                if ([_rootNodeSelected hasTags:tagTreeItemRelease]) {
+                    NSUInteger idx = [BaseDirectoriesArray indexOfObject:_treeNodeSelected];
+                    [BaseDirectoriesArray removeObjectAtIndex:idx];
+                    if ([BaseDirectoriesArray count]>0) {
+                        idx = (idx>0) ? 0 : idx-1;
+                        [self selectFolderByItem:[BaseDirectoriesArray objectAtIndex:idx]];
+                    }
+                    else {
+                        // Nothing else to do. Just clear the View
+                        // another options would be to revert to Home directory
+                        _treeNodeSelected = nil;
+                        _rootNodeSelected = nil;
+                        // TODO:!!! The next selector should work with nil.
+                        // The path bar and pop menu should be updated accordingly.
+                        [self selectFolderByItem:nil];
+                    }
+                }
+            }
+        }
+        else {
+            /*If it is the selected Folder make a refresh*/
+            // TODO:! Animate the updates (new files, deleted files)
+            [self refreshTableViewKeepingSelections];
+        }
+    }
 }
 
 
@@ -1295,28 +1366,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     tableData = nil;
 }
 
-//  TODO:!!! Test how a removal of the root directory works
-//- (void) removeSelectedDirectory {
-//    /* gets the selected item */
-//    NSInteger fileSelected = [_myOutlineView selectedRow];
-//    NSInteger level = [_myOutlineView levelForRow:fileSelected];
-//    /* then finds the corresponding item */
-//
-//    if (level==0) {
-//        /*If it is a root
-//         Will delete the tree Root and sub Directories */
-//        [self removeRoot: [_myOutlineView itemAtRow:fileSelected]];
-//        // Redraws the outline view
-//    }
-//    else {
-//        // Will send the corresponding file to recycle bin
-//        TreeItem *fileOrDirectory = [_myOutlineView itemAtRow: fileSelected];
-//        [fileOrDirectory removeItem];
-//    }
-//    [_myOutlineView reloadItem:nil reloadChildren:YES];
-//
-//}
-
 
 // This method checks if a root can be added to existing set.
 -(NSInteger) canAddRoot: (NSString*) rootPath {
@@ -1367,7 +1416,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setTableViewSelectedURLs:(NSArray*) urls {
     if (urls!=nil && [urls count]>0) {
         NSIndexSet *select = [tableData indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
-            NSLog(@"Test %@ %lu", [item path], index);
+            //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
             if ([urls indexOfObject:[item url]]!=NSNotFound)
                 return YES;
             else

@@ -432,7 +432,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 
 - (IBAction)toolbarInformation:(id)sender {
-    // !!! TODO: Implement Call to System Information Window
+    // TODO:! Implement Call to System Information Window
 }
 
 - (IBAction)toolbarRename:(id)sender {
@@ -448,18 +448,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [NSApp runModalForWindow: [self panelRename]];
     }
     else if (numberOfFiles > 1) {
-        // !!! TODO: Implement the multi-rename
+        // TODO:!! Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
 
     }
 }
 
 - (IBAction)toolbarSearch:(id)sender {
-    // !!! TODO: Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
+    // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
 }
 
 - (IBAction)toolbarGrouping:(id)sender {
-    // !!! TODO: Grouping pointer, select column to use for grouping
+    // TODO:! Grouping pointer, select column to use for grouping
 }
 
 
@@ -510,6 +510,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 }
 
+- (IBAction)toolbarNewFolder:(id)sender {
+    // TODO: Implementation of the new Folder
+}
+
 - (IBAction)operationCancel:(id)sender {
     NSArray *operations = [operationsQueue operations];
     [(NSOperation*)[operations firstObject] cancel];
@@ -517,7 +521,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-    // !!! TODO: Disable Back at the beginning Disable Forward
+    // TODO:! Disable Back at the beginning Disable Forward
     // Create isABackFlag for the forward highlight and to test the Back
     // isAForward will make sure that the Forward is highlighted
     // otherwise Forward is disabled and Back Enabled
@@ -531,7 +535,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         }
     }
     else {
-        // !!! TODO: When App Modes are implemented
+        // TODO:! When other View Constrollers are implemented
     }
 }
 
@@ -547,7 +551,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         for (TreeItem *item in items) {
             [item setTag:tagTreeItemToMove+tagTreeItemDirty];
         }
-        [(BrowserController*)sender refreshTableView];
+        [(BrowserController*)sender refreshTableViewKeepingSelections];
         [self copy:sender];
         isCutPending = YES;
     }
@@ -571,7 +575,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         generalPasteBoardChangeCount = [clipboard changeCount];
         isCutPending = NO;
 
-        // !!! TODO: multi copy, where an additional copy will append items to the pasteboard
+        // TODO:!! multi copy, where an additional copy will append items to the pasteboard
+        /* use the following function of NSFileManager to create a directory that will serve as
+         clipboard for situation where the Application can be closed.
+         - (NSURL *)URLForDirectory:(NSSearchPathDirectory)directory
+    inDomain:(NSSearchPathDomainMask)domain
+    appropriateForURL:(NSURL *)url
+    create:(BOOL)shouldCreate
+    error:(NSError **)error
+         */
 
         [clipboard clearContents];
         [clipboard writeObjects:urls];
@@ -609,17 +621,29 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             if (isCutPending) {
                 if (generalPasteBoardChangeCount == [clipboard changeCount]) {
                     // Make the move
-                    moveItemsToBranch(files, [selectedView treeNodeSelected]);
-                    // TODO: Update the Status bar with the information of a copy
+                    TreeBranch *destinationBranch = [selectedView treeNodeSelected];
+                    moveItemsToBranch(files, destinationBranch);
+                    // Update the Status bar with the information of a move
+                    NSString *statusText = [NSString stringWithFormat:@"Moving %ld files to %@",
+                                            [files count],
+                                            [destinationBranch path]
+                                            ];
+                    [_StatusBar setTitle: statusText];
                 }
                 else {
-                    // TODO: Display a warning saying that the application lost control of the clipboard
+                    // TODO:!!! Display a warning saying that the application lost control of the clipboard
                     // and that the cut cannot be done. Will be aborted.
                 }
             }
             else { // Make a regular copy
-                copyItemsToBranch(files, [selectedView treeNodeSelected]);
-                // TODO: Update the Status bar with the information of a copy
+                TreeBranch *destinationBranch = [selectedView treeNodeSelected];
+                copyItemsToBranch(files, destinationBranch);
+                // Update the Status bar with the information of a copy
+                NSString *statusText = [NSString stringWithFormat:@"Copying %ld files to %@",
+                                        [files count],
+                                        [destinationBranch path]
+                                        ];
+                [_StatusBar setTitle: statusText];
             }
         }
         else
@@ -854,9 +878,16 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             case FileExistsSkip:
                 /* Basically we don't do nothing */
                 break;
-            case FileExistsReplace:
-                // !!! TODO:   Erase the file ... and copy again.
+            case FileExistsReplace: {
+                // Erase the file ... and copy again.
+                //sendToRecycleBin();
 
+                [[NSWorkspace sharedWorkspace] recycleURLs:[NSArray arrayWithObject:destinationURL] completionHandler:^(NSDictionary *newURLs, NSError *error) {
+                    if (error!=nil) {
+                        copyURLToURL(sourceURL, destinationURL);
+                    }
+                }];
+                }
                 break;
 
             default:
@@ -891,7 +922,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             }
         }
         else {
-            NSLog(@"Error %@", error); // Don't comment this, before all tests are completed.
+            NSLog(@"Error not processed %@", error); // Don't comment this, before all tests are completed.
         }
 
     }

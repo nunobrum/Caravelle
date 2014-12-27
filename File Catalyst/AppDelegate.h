@@ -40,6 +40,8 @@
 - (IBAction)toolbarRefresh:(id)sender;
 - (IBAction)toolbarHome:(id)sender;
 
+- (IBAction)toolbarNewFolder:(id)sender;
+
 - (IBAction)operationCancel:(id)sender;
 
 - (IBAction)cut:(id)sender;
