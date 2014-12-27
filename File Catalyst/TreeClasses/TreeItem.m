@@ -96,7 +96,7 @@
     _tag |= tag;
 }
 -(void) resetTag:(TreeItemTagEnum)tag {
-    _tag &= tag;
+    _tag &= ~tag;
 }
 -(TreeItemTagEnum) tag {
     return _tag;
