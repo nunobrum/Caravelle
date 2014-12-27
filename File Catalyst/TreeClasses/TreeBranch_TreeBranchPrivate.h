@@ -16,6 +16,10 @@
 -(void) refreshTreeFromURLs;
 -(void) _setChildren:(NSMutableArray*) children;
 
+// TODO:??? Maybe this method is not really needed, since ARC handles this
+-(void) _releaseReleasedChildren;
+-(void) releaseChildren;
+
 @end
 
 

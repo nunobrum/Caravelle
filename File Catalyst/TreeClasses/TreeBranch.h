@@ -11,6 +11,7 @@
 #import "FileCollection.h"
 
 extern NSString *const kvoTreeBranchPropertyChildren;
+//extern NSString *const kvoTreeBranchReleased;
 
 extern NSString* commonPathFromItems(NSArray* itemArray);
 
@@ -35,6 +36,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
 -(TreeLeaf*) leafAtIndex:(NSUInteger)index;
+-(NSInteger) indexOfChild:(TreeItem*)item;
 
 -(long long) sizeOfNode;
 -(long long) filesize;
