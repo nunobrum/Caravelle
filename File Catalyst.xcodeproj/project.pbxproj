@@ -79,6 +79,8 @@
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
+		3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */; };
+		3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */; };
 		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
 		3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
 		3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
@@ -202,6 +204,9 @@
 		3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File CatalystTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
+		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
+		3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesDialog.m; sourceTree = "<group>"; };
+		3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserPreferencesDialog.xib; sourceTree = "<group>"; };
 		3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileExistsChoice.xib; path = "File Catalyst/OperationClasses/FileExistsChoice.xib"; sourceTree = SOURCE_ROOT; };
 		3CF17D211A18C9E50082A9B0 /* FileExistsChoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileExistsChoice.h; path = "File Catalyst/OperationClasses/FileExistsChoice.h"; sourceTree = SOURCE_ROOT; };
 		3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileExistsChoice.m; path = "File Catalyst/OperationClasses/FileExistsChoice.m"; sourceTree = SOURCE_ROOT; };
@@ -344,6 +349,9 @@
 		3CEA674818F87C2F0080C4FC /* File Catalyst */ = {
 			isa = PBXGroup;
 			children = (
+				3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */,
+				3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */,
+				3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */,
 				3CEA675A18F87C2F0080C4FC /* Images.xcassets */,
 				3C717C0A198FB95F0025E28A /* Definitions.h */,
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
@@ -612,6 +620,7 @@
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
 				3C29461718F9B570002B633C /* GenericAirDiskIcon.icns in Resources */,
 				3C29461E18F9B570002B633C /* MusicFolderIcon.icns in Resources */,
+				3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */,
 				3C29461818F9B570002B633C /* GenericApplicationIcon.icns in Resources */,
 				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
 				3C29462C18F9B570002B633C /* ToolbarMusicFolderIcon.icns in Resources */,
@@ -648,6 +657,7 @@
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
+				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
