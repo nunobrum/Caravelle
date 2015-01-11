@@ -8,7 +8,10 @@
 
 #import "BrowserController.h"
 #import "FileUtils.h"
+
+// TODO:!! Get rid of this class. Is not being used.
 #import "FolderCellView.h"
+
 #import "TreeItem.h"
 #import "TreeLeaf.h"
 #import "TreeBranch.h"
@@ -382,6 +385,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([identifier isEqualToString:COL_FILENAME]) {
         // We pass us as the owner so we can setup target/actions into this main controller object
         cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
+        //NSLog(@"View is of class %@", [cellView class]);
+        [cellView setObjectValue:theFile];
         NSString *path = [[theFile url] path];
         if (path) {
             // Then setup properties on the cellView based on the column
@@ -394,10 +399,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
             }
         }
+        else {
+            // This is not supposed to happen, just setting an error
+            [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
+        }
     }
     else { // All other cases are handled here
         // We pass us as the owner so we can setup target/actions into this main controller object
         cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
+        //NSLog(@"View is of class %@", [cellView class]);
 
         NSDictionary *colControl = [columnInfo() objectForKey:identifier];
         if (colControl!=nil) { // The column exists
@@ -482,15 +492,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
  */
 
 
-/* 
- * This will enable the View to respond to Keys and mouse events
- * Will take what is interesting to process, such as normal keys for file navigation, 
- * Copy, Cut and Paste : to decide if processed here if sent to AppDelegate.
- */
-
--(BOOL) acceptsFirstResponder {
-    return YES;
-}
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
@@ -574,9 +575,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #endif
 
-#pragma mark Menu Handling 
+#pragma mark Menu Handling
 
 
+//- (void)menuWillOpen:(NSMenu *)menu {
+//    This is not needed. Keeping it for memory
+//}
 
 
 #pragma mark Path Bar Handling
@@ -586,6 +590,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setPathBarToItem:(TreeItem*)item {
     if (item != _treeNodeSelected) {
+        if (item==nil) {
+            // Going to hide Menus and path bar
+            [_myPathPopDownButton setHidden:YES];
+            [_myPathBarControl setHidden:YES];
+            return;
+        }
+        else {
+            // In case it was formerly hidden.
+            [_myPathPopDownButton setHidden:NO];
+            [_myPathBarControl setHidden:NO];
+        }
         NSURL *url;
         TreeBranch *node;
         if ([item isKindOfClass:[TreeBranch class]]) {
@@ -677,7 +692,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self.myPathBarControl setPathComponentCells:pathComponentCells];
         //[super setURL:aURL];
 
-        // !!! TODO: MRU Option that only includes directories where operations have happned.
+        // !!! TODO: MRU Option that only includes directories where operations have hapened.
         [self mruSet:url];
         _treeNodeSelected = node;
     }
@@ -1156,9 +1171,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         // another options would be to revert to Home directory
                         _treeNodeSelected = nil;
                         _rootNodeSelected = nil;
-                        // TODO:!!! The next selector should work with nil.
                         // The path bar and pop menu should be updated accordingly.
-                        [self selectFolderByItem:nil];
+                        [self setPathBarToItem:nil];
                     }
                 }
             }
@@ -1232,13 +1246,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [_myTableView reloadData];
         [self startAllBusyAnimations];
         _viewMode = viewMode;
+        [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
+        [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
+
     }
 }
 -(BViewMode) viewMode {
     return _viewMode;
 }
 
--(NSOutlineView*) treeOutlineView {
+-(BrowserOutlineView*) treeOutlineView {
     return _myOutlineView;
 }
 
@@ -1445,6 +1462,38 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return answer;
 }
 
+- (NSArray*)getSelectedItemsForContextMenu {
+    static NSArray* answer = nil; // This will send the last answer if a second request is done
+
+    if ([_myOutlineView rightMouseLocation]!= BROWSER_OUTLINE_VIEW_INVALIDATED_ROW) {
+        /* This is done like this so that not more than one folder is selected */
+        NSIndexSet *selectedIndexes = [_myOutlineView selectedRowIndexes];
+        // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
+        if ([_myOutlineView clickedRow] != -1 && ![selectedIndexes containsIndex:[_myOutlineView clickedRow]]) {
+            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myOutlineView clickedRow]];
+        }
+        if ([selectedIndexes count]) {
+            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[selectedIndexes firstIndex]]];
+        }
+        else {
+            answer = [[NSArray alloc] init]; // will send an empty array
+        }
+        // Finally it has to invalidate
+        [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
+    }
+    else if ([_myTableView rightMouseLocation]!= BROWSER_TABLE_VIEW_INVALIDATED_ROW) {
+
+        // TODO:!!! REdo all this ! it seems that the recipe given by apple is not working.
+        NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
+        // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
+        if ([_myTableView clickedRow] != -1 && ![selectedIndexes containsIndex:[_myTableView clickedRow]]) {
+            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView clickedRow]];
+        }
+        answer = [tableData objectsAtIndexes:selectedIndexes];
+        [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
+    }
+    return answer;
+}
 
 -(void) outlineSelectExpandNode:(TreeBranch*) cursor {
     int retries = 2;
@@ -1480,7 +1529,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
-    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
+    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1 && treeNode!=nil) {
 
         for (TreeRoot *root in BaseDirectoriesArray) {
             if ([root canContainURL:[treeNode url]]){ // Search for Root Node

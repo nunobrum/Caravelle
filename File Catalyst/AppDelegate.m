@@ -83,8 +83,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 // -------------------------------------------------------------------------------
 - (id)init
 {
-    NSLog(@"App Delegate: Init");
-	self = [super init];
+    self = [super init];
 	if (self)
     {
         operationsQueue = [[NSOperationQueue alloc] init];
@@ -145,11 +144,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 // -------------------------------------------------------------------------------
 //	awakeFromNib
 // -------------------------------------------------------------------------------
-- (void)awakeFromNib
-{
-    NSLog(@"App Delegate: awakeFromNib");
-
-}
+//- (void)awakeFromNib
+//{
+//    NSLog(@"App Delegate: awakeFromNib");
+//
+//}
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -168,6 +167,9 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     // Insert code here to initialize your application
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
     myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+
+    // TODO: ? Optimization Replace this notification with a simpler method
+    // [NSApp sendAction:@selector(handleOperationInformation:)to:nil from:self];
 
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
@@ -286,7 +288,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 //When the app is deactivated
 -(void) applicationWillResignActive:(NSNotification *)aNotification {
-    // !!! TODO: applicationWillResignActive :Save Application State
+    // TODO:!! Save Application State
+    // TODO:!!! Close all active windows
     NSLog(@"Application Will Resign Active");
 }
 //When the user hides your app
@@ -303,7 +306,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 {
     if ([sendType isEqual:NSFilenamesPboardType] ||
         [sendType isEqual:NSURLPboardType]) {
-        NSLog(@"The return type is %@", returnType);
+        NSLog(@"Service return type is %@", returnType);
         return self;
     }
     //return [super validRequestorForSendType:sendType returnType:returnType];
@@ -417,6 +420,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 // -------------------------------------------------------------------------------
 - (BOOL)windowShouldClose:(id)sender
 {
+    // TODO:!!! Why isn't this being called ?
+    NSLog(@"windowShoudClose");
 	// are you sure you want to close, (threads running)
 	NSInteger numOperationsRunning = [[operationsQueue operations] count];
 
@@ -677,6 +682,64 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 }
 
+#pragma mark Menu Validation
+
+//- (BOOL)validateMenuItem:(NSMenuItem *)item {
+//    NSInteger row = [_myTableView selectedRow];
+//    if ([item action] == @selector(newFolder) &&
+//        (row == [tableData indexOfObject:[tableData lastObject]])) {
+//        return NO;
+//    }
+//    if ([item action] == @selector(priorRecord) && row == 0) {
+//        return NO;
+//    }
+//    return YES;
+//}
+
+ - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
+    SEL theAction = [anItem action];
+    BOOL allow = YES; // The default is yes, unless there is a condition that invalidates it
+
+    /* This is done like this so that not more than one folder is selected */
+    NSArray *itemsSelected = [(BrowserController*)selectedView getSelectedItemsForContextMenu];
+
+    if ([itemsSelected count]==0) { // no selection
+        if (theAction == @selector(toolbarNewFolder:)) {
+            // TODO:!!! Ask the view whether it can make a new Folder
+            // For now assuming a yes
+            allow = YES;
+        }
+        else {
+            allow = NO;
+        }
+    }
+    else {
+        for (TreeItem *item in itemsSelected) {
+            // These pragmas avoid the warning on the toolbarNewFolder
+            //#pragma clang diagnostic push
+            //#pragma clang diagnostic ignored "-Wundeclared-selector"
+            //#pragma clang diagnostic pop
+
+            if (theAction == @selector(toolbarNewFolder:)) {
+                if ([item isKindOfClass:[TreeBranch class]]==NO)
+                {
+                    allow = NO;
+                }
+            }
+            else if (theAction == @selector(delete:)) {
+                allow = YES;
+            }
+            
+            if (!allow) // Stop if a not allow is found
+                break;
+        }
+    }
+    return allow; //[super validateUserInterfaceItem:anItem];
+}
+
+#pragma mark -
+
+
 #pragma mark Operations Handling
 /* Called for the notificationDoFileOperation notification */
 -(void) handleOperationInformation: (NSNotification*) note
@@ -936,7 +999,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             }
             else {
                 // Failed to created either the source or the destination. Not likely to happen but...
-                // TODO: Messagebox with alert
+                // Messagebox with alert
                 NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the operation !"
                                                  defaultButton:@"OK"
                                                alternateButton:nil

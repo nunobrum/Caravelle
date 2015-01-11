@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import "CustomTableHeaderView.h"
+#import "BrowserTableView.h"
+#import "BrowserOutlineView.h"
 #import "FileCollection.h"
 #import "TreeRoot.h"
 #include "Definitions.h"
@@ -26,8 +28,8 @@ extern NSString *notificationCatalystRootUpdate;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
-@property (weak) IBOutlet NSOutlineView *myOutlineView;
-@property (weak) IBOutlet NSTableView *myTableView;
+@property (weak) IBOutlet BrowserOutlineView *myOutlineView;
+@property (weak) IBOutlet BrowserTableView *myTableView;
 @property (strong) IBOutlet CustomTableHeaderView *myTableViewHeader;
 @property (weak) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet NSPathControl *myPathBarControl;
@@ -100,7 +102,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(TreeBranch*) treeNodeSelected;
 
 
--(NSOutlineView*) treeOutlineView;
+-(BrowserOutlineView*) treeOutlineView;
 -(id) getFileAtIndex:(NSUInteger)index;
 -(void) set_filterText:(NSString *) filterText;
 -(void) refreshTableView;
@@ -124,6 +126,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;
 -(NSArray*) getSelectedItems;
+-(NSArray*) getSelectedItemsForContextMenu;
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
 

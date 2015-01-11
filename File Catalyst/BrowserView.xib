@@ -114,7 +114,7 @@
                                         <rect key="frame" x="1" y="17" width="157" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <outlineView verticalHuggingPriority="750" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI">
+                                            <outlineView verticalHuggingPriority="750" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -267,7 +267,7 @@
                                         <rect key="frame" x="1" y="17" width="256" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1">
+                                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1" customClass="BrowserTableView">
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -402,7 +402,7 @@
                                                     </binding>
                                                     <outlet property="dataSource" destination="-2" id="Gtw-dH-pWy"/>
                                                     <outlet property="delegate" destination="-2" id="Dyp-Hx-mPu"/>
-                                                    <outlet property="menu" destination="q8e-qr-VOA" id="muv-xx-Q2z"/>
+                                                    <outlet property="menu" destination="q8e-qr-VOA" id="xOa-pU-Rli"/>
                                                 </connections>
                                             </tableView>
                                         </subviews>
@@ -465,7 +465,9 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem title="Delete" id="AiJ-65-eUG">
-                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <string key="keyEquivalent" base64-UTF8="YES">
+CA
+</string>
                     <connections>
                         <action selector="delete:" target="-1" id="3jf-Kv-bR7"/>
                     </connections>
@@ -486,12 +488,23 @@
                         <action selector="paste:" target="-1" id="1Aa-yt-CCl"/>
                     </connections>
                 </menuItem>
+                <menuItem isSeparatorItem="YES" id="gvN-b3-nLQ"/>
+                <menuItem title="New..." keyEquivalent="n" id="Yfd-od-4LD"/>
+                <menuItem image="NewFolderGrey20" keyEquivalent="N" id="xKl-Mj-ZxK">
+                    <connections>
+                        <action selector="toolbarNewFolder:" target="-1" id="h1D-0R-lR6"/>
+                    </connections>
+                </menuItem>
             </items>
+            <connections>
+                <outlet property="delegate" destination="-2" id="KxG-bb-Ocm"/>
+            </connections>
         </menu>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSApplicationIcon" width="128" height="128"/>
         <image name="NSPathTemplate" width="13" height="10"/>
+        <image name="NewFolderGrey20" width="20" height="20"/>
     </resources>
 </document>

@@ -8,7 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface UserPreferencesDialog : NSWindowController
-@property (strong) IBOutlet NSTreeController *preferencesDirectory;
+@interface UserPreferencesDialog : NSWindowController <NSOutlineViewDataSource, NSOutlineViewDelegate> {
+    NSArray *BaseDirectoriesArray;
+}
 
 @end

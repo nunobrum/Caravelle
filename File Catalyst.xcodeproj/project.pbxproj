@@ -84,6 +84,8 @@
 		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
 		3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
 		3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
+		3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */; };
+		3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */; };
 		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
 		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
 		3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
@@ -212,6 +214,10 @@
 		3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileExistsChoice.m; path = "File Catalyst/OperationClasses/FileExistsChoice.m"; sourceTree = SOURCE_ROOT; };
 		3CF32B9619FCED7700B14A85 /* CatalogBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CatalogBranch.h; sourceTree = "<group>"; };
 		3CF32B9719FCED7700B14A85 /* CatalogBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CatalogBranch.m; sourceTree = "<group>"; };
+		3CF5DA841A5F1CA100786D64 /* BrowserTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserTableView.h; path = BrowserClasses/BrowserTableView.h; sourceTree = "<group>"; };
+		3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserTableView.m; path = BrowserClasses/BrowserTableView.m; sourceTree = "<group>"; };
+		3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserOutlineView.h; path = BrowserClasses/BrowserOutlineView.h; sourceTree = "<group>"; };
+		3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserOutlineView.m; path = BrowserClasses/BrowserOutlineView.m; sourceTree = "<group>"; };
 		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeScanOperation.h; path = ../TreeScanOperation.h; sourceTree = "<group>"; };
 		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeScanOperation.m; path = ../TreeScanOperation.m; sourceTree = "<group>"; };
 		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
@@ -483,6 +489,10 @@
 				3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */,
 				3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */,
 				3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */,
+				3CF5DA841A5F1CA100786D64 /* BrowserTableView.h */,
+				3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */,
+				3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */,
+				3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */,
 			);
 			name = BrowserViewClasses;
 			sourceTree = "<group>";
@@ -656,6 +666,8 @@
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
+				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
+				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,

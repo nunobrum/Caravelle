@@ -292,57 +292,65 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark Refreshing contents
 
 -(BOOL) needsRefresh {
-    return (((_tag & tagTreeItemUpdating)==0) &&
-            (((_tag & tagTreeItemDirty   )!=0) || (self->_children==nil)));
+    BOOL answer;
+    TreeItemTagEnum tag;
+    // TODO:? Verify Atomicity and get rid of synchronized clause if OK
+    @synchronized(self) {
+         tag = _tag;
+    }
+    answer = (((tag & tagTreeItemUpdating)==0) &&
+             (((tag & tagTreeItemDirty   )!=0) || (tag & tagTreeItemScanned)==0));
+
+    return answer;
 }
 
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
-    @synchronized (self) {
-        if ([self needsRefresh]) {
-            _tag |= tagTreeItemUpdating;
-            [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
-                // Using a new ChildrenPointer so that the accesses to the _children are minimized
+    //NSLog(@"Refreshing %@", [self path]);
+    if ([self needsRefresh]) {
+        _tag |= tagTreeItemUpdating;
+        [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
+            // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
-                MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
+            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
 
-                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-                @synchronized(self) {
-                    // Set all items as candidates for release
-                    for (TreeItem *item in _children) {
-                        [item setTag:tagTreeItemRelease];
+            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+            @synchronized(self) {
+                // Set all items as candidates for release
+                for (TreeItem *item in _children) {
+                    [item setTag:tagTreeItemRelease];
+                }
+
+                for (NSURL *theURL in dirEnumerator) {
+                    bool found=NO;
+                    /* Retrieves existing Element */
+                    for (TreeItem *it in self->_children) {
+                        if ([[it url] isEqual:theURL]) {
+                            // Found it
+                            // resets the release Flag. Doesn't neet to be deleted
+                            [it resetTag:tagTreeItemRelease];
+                            found = YES;
+                            break;
+                        }
                     }
-
-                    for (NSURL *theURL in dirEnumerator) {
-                        bool found=NO;
-                        /* Retrieves existing Element */
-                        for (TreeItem *it in self->_children) {
-                            if ([[it url] isEqual:theURL]) {
-                                // Found it
-                                // resets the release Flag. Doesn't neet to be deleted
-                                [it resetTag:tagTreeItemRelease];
-                                found = YES;
-                                break;
-                            }
+                    if (!found) { /* If not found creates a new one */
+                        TreeItem *item = [TreeItem treeItemForURL:theURL parent:self];
+                        if ([item isKindOfClass:[TreeBranch class]]) {
+                            [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
                         }
-                        if (!found) { /* If not found creates a new one */
-                            TreeItem *item = [TreeItem treeItemForURL:theURL parent:self];
-                            if ([item isKindOfClass:[TreeBranch class]]) {
-                                [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
-                            }
-                            if (self->_children==nil)
-                                self->_children = [[NSMutableArray alloc] init];
-                            [self->_children addObject:item];
-                            [item setParent:self];
-                        }
-                    } // for
+                        if (self->_children==nil)
+                            self->_children = [[NSMutableArray alloc] init];
+                        [self->_children addObject:item];
+                        [item setParent:self];
+                    }
+                } // for
 
-                    // Now going to release the disappeard items
-                    [self _releaseReleasedChildren];
-                    _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
-                } // synchronized
-                [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
-            }];
-        }
+                // Now going to release the disappeard items
+                [self _releaseReleasedChildren];
+                _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
+                _tag |= tagTreeItemScanned;
+            } // synchronized
+            [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+        }];
     }
 }
 

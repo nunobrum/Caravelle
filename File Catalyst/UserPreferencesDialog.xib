@@ -7,7 +7,6 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="UserPreferencesDialog">
             <connections>
-                <outlet property="preferencesDirectory" destination="tDG-F8-8RF" id="9Ld-nQ-WLu"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -69,7 +68,8 @@
                                         </tableColumn>
                                     </tableColumns>
                                     <connections>
-                                        <binding destination="tDG-F8-8RF" name="content" keyPath="arrangedObjects.titleKey" id="VXa-Ch-jTM"/>
+                                        <outlet property="dataSource" destination="-2" id="jT4-Ev-frh"/>
+                                        <outlet property="delegate" destination="-2" id="9l5-Au-jCb"/>
                                     </connections>
                                 </outlineView>
                             </subviews>
@@ -113,14 +113,5 @@
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
         </window>
-        <treeController automaticallyPreparesContent="YES" childrenKeyPath="childrenKeyPath" id="tDG-F8-8RF">
-            <declaredKeys>
-                <string>module</string>
-                <string>childrenKeyPath</string>
-                <string>helpKey</string>
-                <string>titleKey</string>
-            </declaredKeys>
-        </treeController>
-        <userDefaultsController representsSharedInstance="YES" id="abA-hA-yNW"/>
     </objects>
 </document>

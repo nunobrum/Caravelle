@@ -11,13 +11,14 @@
 
 
 typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
-    tagTreeItemDirty   = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
-    tagTreeItemMarked  = (1UL << 1),
-    tagTreeItemDropped = (1UL << 2), // Used for drag&drop operations
-    tagTreeItemToMove  = (1UL << 3),
-    tagTreeItemUpdating= (1UL << 4),
-    tagTreeItemRelease  = (1UL << 5), // Used inform BrowserControllers to remove items from Root
-    tagTreeItemAll     = NSUIntegerMax
+    tagTreeItemDirty    = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
+    tagTreeItemScanned  = (1UL << 1), // Used to indicate that the directory was already read from the disk
+    tagTreeItemMarked   = (1UL << 2),
+    tagTreeItemDropped  = (1UL << 3), // Used for drag&drop operations
+    tagTreeItemToMove   = (1UL << 4),
+    tagTreeItemUpdating = (1UL << 5),
+    tagTreeItemRelease  = (1UL << 6), // Used inform BrowserControllers to remove items from Root
+    tagTreeItemAll      = NSUIntegerMax
 };
 
 /* Enumerate to be used on the result of the path relation compare method */
