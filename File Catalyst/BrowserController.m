@@ -214,6 +214,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                             [NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
                 [(FolderCellView*)cellView setSubTitle:subTitle];
                 [(FolderCellView*)cellView setURL:[item url]];
+                [cellView setObjectValue:item];
 
             }
             else {
@@ -1080,7 +1081,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - KVO Methods
 
-- (void)_reloadRowForEntity:(id)object {
+- (void) reloadItem:(id)object {
     //NSLog(@"Reloading %@", [object path]);
     NSInteger row = [_myOutlineView rowForItem:object];
     if (row >= 0 && row != NSNotFound) {
@@ -1124,7 +1125,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
         else {
             // !!! Consider calling the viewForTableColumn: method here.
-            NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
+            // makeIfNecessary is set to no. All views should have been created at this point.
+            NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:NO];
+            assert(nameView!=nil);
             if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
                 [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
@@ -1183,6 +1186,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [self refreshTableViewKeepingSelections];
         }
     }
+    else {
+        // Will see if there anything to reload on the table
+        NSInteger rowToReload = [tableData indexOfObject:object];
+        if (rowToReload >=0  && rowToReload!=NSNotFound) {
+            NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
+            NSRange columnsRange = {0, [[_myTableView tableColumns] count] };
+            NSIndexSet *columnIndexes = [NSIndexSet indexSetWithIndexesInRange:columnsRange];
+            [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
+        }
+    }
 }
 
 
@@ -1191,7 +1204,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // Find the row and reload it.
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
-        [self performSelectorOnMainThread:@selector(_reloadRowForEntity:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
     }
 }
 
@@ -1255,10 +1268,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return _viewMode;
 }
 
--(BrowserOutlineView*) treeOutlineView {
-    return _myOutlineView;
-}
-
 -(id) getFileAtIndex:(NSUInteger)index {
     return [tableData objectAtIndex:index];
 }
@@ -1266,6 +1275,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) set_filterText:(NSString *) filterText {
     self->_filterText = filterText;
 }
+
 
 -(void) refreshTableView {
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
@@ -1463,35 +1473,33 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 - (NSArray*)getSelectedItemsForContextMenu {
-    static NSArray* answer = nil; // This will send the last answer if a second request is done
+    static NSArray* answer = nil; // This will send the last answer when further requests are done
+
+    /*NSInteger outlineClickedRow =[_myOutlineView clickedRow];
+    NSInteger tableClickedRow =[_myTableView clickedRow];
+    NSInteger outlineRightClickedRow = [_myOutlineView rightMouseLocation];
+    NSInteger tableRightClickedRow = [_myTableView rightMouseLocation];
+    NSLog(@"Clicked Row (%ld)-(%ld)\nRightClick (%ld)-(%ld)", outlineClickedRow, tableClickedRow, outlineRightClickedRow, tableRightClickedRow); */
 
     if ([_myOutlineView rightMouseLocation]!= BROWSER_OUTLINE_VIEW_INVALIDATED_ROW) {
         /* This is done like this so that not more than one folder is selected */
         NSIndexSet *selectedIndexes = [_myOutlineView selectedRowIndexes];
         // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
-        if ([_myOutlineView clickedRow] != -1 && ![selectedIndexes containsIndex:[_myOutlineView clickedRow]]) {
-            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myOutlineView clickedRow]];
+        if ([_myOutlineView rightMouseLocation] != -1 && ![selectedIndexes containsIndex:[_myOutlineView rightMouseLocation]]) {
+            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myOutlineView rightMouseLocation]];
         }
-        if ([selectedIndexes count]) {
-            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[selectedIndexes firstIndex]]];
-        }
-        else {
-            answer = [[NSArray alloc] init]; // will send an empty array
-        }
-        // Finally it has to invalidate
-        [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
     }
     else if ([_myTableView rightMouseLocation]!= BROWSER_TABLE_VIEW_INVALIDATED_ROW) {
-
-        // TODO:!!! REdo all this ! it seems that the recipe given by apple is not working.
         NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
         // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
-        if ([_myTableView clickedRow] != -1 && ![selectedIndexes containsIndex:[_myTableView clickedRow]]) {
-            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView clickedRow]];
+        if ([_myTableView rightMouseLocation] != -1 && ![selectedIndexes containsIndex:[_myTableView rightMouseLocation]]) {
+            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView rightMouseLocation]];
         }
         answer = [tableData objectsAtIndexes:selectedIndexes];
-        [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
     }
+    // Finally it has to invalidate both views
+    [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
+    [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
     return answer;
 }
 

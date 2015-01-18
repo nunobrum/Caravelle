@@ -102,9 +102,10 @@ extern NSString *notificationCatalystRootUpdate;
 -(TreeBranch*) treeNodeSelected;
 
 
--(BrowserOutlineView*) treeOutlineView;
 -(id) getFileAtIndex:(NSUInteger)index;
 -(void) set_filterText:(NSString *) filterText;
+
+-(void) reloadItem:(id) item;
 -(void) refreshTableView;
 -(void) refreshTableViewKeepingSelections;
 -(void) refreshTrees;

@@ -19,8 +19,9 @@
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
     // Now register menu location for the delegate to read
-    NSPoint point = [theEvent locationInWindow];
-    NSInteger row = [self rowAtPoint:point];
+    NSPoint event_location = [theEvent locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    NSInteger row = [self rowAtPoint:local_point];
     [self setRightMouseLocation: row];
     [super rightMouseDown:theEvent];
 }

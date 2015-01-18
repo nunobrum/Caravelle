@@ -631,11 +631,7 @@ CA
             <connections>
                 <outlet property="ContentSplitView" destination="6MC-cR-BWB" id="70s-Di-Uy4"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
-                <outlet property="ebRenameExtension" destination="Kw1-17-RAv" id="pwV-4X-pmb"/>
-                <outlet property="ebRenameHead" destination="JWI-dr-kQs" id="aGE-nn-oEA"/>
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
-                <outlet property="panelRename" destination="RCG-M3-pEY" id="qTX-lu-rWU"/>
-                <outlet property="renameCancel" destination="gC1-cd-ic5" id="a34-jf-Cz5"/>
                 <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>
                 <outlet property="statusProgressLabel" destination="Clz-g3-ghw" id="bjP-th-9Hn"/>
@@ -673,27 +669,23 @@ CA
                                     </connections>
                                 </segmentedCell>
                             </segmentedControl>
-                            <button toolTip="Trash (F5)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
+                            <button toolTip="Trash (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
                                 <rect key="frame" x="289" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Trash" bezelStyle="rounded" image="trashcanman32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
+                                    <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <button toolTip="Information (F1)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="143" y="1" width="44" height="32"/>
+                            <button toolTip="Open" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                                <rect key="frame" x="245" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
                                 </buttonCell>
-                                <connections>
-                                    <action selector="toolbarInformation:" target="494" id="5zS-0N-Yez"/>
-                                </connections>
                             </button>
                             <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
                                 <rect key="frame" x="177" y="1" width="44" height="32"/>
@@ -717,26 +709,26 @@ CA
                                     <action selector="toolbarSearch:" target="494" id="7Y3-Xw-frd"/>
                                 </connections>
                             </button>
-                            <button toolTip="View (F4)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
-                                <rect key="frame" x="245" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="View" bezelStyle="rounded" image="NSIconViewTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
+                            <button toolTip="File Information" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
+                                <rect key="frame" x="143" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="View" bezelStyle="rounded" image="NSInfo" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
+                                    <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarGrouping:" target="494" id="9e8-dC-0ID"/>
+                                    <action selector="toolbarInformation:" target="-1" id="RvQ-gX-CD4"/>
                                 </connections>
                             </button>
-                            <button toolTip="Information (F1)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
+                            <button toolTip="Add Folder (F8)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
                                 <rect key="frame" x="391" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Edit" bezelStyle="rounded" image="NSBookmarksTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
+                                <buttonCell key="cell" type="push" bezelStyle="rounded" image="NewFolderGrey20" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarOpen:" target="494" id="Fsb-mF-g3v"/>
+                                    <action selector="toolbarNewFolder:" target="494" id="SGC-h4-9GO"/>
                                 </connections>
                             </button>
                             <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
@@ -750,45 +742,6 @@ CA
                                     <action selector="toolbarCopy:" target="494" id="2fw-od-Cqu"/>
                                 </connections>
                             </button>
-                            <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H8C-NH-YAG">
-                                <rect key="frame" x="516" y="5" width="50" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" allowsMixedState="YES" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="x5F-dX-II9" id="OMO-kB-tgl">
-                                    <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="menu"/>
-                                    <menu key="menu" title="OtherViews" id="7nt-k6-vje">
-                                        <items>
-                                            <menuItem image="NSPreferencesGeneral" hidden="YES" id="iii-fd-bTl">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Labels" tag="1" id="FZR-2S-vIq"/>
-                                            <menuItem title="Columns" tag="2" id="VV0-AJ-bYE">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Clipboard" tag="3" id="x5F-dX-II9">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Bookmarks" id="bPS-sC-jh3">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                            <menuItem title="Preview" id="xe5-26-tUN">
-                                                <modifierMask key="keyEquivalentModifierMask"/>
-                                            </menuItem>
-                                        </items>
-                                    </menu>
-                                </popUpButtonCell>
-                            </popUpButton>
-                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WqO-XS-6QS">
-                                <rect key="frame" x="659" y="7" width="137" height="24"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="bOE-Sc-XQl">
-                                    <font key="font" metaFont="system"/>
-                                    <segments>
-                                        <segment label="B" toolTip="Single Browser View" width="32"/>
-                                        <segment label="BB" toolTip="Dual Pane View" width="32" selected="YES" tag="1"/>
-                                        <segment label="BV" toolTip="Browser and Preview" width="32"/>
-                                        <segment label="S" toolTip="Feature Mode" width="32"/>
-                                    </segments>
-                                </segmentedCell>
-                            </segmentedControl>
                             <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="685-pk-2bz">
                                 <rect key="frame" x="0.0" y="-2" width="854" height="5"/>
                                 <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
@@ -820,28 +773,6 @@ CA
                                     </menu>
                                 </popUpButtonCell>
                             </popUpButton>
-                            <button toolTip="Refresh (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KMp-P2-P6G">
-                                <rect key="frame" x="435" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Refresh" bezelStyle="rounded" image="NSRefreshFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="GPw-8d-L0Y">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarRefresh:" target="494" id="B1S-Xg-mp0"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Home (F10)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LZK-HF-vxx">
-                                <rect key="frame" x="469" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Labels" bezelStyle="rounded" image="NSHomeTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="nfH-kR-Z60">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarHome:" target="494" id="Pee-5S-Vw4"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
@@ -912,145 +843,15 @@ CA
                 </constraints>
             </view>
         </window>
-        <window identifier="dialogSingleRename" title="Rename" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="RCG-M3-pEY" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" resizable="YES" utility="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="120" y="65" width="365" height="85"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
-            <view key="contentView" id="zAr-7S-P8k">
-                <rect key="frame" x="0.0" y="0.0" width="365" height="85"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QjZ-z6-Zgc">
-                        <rect key="frame" x="178" y="7" width="91" height="32"/>
-                        <buttonCell key="cell" type="push" title="Rename" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k8v-mL-GXr">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="renameAction:" target="494" id="v2R-7S-Vhi"/>
-                        </connections>
-                    </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="213-xs-Ach">
-                        <rect key="frame" x="14" y="7" width="131" height="32"/>
-                        <buttonCell key="cell" type="push" title="Content Based" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="N9c-q8-eA9">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gC1-cd-ic5">
-                        <rect key="frame" x="269" y="7" width="82" height="32"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jB5-x7-JFN">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                        <connections>
-                            <action selector="renameCancel:" target="494" id="vFw-Je-aWO"/>
-                        </connections>
-                    </button>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JWI-dr-kQs">
-                        <rect key="frame" x="20" y="43" width="258" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="5kZ-u3-roX">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <outlet property="delegate" destination="494" id="ajF-bl-Uov"/>
-                        </connections>
-                    </textField>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Kw1-17-RAv">
-                        <rect key="frame" x="292" y="43" width="53" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="pLt-LN-3nk">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                        <connections>
-                            <outlet property="delegate" destination="494" id="Ynl-eX-vaf"/>
-                        </connections>
-                    </textField>
-                </subviews>
-                <constraints>
-                    <constraint firstItem="JWI-dr-kQs" firstAttribute="leading" secondItem="zAr-7S-P8k" secondAttribute="leading" constant="20" symbolic="YES" id="C4a-9c-i30"/>
-                    <constraint firstAttribute="trailing" secondItem="Kw1-17-RAv" secondAttribute="trailing" constant="20" symbolic="YES" id="MFu-ey-AQj"/>
-                    <constraint firstItem="gC1-cd-ic5" firstAttribute="leading" secondItem="QjZ-z6-Zgc" secondAttribute="trailing" constant="12" symbolic="YES" id="NOK-Dw-Rgn"/>
-                    <constraint firstItem="213-xs-Ach" firstAttribute="top" secondItem="JWI-dr-kQs" secondAttribute="bottom" constant="8" symbolic="YES" id="cpY-KN-v9s"/>
-                    <constraint firstItem="JWI-dr-kQs" firstAttribute="baseline" secondItem="Kw1-17-RAv" secondAttribute="baseline" id="d9C-ZF-bqa"/>
-                    <constraint firstItem="JWI-dr-kQs" firstAttribute="top" secondItem="zAr-7S-P8k" secondAttribute="top" constant="20" symbolic="YES" id="dJ6-kV-JYo"/>
-                    <constraint firstItem="Kw1-17-RAv" firstAttribute="trailing" secondItem="gC1-cd-ic5" secondAttribute="trailing" id="eg2-a5-8MZ"/>
-                    <constraint firstItem="213-xs-Ach" firstAttribute="baseline" secondItem="QjZ-z6-Zgc" secondAttribute="baseline" id="gPf-cC-5C1"/>
-                    <constraint firstItem="QjZ-z6-Zgc" firstAttribute="baseline" secondItem="gC1-cd-ic5" secondAttribute="baseline" id="hdq-pV-K7v"/>
-                    <constraint firstItem="Kw1-17-RAv" firstAttribute="leading" secondItem="JWI-dr-kQs" secondAttribute="trailing" constant="3" id="seg-pJ-zIu"/>
-                    <constraint firstItem="JWI-dr-kQs" firstAttribute="leading" secondItem="213-xs-Ach" secondAttribute="leading" id="y9X-Rx-3Oh"/>
-                </constraints>
-            </view>
-            <point key="canvasLocation" x="139.5" y="-299.5"/>
-        </window>
-        <window title="New Folder" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="3DB-7R-cc6" customClass="NSPanel">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="120" y="65" width="276" height="90"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
-            <view key="contentView" id="ZVL-3E-5En">
-                <rect key="frame" x="0.0" y="0.0" width="276" height="90"/>
-                <autoresizingMask key="autoresizingMask"/>
-                <subviews>
-                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2Oq-Yx-wS3">
-                        <rect key="frame" x="20" y="48" width="236" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="ND3-kX-XXe">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="MqD-At-ymP">
-                        <rect key="frame" x="180" y="12" width="82" height="32"/>
-                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AbR-jY-Vqz">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-Gw
-</string>
-                        </buttonCell>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y3a-bX-EWw">
-                        <rect key="frame" x="20" y="19" width="21" height="21"/>
-                        <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSAddTemplate" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NU4-0f-Ov3">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kW8-zJ-nIy">
-                        <rect key="frame" x="98" y="12" width="82" height="32"/>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yV6-gy-zhJ">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="system"/>
-                            <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                        </buttonCell>
-                    </button>
-                </subviews>
-            </view>
-            <point key="canvasLocation" x="139" y="-522"/>
-        </window>
     </objects>
     <resources>
-        <image name="NSAddTemplate" width="8" height="8"/>
-        <image name="NSBookmarksTemplate" width="17" height="12"/>
         <image name="NSFontPanel" width="32" height="32"/>
-        <image name="NSHomeTemplate" width="14" height="13"/>
-        <image name="NSIconViewTemplate" width="11" height="10"/>
+        <image name="NSInfo" width="32" height="32"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
-        <image name="NSPreferencesGeneral" width="32" height="32"/>
         <image name="NSQuickLookTemplate" width="21" height="16"/>
-        <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="NewFolderGrey20" width="20" height="20"/>
         <image name="StopButton" width="11" height="11"/>
         <image name="footprint32" width="100.17391204833984" height="100.17391204833984"/>
         <image name="mancopy32" width="32" height="32"/>

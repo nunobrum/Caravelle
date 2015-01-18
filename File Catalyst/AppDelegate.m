@@ -21,6 +21,7 @@
 
 #import "DuplicateFindSettingsViewController.h"
 #import "UserPreferencesDialog.h"
+#import "RenameFileDialog.h"
 
 
 // Debug CODE !!! To delete
@@ -71,6 +72,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     UserPreferencesDialog *userPreferenceWindow;
+    RenameFileDialog *renameFilePanel;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
@@ -306,7 +308,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 {
     if ([sendType isEqual:NSFilenamesPboardType] ||
         [sendType isEqual:NSURLPboardType]) {
-        NSLog(@"Service return type is %@", returnType);
+        //NSLog(@"Service return type is %@", returnType);
         return self;
     }
     //return [super validRequestorForSendType:sendType returnType:returnType];
@@ -443,19 +445,68 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (IBAction)toolbarInformation:(id)sender {
     // TODO:! Implement Call to System Information Window
+    // Access the row that was clicked on and open that image
+
+    NSArray *selectedFiles = [selectedView getSelectedItems];
+    NSUInteger numberOfFiles = [selectedFiles count];
+
+    // Solution for one single file
+    if (numberOfFiles == 1) {
+        NSURL *item = [[selectedFiles firstObject] url];
+
+        if ([item filePathURL]) {
+            NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
+            [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+            [pboard setString:[[item filePathURL] path]  forType:NSStringPboardType];
+            NSPerformService(@"Finder/Show Info", pboard);
+        }
+    }
+    // Solution for multiple files
+    else {
+
+        NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
+        [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+
+        NSMutableArray *fileList = [NSMutableArray new];
+
+        //Add as many as file's path in the fileList array
+        for(TreeItem *item in selectedFiles) {
+            [fileList addObject:[item path]];
+        }
+
+        [pboard setPropertyList:fileList forType:NSFilenamesPboardType];
+        NSPerformService(@"Finder/Show Info", pboard);
+    }
+
 }
 
 - (IBAction)toolbarRename:(id)sender {
     NSArray *selectedFiles = [selectedView getSelectedItems];
     NSUInteger numberOfFiles = [selectedFiles count];
     if (numberOfFiles == 1) {
-        // If only one file, with edit with dialogSingleRename
-        NSString *path = [[selectedFiles firstObject] path];
-        NSString *fileNameExt = [path pathExtension];
-        NSString *fileName = [[path lastPathComponent] stringByDeletingPathExtension];
-        [[self ebRenameExtension] setStringValue:fileNameExt];
-        [[self ebRenameHead] setStringValue:fileName];
-        [NSApp runModalForWindow: [self panelRename]];
+        // If only one file, with edit with RenameFileDialog
+        if (renameFilePanel==nil)
+            renameFilePanel =[[RenameFileDialog alloc] initWithWindowNibName:@"RenameFileDialog"];
+        TreeItem *selectedFile = [selectedFiles firstObject];
+        NSString *oldFilename = [[selectedFile path] lastPathComponent];
+        [renameFilePanel showWindow:self];
+        // NOTE: If the showWindow is invoked after the statement below it doesn't work
+        [renameFilePanel setRenamingFile:oldFilename];
+        [NSApp runModalForWindow: [renameFilePanel window]];
+        // Got info from window going to make the rename
+        NSString *fileName = [renameFilePanel getRenameFile];
+        if (NO==[oldFilename isEqualToString:fileName]) {
+            NSURL *url = [selectedFile url];
+            BOOL isDirectory = isFolder(url);
+            NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:fileName isDirectory:isDirectory];
+            BOOL OK = moveFileTo(url, newURL);
+            if (OK==YES) {
+                /* This code will work because it is a rename, if its is a move, the TreeItem would have
+                 to be created from scratch */
+                [selectedFile setUrl:newURL];
+                [(BrowserController*)selectedView reloadItem:selectedFile];
+            }
+        }
     }
     else if (numberOfFiles > 1) {
         // TODO:!! Implement the multi-rename
@@ -466,6 +517,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (IBAction)toolbarSearch:(id)sender {
     // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
+    //- (BOOL)showSearchResultsForQueryString:(NSString *)queryString
 }
 
 - (IBAction)toolbarGrouping:(id)sender {
@@ -1067,52 +1119,4 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 
-/* NSTextFieldDelegate Notifications and Delegates */
-
-//- (void)controlTextDidEndEditing:(NSNotification *)obj {
-//    id object = [obj object];
-//    if (object == _ebRenameHead || object == _ebRenameExtension) {
-//        // Should validate and close the rename dialog
-//        [self renameAction:object];
-//    }
-//}
-
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
-{
-    NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
-    if (commandSelector == @selector(insertNewline:)) {
-        if (control == _ebRenameHead || control == _ebRenameExtension) {
-            //Do something against ENTER key
-            [self renameAction:nil];
-            return YES;
-        }
-    }
-//    } else if (commandSelector == @selector(deleteForward:)) {
-//        //Do something against DELETE key
-//
-//    } else if (commandSelector == @selector(deleteBackward:)) {
-//        //Do something against BACKSPACE key
-//
-//    } else if (commandSelector == @selector(insertTab:)) {
-//        //Do something against TAB key
-//    }
-
-    return NO;
-}
-
-- (IBAction)renameAction:(id)sender {
-    NSString *fileName = [[self ebRenameHead] stringValue];
-    NSString *fileExt = [[self ebRenameExtension] stringValue];
-    if ([fileExt length]>0)
-        fileName = [fileName stringByAppendingPathExtension:fileExt];
-    NSURL *oldURL = [[[selectedView getSelectedItems] firstObject] url];
-    renameFile(oldURL, fileName);
-    [[self panelRename] close];
-    [NSApp stopModal];
-}
-
-- (IBAction)renameCancel:(id)sender {
-    [[self panelRename] close];
-    [NSApp stopModal];
-}
 @end

@@ -241,13 +241,13 @@ TreeManager *appTreeManager;
                 // Easiest is to make an Catalyst enumerator
             }
             else {
-                NSLog(@"Refreshing %@", [itemToRefresh url]);
+                //NSLog(@"Refreshing %@", [itemToRefresh url]);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];
                 }
                 else { // TODO: Scan the parent directory
-                    NSLog(@"Not implemented ! Not expected to receive files.");
+                    NSLog(@"Not implemented ! Not expected to receive files.\nReceived ""%@""", changedPath);
                 }
             }
         }

@@ -228,6 +228,7 @@
                                                     </binding>
                                                     <outlet property="dataSource" destination="-2" id="mT6-xG-dgd"/>
                                                     <outlet property="delegate" destination="-2" id="Vbl-au-7cv"/>
+                                                    <outlet property="menu" destination="q8e-qr-VOA" id="w63-7W-4oS"/>
                                                 </connections>
                                             </outlineView>
                                         </subviews>
@@ -458,16 +459,26 @@
         </customView>
         <menu id="q8e-qr-VOA" userLabel="fileContextMenu">
             <items>
+                <menuItem title="Get Info" keyEquivalent="" id="3VP-FH-tZh">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="toolbarInformation:" target="-1" id="jDy-Wc-JpZ"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Rename" keyEquivalent="" id="G3B-EB-1gV">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="toolbarRename:" target="-1" id="SWO-es-8fR"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Preview" id="WFz-fS-fZg">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Edit" id="CQK-9R-8lM">
+                <menuItem title="Edit" alternate="YES" id="CQK-9R-8lM">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Delete" id="AiJ-65-eUG">
-                    <string key="keyEquivalent" base64-UTF8="YES">
-CA
-</string>
+                <menuItem title="Delete" keyEquivalent="" id="AiJ-65-eUG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="delete:" target="-1" id="3jf-Kv-bR7"/>
                     </connections>

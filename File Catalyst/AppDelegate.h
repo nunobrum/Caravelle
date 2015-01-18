@@ -51,13 +51,5 @@
 - (IBAction)paste:(id)sender;
 - (IBAction)delete:(id)sender;
 
-/* Rename Dialog */
-@property (weak) IBOutlet NSTextField *ebRenameHead;
-@property (weak) IBOutlet NSTextField *ebRenameExtension;
-@property (weak) IBOutlet NSPanel *panelRename;
-
-- (IBAction) renameAction:(id) sender;
-- (IBAction) renameCancel:(id) sender;
-
 
 @end
