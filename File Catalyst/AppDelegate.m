@@ -62,13 +62,12 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (void)     statusUpdate:(NSNotification*)theNotification;
 - (void)       rootUpdate:(NSNotification*)theNotification;
 - (void) processNextError:(NSNotification*)theNotification;
-
+- (id)   selectedView;
 @end
 
 @implementation AppDelegate {
     ApplicationwMode applicationMode;
-    id  selectedView;
-	NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
+    NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     UserPreferencesDialog *userPreferenceWindow;
@@ -129,6 +128,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [(BrowserController*)view setViewMode:BViewBrowserMode];
         [(BrowserController*)view addTreeRoot: item];
     }
+}
+
+-(id) selectedView {
+    static id view = nil;
+
+    if ([myLeftView hasFocus]) {
+        view = myLeftView;
+    }
+    else if ([myRightView hasFocus]) {
+        view = myRightView;
+    }
+    return view;
 }
 
 // -------------------------------------------------------------------------------
@@ -205,11 +216,16 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                              returnTypes:returnTypes];
 
 
-    //[_chkMP3_ID setEnabled:NO];
-    //[_chkPhotoEXIF setEnabled:NO];
-    //[_pbRemove setEnabled:NO];
-    //[FSMonitorThread initFSEventStream:[NSArray arrayWithObject:@"/Users/vika/Downloads"]];
-    //[FSMonitorThread start];
+    // Left Side
+    [self goHome: myLeftView]; // Display the User Preferences Left Home
+    // Right side
+    [self goHome: myRightView]; // Display the User Preferences Left Home
+
+    [(BrowserController*)myLeftView selectFirstRoot];
+    [(BrowserController*)myRightView selectFirstRoot];
+    [(BrowserController*)myLeftView refreshTrees];
+    [(BrowserController*)myRightView refreshTrees];
+
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
@@ -217,17 +233,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
-
-        // Left Side
-        [self goHome: myLeftView]; // Display the User Preferences Left Home
-        // Right side
-        [self goHome: myRightView]; // Display the User Preferences Left Home
-
-        NSLog(@"Finished Go Home");
-        [(BrowserController*)myLeftView selectFirstRoot];
-        [(BrowserController*)myRightView selectFirstRoot];
-        [(BrowserController*)myLeftView refreshTrees];
-        [(BrowserController*)myRightView refreshTrees];
 
         if (0) { // Testing Catalyst Mode
             [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
@@ -325,7 +330,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     if ([types containsObject:NSFilenamesPboardType] == YES) {
         typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
         [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [selectedView getSelectedItems];
+        NSArray *selectedFiles = [[self selectedView] getSelectedItems];
         NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
         NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
         return [pboard writeObjects:selectedPaths];
@@ -333,7 +338,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     else if ([types containsObject:NSURLPboardType] == YES) {
         typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
         [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [selectedView getSelectedItems];
+        NSArray *selectedFiles = [[self selectedView] getSelectedItems];
         NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
         return [pboard writeObjects:selectedURLs];
     }
@@ -355,6 +360,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 /* Receives the notification from the BrowserView to reload the Tree */
+
+//TODO:!!! Revise this code
 - (void) rootUpdate:(NSNotification*)theNotification {
     NSMutableDictionary *notifInfo = [NSMutableDictionary dictionaryWithDictionary:[theNotification userInfo]];
     BrowserController *BrowserView = [theNotification object];
@@ -440,14 +447,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 	return (numOperationsRunning == 0);
 }
 
-#pragma mark Action Outlets
+#pragma mark -
 
+#pragma mark execution of Actions
 
-- (IBAction)toolbarInformation:(id)sender {
-    // TODO:! Implement Call to System Information Window
-    // Access the row that was clicked on and open that image
-
-    NSArray *selectedFiles = [selectedView getSelectedItems];
+- (void) executeInformation:(NSArray*) selectedFiles {
     NSUInteger numberOfFiles = [selectedFiles count];
 
     // Solution for one single file
@@ -480,8 +484,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 }
 
-- (IBAction)toolbarRename:(id)sender {
-    NSArray *selectedFiles = [selectedView getSelectedItems];
+- (void) executeRename:(NSArray*) selectedFiles {
     NSUInteger numberOfFiles = [selectedFiles count];
     if (numberOfFiles == 1) {
         // If only one file, with edit with RenameFileDialog
@@ -504,7 +507,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 /* This code will work because it is a rename, if its is a move, the TreeItem would have
                  to be created from scratch */
                 [selectedFile setUrl:newURL];
-                [(BrowserController*)selectedView reloadItem:selectedFile];
+                [(BrowserController*)[self selectedView] reloadItem:selectedFile];
             }
         }
     }
@@ -515,6 +518,210 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 }
 
+-(void) executeCopyTo:(NSArray*) selectedFiles {
+    if ([self selectedView] == myLeftView) {
+        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+    }
+    else if ([self selectedView] == myRightView) {
+        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+    }
+}
+
+-(void) executeMoveTo:(NSArray*) selectedFiles {
+    if ([self selectedView] == myLeftView) {
+        moveItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+    }
+    else if ([self selectedView] == myRightView) {
+        moveItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+    }
+}
+
+-(void) executeOpen:(NSArray*) selectedFiles {
+    for (TreeItem *item in selectedFiles) {
+        [[NSWorkspace sharedWorkspace] openFile:[item path]];
+    }
+}
+
+- (void) executeNewFolder:(TreeBranch*)selectedBranch {
+    // TODO:!!! Implementation of the new Folder
+}
+
+
+- (void)executeCut:(NSArray*) selectedFiles {
+    // The cut: is identical to the copy: but the isCutPending is activated.
+    // Its on the paste operation that the a decision is taken whether the cut
+    // Can be done, if the application still maintains ownership of the pasteboard
+    for (TreeItem *item in selectedFiles) {
+        [item setTag:tagTreeItemToMove+tagTreeItemDirty];
+    }
+    [[self selectedView] refreshTableViewKeepingSelections];
+    [self executeCopy:selectedFiles];
+    isCutPending = YES;
+}
+
+- (void)executeCopy:(NSArray*) selectedFiles {
+
+    // Get the urls from the view
+    NSArray* items = [[self selectedView] getSelectedItems];
+    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+    // Will create name list for text application paste
+    NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
+    // Join the paths, one name per line
+    NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
+
+    // Get The clipboard
+    NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
+
+    // Store the Pasteboard counter for later to check ownership
+    generalPasteBoardChangeCount = [clipboard changeCount];
+    isCutPending = NO;
+
+    // TODO:!! multi copy, where an additional copy will append items to the pasteboard
+    /* use the following function of NSFileManager to create a directory that will serve as
+     clipboard for situation where the Application can be closed.
+     - (NSURL *)URLForDirectory:(NSSearchPathDirectory)directory
+     inDomain:(NSSearchPathDomainMask)domain
+     appropriateForURL:(NSURL *)url
+     create:(BOOL)shouldCreate
+     error:(NSError **)error
+     */
+
+    [clipboard clearContents];
+    [clipboard writeObjects:urls];
+    //Now add the pathsPerLine as a string
+    [clipboard setString:pathPerLine forType:NSStringPboardType];
+
+    NSUInteger count = [urls count];
+    NSString *statusText;
+    if (count==0) {
+        statusText = [NSString stringWithFormat:@"No files selected"];
+    } else if (count==1) {
+        statusText = [NSString stringWithFormat:@"%lu file copied", (unsigned long)count];
+    }
+    else {
+        statusText = [NSString stringWithFormat:@"%lu files copied", (unsigned long)count];
+    }
+    [_StatusBar setTitle:statusText];
+
+}
+
+- (void) executePaste:(TreeBranch*) destinationBranch {
+
+    NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
+                             NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
+                             nil];
+    NSArray *files = [clipboard readObjectsForClasses:
+                      [NSArray arrayWithObjects: [NSURL class], nil]
+                                              options:options];
+    if (files!=nil && [files count]>0) {
+        if (isCutPending) {
+            if (generalPasteBoardChangeCount == [clipboard changeCount]) {
+                // Make the move
+                moveItemsToBranch(files, destinationBranch);
+                // Update the Status bar with the information of a move
+                NSString *statusText = [NSString stringWithFormat:@"Moving %ld files to %@",
+                                        [files count],
+                                        [destinationBranch path]
+                                        ];
+                [_StatusBar setTitle: statusText];
+            }
+            else {
+                // Display a warning saying that the application lost control of the clipboard
+                // and that the cut cannot be done. Will be aborted.
+                NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the Cut operation !"
+                                                 defaultButton:@"OK"
+                                               alternateButton:nil
+                                                   otherButton:nil
+                                     informativeTextWithFormat:@"Another application changed the System Clipboard."];
+                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            }
+        }
+        else { // Make a regular copy
+            copyItemsToBranch(files, destinationBranch);
+            // Update the Status bar with the information of a copy
+            NSString *statusText = [NSString stringWithFormat:@"Copying %ld files to %@",
+                                    [files count],
+                                    [destinationBranch path]
+                                    ];
+            [_StatusBar setTitle: statusText];
+        }
+    }
+    else
+        [_StatusBar setTitle: @"Nothing to paste"];
+}
+
+
+-(void) executeDelete:(NSArray*) selectedFiles {
+    sendItemsToRecycleBin(selectedFiles);
+}
+
+
+#pragma mark Action Outlets
+
+
+- (IBAction)toolbarInformation:(id)sender {
+    [self executeInformation: [[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualInformation:(id)sender {
+    [self executeInformation: [[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarRename:(id)sender {
+    [self executeRename:[[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualRename:(id)sender {
+    [self executeRename:[[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarDelete:(id)sender {
+    [self executeDelete:[[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualDelete:(id)sender {
+    [self executeDelete:[[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarCopyTo:(id)sender {
+    [self executeCopyTo:[[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualCopyTo:(id)sender {
+    [self executeCopyTo:[[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarMoveTo:(id)sender {
+    [self executeMoveTo:[[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualMoveTo:(id)sender {
+    [self executeMoveTo:[[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarOpen:(id)sender {
+    [self executeOpen:[[self selectedView] getSelectedItems]];
+}
+
+- (IBAction)contextualOpen:(id)sender {
+    [self executeOpen:[[self selectedView] getSelectedItemsForContextMenu]];
+}
+
+- (IBAction)toolbarNewFolder:(id)sender {
+    NSArray *selectedItems = [[self selectedView] getSelectedItems];
+    assert ([selectedItems count]==1); // This needs to be verified by the validateUserIterfaceItem
+    [self executeNewFolder:(TreeBranch*) [selectedItems firstObject]];
+}
+
+- (IBAction)contextualNewFolder:(id)sender {
+    // The last item is forcefully a Branch since it was checked in the validateUserIterfaceItem
+    [self executeNewFolder:(TreeBranch*)[[self selectedView] getLastClickedItem]];
+}
+
+
 - (IBAction)toolbarSearch:(id)sender {
     // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
     //- (BOOL)showSearchResultsForQueryString:(NSString *)queryString
@@ -524,57 +731,18 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     // TODO:! Grouping pointer, select column to use for grouping
 }
 
-
-- (IBAction)toolbarDelete:(id)sender {
-    NSArray *selectedFiles = [selectedView getSelectedItems];
-    sendItemsToRecycleBin(selectedFiles);
-}
-
-
-- (IBAction)toolbarCopy:(id)sender {
-    if (selectedView == myLeftView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
-    }
-    else if (selectedView == myRightView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
-    }
-}
-
-- (IBAction)toolbarMove:(id)sender {
-    if (selectedView == myLeftView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        moveItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
-    }
-    else if (selectedView == myRightView) {
-        NSArray *selectedFiles = [selectedView getSelectedItems];
-        moveItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
-    }
-}
-
-- (IBAction)toolbarOpen:(id)sender {
-    NSArray *selectedFiles = [selectedView getSelectedItems];
-    for (TreeItem *item in selectedFiles) {
-        [[NSWorkspace sharedWorkspace] openFile:[item path]];
-    }
-}
-
 - (IBAction)toolbarRefresh:(id)sender {
     [self refreshAllViews:nil];
 }
 
 - (IBAction)toolbarHome:(id)sender {
     if ([sender isKindOfClass:[BrowserController class]]) {
-        [self goHome:selectedView];
-        [(BrowserController*)selectedView selectFirstRoot];
-        [(BrowserController*)selectedView refreshTrees];
+        [self goHome:[self selectedView]];
+        [(BrowserController*)[self selectedView] selectFirstRoot];
+        [(BrowserController*)[self selectedView] refreshTrees];
     }
 }
 
-- (IBAction)toolbarNewFolder:(id)sender {
-    // TODO:!!! Implementation of the new Folder
-}
 
 - (IBAction)orderPreferencePanel:(id)sender {
     NSLog(@"Preference Panel");
@@ -595,7 +763,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     // Create isABackFlag for the forward highlight and to test the Back
     // isAForward will make sure that the Forward is highlighted
     // otherwise Forward is disabled and Back Enabled
-    id focused_browser = selectedView;
+    id focused_browser = [self selectedView];
     if ([focused_browser isKindOfClass:[BrowserController class]]) {
         if (backOrForward==0) { // Backward
             [focused_browser backSelectedFolder];
@@ -611,128 +779,70 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 
 - (IBAction)cut:(id)sender {
-    // The cut: is identical to the copy: but the isCutPending is activated.
-    // Its on the paste operation that the a decision is taken whether the cut
-    // Can be done, if the application still maintains ownership of the pasteboard
     if ([sender isKindOfClass:[BrowserController class]] &&
         (sender==myLeftView || sender==myRightView)) {
         // First will mark the selected files to move
-        NSArray* items = [selectedView getSelectedItems];
-        for (TreeItem *item in items) {
-            [item setTag:tagTreeItemToMove+tagTreeItemDirty];
-        }
-        [(BrowserController*)sender refreshTableViewKeepingSelections];
-        [self copy:sender];
-        isCutPending = YES;
+        [self executeCut:[[self selectedView] getSelectedItems]];
+    }
+    else {
+        // other objects that can send a cut:
     }
 }
+
+- (IBAction)contextualCut:(id)sender {
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
+        // First will mark the selected files to move
+        [self executeCut:[[self selectedView] getSelectedItemsForContextMenu]];
+    }
+}
+
 - (IBAction)copy:(id)sender {
     if ([sender isKindOfClass:[BrowserController class]] &&
         (sender==myLeftView || sender==myRightView)) {
+        [self executeCopy:[[self selectedView] getSelectedItems]];
+    }
+    else {
+        // other objects that can send a copy:
+    }
+}
 
-        // Get the urls from the view
-        NSArray* items = [selectedView getSelectedItems];
-        NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
-        // Will create name list for text application paste
-        NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
-        // Join the paths, one name per line
-        NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
-
-        // Get The clipboard
-        NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
-
-        // Store the Pasteboard counter for later to check ownership
-        generalPasteBoardChangeCount = [clipboard changeCount];
-        isCutPending = NO;
-
-        // TODO:!! multi copy, where an additional copy will append items to the pasteboard
-        /* use the following function of NSFileManager to create a directory that will serve as
-         clipboard for situation where the Application can be closed.
-         - (NSURL *)URLForDirectory:(NSSearchPathDirectory)directory
-    inDomain:(NSSearchPathDomainMask)domain
-    appropriateForURL:(NSURL *)url
-    create:(BOOL)shouldCreate
-    error:(NSError **)error
-         */
-
-        [clipboard clearContents];
-        [clipboard writeObjects:urls];
-        //Now add the pathsPerLine as a string
-        [clipboard setString:pathPerLine forType:NSStringPboardType];
-
-        NSUInteger count = [urls count];
-        NSString *statusText;
-        if (count==0) {
-            statusText = [NSString stringWithFormat:@"No files selected"];
-        } else if (count==1) {
-            statusText = [NSString stringWithFormat:@"%lu file copied", (unsigned long)count];
-        }
-        else {
-            statusText = [NSString stringWithFormat:@"%lu files copied", (unsigned long)count];
-        }
-        [_StatusBar setTitle:statusText];
+- (IBAction)contextualCopy:(id)sender {
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
+        [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu]];
     }
 }
 
 - (IBAction)paste:(id)sender {
     if ([sender isKindOfClass:[BrowserController class]] &&
         (sender==myLeftView || sender==myRightView)) {
+        TreeBranch *destinationBranch = [[self selectedView] treeNodeSelected];
+        [self executePaste:destinationBranch];
+    }
+    else {
+        // other objects that can send a paste:
+    }
+}
 
-        NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
-
-        NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                                 NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
-                                 NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
-                                 nil];
-        NSArray *files = [clipboard readObjectsForClasses:
-                          [NSArray arrayWithObjects: [NSURL class], nil]
-                                                  options:options];
-        if (files!=nil && [files count]>0) {
-            if (isCutPending) {
-                if (generalPasteBoardChangeCount == [clipboard changeCount]) {
-                    // Make the move
-                    TreeBranch *destinationBranch = [selectedView treeNodeSelected];
-                    moveItemsToBranch(files, destinationBranch);
-                    // Update the Status bar with the information of a move
-                    NSString *statusText = [NSString stringWithFormat:@"Moving %ld files to %@",
-                                            [files count],
-                                            [destinationBranch path]
-                                            ];
-                    [_StatusBar setTitle: statusText];
-                }
-                else {
-                    // Display a warning saying that the application lost control of the clipboard
-                    // and that the cut cannot be done. Will be aborted.
-                    NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the Cut operation !"
-                                                     defaultButton:@"OK"
-                                                   alternateButton:nil
-                                                       otherButton:nil
-                                         informativeTextWithFormat:@"Another application changed the System Clipboard."];
-                    [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-                }
-            }
-            else { // Make a regular copy
-                TreeBranch *destinationBranch = [selectedView treeNodeSelected];
-                copyItemsToBranch(files, destinationBranch);
-                // Update the Status bar with the information of a copy
-                NSString *statusText = [NSString stringWithFormat:@"Copying %ld files to %@",
-                                        [files count],
-                                        [destinationBranch path]
-                                        ];
-                [_StatusBar setTitle: statusText];
-            }
-        }
-        else
-            [_StatusBar setTitle: @"Nothing to paste"];
+- (IBAction)contextualPaste:(id)sender {
+    if ([sender isKindOfClass:[BrowserController class]] &&
+        (sender==myLeftView || sender==myRightView)) {
+        // TODO: Need to insure on the validateUserInterfaceItem that node is Branch
+        [self executePaste:(TreeBranch*)[[self selectedView] getLastClickedItem]];
     }
 }
 
 -(IBAction)delete:(id)sender {
     if ([sender isKindOfClass:[BrowserController class]] &&
         (sender==myLeftView || sender==myRightView)) {
-        [self toolbarDelete:sender];
+        [self executeDelete:[(BrowserController*)sender getSelectedItems]];
+    }
+    else {
+        // other objects that can send a delete:
     }
 }
+
 
 #pragma mark Menu Validation
 
@@ -748,44 +858,112 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 //    return YES;
 //}
 
- - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
+// These pragmas avoid the warning on the toolbarNewFolder
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Wundeclared-selector"
+//#pragma clang diagnostic pop
+
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
     SEL theAction = [anItem action];
     BOOL allow = YES; // The default is yes, unless there is a condition that invalidates it
 
     /* This is done like this so that not more than one folder is selected */
-    NSArray *itemsSelected = [(BrowserController*)selectedView getSelectedItemsForContextMenu];
+    NSArray *itemsSelected=nil;
 
-    if ([itemsSelected count]==0) { // no selection
-        if (theAction == @selector(toolbarNewFolder:)) {
-            // TODO:!!! Ask the view whether it can make a new Folder
-            // For now assuming a yes
-            allow = YES;
+    // Actions that can always be done
+    if (theAction == @selector(toolbarHome:) ||
+        theAction == @selector(toolbarRefresh:) ||
+        theAction == @selector(toolbarSearch:) ||
+        theAction == @selector(toolbarGrouping:)
+        ) {
+        return YES;
+    }
+
+    // Actions that require a selection
+    if (theAction == @selector(contextualCopy:) ||
+        theAction == @selector(contextualCopyTo:) ||
+        theAction == @selector(contextualCut:) ||
+        theAction == @selector(contextualDelete:) ||
+        theAction == @selector(contextualInformation:) ||
+        theAction == @selector(contextualMoveTo:) ||
+        theAction == @selector(contextualNewFolder:) ||
+        theAction == @selector(contextualOpen:) ||
+        theAction == @selector(contextualRename:) ||
+        theAction == @selector(contextualPaste:)
+        ) {
+        itemsSelected = [(BrowserController*)[self selectedView] getSelectedItemsForContextMenu];
+    }
+    else {
+        itemsSelected = [(BrowserController*)[self selectedView] getSelectedItems];
+    }
+
+
+    NSLog(@"Items selected");
+    for (TreeItem *d in itemsSelected) {
+        NSLog(@"%@", [d path]);
+    }
+
+    if ([itemsSelected count]==0) { // no selection, go for the selected view
+        TreeBranch *targetFolder = [[self selectedView] treeNodeSelected];
+        // TODO:!!! check whether the folder is accessible
+        // For now assuming a NO
+
+        if (theAction == @selector(toolbarNewFolder:) ||
+            theAction == @selector(contextualNewFolder:)) {
+            allow = NO;
         }
-        else {
+        else if (theAction == @selector(paste:) ||
+                 theAction == @selector(contextualPaste:)) {
+            allow = NO;
+        }
+        else
+        {
             allow = NO;
         }
     }
     else {
         for (TreeItem *item in itemsSelected) {
-            // These pragmas avoid the warning on the toolbarNewFolder
-            //#pragma clang diagnostic push
-            //#pragma clang diagnostic ignored "-Wundeclared-selector"
-            //#pragma clang diagnostic pop
+            // Actions that can always be made
+            if (theAction == @selector(contextualCopy:) ||
+                theAction == @selector(contextualCopyTo:) ||
+                theAction == @selector(contextualInformation:) ||
+                theAction == @selector(contextualOpen:) ||
+                theAction == @selector(contextualRename:) ||
+                theAction == @selector(toolbarCopyTo:) ||
+                theAction == @selector(toolbarInformation:) ||
+                theAction == @selector(toolbarOpen:)
+                ) {
 
-            if (theAction == @selector(toolbarNewFolder:)) {
+            }
+
+            // actions that require write access
+            else if (theAction == @selector(toolbarNewFolder:) ||
+                theAction == @selector(paste:) ||
+                theAction == @selector(contextualNewFolder:) ||
+                theAction == @selector(contextualPaste:)
+                ) {
                 if ([item isKindOfClass:[TreeBranch class]]==NO)
                 {
                     allow = NO;
                 }
             }
-            else if (theAction == @selector(delete:)) {
-                allow = YES;
+
+            // Actions that require delete access
+            else if (theAction == @selector(contextualCut:) ||
+                theAction == @selector(contextualDelete:) ||
+                theAction == @selector(contextualMoveTo:) ||
+                theAction == @selector(toolbarDelete:) ||
+                theAction == @selector(delete:)
+                ) {
+                    allow = YES;
             }
-            
+
             if (!allow) // Stop if a not allow is found
                 break;
         }
     }
+
     return allow; //[super validateUserInterfaceItem:anItem];
 }
 
@@ -845,7 +1023,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (void) statusUpdate:(NSNotification*)theNotification {
     static NSUInteger dupShow = 0;
     NSString *statusText;
-    selectedView = [theNotification object];
+    id selView = [theNotification object];
     // Updates the window Title
     NSArray *titleComponents = [NSArray arrayWithObjects:@"File Catalyst",
                                 [myLeftView title],
@@ -853,16 +1031,16 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
     [[self myWindow] setTitle:windowTitle];
 
-    if ([selectedView isKindOfClass:[BrowserController class]]) {
+    if ([selView isKindOfClass:[BrowserController class]]) {
 
-        NSArray *selectedFiles = [selectedView getSelectedItems];
+        NSArray *selectedFiles = [selView getSelectedItems];
 
         if (selectedFiles != nil) {
             NSInteger num_files=0;
             NSInteger files_size=0;
             NSInteger folders_size=0;
             NSInteger num_directories=0;
-            if (applicationMode==ApplicationwModeDuplicate && selectedView==myLeftView) {
+            if (applicationMode==ApplicationwModeDuplicate && selView==myLeftView) {
                 dupShow++;
                 FileCollection *selectedDuplicates = [[FileCollection alloc] init];
                 for (TreeItem *item in selectedFiles ) {
@@ -905,7 +1083,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 //                    //[self.toolbarCopyRightButton setEnabled:NO];
 //                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
 //                }
-                if ([(BrowserController*)selectedView viewMode]==BViewBrowserMode) {
+                if ([(BrowserController*)selView viewMode]==BViewBrowserMode) {
                     NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
                     statusText = [NSString stringWithFormat:@"%lu Directories, %lu Files adding up to %@ bytes",
                                   num_directories, num_files, sizeText];

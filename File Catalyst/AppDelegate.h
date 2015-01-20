@@ -28,19 +28,31 @@
 
 /* Toolbar Actions */
 - (IBAction)toolbarInformation:(id)sender;
+- (IBAction)contextualInformation:(id)sender;
+
 - (IBAction)toolbarRename:(id)sender;
-- (IBAction)toolbarSearch:(id)sender;
-- (IBAction)toolbarGrouping:(id)sender;
+- (IBAction)contextualRename:(id)sender;
 
 - (IBAction)toolbarDelete:(id)sender;
-- (IBAction)toolbarCopy:(id)sender;
-- (IBAction)toolbarMove:(id)sender;
-- (IBAction)toolbarOpen:(id)sender;
+- (IBAction)contextualDelete:(id)sender;
 
+- (IBAction)toolbarCopyTo:(id)sender;
+- (IBAction)contextualCopyTo:(id)sender;
+
+- (IBAction)toolbarMoveTo:(id)sender;
+- (IBAction)contextualMoveTo:(id)sender;
+
+- (IBAction)toolbarOpen:(id)sender;
+- (IBAction)contextualOpen:(id)sender;
+
+- (IBAction)toolbarNewFolder:(id)sender;
+- (IBAction)contextualNewFolder:(id)sender;
+
+- (IBAction)toolbarSearch:(id)sender;
+- (IBAction)toolbarGrouping:(id)sender;
 - (IBAction)toolbarRefresh:(id)sender;
 - (IBAction)toolbarHome:(id)sender;
 
-- (IBAction)toolbarNewFolder:(id)sender;
 
 - (IBAction)operationCancel:(id)sender;
 
