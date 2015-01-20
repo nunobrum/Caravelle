@@ -1482,12 +1482,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSLog(@"Clicked Row (%ld)-(%ld)\nRightClick (%ld)-(%ld)", outlineClickedRow, tableClickedRow, outlineRightClickedRow, tableRightClickedRow); */
 
     if ([_myOutlineView rightMouseLocation]!= BROWSER_OUTLINE_VIEW_INVALIDATED_ROW) {
-        /* This is done like this so that not more than one folder is selected */
-        NSIndexSet *selectedIndexes = [_myOutlineView selectedRowIndexes];
-        // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
-        if ([_myOutlineView rightMouseLocation] != -1 && ![selectedIndexes containsIndex:[_myOutlineView rightMouseLocation]]) {
-            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myOutlineView rightMouseLocation]];
-        }
+        answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[_myOutlineView rightMouseLocation]]];
+        _focusedView = _myOutlineView;
     }
     else if ([_myTableView rightMouseLocation]!= BROWSER_TABLE_VIEW_INVALIDATED_ROW) {
         NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
@@ -1496,11 +1492,21 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView rightMouseLocation]];
         }
         answer = [tableData objectsAtIndexes:selectedIndexes];
+        _focusedView = _myTableView;
     }
     // Finally it has to invalidate both views
     [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
     [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
     return answer;
+}
+
+-(TreeItem*) getLastClickedItem {
+    if (_focusedView==_myOutlineView) {
+        return [_myOutlineView itemAtRow:[_myOutlineView clickedRow]];
+    }
+    else {
+        return [tableData objectAtIndex:[_myTableView clickedRow]];
+    }
 }
 
 -(void) outlineSelectExpandNode:(TreeBranch*) cursor {
@@ -1661,6 +1667,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(NSString *) title {
     NSURL *root_url = [_rootNodeSelected url];
     return [root_url lastPathComponent];
+}
+
+-(BOOL) hasFocus {
+    NSInteger a;
+    if ((a=[_myTableView clickedRow])!=-1) // -1 means no click
+        return YES;
+    if ((a=[_myOutlineView clickedRow])!=-1)
+        return YES;
+    return NO;
 }
 
 @end

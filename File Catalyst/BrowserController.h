@@ -28,10 +28,10 @@ extern NSString *notificationCatalystRootUpdate;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
-@property (weak) IBOutlet BrowserOutlineView *myOutlineView;
-@property (weak) IBOutlet BrowserTableView *myTableView;
+@property (strong) IBOutlet BrowserOutlineView *myOutlineView;
+@property (strong) IBOutlet BrowserTableView *myTableView;
 @property (strong) IBOutlet CustomTableHeaderView *myTableViewHeader;
-@property (weak) IBOutlet NSPathCell *myPathBarCell;
+@property (strong) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet NSPathControl *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
 @property (strong) IBOutlet NSPopUpButton *myPathPopDownButton;
@@ -126,8 +126,11 @@ extern NSString *notificationCatalystRootUpdate;
 -(NSURL*) getTreeViewSelectedURL;
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;
+
 -(NSArray*) getSelectedItems;
 -(NSArray*) getSelectedItemsForContextMenu;
+-(TreeItem*) getLastClickedItem;
+
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
 

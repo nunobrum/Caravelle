@@ -70,6 +70,7 @@ extern NSString *kOptionsKey;
 @protocol MYViewProtocol <NSObject>
 
 -(NSString*) title;
+-(BOOL) hasFocus;
 
 @end
 
