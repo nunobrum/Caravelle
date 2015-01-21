@@ -41,8 +41,13 @@ extern NSString *notificationCatalystRootUpdate;
 @property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
 
 
+
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
+
+@property NSString *titleCopyTo;
+@property NSString *titleMoveTo;
+@property NSNumber *contextualToMenusEnabled;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
@@ -94,8 +99,8 @@ extern NSString *notificationCatalystRootUpdate;
  * Parent access routines
  */
 
--(void) afterLoadInitialization;
-
+-(void) initBrowserView:(BViewMode)viewMode twin:(NSString*)twinName;
+-(void) setTwinName:(NSString *)twinName;
 -(void) setViewMode:(BViewMode)viewMode;
 -(BViewMode) viewMode;
 

@@ -159,7 +159,7 @@
     predicateToRun = [NSCompoundPredicate andPredicateWithSubpredicates:[NSArray arrayWithObjects:predicateToRun, emailExclusionPredicate, nil]];
 
     } else { // I want to use the URL to limit the search
-        if (self->_url!=nil)
+        if ([self url]!=nil)
             [self->_query setSearchScopes:[NSArray arrayWithObjects:[self url], nil]];
         else
             [self->_query setSearchScopes:[NSArray arrayWithObject:NSMetadataQueryUserHomeScope]];
@@ -175,51 +175,6 @@
 
 
 #pragma mark -
-//#pragma mark Refreshing contents
-//- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
-//    @synchronized (self) {
-//        if ((_tag & tagTreeItemUpdating)!=0 || (_tag&tagTreeItemDirty)==0 || _url==nil) {
-//            // If its already updating or not dirty.... do nothing exit here.
-//            if (_url==nil) {
-//                [self resetTag:tagTreeItemDirty]; // Choosing to do this for avoiding repeat when url is not defined
-//            }
-//        }
-//        else { // else make the update
-//            _tag |= tagTreeItemUpdating;
-//            [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
-//                filterBranch *others;
-//                others = (filterBranch*)[self childWithName:@"Others" class:[filterBranch class]];
-//                if (others==nil) {
-//                    others = [[filterBranch new] initWithFilter:nil name:@"Others" parent:nil];
-//                }
-//                /* Will set all items with TAG dirty */
-//                [self setTagsInBranch:tagTreeItemDirty];
-//                NSLog(@"Enumerating files in directory %@", self.path);
-//                MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewDuplicateMode];
-//
-//                for (NSURL *theURL in dirEnumerator) {
-//                    TreeItem *item = [self addURL:theURL]; /* Retrieves existing Element */
-//                    if (item==nil) { /* If not found creates a new one */
-//                        [others addURL:theURL];
-//                    }
-//                    /* In items found the Dirty tag is reset */
-//                    [item resetTag:tagTreeItemDirty];
-//
-//
-//                } // for
-//                @synchronized (self) {
-//                    _tag  &= ~(tagTreeItemDirty); // Resets updating and dirty
-//                }
-//                [self purgeDirtyItems];
-//                @synchronized (self) {
-//                    _tag &= ~(tagTreeItemUpdating); // Resets updating and dirty
-//                }
-//            }];
-//        }
-//    }
-//}
-//
-//#pragma mark -
 
 
 

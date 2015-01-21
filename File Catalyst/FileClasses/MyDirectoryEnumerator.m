@@ -17,7 +17,9 @@
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles;
     }
     else if (viewMode == BViewBrowserMode){
-        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles;
+        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles |
+        // TODO:!!!! Get this from the UserDefinitions
+            NSDirectoryEnumerationSkipsPackageDescendants;
     } else if (viewMode == BViewDuplicateMode){
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
@@ -35,6 +37,8 @@
                                                                               NSURLIsDirectoryKey,
                                                                               NSURLContentModificationDateKey,
                                                                               NSURLFileSizeKey,
+                                                                              NSURLIsWritableKey,
+                                                                              NSURLIsRegularFileKey,
                                                                               nil]
                                                                      options:dirEnumOptions
                                                                 errorHandler:nil];

@@ -18,6 +18,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemToMove   = (1UL << 4),
     tagTreeItemUpdating = (1UL << 5),
     tagTreeItemRelease  = (1UL << 6), // Used inform BrowserControllers to remove items from Root
+    tagTreeItemReadOnly = (1UL << 7),
     tagTreeItemAll      = NSUIntegerMax
 };
 
@@ -44,7 +45,6 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 }
 
 @property (weak) TreeItem           *parent;
-@property NSURL                     *url;
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 -(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
@@ -65,10 +65,15 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
 -(NSNumber*) fileSize;
 -(NSString*) fileKind;
 
+
+-(void) setUrl:(NSURL*)url;
+-(NSURL*) url;
+
 -(void) setTag:(TreeItemTagEnum)tag;
 -(void) resetTag:(TreeItemTagEnum)tag;
 -(TreeItemTagEnum) tag;
 -(BOOL) hasTags:(TreeItemTagEnum) tag;
+-(void) updateFileTags;
 
 /*
  * File manipulation methods

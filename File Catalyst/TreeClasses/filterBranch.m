@@ -13,8 +13,10 @@
 #pragma mark Initializers
 
 -(filterBranch*) initWithFilter:(NSPredicate*)filt  name:(NSString*)name  parent:(TreeBranch*)parent {
-    self = [super initWithURL:nil parent:parent];
-    self->_url = [parent url]; // This is needed for compatibility with other methods
+    // self = [super initWithURL:nil parent:parent]; Now a nil can't be passed to the initWithURL
+    self->_children = nil;
+    [self setParent:parent];    // This routine also sets url to be the same of the parent.
+                                // This is needed for compatibility with other methods
                                 // such as childContainingURL. The filter is supposed to be used on
                                 // filters on the contents of a parent.
     self->_filter = filt;
@@ -56,7 +58,7 @@
 
 -(void) setParent:(TreeItem *)parent {
     self->_parent = parent;
-    self->_url = [parent url]; // This is needed for compatibility with other methods
+    [self setUrl:[parent url]]; // This is needed for compatibility with other methods
     // such as childContainingURL. The filter is supposed to be used on
     // filters on the contents of a parent.
 }

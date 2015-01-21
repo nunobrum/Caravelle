@@ -459,51 +459,66 @@
         </customView>
         <menu id="q8e-qr-VOA" userLabel="fileContextMenu">
             <items>
-                <menuItem title="Get Info" keyEquivalent="" id="3VP-FH-tZh">
+                <menuItem title="Get Info" tag="1" keyEquivalent="" id="3VP-FH-tZh">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="toolbarInformation:" target="-1" id="jDy-Wc-JpZ"/>
+                        <action selector="contextualInformation:" target="-1" id="oSR-FV-CRi"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Rename" keyEquivalent="" id="G3B-EB-1gV">
+                <menuItem title="Rename" tag="2" keyEquivalent="" id="G3B-EB-1gV">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="toolbarRename:" target="-1" id="SWO-es-8fR"/>
+                        <action selector="contextualRename:" target="-1" id="e6x-L7-73M"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Preview" id="WFz-fS-fZg">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Edit" alternate="YES" id="CQK-9R-8lM">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Delete" keyEquivalent="" id="AiJ-65-eUG">
+                <menuItem title="Open" id="WFz-fS-fZg">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="delete:" target="-1" id="3jf-Kv-bR7"/>
+                        <action selector="contextualOpen:" target="-1" id="IAK-9r-0qf"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Delete" tag="9" keyEquivalent="" id="AiJ-65-eUG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="contextualDelete:" target="-1" id="izf-rs-02N"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="MXg-ci-KvD"/>
+                <menuItem title="Copy Right" tag="6" keyEquivalent="" id="wht-kT-dyW">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
+                        <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="dJ8-5I-zQs"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
+                        <binding destination="-2" name="title" keyPath="self.titleMoveTo" id="CZG-6S-oid"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
                 <menuItem title="Cut" keyEquivalent="x" id="say-To-m67">
                     <connections>
-                        <action selector="cut:" target="-1" id="eQo-ko-r1k"/>
+                        <action selector="contextualCut:" target="-1" id="a17-lI-alr"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Copy" keyEquivalent="c" id="Fn1-51-4VD">
                     <connections>
-                        <action selector="copy:" target="-1" id="aJg-us-Sug"/>
+                        <action selector="contextualCopy:" target="-1" id="wPL-zM-oXt"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO">
                     <connections>
-                        <action selector="paste:" target="-1" id="1Aa-yt-CCl"/>
+                        <action selector="contextualPaste:" target="-1" id="zQK-QA-jGk"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="gvN-b3-nLQ"/>
                 <menuItem title="New..." keyEquivalent="n" id="Yfd-od-4LD"/>
                 <menuItem image="NewFolderGrey20" keyEquivalent="N" id="xKl-Mj-ZxK">
                     <connections>
-                        <action selector="toolbarNewFolder:" target="-1" id="h1D-0R-lR6"/>
+                        <action selector="contextualNewFolder:" target="-1" id="5Cr-mg-hqS"/>
                     </connections>
                 </menuItem>
             </items>
@@ -511,6 +526,7 @@
                 <outlet property="delegate" destination="-2" id="KxG-bb-Ocm"/>
             </connections>
         </menu>
+        <userDefaultsController representsSharedInstance="YES" id="c7i-sc-Lu7"/>
     </objects>
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>

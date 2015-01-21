@@ -18,27 +18,21 @@
     self = [super init];
     if (self) {
         self->_tag = 0;
-        self->_url = url;
+        [self setUrl:url];
         self->_parent = parent;
     }
     return self;
 }
 
 -(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
-    self = [super init];
-    if (self) {
-        NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
-        self->_tag = 0;
-        self->_url = [NSURL fileURLWithPath:path];
-        self->_parent = parent;
-    }
-    return self;
-}
+    NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
+    return [self initWithURL: [NSURL fileURLWithPath:path] parent:parent];
+ }
 
 
 +(instancetype) treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
-
+    // TODO:!! Check Is regular file First. See NSURLIsRegularFileKey
     NSString *typeIdentifier;
     if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
         if (isFolder(url)) {
@@ -91,6 +85,15 @@
 }
 
 
+-(void) setUrl:(NSURL*)url {
+    // The tags shoud be set here accordingly to the information got from URL
+    self->_url = url;
+    [self updateFileTags];
+}
+
+-(NSURL*) url {
+    return _url;
+}
 
 -(void) setTag:(TreeItemTagEnum)tag {
     _tag |= tag;
@@ -104,6 +107,14 @@
 
 -(BOOL) hasTags:(TreeItemTagEnum) tag {
     return (_tag & tag)!=0 ? YES : NO;
+}
+
+-(void) updateFileTags {
+    _tag &= ~tagTreeItemDirty;
+    if (isWritable(_url))
+        _tag &= ~tagTreeItemReadOnly;
+    else
+        _tag |= tagTreeItemReadOnly;
 }
 
 -(BOOL) isBranch {

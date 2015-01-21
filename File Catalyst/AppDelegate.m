@@ -109,7 +109,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 -(void) goHome:(id) view {
     // Change the selected view to go Home in Browser Mode
-
     if ([view isKindOfClass:[BrowserController class]]) {
         NSString *homepath;
         if (view == myLeftView) {
@@ -203,6 +202,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [myRightView setFoldersDisplayed:
             [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
                                       objectForKey:@"prefDisplayFoldersInTable"] boolValue]];
+    [myLeftView setTwinName:@"Right"];
+    [myRightView setTwinName:@"Left"];
 
     [_ContentSplitView addSubview:myLeftView.view];
     [_ContentSplitView addSubview:myRightView.view];
@@ -235,7 +236,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         firstAppActivation = NO;
 
         if (0) { // Testing Catalyst Mode
-            [(BrowserController*)myLeftView setViewMode:BViewCatalystMode];
+            [(BrowserController*)myLeftView initBrowserView:BViewCatalystMode twin:@"Right"];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
                                       @"/Users/vika/Documents/",kRootPathKey,
@@ -265,8 +266,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     [st addChild:fb];
                 }
                 [st createSearchPredicate];
-                [(BrowserController*)myLeftView afterLoadInitialization];
-                [(BrowserController*)myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView initBrowserView:BViewBrowserMode twin:@"Left"];
                 [(BrowserController*)myLeftView addTreeRoot: st];
             }
             else {
@@ -276,8 +276,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 [st setCatalogKey:@"date_modified"];
                 [st setValueTransformer:DateToYearTransformer()];
                 [st createSearchPredicate];
-                [(BrowserController*)myLeftView afterLoadInitialization];
-                [(BrowserController*)myLeftView setViewMode:BViewBrowserMode];
+                [(BrowserController*)myLeftView initBrowserView:BViewBrowserMode twin:@"Right"];
                 [(BrowserController*)myLeftView addTreeRoot: st];
 
             }
@@ -880,7 +879,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         return YES;
     }
 
-    // Actions that require a selection
+    // Actions that require a contextual selection
     if (theAction == @selector(contextualCopy:) ||
         theAction == @selector(contextualCopyTo:) ||
         theAction == @selector(contextualCut:) ||
@@ -899,10 +898,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 
 
-    NSLog(@"Items selected");
-    for (TreeItem *d in itemsSelected) {
-        NSLog(@"%@", [d path]);
-    }
+    //NSLog(@"Items selected");
+    //for (TreeItem *d in itemsSelected) {
+    //    NSLog(@"%@", [d path]);
+    //}
 
     if ([itemsSelected count]==0) { // no selection, go for the selected view
         TreeBranch *targetFolder = [[self selectedView] treeNodeSelected];
@@ -911,11 +910,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
         if (theAction == @selector(toolbarNewFolder:) ||
             theAction == @selector(contextualNewFolder:)) {
-            allow = NO;
+            if ([targetFolder hasTags:tagTreeItemReadOnly]) {
+                allow = NO;
+            }
         }
         else if (theAction == @selector(paste:) ||
                  theAction == @selector(contextualPaste:)) {
-            allow = NO;
+            if ([targetFolder hasTags:tagTreeItemReadOnly]) {
+                allow = NO;
+            }
         }
         else
         {
@@ -929,15 +932,22 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 theAction == @selector(contextualCopyTo:) ||
                 theAction == @selector(contextualInformation:) ||
                 theAction == @selector(contextualOpen:) ||
-                theAction == @selector(contextualRename:) ||
+                theAction == @selector(copy:) ||
                 theAction == @selector(toolbarCopyTo:) ||
                 theAction == @selector(toolbarInformation:) ||
                 theAction == @selector(toolbarOpen:)
                 ) {
 
             }
+            // Actions that can only be made in one file and req. R/W
+            if (theAction == @selector(contextualRename:) ||
+                theAction == @selector(toolbarRename:)
+                ) {
+                if (([itemsSelected count]!=1) || ([item hasTags:tagTreeItemReadOnly]))
+                    allow = NO;
+            }
 
-            // actions that require write access
+            // actions that require Folder write access
             else if (theAction == @selector(toolbarNewFolder:) ||
                 theAction == @selector(paste:) ||
                 theAction == @selector(contextualNewFolder:) ||
@@ -947,6 +957,9 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 {
                     allow = NO;
                 }
+                else if ([item hasTags:tagTreeItemReadOnly]) {
+                    allow = NO;
+                }
             }
 
             // Actions that require delete access
@@ -954,16 +967,19 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 theAction == @selector(contextualDelete:) ||
                 theAction == @selector(contextualMoveTo:) ||
                 theAction == @selector(toolbarDelete:) ||
+                theAction == @selector(cut:) ||
                 theAction == @selector(delete:)
                 ) {
-                    allow = YES;
+                if ([item hasTags:tagTreeItemReadOnly]) {
+                    allow = NO;
+                }
             }
 
             if (!allow) // Stop if a not allow is found
                 break;
         }
     }
-
+    //NSLog(@"%ld  %hhd", (long)[anItem tag], allow);
     return allow; //[super validateUserInterfaceItem:anItem];
 }
 

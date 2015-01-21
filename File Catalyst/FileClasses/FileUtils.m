@@ -23,6 +23,13 @@ BOOL isPackage(NSURL* url) {
     return [isPackage boolValue];
 }
 
+BOOL isWritable(NSURL* url) {
+    NSNumber *isWritable;
+    [url getResourceValue:&isWritable forKey:NSURLIsWritableKey error:NULL];
+    return [isWritable boolValue];
+}
+
+
 NSString* utiType(NSURL* url) {
     NSString *typeIdentifier=nil;
     [url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL];

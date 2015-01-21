@@ -1126,7 +1126,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else {
             // !!! Consider calling the viewForTableColumn: method here.
             // makeIfNecessary is set to no. All views should have been created at this point.
-            NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:NO];
+            NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
             assert(nameView!=nil);
             if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
                 [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
@@ -1243,14 +1243,30 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /*
  * Parent access routines
  */
-// TODO:! Create a initAfterLoad routine to decouple from the setView.
-// This routine should define the Column AutoSave
-// (See TableView setAutosaveTableColumns:)
-
--(void) afterLoadInitialization {
-}
+// TODO:! This routine should define the Column AutoSave
+// (See TableView setAutosaveTableColumns:) maybe this can be set on the NIB editor
 
 /* This routine is serving as after load initialization */
+
+-(void) initBrowserView:(BViewMode)viewMode twin:(NSString*)twinName {
+    [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
+    [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
+    [self setTwinName:twinName];
+    viewMode = BViewModeVoid; // Forces the viewMode Update;
+    [self setViewMode:viewMode];
+}
+
+-(void) setTwinName:(NSString *)twinName {
+    if (twinName==nil) { // there is no twin view
+        _contextualToMenusEnabled = [NSNumber numberWithBool:NO];
+    }
+    else {
+        _titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
+        _titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
+        _contextualToMenusEnabled = [NSNumber numberWithBool:YES];
+    }
+}
+
 -(void) setViewMode:(BViewMode)viewMode {
     if (viewMode!=_viewMode) {
         [self removeAll];
@@ -1259,9 +1275,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [_myTableView reloadData];
         [self startAllBusyAnimations];
         _viewMode = viewMode;
-        [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
-        [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
-
     }
 }
 -(BViewMode) viewMode {

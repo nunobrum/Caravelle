@@ -12,6 +12,7 @@
 // File Information
 extern BOOL isFolder(NSURL* url);
 extern BOOL isPackage(NSURL* url);
+extern BOOL isWritable(NSURL* url);
 extern NSString* utiType(NSURL* url);
 extern inline NSString* name(NSURL*url);
 extern inline NSDate* dateModified(NSURL*url);

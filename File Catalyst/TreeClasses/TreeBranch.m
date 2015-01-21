@@ -263,31 +263,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
-/*
- * Deprecated Method
- */
-//
-///* This is not to be used with Catalyst Mode */
-//-(NSMutableArray*) childrenRefreshed {
-//    NSMutableArray *newChildren = [[NSMutableArray new] init];
-//
-//    //NSLog(@"Scanning directory %@", self.path);
-//    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
-//
-//    for (NSURL *theURL in dirEnumerator) {
-//        TreeItem *item = [self childWithURL:theURL]; /* Retrieves existing Element */
-//        if (item==nil) { /* If not found creates a new one */
-//            item = [TreeItem treeItemForURL:theURL parent:self];
-//        }
-//        else {
-//            [item resetTag:tagTreeItemAll];
-//        }
-//        [newChildren addObject:item];
-//
-//    } // for
-//    return newChildren;
-//}
-//
 #pragma mark -
 #pragma mark Refreshing contents
 
@@ -296,7 +271,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     TreeItemTagEnum tag;
     // TODO:? Verify Atomicity and get rid of synchronized clause if OK
     @synchronized(self) {
-         tag = _tag;
+         tag = [self tag];
     }
     answer = (((tag & tagTreeItemUpdating)==0) &&
              (((tag & tagTreeItemDirty   )!=0) || (tag & tagTreeItemScanned)==0));
@@ -307,11 +282,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 - (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
     //NSLog(@"Refreshing %@", [self path]);
     if ([self needsRefresh]) {
-        _tag |= tagTreeItemUpdating;
+        [self setTag: tagTreeItemUpdating];
         [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
-            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:self->_url WithMode:BViewBrowserMode];
+            MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewBrowserMode];
 
             [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
             @synchronized(self) {
@@ -328,6 +303,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                             // Found it
                             // resets the release Flag. Doesn't neet to be deleted
                             [it resetTag:tagTreeItemRelease];
+                            [it updateFileTags];
                             found = YES;
                             break;
                         }
@@ -346,8 +322,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
                 // Now going to release the disappeard items
                 [self _releaseReleasedChildren];
-                _tag &= ~(tagTreeItemUpdating+tagTreeItemDirty); // Resets updating and dirty
-                _tag |= tagTreeItemScanned;
+                [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
+                [self setTag: tagTreeItemScanned];
             } // synchronized
             [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
         }];
