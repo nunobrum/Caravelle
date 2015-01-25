@@ -576,8 +576,44 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #endif
 
-#pragma mark Menu Handling
+#pragma mark Service Menu Handling
+/* These functions are used for the Services Menu */
 
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    if ([sendType isEqual:NSFilenamesPboardType] ||
+        [sendType isEqual:NSURLPboardType]) {
+        //NSLog(@"Service return type is %@", returnType);
+        return self;
+    }
+    //return [super validRequestorForSendType:sendType returnType:returnType];
+    return nil;
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
+                             types:(NSArray *)types
+{
+    NSArray *typesDeclared;
+
+    if ([types containsObject:NSFilenamesPboardType] == YES) {
+        typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
+        [pboard declareTypes:typesDeclared owner:nil];
+        NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
+        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
+        NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
+        return [pboard writeObjects:selectedPaths];
+    }
+    else if ([types containsObject:NSURLPboardType] == YES) {
+        typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
+        [pboard declareTypes:typesDeclared owner:nil];
+        NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
+        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
+        return [pboard writeObjects:selectedURLs];
+    }
+
+    return NO;
+}
 
 //- (void)menuWillOpen:(NSMenu *)menu {
 //    This is not needed. Keeping it for memory
@@ -705,6 +741,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 // !!! TODO: Put here the code for the after Grouping/search button
 - (IBAction)tableSelected:(id)sender {
     _focusedView = sender;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    [NSApp sendAction:@selector(updateSelected:) to:nil from:self]; // to: Nil sends it to the Application Delegate
+#pragma clang diagnostic pop
+
 //    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:nil];
 }
 
@@ -1249,8 +1290,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* This routine is serving as after load initialization */
 
 -(void) initBrowserView:(BViewMode)viewMode twin:(NSString*)twinName {
-    [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
-    [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
     [self setTwinName:twinName];
     viewMode = BViewModeVoid; // Forces the viewMode Update;
     [self setViewMode:viewMode];
@@ -1492,33 +1531,59 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger tableClickedRow =[_myTableView clickedRow];
     NSInteger outlineRightClickedRow = [_myOutlineView rightMouseLocation];
     NSInteger tableRightClickedRow = [_myTableView rightMouseLocation];
-    NSLog(@"Clicked Row (%ld)-(%ld)\nRightClick (%ld)-(%ld)", outlineClickedRow, tableClickedRow, outlineRightClickedRow, tableRightClickedRow); */
+    NSLog(@"Clicked Row (%ld)-(%ld)\nRightClick (%ld)-(%ld)", outlineClickedRow, tableClickedRow, outlineRightClickedRow, tableRightClickedRow);*/
 
-    if ([_myOutlineView rightMouseLocation]!= BROWSER_OUTLINE_VIEW_INVALIDATED_ROW) {
-        answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[_myOutlineView rightMouseLocation]]];
-        _focusedView = _myOutlineView;
-    }
-    else if ([_myTableView rightMouseLocation]!= BROWSER_TABLE_VIEW_INVALIDATED_ROW) {
-        NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
-        // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
-        if ([_myTableView rightMouseLocation] != -1 && ![selectedIndexes containsIndex:[_myTableView rightMouseLocation]]) {
-            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView rightMouseLocation]];
+    // The condition below is used to detect which table view is selected. 
+    if (_focusedView == _myOutlineView) {
+        if ([_myOutlineView clickedRow]==-1)
+            answer = nil; // Not going to process this case
+        else{
+            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[_myOutlineView clickedRow]]];
         }
-        answer = [tableData objectsAtIndexes:selectedIndexes];
-        _focusedView = _myTableView;
+
     }
-    // Finally it has to invalidate both views
-    [_myOutlineView setRightMouseLocation:BROWSER_OUTLINE_VIEW_INVALIDATED_ROW];
-    [_myTableView setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
+    else if (_focusedView == _myTableView) {
+        // if the click was outside the items displayed
+        if ([_myTableView clickedRow] == -1 ) {
+            // it returns nothing
+            answer = [NSArray array]; // It will return an empty selection
+        }
+        else {
+            NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
+            // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
+            if(![selectedIndexes containsIndex:[_myTableView clickedRow]]) {
+                selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView clickedRow]];
+            }
+            answer = [tableData objectsAtIndexes:selectedIndexes];
+        }
+
+    }
     return answer;
 }
 
 -(TreeItem*) getLastClickedItem {
     if (_focusedView==_myOutlineView) {
-        return [_myOutlineView itemAtRow:[_myOutlineView clickedRow]];
+        NSInteger row = [_myOutlineView clickedRow];
+        if (row >=0) {
+            // Returns the current selected item
+            return [_myOutlineView itemAtRow:row];
+        }
+        else {
+            // returns the root of the path
+            return _rootNodeSelected;
+        }
     }
     else {
-        return [tableData objectAtIndex:[_myTableView clickedRow]];
+        NSInteger row = [_myTableView clickedRow];
+        if (row >=0 && row < [tableData count]) {
+            // Returns the current selected item
+            return [tableData objectAtIndex:row];
+        }
+        else {
+            // Returns the displayed folder
+            return _treeNodeSelected;
+
+        }
     }
 }
 
@@ -1682,13 +1747,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return [root_url lastPathComponent];
 }
 
--(BOOL) hasFocus {
-    NSInteger a;
-    if ((a=[_myTableView clickedRow])!=-1) // -1 means no click
-        return YES;
-    if ((a=[_myOutlineView clickedRow])!=-1)
-        return YES;
-    return NO;
-}
+
 
 @end

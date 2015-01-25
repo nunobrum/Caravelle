@@ -8,12 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define BROWSER_OUTLINE_VIEW_INVALIDATED_ROW -2
-
 @interface BrowserOutlineView : NSOutlineView {
-    NSInteger _rightMouseLocation;
+    //NSInteger _rightMouseLocation;
 }
 
-@property NSInteger rightMouseLocation;
+//@property NSInteger rightMouseLocation;
 
 @end

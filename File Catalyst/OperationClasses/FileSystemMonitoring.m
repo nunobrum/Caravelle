@@ -202,11 +202,6 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
 @implementation FileSystemMonitoring
 
 -(FileSystemMonitoring*) configureFSEventStream:(NSArray*) pathsToMonitor {
-    if (stream!=nil) { // Needs to cancel previous monitoring
-        FSEventStreamStop(stream);
-        FSEventStreamInvalidate(stream);
-        CFRelease(monitoredPaths);
-    }
     /* Define variables and create a CFArray object containing
      CFString objects containing paths to watch.
      */
@@ -245,6 +240,9 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
 
 }
 
+
+
+
 -(void) main {
     CFRunLoopRef cfRunLoop  = CFRunLoopGetCurrent();
     FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
@@ -261,6 +259,9 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
     FSEventStreamInvalidate(stream);
     CFRelease(monitoredPaths);
     [super cancel];
+    while (![self isCancelled]) {
+        NSLog(@".");
+    }
 }
 
 -(void) dealloc {

@@ -7,21 +7,24 @@
 //
 
 #import "BrowserTableView.h"
+#import "BrowserController.h"
 
 @implementation BrowserTableView
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
-    
+    //[self setRightMouseLocation:BROWSER_TABLE_VIEW_INVALIDATED_ROW];
+
     // Drawing code here.
 }
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
     // Now register menu location for the delegate to read
-    NSPoint event_location = [theEvent locationInWindow];
+    /*NSPoint event_location = [theEvent locationInWindow];
     NSPoint local_point = [self convertPoint:event_location fromView:nil];
     NSInteger row = [self rowAtPoint:local_point];
-    [self setRightMouseLocation: row];
+    [self setRightMouseLocation: row];*/
+    [(BrowserController*)[self delegate] tableSelected:self];
     [super rightMouseDown:theEvent];
 }
 
@@ -45,5 +48,19 @@
 //    return [super validateProposedFirstResponder:responder forEvent:event];
 //}
 
+
+/* The menu handling is forwarded to the Delegate.
+ For the contextual Menus the selection is different, than for the application */
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    return [(id<MYViewProtocol>)[self delegate] validRequestorForSendType:sendType returnType:returnType];
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
+                             types:(NSArray *)types
+{
+    return [(id<MYViewProtocol>)[self delegate] writeSelectionToPasteboard:pboard types:types];
+}
 
 @end

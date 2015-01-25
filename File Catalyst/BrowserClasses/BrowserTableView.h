@@ -8,12 +8,11 @@
 
 #import <Cocoa/Cocoa.h>
 
-#define BROWSER_TABLE_VIEW_INVALIDATED_ROW -2
 
 @interface BrowserTableView : NSTableView {
-    NSInteger _rightMouseLocation;
+    //NSInteger _rightMouseLocation;
 }
 
-@property NSInteger rightMouseLocation;
+//@property NSInteger rightMouseLocation;
 
 @end

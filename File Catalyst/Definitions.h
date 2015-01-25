@@ -38,6 +38,15 @@ extern NSString *opSendRecycleBinOperation;
 #define COL_TITLE_KEY @"title"
 #define COL_TRANS_KEY @"transformer" 
 
+
+// Used to check where is the focus of the window for the contextual selection
+// This is a terrible workaround because I didn't find a clear and neat way
+// to get the window focus. The cocoa base classes only work with Windows and do not
+// seem to work with Views.
+// -2 to differentiate from the -1 Not found.
+#define BROWSER_TABLE_VIEW_INVALIDATED_ROW -2
+
+
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
 extern id appTreeManager;
@@ -70,7 +79,14 @@ extern NSString *kOptionsKey;
 @protocol MYViewProtocol <NSObject>
 
 -(NSString*) title;
--(BOOL) hasFocus;
+
+// Service Handling needs to be forwarded to the delegate for the contextual menus
+
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType;
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
+                             types:(NSArray *)types;
 
 @end
 

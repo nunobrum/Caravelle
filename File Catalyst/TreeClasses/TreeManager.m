@@ -111,19 +111,16 @@ TreeManager *appTreeManager;
     }
     if (iArrayChanged) { // Will changed the monitored directories
 
-        // If the thread does't exist create it
-        if (FSMonitorThread==nil) {
-            FSMonitorThread = [[FileSystemMonitoring alloc] init];
+        // If the thread exist kill it
+        if (FSMonitorThread!=nil) {
+            [FSMonitorThread cancel];
+        }
+        FSMonitorThread = [[FileSystemMonitoring alloc] init];
 
-            // Change the list of surveilances
-            [FSMonitorThread configureFSEventStream:iArray];
-            //Start the loop
-            [FSMonitorThread start];
-        }
-        else {
-            // Just reconfigures the stream
-            [FSMonitorThread configureFSEventStream:iArray];
-        }
+        // Change the list of surveilances
+        [FSMonitorThread configureFSEventStream:iArray];
+        //Start the loop
+        [FSMonitorThread start];
     }
     return answer;
 }
@@ -241,7 +238,7 @@ TreeManager *appTreeManager;
                 // Easiest is to make an Catalyst enumerator
             }
             else {
-                //NSLog(@"Refreshing %@", [itemToRefresh url]);
+                NSLog(@"Refreshing %@", [itemToRefresh url]);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];

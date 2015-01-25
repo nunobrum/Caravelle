@@ -14,6 +14,7 @@
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
+    id _selectedView;
     //__weak LeftDataSource *_RightDataSrc;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;

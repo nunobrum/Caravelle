@@ -130,15 +130,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 -(id) selectedView {
-    static id view = nil;
-
-    if ([myLeftView hasFocus]) {
-        view = myLeftView;
-    }
-    else if ([myRightView hasFocus]) {
-        view = myRightView;
-    }
-    return view;
+    return _selectedView;
 }
 
 // -------------------------------------------------------------------------------
@@ -660,6 +652,15 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 #pragma mark Action Outlets
 
+- (IBAction)updateSelected:(id)sender {
+    if (sender == myLeftView || sender == myRightView)
+        _selectedView = sender;
+    else {
+        NSLog(@"Case not expected");
+        assert(false);
+    }
+}
+
 
 - (IBAction)toolbarInformation:(id)sender {
     [self executeInformation: [[self selectedView] getSelectedItems]];
@@ -903,11 +904,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     //    NSLog(@"%@", [d path]);
     //}
 
-    if ([itemsSelected count]==0) { // no selection, go for the selected view
+    if (itemsSelected==nil) {
+        // If nothing was returned is selected then don't allow anything
+        allow = NO;
+    }
+    else if ([itemsSelected count]==0) { // no selection, go for the selected view
         TreeBranch *targetFolder = [[self selectedView] treeNodeSelected];
-        // TODO:!!! check whether the folder is accessible
-        // For now assuming a NO
-
+        
         if (theAction == @selector(toolbarNewFolder:) ||
             theAction == @selector(contextualNewFolder:)) {
             if ([targetFolder hasTags:tagTreeItemReadOnly]) {
@@ -920,8 +923,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 allow = NO;
             }
         }
-        else
-        {
+        else {
             allow = NO;
         }
     }
@@ -948,20 +950,29 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             }
 
             // actions that require Folder write access
-            else if (theAction == @selector(toolbarNewFolder:) ||
-                theAction == @selector(paste:) ||
-                theAction == @selector(contextualNewFolder:) ||
-                theAction == @selector(contextualPaste:)
+            else if (theAction == @selector(paste:) ||
+                     theAction == @selector(contextualPaste:)
                 ) {
-                if ([item isKindOfClass:[TreeBranch class]]==NO)
-                {
+                if ([item isKindOfClass:[TreeBranch class]]==NO) {
                     allow = NO;
                 }
                 else if ([item hasTags:tagTreeItemReadOnly]) {
                     allow = NO;
                 }
             }
-
+            // actions that require one folder with Right access
+            else if (theAction == @selector(toolbarNewFolder:) ||
+                     theAction == @selector(contextualNewFolder:)) {
+                if ([item isKindOfClass:[TreeBranch class]]==NO) {
+                    allow = NO;
+                }
+                else if ([item hasTags:tagTreeItemReadOnly]) {
+                    allow = NO;
+                }
+                else if ([itemsSelected count]!=1) {
+                    allow = NO;
+                }
+            }
             // Actions that require delete access
             else if (theAction == @selector(contextualCut:) ||
                 theAction == @selector(contextualDelete:) ||
@@ -974,6 +985,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                     allow = NO;
                 }
             }
+            else
+                allow = NO; // Deny all other unknown cases
 
             if (!allow) // Stop if a not allow is found
                 break;

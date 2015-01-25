@@ -95,6 +95,9 @@ extern NSString *notificationCatalystRootUpdate;
 #ifdef COLUMN_NOTIFICATION
 -(void) selectColumnTitles:(NSNotification *) note ;
 #endif
+
+
+-(IBAction) tableSelected:(id)sender;
 /*
  * Parent access routines
  */
