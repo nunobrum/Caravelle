@@ -488,13 +488,15 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
-                        <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="dJ8-5I-zQs"/>
+                        <binding destination="-2" name="enabled" keyPath="self.validateContextualCopyTo" id="0Qw-44-ici"/>
+                        <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="HYw-8b-d9W"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
+                        <binding destination="-2" name="enabled" keyPath="self.validateContextualMoveTo" id="Eae-tY-266"/>
                         <binding destination="-2" name="title" keyPath="self.titleMoveTo" id="CZG-6S-oid"/>
                     </connections>
                 </menuItem>

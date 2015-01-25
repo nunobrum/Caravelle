@@ -505,6 +505,13 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     else if (numberOfFiles > 1) {
         // TODO:!! Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
+        // For the time being this is an invalid condition. Need to notify user.
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Invalid Selection !"
+                                         defaultButton:@"OK"
+                                       alternateButton:nil
+                                           otherButton:nil
+                             informativeTextWithFormat:@"Select only one Folder"];
+        [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 
     }
 }
@@ -712,8 +719,24 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (IBAction)toolbarNewFolder:(id)sender {
     NSArray *selectedItems = [[self selectedView] getSelectedItems];
-    assert ([selectedItems count]==1); // This needs to be verified by the validateUserIterfaceItem
-    [self executeNewFolder:(TreeBranch*) [selectedItems firstObject]];
+    NSInteger selectionCount = [selectedItems count];
+    if (selectionCount==0) {
+        // this is the treeBranch
+        [self executeNewFolder:[[self selectedView] treeNodeSelected]];
+    }
+    else if (selectionCount==1) {
+        // The selection done
+        [self executeNewFolder:(TreeBranch*) [selectedItems firstObject]];
+    }
+    else {
+        // This is an invalid condition. Need to notify user
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Invalid Selection !"
+                                         defaultButton:@"OK"
+                                       alternateButton:nil
+                                           otherButton:nil
+                             informativeTextWithFormat:@"Select only one Folder"];
+        [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    }
 }
 
 - (IBAction)contextualNewFolder:(id)sender {
@@ -828,7 +851,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)contextualPaste:(id)sender {
     if ([sender isKindOfClass:[BrowserController class]] &&
         (sender==myLeftView || sender==myRightView)) {
-        // TODO: Need to insure on the validateUserInterfaceItem that node is Branch
+        // the validateMenuItems insures that node is Branch
         [self executePaste:(TreeBranch*)[[self selectedView] getLastClickedItem]];
     }
 }
@@ -916,12 +939,14 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             if ([targetFolder hasTags:tagTreeItemReadOnly]) {
                 allow = NO;
             }
+            // No other conditions. This is supposed to be a folder, no need to test this condition
         }
         else if (theAction == @selector(paste:) ||
                  theAction == @selector(contextualPaste:)) {
             if ([targetFolder hasTags:tagTreeItemReadOnly]) {
                 allow = NO;
             }
+            // No other conditions. This is supposed to be a folder, no need to test this condition
         }
         else {
             allow = NO;
@@ -942,7 +967,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
             }
             // Actions that can only be made in one file and req. R/W
-            if (theAction == @selector(contextualRename:) ||
+            else if (theAction == @selector(contextualRename:) ||
                 theAction == @selector(toolbarRename:)
                 ) {
                 if (([itemsSelected count]!=1) || ([item hasTags:tagTreeItemReadOnly]))

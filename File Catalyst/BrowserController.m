@@ -1306,6 +1306,41 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+-(NSNumber*) validateContextualCopyTo {
+    // I have to write this function because the binding actually overrides the automatic Menu Validation.
+    BOOL allow;
+    NSArray *itemsSelected = [self getSelectedItemsForContextMenu];
+    if ((itemsSelected==nil) || ([itemsSelected count]==0))  // no selection, go for the selected view
+        allow = NO;
+    else
+        allow = YES;
+
+    return [NSNumber numberWithBool:allow];
+}
+-(NSNumber*) validateContextualMoveTo {
+    // I have to write this function because the binding actually overrides the automatic Menu Validation.
+    BOOL allow = YES;
+    NSArray *itemsSelected = [self getSelectedItemsForContextMenu];
+    if (itemsSelected==nil) {
+        // If nothing was returned is selected then don't allow anything
+        allow = NO;
+    }
+    else if ([itemsSelected count]==0) { // no selection, go for the selected view
+        allow = NO;
+    }
+    else {
+        // The file has to be read/write
+        for (TreeItem *item in itemsSelected) {
+            if ([item hasTags:tagTreeItemReadOnly]) {
+                allow = NO;
+                break;
+            }
+        }
+    }
+    return [NSNumber numberWithBool:allow];
+}
+
+
 -(void) setViewMode:(BViewMode)viewMode {
     if (viewMode!=_viewMode) {
         [self removeAll];

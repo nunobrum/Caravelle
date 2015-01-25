@@ -142,6 +142,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
 
-
+-(NSNumber*) validateContextualCopyTo;
+-(NSNumber*) validateContextualMoveTo;
 
 @end

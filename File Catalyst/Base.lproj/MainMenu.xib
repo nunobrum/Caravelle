@@ -739,7 +739,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarCopy:" target="494" id="2fw-od-Cqu"/>
+                                    <action selector="toolbarCopyTo:" target="-1" id="D2V-Ze-9rH"/>
                                 </connections>
                             </button>
                             <box autoresizesSubviews="NO" verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="685-pk-2bz">
@@ -756,7 +756,7 @@ CA
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="toolbarMove:" target="494" id="OtL-cV-86f"/>
+                                    <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
                                 </connections>
                             </button>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kPy-bX-dze">
