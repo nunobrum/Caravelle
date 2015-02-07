@@ -70,16 +70,20 @@ inline long long filesize(NSURL*url) {
     return [filesize longLongValue];
 }
 
+BOOL fileURLlExists(NSURL *url) {
+    return [[NSFileManager defaultManager]fileExistsAtPath:[url path]];
+}
+
 NSString *pathWithRename(NSString *original, NSString *new_name) {
     return [[original stringByDeletingLastPathComponent] stringByAppendingPathComponent:new_name];
 }
 
 NSURL *urlWithRename(NSURL* original, NSString *new_name) {
-    return [[original URLByDeletingLastPathComponent] URLByAppendingPathComponent:new_name];
+    BOOL folder = isFolder(original);
+    return [[original URLByDeletingLastPathComponent] URLByAppendingPathComponent:new_name isDirectory:folder];
 }
 
-BOOL eraseFile(NSURL*url) {
-    NSError *error;
+BOOL eraseFile(NSURL*url, NSError *error) {
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];
     if (error) {
         NSLog(@"=================ERASE ERROR ====================");
@@ -93,8 +97,7 @@ void sendToRecycleBin(NSArray *urls) {
     [[NSWorkspace sharedWorkspace] recycleURLs:urls completionHandler:nil];
 }
 
-NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName) {
-    NSError *error;
+NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error) {
     NSURL *destFileURL;
     if (newName) {
         destFileURL = [destURL URLByAppendingPathComponent:newName];
@@ -109,8 +112,7 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName) {
     return destFileURL;
 }
 
-NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName) {
-    NSError *error;
+NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error) {
     NSURL *destFileURL;
     if (newName) {
         destFileURL = [destURL URLByAppendingPathComponent:newName];
@@ -125,8 +127,7 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName) {
     return destFileURL;
 }
 
-BOOL copyFileTo(NSURL*srcURL, NSURL *destURL) {
-    NSError *error;
+BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
     [appFileManager copyItemAtURL:srcURL toURL:destURL error:&error];
     if (error) { // In the
         return NO;
@@ -134,10 +135,9 @@ BOOL copyFileTo(NSURL*srcURL, NSURL *destURL) {
     return YES;
 }
 
-BOOL moveFileTo(NSURL*srcURL, NSURL *destURL) {
-    NSError *error;
-    [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
-    if (error) { // In the
+BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
+    BOOL OK = [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
+    if (OK==NO || error!=nil) { // In the case of error
         return NO;
     }
     return YES;
@@ -148,10 +148,10 @@ BOOL openFile(NSURL*url) {
     return YES;
 }
 
-BOOL renameFile(NSURL*url, NSString *newName) {
+BOOL renameFile(NSURL*url, NSString *newName, NSError *error) {
     BOOL isDirectory = isFolder(url);
     NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName isDirectory:isDirectory];
-    return moveFileTo(url, newURL);
+    return moveFileTo(url, newURL, error);
 }
 //
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory) {
@@ -213,10 +213,10 @@ BOOL renameFile(NSURL*url, NSString *newName) {
 //}
 
 
-BOOL createDirectoryAtURL(NSString *name, NSURL *parent) {
-    NSError *error;
-    // TODO:!!! Check what are the attributes that must be set. see umask(2) documentation
-    BOOL OK = [appFileManager createDirectoryAtURL:parent withIntermediateDirectories:NO attributes:nil error:&error];
+BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error) {
+    // TODO:! Check what are the attributes that must be set. see umask(2) documentation
+    NSURL *newDirectory = [parent URLByAppendingPathComponent:name isDirectory:YES];
+    BOOL OK = [appFileManager createDirectoryAtURL:newDirectory withIntermediateDirectories:NO attributes:nil error:&error];
     return OK;
 }
 

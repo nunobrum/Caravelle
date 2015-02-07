@@ -154,7 +154,7 @@
                                                                             <constraint firstAttribute="height" constant="32" id="pnm-3X-Nd3"/>
                                                                             <constraint firstAttribute="width" constant="32" id="w9J-bm-6a3"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="H7x-uv-PWX"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="GenericFolderIcon" id="H7x-uv-PWX"/>
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bZf-MO-Pdv">
                                                                         <rect key="frame" x="35" y="2" width="99" height="17"/>
@@ -291,13 +291,16 @@
                                                                 <rect key="frame" x="1" y="1" width="161" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" placeholderIntrinsicWidth="1000" placeholderIntrinsicHeight="17" translatesAutoresizingMaskIntoConstraints="NO" id="sw7-bg-l2V">
-                                                                        <rect key="frame" x="27" y="0.0" width="1004" height="17"/>
-                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Zfd-ss-dKQ">
+                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="sw7-bg-l2V">
+                                                                        <rect key="frame" x="27" y="0.0" width="136" height="17"/>
+                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" truncatesLastVisibleLine="YES" selectable="YES" editable="YES" title="Table View Cell" id="Zfd-ss-dKQ">
                                                                             <font key="font" metaFont="system"/>
                                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                         </textFieldCell>
+                                                                        <connections>
+                                                                            <action selector="filenameDidChange:" target="-2" id="Hrz-MT-uSi"/>
+                                                                        </connections>
                                                                     </textField>
                                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="0mU-iE-1CV">
                                                                         <rect key="frame" x="4" y="0.0" width="17" height="17"/>
@@ -305,13 +308,14 @@
                                                                             <constraint firstAttribute="height" constant="17" id="tFg-do-BcN"/>
                                                                             <constraint firstAttribute="width" constant="17" id="wl0-Fg-vLl"/>
                                                                         </constraints>
-                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSApplicationIcon" id="SH3-no-BaF"/>
+                                                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="GenericDocumentIcon" id="SH3-no-BaF"/>
                                                                     </imageView>
                                                                 </subviews>
                                                                 <constraints>
                                                                     <constraint firstItem="0mU-iE-1CV" firstAttribute="centerY" secondItem="Q4u-W9-Vpz" secondAttribute="centerY" id="1Vn-z7-SNp"/>
                                                                     <constraint firstItem="0mU-iE-1CV" firstAttribute="top" secondItem="sw7-bg-l2V" secondAttribute="top" id="Qoj-Gn-Gla"/>
                                                                     <constraint firstItem="sw7-bg-l2V" firstAttribute="leading" secondItem="0mU-iE-1CV" secondAttribute="trailing" constant="8" symbolic="YES" id="TMy-BF-tzi"/>
+                                                                    <constraint firstAttribute="trailing" secondItem="sw7-bg-l2V" secondAttribute="trailing" id="ZKJ-oL-kiR"/>
                                                                     <constraint firstItem="0mU-iE-1CV" firstAttribute="leading" secondItem="Q4u-W9-Vpz" secondAttribute="leading" constant="4" id="eWA-AI-HEn"/>
                                                                 </constraints>
                                                                 <connections>
@@ -488,16 +492,16 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
-                        <binding destination="-2" name="enabled" keyPath="self.validateContextualCopyTo" id="0Qw-44-ici"/>
                         <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="HYw-8b-d9W"/>
+                        <binding destination="-2" name="enabled" keyPath="self.validateContextualCopyTo" id="0Qw-44-ici"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
-                        <binding destination="-2" name="enabled" keyPath="self.validateContextualMoveTo" id="Eae-tY-266"/>
                         <binding destination="-2" name="title" keyPath="self.titleMoveTo" id="CZG-6S-oid"/>
+                        <binding destination="-2" name="enabled" keyPath="self.validateContextualMoveTo" id="Eae-tY-266"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
@@ -531,8 +535,9 @@
         <userDefaultsController representsSharedInstance="YES" id="c7i-sc-Lu7"/>
     </objects>
     <resources>
+        <image name="GenericDocumentIcon" width="512" height="512"/>
+        <image name="GenericFolderIcon" width="512" height="512"/>
         <image name="NSActionTemplate" width="14" height="14"/>
-        <image name="NSApplicationIcon" width="128" height="128"/>
         <image name="NSPathTemplate" width="13" height="10"/>
         <image name="NewFolderGrey20" width="20" height="20"/>
     </resources>

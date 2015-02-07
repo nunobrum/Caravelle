@@ -13,6 +13,9 @@
 
 @end
 
+extern NSString *notificationFinishedFileOperation;
+
+extern BOOL putInQueue(NSDictionary *taskInfo);
 
 extern BOOL copyItemsToBranch(NSArray *items, TreeBranch *folder);
 extern BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder);

@@ -14,7 +14,7 @@
 #import "TreeManager.h"
 #import "TreeScanOperation.h"
 #import "searchTree.h"
-#import "FileUtils.h"
+#import "FileUtils.h" // The app shouldnt use functions that access the system directly. Rather go through the Operations
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
 #import "FileExistsChoice.h"
@@ -37,10 +37,13 @@ NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 
 NSString *notificationDoFileOperation = @"DoOperation";
-NSString *kDropOperationKey =@"OperationKey";
-NSString *kDropDestinationKey =@"DestinationKey";
-NSString *kRenameFileKey = @"RenameKey";
-NSString *kDroppedFilesKey=@"FilesSelected";
+NSString *kDFOOperationKey =@"OperationKey";
+NSString *kDFODestinationKey =@"DestinationKey";
+NSString *kDFORenameFileKey = @"RenameKey";
+NSString *kNewFolderKey = @"NewFolderKey";
+NSString *kDFOFilesKey=@"FilesSelected";
+NSString *kDFOErrorKey =@"ErrorKey";
+NSString *kDFOOkKey = @"OKKey";
 
 #ifdef USE_UTI
 const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
@@ -49,6 +52,7 @@ const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
 NSString *opEraseOperation =@"EraseOperation";
+NSString *opEditFilename=@"EditFilenameOperation";
 NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 
 NSFileManager *appFileManager;
@@ -181,6 +185,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [center addObserver:self selector:@selector(processNextError:) name:notificationClosedFileExistsWindow object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
+
+    [center addObserver:self selector:@selector(anyThread_operationFinished:) name:notificationFinishedFileOperation object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:nil];
 
@@ -477,28 +483,35 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 - (void) executeRename:(NSArray*) selectedFiles {
     NSUInteger numberOfFiles = [selectedFiles count];
+    // TODO: ! Option for the rename, on the table or on a dedicated dialog
     if (numberOfFiles == 1) {
-        // If only one file, with edit with RenameFileDialog
-        if (renameFilePanel==nil)
-            renameFilePanel =[[RenameFileDialog alloc] initWithWindowNibName:@"RenameFileDialog"];
         TreeItem *selectedFile = [selectedFiles firstObject];
         NSString *oldFilename = [[selectedFile path] lastPathComponent];
-        [renameFilePanel showWindow:self];
-        // NOTE: If the showWindow is invoked after the statement below it doesn't work
-        [renameFilePanel setRenamingFile:oldFilename];
-        [NSApp runModalForWindow: [renameFilePanel window]];
-        // Got info from window going to make the rename
-        NSString *fileName = [renameFilePanel getRenameFile];
-        if (NO==[oldFilename isEqualToString:fileName]) {
-            NSURL *url = [selectedFile url];
-            BOOL isDirectory = isFolder(url);
-            NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:fileName isDirectory:isDirectory];
-            BOOL OK = moveFileTo(url, newURL);
-            if (OK==YES) {
-                /* This code will work because it is a rename, if its is a move, the TreeItem would have
-                 to be created from scratch */
-                [selectedFile setUrl:newURL];
-                [(BrowserController*)[self selectedView] reloadItem:selectedFile];
+        if (1) { // Rename done in place
+            [[self selectedView] startEditItemName:selectedFile];
+        }
+        // Using a dialog Box
+        else {
+            // If only one file, with edit with RenameFileDialog
+            if (renameFilePanel==nil)
+                renameFilePanel =[[RenameFileDialog alloc] initWithWindowNibName:@"RenameFileDialog"];
+            [renameFilePanel showWindow:self];
+            // NOTE: If the showWindow is invoked after the statement below it doesn't work
+            [renameFilePanel setRenamingFile:oldFilename];
+            [NSApp runModalForWindow: [renameFilePanel window]];
+            // Got info from window going to make the rename
+            NSString *fileName = [renameFilePanel getRenameFile];
+
+            if (NO==[oldFilename isEqualToString:fileName]) {
+
+                // Create the File Operation
+                NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      selectedFiles, kDFOFilesKey,
+                                      opEditFilename, kDFOOperationKey,
+                                      fileName, kDFORenameFileKey,
+                                      [[self selectedView] treeNodeSelected], kDFODestinationKey,
+                                      nil];
+                putInQueue(taskinfo);
             }
         }
     }
@@ -541,7 +554,11 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 }
 
 - (void) executeNewFolder:(TreeBranch*)selectedBranch {
-    // TODO:!!! Implementation of the new Folder
+    NSURL *newURL = [[selectedBranch url] URLByAppendingPathComponent:@"New Folder"];
+    TreeBranch *newFolder = [[TreeBranch alloc] initWithURL:newURL parent:selectedBranch];
+    [newFolder setTag:tagTreeItemNew];
+    [[self selectedView] insertItem:newFolder];
+    [[self selectedView] startEditItemName:newFolder];
 }
 
 
@@ -725,7 +742,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
         [self executeNewFolder:[[self selectedView] treeNodeSelected]];
     }
     else if (selectionCount==1) {
-        // The selection done
+        // TODO: Validate that its a Branch
         [self executeNewFolder:(TreeBranch*) [selectedItems firstObject]];
     }
     else {
@@ -1028,6 +1045,16 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 /* Called for the notificationDoFileOperation notification */
 -(void) handleOperationInformation: (NSNotification*) note
 {
+
+    NSString *operation = [[note userInfo] objectForKey:kDFOOperationKey];
+
+    if (([operation isEqualToString:opCopyOperation]) ||
+        ([operation isEqualToString:opMoveOperation]) ||
+        ([operation isEqualToString:opEditFilename])) {
+        // TODO: Register the folder as a last Steps one
+        // Redirects all to file operation
+        putInQueue([note userInfo]);
+    }
     // Presently this only starts the Busy indications on the statusBar.
     [self _startOperationBusyIndication];
 }
@@ -1072,6 +1099,68 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     [self.statusProgressIndicator setHidden:YES];
     [self.statusProgressLabel setHidden:YES];
     [self.statusCancelButton setHidden:YES];
+}
+
+- (void) mainThread_operationFinished:(NSNotification*)theNotification {
+    if ([operationsQueue operationCount]==0) {
+        [self _stopOperationBusyIndication];
+
+        // Make Status Update here
+        NSString *statusText=nil;
+
+        NSDictionary *info = [theNotification userInfo];
+        NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
+        NSString *operation = [info objectForKey:kDFOOperationKey];
+        BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
+
+        if ([operation isEqualToString:opCopyOperation]) {
+            if (OK)
+                statusText  = [NSString stringWithFormat:@"%lu Files copied",
+                           num_files];
+            else
+                statusText = @"Copy Failed";
+
+        }
+        else if ([operation isEqualToString:opMoveOperation]) {
+            if (OK)
+                statusText  = [NSString stringWithFormat:@"%lu Files moved",
+                           num_files];
+            else
+                statusText = @"Move Failed";
+        }
+        else if ([operation isEqualToString:opSendRecycleBinOperation] ||
+                 [operation isEqualToString:opEraseOperation]) {
+            if (OK)
+                statusText  = [NSString stringWithFormat:@"%lu Files deleted",
+                               num_files];
+            else
+                statusText = @"Delete Failed";
+
+        }
+        else if ([operation isEqualToString:opEditFilename]) {
+            if (!OK) {
+                statusText = @"Rename Failed";
+
+                // Since the rename actually didn't activate the FSEvents, have to update the view
+                // Reload the items in the Selected View
+                for (id item in [info objectForKey:kDFOFilesKey]) {
+                    [(BrowserController*)_selectedView reloadItem:item];
+                 }
+            }
+        }
+        else {
+            assert(NO); // Unknown operation
+        }
+        if (statusText!=nil) // If nothing was set, don't update status
+            [_StatusBar setTitle: statusText];
+
+    }
+}
+
+- (void) anyThread_operationFinished:(NSNotification*) theNotification {
+    // update our table view on the main thread
+    [self performSelectorOnMainThread:@selector(mainThread_operationFinished:) withObject:theNotification waitUntilDone:NO];
+
 }
 
 - (void) statusUpdate:(NSNotification*)theNotification {

@@ -12,11 +12,22 @@
 
 /* Used for Drag&Drop notifications */
 extern NSString *notificationDoFileOperation;
-extern NSString *kDropOperationKey;
-extern NSString *kDropDestinationKey;
-extern NSString *kRenameFileKey;
+extern NSString *kDFOOperationKey;
+extern NSString *kDFODestinationKey;
+extern NSString *kDFORenameFileKey;
 /* Used for Both Drag&Drop and for Status Notifications */
-extern NSString *kDroppedFilesKey;
+extern NSString *kDFOFilesKey;
+
+extern NSString *kDFOErrorKey;
+extern NSString *kDFOOkKey;
+
+
+extern NSString *opCopyOperation;
+extern NSString *opMoveOperation;
+extern NSString *opEraseOperation;
+extern NSString *opEditFilename;
+extern NSString *opSendRecycleBinOperation;
+
 
 //#define USE_UTI
 #ifdef USE_UTI
@@ -26,11 +37,6 @@ extern const CFStringRef kTreeItemDropUTI;
 #else
 #define OwnUTITypes
 #endif
-
-extern NSString *opCopyOperation;
-extern NSString *opMoveOperation;
-extern NSString *opEraseOperation;
-extern NSString *opSendRecycleBinOperation;
 
 
 //#define COL_ID_KEY @"ID"

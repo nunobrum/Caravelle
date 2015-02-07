@@ -19,6 +19,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemUpdating = (1UL << 5),
     tagTreeItemRelease  = (1UL << 6), // Used inform BrowserControllers to remove items from Root
     tagTreeItemReadOnly = (1UL << 7),
+    tagTreeItemNew      = (1UL << 8),
     tagTreeItemAll      = NSUIntegerMax
 };
 

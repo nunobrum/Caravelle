@@ -377,7 +377,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    TreeItem *theFile = [tableData objectAtIndex:rowIndex];
+    id objectValue = [tableData objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
     NSString *identifier = [aTableColumn identifier];
 
@@ -387,89 +387,110 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // We pass us as the owner so we can setup target/actions into this main controller object
         cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
         //NSLog(@"View is of class %@", [cellView class]);
-        [cellView setObjectValue:theFile];
-        NSString *path = [[theFile url] path];
-        if (path) {
-            // Then setup properties on the cellView based on the column
-            cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
-            cellView.imageView.objectValue = [theFile image];
-            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
-                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+        [cellView setObjectValue:objectValue];
+        if ([objectValue isKindOfClass:[TreeItem class]]) {
+            TreeItem *theFile = objectValue;
+
+            // If it's a new file, then assume a default ICON
+            if ([theFile hasTags:tagTreeItemNew]) {
+                cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
+                if ([theFile isKindOfClass:[TreeBranch class]])
+                    // TODO:! Put these strings into a User Defaults setting
+                    cellView.imageView.objectValue = [NSImage imageNamed:@"GenericFolderIcon"];
+                else
+                    cellView.imageView.objectValue = [NSImage imageNamed:@"GenericDocumentIcon"];
             }
-            else {
-                [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+            
+            else  {
+                NSString *path = [[theFile url] path];
+                if (path) {
+                    // Then setup properties on the cellView based on the column
+                    cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
+                    cellView.imageView.objectValue = [theFile image];
+                    if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
+                        [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+                    }
+                    else {
+                        [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+                    }
+                }
+                else {
+                    // This is not supposed to happen, just setting an error
+                    [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
+                }
             }
-        }
-        else {
-            // This is not supposed to happen, just setting an error
-            [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
         }
     }
     else { // All other cases are handled here
-        // We pass us as the owner so we can setup target/actions into this main controller object
-        cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
-        //NSLog(@"View is of class %@", [cellView class]);
+        if ([objectValue isKindOfClass:[TreeItem class]]) {
 
-        NSDictionary *colControl = [columnInfo() objectForKey:identifier];
-        if (colControl!=nil) { // The column exists
-            NSString *prop_name = colControl[COL_ACCESSOR_KEY];
-            id prop = nil;
-            @try {
-                prop = [theFile valueForKey:prop_name];
-            }
-            @catch (NSException *exception) {
-                NSLog(@"property '%@' not found", prop_name);
-            }
+            // We pass us as the owner so we can setup target/actions into this main controller object
+            cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
+            //NSLog(@"View is of class %@", [cellView class]);
 
-            if (prop){
-                if ([prop isKindOfClass:[NSString class]])
-                    cellView.textField.objectValue = prop;
-                else { // Need to use one of the NSValueTransformers
-                    NSString *trans_name = [colControl objectForKey:COL_TRANS_KEY];
-                    if (trans_name) {
-                        NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
-                        if (trans) {
-                            NSString *text = [trans transformedValue:prop];
-                            if (text)
-                                cellView.textField.objectValue = text;
+            NSDictionary *colControl = [columnInfo() objectForKey:identifier];
+            if (colControl!=nil) { // The column exists
+                NSString *prop_name = colControl[COL_ACCESSOR_KEY];
+                id prop = nil;
+                @try {
+                    prop = [objectValue valueForKey:prop_name];
+                }
+                @catch (NSException *exception) {
+                    NSLog(@"property '%@' not found", prop_name);
+                }
+
+                if (prop){
+                    if ([prop isKindOfClass:[NSString class]])
+                        cellView.textField.objectValue = prop;
+                    else { // Need to use one of the NSValueTransformers
+                        NSString *trans_name = [colControl objectForKey:COL_TRANS_KEY];
+                        if (trans_name) {
+                            NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
+                            if (trans) {
+                                NSString *text = [trans transformedValue:prop];
+                                if (text)
+                                    cellView.textField.objectValue = text;
+                                else
+                                    cellView.textField.objectValue = @"error transforming value";
+                            }
                             else
-                                cellView.textField.objectValue = @"error transforming value";
+                                cellView.textField.objectValue = @"invalid transformer";
                         }
                         else
-                            cellView.textField.objectValue = @"invalid transformer";
+                            cellView.textField.objectValue = @"no transformer found";
                     }
-                    else
-                        cellView.textField.objectValue = @"no transformer found";
                 }
+                else
+                    cellView.textField.objectValue = @"--";
             }
-            else
-                cellView.textField.objectValue = @"--";
-        }
-        else {
-            cellView.textField.objectValue = @"Invalid Column";
-        }
+            else {
+                cellView.textField.objectValue = @"Invalid Column";
+            }
 
+
+        //        if ([identifier isEqualToString:COL_SIZE]) {
+        //        if (_viewMode==BViewBrowserMode && [theFile isKindOfClass:[TreeBranch class]]){
+        //            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
+        //            cellView.textField.objectValue = @"--";
+        //        }
+        //        else
+        //            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
+        //
+        //    } else if ([identifier isEqualToString:COL_DATE_MOD]) {
+        //        NSString *result=nil;
+        //        DateFormatter([theFile date_modified], &result);
+        //        if (result == nil)
+        //            cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
+        //        else
+        //            cellView.textField.stringValue = result;
+        //    }
+        //    else {
+        //        /* Debug code for further implementation */
+        //        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
+        //    }
+        }
+        // other cases are not considered here. returning Nil
     }
-//        if ([identifier isEqualToString:COL_SIZE]) {
-//        if (_viewMode==BViewBrowserMode && [theFile isKindOfClass:[TreeBranch class]]){
-//            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
-//            cellView.textField.objectValue = @"--";
-//        }
-//        else
-//            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
-//
-//    } else if ([identifier isEqualToString:COL_DATE_MOD]) {
-//        NSString *result=nil;
-//        DateFormatter([theFile date_modified], &result);
-//        if (result == nil)
-//            cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
-//        else
-//            cellView.textField.stringValue = result;
-//    }
-//    else {
-//        /* Debug code for further implementation */
-//        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
-//    }
     return cellView;
 }
 
@@ -485,6 +506,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [_myTableView reloadData];
     }
 }
+
 
 #pragma mark - TableView View Delegate Protocol
 
@@ -506,7 +528,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 // -------------------------------------------------------------------------------
 - (void)tableView:(NSTableView *)inTableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-    // !!! TODO: if Control or Alt is presssed the new column is just added to the sortDescriptor
+    // !!! TODO:(Later) if Control or Alt is presssed the new column is just added to the sortDescriptor
     // NSUInteger modifierKeys = [NSEvent modifierFlags];
     // test NSControlKeyMask and NSAlternateKeyMask
 
@@ -838,6 +860,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+// This selector is invoked when the file was renamed or a New File was created
+- (IBAction)filenameDidChange:(id)sender {
+    NSInteger row = [_myTableView rowForView:sender];
+    if (row != -1) {
+        id items = [NSArray arrayWithObject:[tableData objectAtIndex:row]];
+
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              items, kDFOFilesKey,
+                              opEditFilename, kDFOOperationKey,
+                              [sender stringValue], kDFORenameFileKey,
+                              _treeNodeSelected, kDFODestinationKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
+    }
+}
+
 - (IBAction)PathSelect:(id)sender {
     NSURL *newURL;
     if ([sender isKindOfClass:[NSPopUpButton class]]) {
@@ -916,7 +955,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else if (operation ==  NSDragOperationDelete) {
         // Send to RecycleBin.
         [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];
-        sendItemsToRecycleBin(files); // !!! TODO: Check whether the recycle bin deletes the
+        sendItemsToRecycleBin(files);
     }
 }
 
@@ -932,7 +971,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else if (operation ==  NSDragOperationDelete) {
         // Send to RecycleBin.
         [outlineView removeItemsAtIndexes:_draggedItemsIndexSet inParent:parent withAnimation:NSTableViewAnimationEffectFade];
-        sendItemsToRecycleBin(files); // !!! TODO: Check whether the recycle bin deletes the
+        sendItemsToRecycleBin(files);
     }
 }
 
@@ -1051,22 +1090,34 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (BOOL) acceptDrop:(id < NSDraggingInfo >)info  {
     BOOL fireNotfication = NO;
+    NSString *operation;
     NSPasteboard *pboard = [info draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
     if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
         // TODO: !! Dropping Application on top of file or File on top of Application
         NSLog(@"Not impplemented open the file with the application");
-        // !!! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
+        // TODO:! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
     }
     else if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
         if (_validatedOperation == NSDragOperationCopy) {
-            copyItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
+            operation = opCopyOperation;
             fireNotfication = YES;
         }
         else if (_validatedOperation == NSDragOperationMove) {
-            moveItemsToBranch(files, (TreeBranch*)_validatedDestinationItem);
-            fireNotfication = YES;            }
+            operation = opMoveOperation;
+            fireNotfication = YES;
+
+            // Check whether the destination item is equal to the parent of the item do nothing
+            for (NSURL* file in files) {
+                NSURL *folder = [file URLByDeletingLastPathComponent];
+                if ([[_validatedDestinationItem url] isEqualTo:folder]) // TODO:!!!! Check this condition
+                {
+                // If true : abort
+                    fireNotfication = NO;
+                }
+            }
+        }
         else if (_validatedOperation == NSDragOperationLink) {
             // TODO: !! Operation Link
         }
@@ -1076,10 +1127,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     }
     if (fireNotfication==YES) {
-        // TODO: ! Optimization Replace this notification with a simpler method
-        // [NSApp sendAction:@selector(handleOperationInformation:)to:nil from:self];
-        // TODO: !! The copy and move operations done above, should be preferably be done in the AppDelegate
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:nil];
+        // The copy and move operations are done in the AppDelegate
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              files, kDFOFilesKey,
+                              operation, kDFOOperationKey,
+                              _validatedDestinationItem, kDFODestinationKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
     }
     else
         NSLog(@"Unsupported Operation %lu", (unsigned long)_validatedOperation);
@@ -1106,7 +1160,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
                 if (newItem) {
                     [tableData insertObject:newItem atIndex:row+i];
-                    [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown];
+                    [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
                     NSLog(@"Copy Item %@ creating line %ld", [pastedItem lastPathComponent], row+i);
                     i++;
                 }
@@ -1755,6 +1809,56 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_myFileViewProgressIndicator startAnimation:self];
     //NSLog(@"start Table Busy animations %@", self);
     
+}
+
+-(BOOL) startEditItemName:(TreeItem*)item  {
+    // TODO: when the focused view is the treeOutline
+    if (_focusedView==_myTableView) {
+        NSUInteger row = [tableData indexOfObject:item];
+        if (row!=NSNotFound) {
+            NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME];
+            [_myTableView editColumn:column row:row withEvent:nil select:YES];
+            // Obtain the NSTextField from the view
+            NSTextField *textField = [[_myTableView viewAtColumn:column row:row makeIfNecessary:NO] textField];
+            assert(textField!=nil);
+            // Recuperate the old filename
+            NSString *oldFilename = [textField stringValue];
+            // Select the part up to the extension
+            NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
+            NSRange selectRange = {0, head_size};
+            [[textField currentEditor] setSelectedRange:selectRange];
+            return YES;
+        }
+    }
+    return NO;
+}
+
+-(void) insertItem:(id)item {
+    NSInteger row;
+    if (_focusedView==_myTableView) {
+        NSIndexSet *selection = [_myTableView selectedRowIndexes];
+        if ([selection count]>0) {
+            // Will insert a row on the bottom of the selection.
+            row = [selection lastIndex] + 1;
+        }
+        else {
+            row = [tableData count];
+        }
+        // Making the new inserted line as selected
+        [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+
+        if (row < [tableData count]) {
+            [tableData insertObject:item atIndex:row];
+        }
+        else {
+            [tableData addObject:item];
+        }
+        [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation:NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
+        // TODO:! Add a timer in order to delay the execution and fit one nice animation
+    }
+    else if (_focusedView == _myOutlineView) {
+        // TODO:!!! Implement this
+    }
 }
 
 

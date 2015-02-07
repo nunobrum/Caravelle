@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="FileExistsChoice">
             <connections>
                 <outlet property="attributeTableView" destination="OGp-WJ-OP7" id="4Kv-BB-A4a"/>
+                <outlet property="labelKeep" destination="ewX-Bf-7Xy" id="7sR-HK-Acw"/>
                 <outlet property="pbReplace" destination="oWX-a1-P95" id="kYw-nR-JAn"/>
                 <outlet property="pbSkip" destination="CrI-g6-RFo" id="Ubd-D2-O0f"/>
                 <outlet property="tfFilename" destination="eCb-x5-Kqi" id="gKc-3l-Vxr"/>
@@ -64,7 +65,7 @@
                     </textField>
                     <button toolTip="Press shift to apply to all remaining files" horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CrI-g6-RFo">
                         <rect key="frame" x="247" y="49" width="122" height="19"/>
-                        <buttonCell key="cell" type="roundRect" title="Cancel" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
+                        <buttonCell key="cell" type="roundRect" title="Skip" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
                         </buttonCell>
@@ -84,9 +85,9 @@
                         </connections>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ewX-Bf-7Xy">
-                        <rect key="frame" x="18" y="52" width="71" height="17"/>
+                        <rect key="frame" x="18" y="52" width="223" height="17"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="67" id="eJW-MW-K6n"/>
+                            <constraint firstAttribute="width" constant="219" id="eJW-MW-K6n"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Keep" id="AL2-zG-EcR">
                             <font key="font" metaFont="system"/>
@@ -241,13 +242,13 @@
                     <constraint firstItem="ewX-Bf-7Xy" firstAttribute="leading" secondItem="eCb-x5-Kqi" secondAttribute="leading" id="RSb-gs-QQa"/>
                     <constraint firstItem="oWX-a1-P95" firstAttribute="width" secondItem="CrI-g6-RFo" secondAttribute="width" id="TNc-Bf-azY"/>
                     <constraint firstItem="ewX-Bf-7Xy" firstAttribute="baseline" secondItem="oWX-a1-P95" secondAttribute="baseline" id="UN0-yu-Rlz"/>
+                    <constraint firstItem="oWX-a1-P95" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="116" id="a7r-kG-8Tu"/>
                     <constraint firstItem="eCb-x5-Kqi" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="26" id="dss-4g-Bu3"/>
                     <constraint firstItem="4YS-iz-fdA" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="fG6-Vi-IEW"/>
                     <constraint firstAttribute="trailing" secondItem="CrI-g6-RFo" secondAttribute="trailing" constant="21" id="gUB-Gc-ZZh"/>
                     <constraint firstItem="41h-lJ-4D4" firstAttribute="top" secondItem="eCb-x5-Kqi" secondAttribute="bottom" constant="8" symbolic="YES" id="ltj-pR-w7o"/>
                     <constraint firstAttribute="trailing" secondItem="eCb-x5-Kqi" secondAttribute="trailing" constant="20" symbolic="YES" id="nEH-Sl-zWP"/>
                     <constraint firstAttribute="trailing" secondItem="41h-lJ-4D4" secondAttribute="trailing" constant="20" symbolic="YES" id="oWQ-Ls-hFG"/>
-                    <constraint firstItem="oWX-a1-P95" firstAttribute="leading" secondItem="ewX-Bf-7Xy" secondAttribute="trailing" constant="29" id="qUv-GM-Bsv"/>
                     <constraint firstItem="4YS-iz-fdA" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="10" id="rW6-U7-ufQ"/>
                     <constraint firstItem="ewX-Bf-7Xy" firstAttribute="baseline" secondItem="CrI-g6-RFo" secondAttribute="baseline" id="rsG-s8-PQS"/>
                     <constraint firstItem="41h-lJ-4D4" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="tvh-0t-0Ch"/>

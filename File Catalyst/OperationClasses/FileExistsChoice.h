@@ -27,6 +27,7 @@ extern NSString *notificationClosedFileExistsWindow;
 @property (strong) IBOutlet NSButton *pbReplace;
 @property (strong) IBOutlet NSButton *pbSkip;
 @property (strong) IBOutlet NSTableView *attributeTableView;
+@property (strong) IBOutlet NSTextField *labelKeep;
 
 @property (readonly) fileExistsQuestionResult answer;
 

@@ -88,51 +88,51 @@
 
 // prepareForDragOperation: message followed by performDragOperation: and concludeDragOperation:.
 
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
-    NSPasteboard *pboard;
-    NSDragOperation sourceDragMask;
-
-    sourceDragMask = [sender draggingSourceOperationMask];
-    pboard = [sender draggingPasteboard];
-
-    if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
-        NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
-        NSString *operation=nil;
-
-
-        // Depending on the dragging source and modifier keys,
-        // the file data may be copied or linked
-        if (sourceDragMask & NSDragOperationCopy) {
-            NSLog(@"Going to copy the files");
-            //copyFilesThreaded(files, [self->url path]);
-            operation = opCopyOperation;
-
-            //[self addLinkToFiles:files];
-        } else if (sourceDragMask & NSDragOperationMove) {
-            // implement the move here
-            NSLog(@"Going to move the file");
-            //[self addDataFromFiles:files];
-            operation = opMoveOperation;
-        }
-        else {
-            NSLog(@"Unsuported Operation Something went wrong here");
-            return NO;
-        }
-        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              files, kDroppedFilesKey,
-                              operation, kDropOperationKey,
-                              self->url, kDropDestinationKey,
-                              nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
-
-
-    }
-//    else if ( [[pboard types] containsObject:NSColorPboardType] ) {
-//        // Only a copy operation allowed so just copy the data
-//        NSColor *newColor = [NSColor colorFromPasteboard:pboard];
-//        [self setColor:newColor];
+//- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender {
+//    NSPasteboard *pboard;
+//    NSDragOperation sourceDragMask;
+//
+//    sourceDragMask = [sender draggingSourceOperationMask];
+//    pboard = [sender draggingPasteboard];
+//
+//    if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
+//        NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+//        NSString *operation=nil;
+//
+//
+//        // Depending on the dragging source and modifier keys,
+//        // the file data may be copied or linked
+//        if (sourceDragMask & NSDragOperationCopy) {
+//            NSLog(@"Going to copy the files");
+//            //copyFilesThreaded(files, [self->url path]);
+//            operation = opCopyOperation;
+//
+//            //[self addLinkToFiles:files];
+//        } else if (sourceDragMask & NSDragOperationMove) {
+//            // implement the move here
+//            NSLog(@"Going to move the file");
+//            //[self addDataFromFiles:files];
+//            operation = opMoveOperation;
+//        }
+//        else {
+//            NSLog(@"Unsuported Operation Something went wrong here");
+//            return NO;
+//        }
+//        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+//                              files, kDFOFilesKey,
+//                              operation, kDFOOperationKey,
+//                              self->url, kDFODestinationKey,
+//                              nil];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+//
+//
 //    }
-    return YES;
-}
+////    else if ( [[pboard types] containsObject:NSColorPboardType] ) {
+////        // Only a copy operation allowed so just copy the data
+////        NSColor *newColor = [NSColor colorFromPasteboard:pboard];
+////        [self setColor:newColor];
+////    }
+//    return YES;
+//}
 
 @end

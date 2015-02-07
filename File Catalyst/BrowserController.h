@@ -88,6 +88,7 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) PathSelect:(id)sender;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
+- (IBAction) filenameDidChange:(id)sender;
 
 /*
  * Notifications Received 
@@ -138,6 +139,9 @@ extern NSString *notificationCatalystRootUpdate;
 -(NSArray*) getSelectedItems;
 -(NSArray*) getSelectedItemsForContextMenu;
 -(TreeItem*) getLastClickedItem;
+
+-(BOOL) startEditItemName:(id)item;
+-(void) insertItem:(id)item;
 
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;

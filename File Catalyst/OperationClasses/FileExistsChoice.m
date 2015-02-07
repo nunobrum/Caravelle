@@ -59,26 +59,56 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
 }
 
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest {
+    NSString *name;
     /* Remove all objects */
     if (attributesTable==nil)
         attributesTable = [[NSMutableArray alloc] init];
     // Empty table
     [attributesTable removeAllObjects];
 
-    // !!! TODO: Fill comparison Table
+    // If the paths are the same, i.e. the same file, just offer to rename
     if ([source compareTo: dest]==pathIsSame) {
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-                             @"Path",@"name",
-                             [source path],@"source",
-                             [dest path],@"destination",
-                             nil];
-        [attributesTable addObject:dic];
         [_pbReplace setHidden:YES];
-        [_pbSkip setTitle:@"Skip"];
-        NSString *name = [NSString stringWithFormat:@"Copy of %@",[[dest path] lastPathComponent]];
-        [[self tfFilename] setStringValue: [source path]];
-        [[self tfNewFilename] setStringValue:name];
+        //[_pbSkip setTitle:@"Skip"];
+        [_labelKeep setStringValue:@"Source and destination are the same"];
     }
+    // Put as before
+    else {
+        [_pbReplace setHidden:NO];
+        //[_pbSkip setTitle:@"Cancel"];
+        [_labelKeep setStringValue:@"Keep"];
+
+    }
+
+    // If the file names are the same, create a copy name
+    if ([[source name] isEqualToString:[dest name]]) {
+        name = [NSString stringWithFormat:@"Copy of %@",[dest name]];
+    }
+    else {
+        name = [source name];
+    }
+    [[self tfFilename] setStringValue: [source path]];
+    [[self tfNewFilename] setStringValue:name];
+
+
+    // !!! TODO: Fill comparison Table
+
+    // Path
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
+                         @"Path",@"name",
+                         [source path],@"source",
+                         [dest path],@"destination",
+                         nil];
+    [attributesTable addObject:dic];
+
+    // Size
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:
+           @"Size",@"name",
+           [source fileSize],@"source",
+           [dest fileSize],@"destination",
+           nil];
+    [attributesTable addObject:dic];
+
     [_attributeTableView reloadData];
     return YES;
 }
@@ -100,7 +130,12 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     NSString *identifier = [aTableColumn identifier];
     NSTableCellView *cellView = [aTableView makeViewWithIdentifier:identifier owner:self];
-    cellView.textField.stringValue = [[attributesTable objectAtIndex:rowIndex] objectForKey:identifier];
+    id obj = [[attributesTable objectAtIndex:rowIndex] objectForKey:identifier];
+
+    // To avoid assertion faults when passing a nil to the selector setStringValue
+    // TODO:? use the same value transformers as the defined for the tableView on BrowserController.
+    if (obj)
+        [[cellView textField ] setStringValue: obj];
     return cellView;
 }
 
