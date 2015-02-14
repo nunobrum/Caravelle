@@ -2,7 +2,7 @@
 //  MyURL.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 11/08/14.
+//  Created by Nuno Brum on 11/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -83,6 +83,30 @@ NSURL *urlWithRename(NSURL* original, NSString *new_name) {
     return [[original URLByDeletingLastPathComponent] URLByAppendingPathComponent:new_name isDirectory:folder];
 }
 
+enumPathCompare path_relation(NSString *aPath, NSString* otherPath) {
+    NSRange result;
+    NSInteger answer = pathsHaveNoRelation;
+
+    if ([aPath isEqualToString:otherPath])
+        return pathIsSame;
+
+    result = [otherPath rangeOfString:aPath];
+    if (NSNotFound!=result.location) {
+        // The new root is already contained in the existing trees
+        answer = pathIsChild;
+    }
+    else {
+        /* The new contains exiting */
+        result = [aPath rangeOfString:otherPath];
+        if (NSNotFound!=result.location) {
+            // Will need to replace current position
+            answer = pathIsParent;
+        }
+    }
+    return answer;
+}
+
+
 BOOL eraseFile(NSURL*url, NSError *error) {
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];
     if (error) {
@@ -105,6 +129,12 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     else {
         destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     }
+
+    // if one file is contained in another, or the same, abort operation
+    if (url_relation(srcURL, destFileURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NULL;
+    }
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
     if (error) { // In the event of errors the NSFileManagerDelegate is called
         return NULL;
@@ -120,6 +150,11 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     else {
         destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     }
+    // if one file is contained in another, or the same, abort operation
+    if (url_relation(srcURL, destFileURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NULL;
+    }
     [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];
     if (error) {  // In the event of errors the NSFileManagerDelegate is called 
         return NULL;
@@ -128,6 +163,11 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
 }
 
 BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
+    // if one file is contained in another, or the same, abort operation
+    if (url_relation(srcURL, destURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NO;
+    }
     [appFileManager copyItemAtURL:srcURL toURL:destURL error:&error];
     if (error) { // In the
         return NO;
@@ -136,6 +176,11 @@ BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
 }
 
 BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
+    // if one file is contained in another, or the same, abort operation
+    if (url_relation(srcURL, destURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NO;
+    }
     BOOL OK = [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
     if (OK==NO || error!=nil) { // In the case of error
         return NO;

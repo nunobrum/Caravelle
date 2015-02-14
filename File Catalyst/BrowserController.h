@@ -2,7 +2,7 @@
 //  BrowserController.h
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 02/08/14.
+//  Created by Nuno Brum on 02/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -20,7 +20,7 @@ extern NSString *notificationStatusUpdate;
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol>{
+@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol, NSTextDelegate> {
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
@@ -123,7 +123,7 @@ extern NSString *notificationCatalystRootUpdate;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 //-(void) removeSelectedDirectory;
 -(void) removeAll;
--(NSInteger) canAddRoot: (NSString*) rootPath;
+//-(BOOL) canAddRoot: (NSString*) rootPath;
 //-(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFirstRoot;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;

@@ -2,7 +2,7 @@
 //  BrowserController.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 02/08/14.
+//  Created by Nuno Brum on 02/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -598,7 +598,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #endif
 
-#pragma mark Service Menu Handling
+
+#pragma mark - Service Menu Handling
 /* These functions are used for the Services Menu */
 
 - (id)validRequestorForSendType:(NSString *)sendType
@@ -642,7 +643,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //}
 
 
-#pragma mark Path Bar Handling
+#pragma mark - Path Bar Handling
 -(TreeBranch*) treeNodeSelected {
     return _treeNodeSelected;
 }
@@ -758,7 +759,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 
-#pragma mark Action Selectors
+#pragma mark - Action Selectors
 
 // !!! TODO: Put here the code for the after Grouping/search button
 - (IBAction)tableSelected:(id)sender {
@@ -864,11 +865,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (IBAction)filenameDidChange:(id)sender {
     NSInteger row = [_myTableView rowForView:sender];
     if (row != -1) {
-        id items = [NSArray arrayWithObject:[tableData objectAtIndex:row]];
+        TreeItem *item = [tableData objectAtIndex:row];
+        NSString *operation=nil;
+        if ([item hasTags:tagTreeItemNew]) {
+            operation = opNewFolder;
+        }
+        else {
+            // If the name didn't change. Do Nothing
+            if ([[sender stringValue] isEqualToString:[item name]]) {
+                return;
+            }
+            operation = opRename;
+        }
+        NSArray *items = [NSArray arrayWithObject:item];
 
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                               items, kDFOFilesKey,
-                              opEditFilename, kDFOOperationKey,
+                              operation, kDFOOperationKey,
                               [sender stringValue], kDFORenameFileKey,
                               _treeNodeSelected, kDFODestinationKey,
                               nil];
@@ -915,7 +928,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     _filterText = [sender stringValue];
     [self refreshTableViewKeepingSelections];
 }
-
 
 
 #pragma mark - Drag and Drop Support
@@ -1332,6 +1344,36 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_observedVisibleItems removeAllObjects];
 }
 
+#pragma mark - NSControlTextDelegate Protocol
+
+- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
+    NSInteger row = [_myTableView rowForView:fieldEditor];
+    assert(row!=-1);
+    id item = [tableData objectAtIndex:row];
+    return [item hasTags:tagTreeItemReadOnly]==NO;
+}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
+{
+    //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+    if (commandSelector == @selector(cancelOperation:)) {
+        // In cancel will check if it was a new File and if so, remove it
+        NSInteger row =[_myTableView rowForView:fieldEditor];
+        if (row!=-1) {
+            id item = [tableData objectAtIndex:row];
+            if ([item isKindOfClass:[TreeItem class]]) {
+                if ([(TreeItem*)item hasTags:tagTreeItemNew]) {
+                    NSIndexSet *rows2delete = [NSIndexSet indexSetWithIndex:row];
+                    [_myTableView removeRowsAtIndexes:rows2delete
+                                        withAnimation:NSTableViewAnimationEffectFade];
+                }
+            }
+        }
+    }
+
+    return NO;
+}
+
 #pragma mark - Interface Methods
 
 
@@ -1500,8 +1542,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) addTreeRoot:(TreeBranch*)theRoot {
     if (theRoot!=nil) {
-        NSInteger answer = [self canAddRoot:[theRoot path]];
-        if (answer == pathsHaveNoRelation) {
+        BOOL answer = [self canAddRoot:[theRoot path]];
+        if (answer == YES) {
             [BaseDirectoriesArray addObject: theRoot];
         }
         /* Refresh the Trees so that the trees are displayed */
@@ -1536,14 +1578,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 // This method checks if a root can be added to existing set.
--(NSInteger) canAddRoot: (NSString*) rootPath {
-    NSInteger answer = pathsHaveNoRelation;
+-(BOOL) canAddRoot: (NSString*) rootPath {
+    enumPathCompare answer = pathsHaveNoRelation;
     for(TreeRoot *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         answer =[root relationToPath: rootPath];
         if (answer!=pathsHaveNoRelation) break;
     }
-    return answer;
+    return answer==pathsHaveNoRelation;
 }
 
 //-(FileCollection *) concatenateAllCollections {
@@ -1834,7 +1876,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) insertItem:(id)item {
-    NSInteger row;
+    NSInteger row = [tableData count];
+    if (_focusedView == _myOutlineView) {
+        // Will change to the table view and make the edit there.
+        _focusedView = _myTableView;
+    }
     if (_focusedView==_myTableView) {
         NSIndexSet *selection = [_myTableView selectedRowIndexes];
         if ([selection count]>0) {
@@ -1844,21 +1890,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else {
             row = [tableData count];
         }
-        // Making the new inserted line as selected
-        [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+    }
+    // Making the new inserted line as selected
+    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 
-        if (row < [tableData count]) {
-            [tableData insertObject:item atIndex:row];
-        }
-        else {
-            [tableData addObject:item];
-        }
-        [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation:NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
-        // TODO:! Add a timer in order to delay the execution and fit one nice animation
+    if (row < [tableData count]) {
+        [tableData insertObject:item atIndex:row];
     }
-    else if (_focusedView == _myOutlineView) {
-        // TODO:!!! Implement this
+    else {
+        [tableData addObject:item];
     }
+    [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation:NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
+    // TODO:!!! Add a timer in order to delay the execution and fit one nice animation. Check DidAnimation...
 }
 
 

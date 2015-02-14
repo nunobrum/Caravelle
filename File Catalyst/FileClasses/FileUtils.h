@@ -2,7 +2,7 @@
 //  FileUtils.h
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 11/08/14.
+//  Created by Nuno Brum on 11/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -19,6 +19,16 @@ extern inline NSDate* dateModified(NSURL*url);
 extern inline NSString* path(NSURL*url);
 extern inline long long filesize(NSURL*url);
 extern BOOL fileURLlExists(NSURL *url);
+
+/* Enumerate to be used on the result of the path relation compare method */
+typedef NS_ENUM(NSInteger, enumPathCompare) {
+    pathIsSame = 0,
+    pathsHaveNoRelation = 1,
+    pathIsParent = 2,
+    pathIsChild = 3
+};
+enumPathCompare path_relation(NSString *aPath, NSString* otherPath);
+#define url_relation(aURL, otherURL) path_relation([aURL path], [otherURL path])
 
 // Support Routines
 NSString *pathWithRename(NSString *original, NSString *new_name);

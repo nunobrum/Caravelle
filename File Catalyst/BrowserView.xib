@@ -293,13 +293,14 @@
                                                                 <subviews>
                                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="sw7-bg-l2V">
                                                                         <rect key="frame" x="27" y="0.0" width="136" height="17"/>
-                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" truncatesLastVisibleLine="YES" selectable="YES" editable="YES" title="Table View Cell" id="Zfd-ss-dKQ">
+                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" truncatesLastVisibleLine="YES" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="Zfd-ss-dKQ">
                                                                             <font key="font" metaFont="system"/>
                                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                         </textFieldCell>
                                                                         <connections>
                                                                             <action selector="filenameDidChange:" target="-2" id="Hrz-MT-uSi"/>
+                                                                            <outlet property="delegate" destination="-2" id="JER-Yc-OdR"/>
                                                                         </connections>
                                                                     </textField>
                                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="0mU-iE-1CV">
@@ -521,8 +522,8 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="gvN-b3-nLQ"/>
-                <menuItem title="New..." keyEquivalent="n" id="Yfd-od-4LD"/>
-                <menuItem image="NewFolderGrey20" keyEquivalent="N" id="xKl-Mj-ZxK">
+                <menuItem title="New Folder" keyEquivalent="" id="xKl-Mj-ZxK">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualNewFolder:" target="-1" id="5Cr-mg-hqS"/>
                     </connections>
@@ -539,6 +540,5 @@
         <image name="GenericFolderIcon" width="512" height="512"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSPathTemplate" width="13" height="10"/>
-        <image name="NewFolderGrey20" width="20" height="20"/>
     </resources>
 </document>

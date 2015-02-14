@@ -2,12 +2,13 @@
 //  TreeManager.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 26/09/14.
+//  Created by Nuno Brum on 26/09/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
 #import "TreeManager.h"
 //#import "TreeBranch_TreeBranchPrivate.h"
+#import "FileUtils.h"
 
 NSString *notificationRefreshViews = @"RefreshViews";
 
@@ -29,7 +30,7 @@ TreeManager *appTreeManager;
     id parent =  nil;
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
-        NSUInteger comparison = [item relationToPath:[url path]];
+        enumPathCompare comparison = [item relationToPath:[url path]];
         if (comparison == pathIsSame) {
             return item;
         }

@@ -2,7 +2,7 @@
 //  TreeItem.m
 //  FileCatalyst1
 //
-//  Created by Viktoryia Labunets on 12/31/12.
+//  Created by Nuno Brum on 12/31/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
@@ -215,6 +215,7 @@
     if (_parent) {
         [(TreeBranch*)_parent removeChild:self];
     }
+    [self setTag:tagTreeItemRelease];
     return YES;
 }
 
@@ -222,27 +223,7 @@
 #pragma mark URL comparison methods
 
 -(enumPathCompare) relationToPath:(NSString*) otherPath {
-    NSRange result;
-    NSInteger answer = pathsHaveNoRelation;
-    NSString *myPath = [self path];
-
-    if ([myPath isEqualToString:otherPath])
-        return pathIsSame;
-
-    result = [otherPath rangeOfString:myPath];
-    if (NSNotFound!=result.location) {
-        // The new root is already contained in the existing trees
-        answer = pathIsChild;
-    }
-    else {
-        /* The new contains exiting */
-        result = [myPath rangeOfString:otherPath];
-        if (NSNotFound!=result.location) {
-            // Will need to replace current position
-            answer = pathIsParent;
-        }
-    }
-    return answer;
+    return path_relation([self path], otherPath);
 }
 
 -(enumPathCompare) compareTo:(TreeItem*) otherItem {
@@ -342,7 +323,7 @@
     // We recreate the appropriate object
 #ifdef USE_UTI
     if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
-        // !!! TODO: If a custom UTI is ever considered, write the Write to pasteboard
+        // ! TODO: If a custom UTI is ever considered, write the Write to pasteboard
         return propertyList; // !!! TODO: If ever the custom UTI is created. Check if this works
     }
     else 

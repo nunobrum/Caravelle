@@ -2,7 +2,7 @@
 //  AppDelegate.m
 //  FileCatalyst1
 //
-//  Created by Viktoryia Labunets on 12/28/12.
+//  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
@@ -52,13 +52,27 @@ const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
 NSString *opEraseOperation =@"EraseOperation";
-NSString *opEditFilename=@"EditFilenameOperation";
 NSString *opSendRecycleBinOperation = @"SendRecycleBin";
+NSString *opNewFolder = @"NewFolderOperation";
+NSString *opRename = @"RenameOperation";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 
+NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
+                             /* obj */   [NSNumber numberWithBool:NO] ,
+                             /* key */    NSPasteboardURLReadingFileURLsOnlyKey,
+                             /* obj */   [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
+                             /* key */    NSPasteboardURLReadingContentsConformToTypesKey,
+                             nil];
+    NSArray *files = [clipboard readObjectsForClasses:
+                      [NSArray arrayWithObjects: [NSURL class], nil]
+                                              options:options];
+    return files;
+    
+}
 
 @interface AppDelegate (Privates)
 
@@ -176,12 +190,9 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
     myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
 
-    // TODO: ? Optimization Replace this notification with a simpler method
-    // [NSApp sendAction:@selector(handleOperationInformation:)to:nil from:self];
-
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
-    [center addObserver:self selector:@selector(handleOperationInformation:) name:notificationDoFileOperation object:nil];
+    [center addObserver:self selector:@selector(startOperationHandler:) name:notificationDoFileOperation object:nil];
     [center addObserver:self selector:@selector(processNextError:) name:notificationClosedFileExistsWindow object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
@@ -507,7 +518,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 // Create the File Operation
                 NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       selectedFiles, kDFOFilesKey,
-                                      opEditFilename, kDFOOperationKey,
+                                      opRename, kDFOOperationKey,
                                       fileName, kDFORenameFileKey,
                                       [[self selectedView] treeNodeSelected], kDFODestinationKey,
                                       nil];
@@ -623,14 +634,8 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (void) executePaste:(TreeBranch*) destinationBranch {
 
     NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+    NSArray *files = get_clipboard_files(clipboard);
 
-    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             NSPasteboardURLReadingFileURLsOnlyKey, [NSNumber numberWithBool:NO] ,
-                             NSPasteboardURLReadingContentsConformToTypesKey, [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
-                             nil];
-    NSArray *files = [clipboard readObjectsForClasses:
-                      [NSArray arrayWithObjects: [NSURL class], nil]
-                                              options:options];
     if (files!=nil && [files count]>0) {
         if (isCutPending) {
             if (generalPasteBoardChangeCount == [clipboard changeCount]) {
@@ -737,23 +742,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 - (IBAction)toolbarNewFolder:(id)sender {
     NSArray *selectedItems = [[self selectedView] getSelectedItems];
     NSInteger selectionCount = [selectedItems count];
-    if (selectionCount==0) {
-        // this is the treeBranch
-        [self executeNewFolder:[[self selectedView] treeNodeSelected]];
+    if (selectionCount!=0) {
+        // TODO:!! Ask whether to move the files into the new created Folder
     }
-    else if (selectionCount==1) {
-        // TODO: Validate that its a Branch
-        [self executeNewFolder:(TreeBranch*) [selectedItems firstObject]];
-    }
-    else {
-        // This is an invalid condition. Need to notify user
-        NSAlert *alert = [NSAlert alertWithMessageText:@"Invalid Selection !"
-                                         defaultButton:@"OK"
-                                       alternateButton:nil
-                                           otherButton:nil
-                             informativeTextWithFormat:@"Select only one Folder"];
-        [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-    }
+    [self executeNewFolder:[[self selectedView] treeNodeSelected]];
 }
 
 - (IBAction)contextualNewFolder:(id)sender {
@@ -963,6 +955,14 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
             if ([targetFolder hasTags:tagTreeItemReadOnly]) {
                 allow = NO;
             }
+            // Check if paste board has valid data
+            else {
+                NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+                NSArray *files = get_clipboard_files(clipboard);
+                if ([files count]==0) {
+                    allow = NO;
+                }
+            }
             // No other conditions. This is supposed to be a folder, no need to test this condition
         }
         else {
@@ -1042,15 +1042,17 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 
 
 #pragma mark Operations Handling
-/* Called for the notificationDoFileOperation notification */
--(void) handleOperationInformation: (NSNotification*) note
-{
+/* Called for the notificationDoFileOperation notification 
+ This routine is called by the views to initiate opeations, such as 
+ the case of the edit of the file name or the drag/drop operations */
+-(void) startOperationHandler: (NSNotification*) note {
 
     NSString *operation = [[note userInfo] objectForKey:kDFOOperationKey];
 
     if (([operation isEqualToString:opCopyOperation]) ||
         ([operation isEqualToString:opMoveOperation]) ||
-        ([operation isEqualToString:opEditFilename])) {
+        ([operation isEqualToString:opNewFolder])||
+        ([operation isEqualToString:opRename])) {
         // TODO: Register the folder as a last Steps one
         // Redirects all to file operation
         putInQueue([note userInfo]);
@@ -1137,7 +1139,7 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 statusText = @"Delete Failed";
 
         }
-        else if ([operation isEqualToString:opEditFilename]) {
+        else if ([operation isEqualToString:opRename]) {
             if (!OK) {
                 statusText = @"Rename Failed";
 
@@ -1146,6 +1148,26 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
                 for (id item in [info objectForKey:kDFOFilesKey]) {
                     [(BrowserController*)_selectedView reloadItem:item];
                  }
+            }
+        }
+        else if ([operation isEqualToString:opNewFolder]) {
+            if (!OK) {
+                statusText = @"New Folder creation failed";
+
+                // Removing the inserted item
+                for (TreeItem* item in [info objectForKey:kDFOFilesKey]) {
+                    [item removeItem];
+                }
+                // Since the item was never inserted in the tree structure, it sufices to refresh the Table
+                [(BrowserController*)_selectedView refreshTableView];
+
+                // Inform User
+                NSAlert *alert = [NSAlert alertWithMessageText:@"Error creating Folder"
+                                                 defaultButton:@"OK"
+                                               alternateButton:nil
+                                                   otherButton:nil
+                                     informativeTextWithFormat:@"Possible Causes:\nFile already exists or write is restricted"];
+                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             }
         }
         else {
@@ -1400,7 +1422,6 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
     }
 
 }
-
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];

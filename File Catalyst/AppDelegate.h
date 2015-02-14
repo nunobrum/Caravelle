@@ -2,7 +2,7 @@
 //  AppDelegate.h
 //  FileCatalyst1
 //
-//  Created by Viktoryia Labunets on 12/28/12.
+//  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
@@ -14,7 +14,7 @@
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
-    id _selectedView;
+    id<MYViewProtocol> _selectedView;
     //__weak LeftDataSource *_RightDataSrc;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;

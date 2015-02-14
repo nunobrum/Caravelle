@@ -2,12 +2,12 @@
 //  TreeItem.h
 //  FileCatalyst1
 //
-//  Created by Viktoryia Labunets on 12/31/12.
+//  Created by Nuno Brum on 12/31/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-//#import "FileInformation.h"
+#import "FileUtils.h"
 
 
 typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
@@ -21,14 +21,6 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemReadOnly = (1UL << 7),
     tagTreeItemNew      = (1UL << 8),
     tagTreeItemAll      = NSUIntegerMax
-};
-
-/* Enumerate to be used on the result of the path relation compare method */
-typedef NS_ENUM(NSInteger, enumPathCompare) {
-    pathIsSame = 0,
-    pathsHaveNoRelation = 1,
-    pathIsParent = 2,
-    pathIsChild = 3
 };
 
 

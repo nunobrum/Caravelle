@@ -7,6 +7,7 @@
 //
 
 #import "FileExistsChoice.h"
+#import "FileUtils.h"
 
 
 NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";

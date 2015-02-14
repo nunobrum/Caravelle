@@ -2,7 +2,7 @@
 //  Definitions.h
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 04/08/14.
+//  Created by Nuno Brum on 04/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -25,7 +25,8 @@ extern NSString *kDFOOkKey;
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
 extern NSString *opEraseOperation;
-extern NSString *opEditFilename;
+extern NSString *opNewFolder;
+extern NSString *opRename;
 extern NSString *opSendRecycleBinOperation;
 
 

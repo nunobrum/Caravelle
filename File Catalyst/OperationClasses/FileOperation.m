@@ -92,30 +92,28 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
             }
 
             // Its a rename or a file new
-            else if ([op isEqualToString:opEditFilename]) {
+            else if ([op isEqualToString:opRename] ||
+                     [op isEqualToString:opNewFolder]) {
 
                 // Check whether it is a rename or a New File/Folder. Both required an edit of a name.
                 // To distinguish from the two, if the file/folder exists is a rename, else is a new
                 for (id item in items) {
                     NSURL *checkURL = NULL;
-                    BOOL newFolder;
                     if ([item isKindOfClass:[NSURL class]]) {
                         checkURL = item;
-                        newFolder = NO;
                     }
                     else if ([item isKindOfClass:[TreeItem class]]) {
                         checkURL = [item url];
-                        if ([(TreeItem*)item hasTags:tagTreeItemNew])
-                            newFolder = YES;
-                        else
-                            newFolder = NO;
+                    }
+                    else {
+                        assert(NO); // Unknown type
                     }
 
                     // Creating a new URL, works for either the new File or a Rename
                     NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
                     // create a new Folder.
 
-                    if (newFolder) {
+                    if ([op isEqualToString:opNewFolder]) {
                         NSURL *parentURL;
                         id destObj = [_taskInfo objectForKey:kDFODestinationKey];
                         if (destObj!=nil) {
@@ -125,13 +123,14 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 parentURL = destObj;
                             OK = createDirectoryAtURL(newName, parentURL, error);
                         }
+                        // Adjust to the correct operation
+                        [_taskInfo setObject:opNewFolder forKey:kDFOOperationKey];
                     }
-                    // else
                     // NOTE: No Files are created with this application, at most it
                     // could in the future launch applications with a path, so they
                     // will create it.
 
-                    else { //if (fileURLlExists(checkURL)) {
+                    else { 
                         // Do a Rename
                         NSURL *newURL = urlWithRename(checkURL, newName);
                         OK = moveFileTo(checkURL, newURL, error);
@@ -142,6 +141,8 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             [(TreeItem*)item setUrl:newURL];
                         }
 //#endif // UPDATE_TREE
+                        // Adjust to the correct Operation
+                        [_taskInfo setObject:opRename forKey:kDFOOperationKey];
                     }
 
 
@@ -160,6 +161,8 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     // Sees if there is a rename associated with the copy
                     NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
 
+                    // Assuming all will go well, and revert to No if anything happens
+                    OK = YES;
                     if ([op isEqualToString:opCopyOperation]) {
                         for (id item in items) {
                             NSURL *newURL = NULL;
@@ -167,13 +170,16 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 newURL = copyFileToDirectory(item, [dest url], newName, error);
                             else if ([item isKindOfClass:[TreeItem class]])
                                 newURL = copyFileToDirectory([item url], [dest url], newName, error);
-#ifdef UPDATE_TREE
                             if (newURL) {
+#ifdef UPDATE_TREE
                                 [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
-                            }
 #endif //UPDATE_TREE
+                            }
+                            else
+                                OK = NO;
+
                             statusCount++;
-                            if ([self isCancelled] || error!=nil) break;
+                            if ([self isCancelled] || OK==NO) break;
                         }
                     }
                     else if ([op isEqualToString:opMoveOperation]) {
@@ -181,25 +187,29 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             NSURL *newURL = NULL;
                             if ([item isKindOfClass:[NSURL class]]) {
                                 newURL = moveFileToDirectory(item, [dest url], newName, error);
-#ifdef UPDATE_TREE
                                 if (newURL) {
+#ifdef UPDATE_TREE
                                     [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
-                                }
 #endif //UPDATE_TREE
+                                }
+                                else
+                                    OK = NO;
                                 statusCount++;
                             }
                             else if ([item isKindOfClass:[TreeItem class]]) {
                                 newURL = moveFileToDirectory([item url], [dest url], newName, error);
-#ifdef UPDATE_TREE
                                 if (newURL) {
+#ifdef UPDATE_TREE
                                     [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
                                     // Remove itself from the former parent
                                     [(TreeItem*)item removeItem];
-                                }
 #endif //UPDATE_TREE
+                                }
+                                else
+                                    OK = NO;
                                 statusCount++;
                             }
-                            if ([self isCancelled] || error!=nil) break;
+                            if ([self isCancelled] || OK==NO) break;
                         }
                     }
                 }
@@ -223,7 +233,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             else if ([item isKindOfClass:[TreeItem class]])
                                 OK=moveFileTo([item url], dest, error);
                             statusCount++;
-                            if ([self isCancelled] || error!=nil) break;
+                            if ([self isCancelled] || OK == NO) break;
                         }
                     }
                 }
