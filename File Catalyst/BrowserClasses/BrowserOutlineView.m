@@ -2,7 +2,7 @@
 //  BrowserOutlineView.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 08/01/15.
+//  Created by Nuno Brum on 08/01/15.
 //  Copyright (c) 2015 Nuno Brum. All rights reserved.
 //
 

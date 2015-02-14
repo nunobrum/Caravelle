@@ -2,7 +2,7 @@
 //  FolderCellView.m
 //  FileCatalyst1
 //
-//  Created by Viktoryia Labunets on 3/30/13.
+//  Created by Nuno Brum on 3/30/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.
 //
 
