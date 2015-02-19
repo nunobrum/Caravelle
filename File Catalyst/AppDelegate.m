@@ -44,6 +44,7 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
+NSString *kSourceViewKey = @"SourceViewKey";
 
 #ifdef USE_UTI
 const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
@@ -62,10 +63,10 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                             /* obj */   [NSNumber numberWithBool:NO] ,
+                             /* obj */   [NSNumber numberWithBool:YES] ,
                              /* key */    NSPasteboardURLReadingFileURLsOnlyKey,
-                             /* obj */   [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
-                             /* key */    NSPasteboardURLReadingContentsConformToTypesKey,
+                             ///* obj */   [NSArray arrayWithObjects: NSFilenamesPboardType, nil],
+                             ///* key */    NSPasteboardURLReadingContentsConformToTypesKey,
                              nil];
     NSArray *files = [clipboard readObjectsForClasses:
                       [NSArray arrayWithObjects: [NSURL class], nil]
@@ -233,8 +234,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     [(BrowserController*)myLeftView selectFirstRoot];
     [(BrowserController*)myRightView selectFirstRoot];
-    [(BrowserController*)myLeftView refreshTrees];
-    [(BrowserController*)myRightView refreshTrees];
+    [(BrowserController*)myLeftView refresh];
+    [(BrowserController*)myRightView refresh];
 
 }
 
@@ -359,12 +360,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 /* Received when a complete refresh of views is needed */
 
 -(void) refreshAllViews:(NSNotification*) theNotification {
-    if ([myLeftView isKindOfClass:[BrowserController class]]) {
-        [(BrowserController*)myLeftView refreshTrees];
-    }
-    if ([myRightView isKindOfClass:[BrowserController class]]) {
-        [(BrowserController*)myRightView refreshTrees];
-    }
+    [(id<MYViewProtocol>)myLeftView refresh];
+    [(id<MYViewProtocol>)myRightView refresh];
 }
 
 /* Receives the notification from the BrowserView to reload the Tree */
@@ -568,6 +565,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     NSURL *newURL = [[selectedBranch url] URLByAppendingPathComponent:@"New Folder"];
     TreeBranch *newFolder = [[TreeBranch alloc] initWithURL:newURL parent:selectedBranch];
     [newFolder setTag:tagTreeItemNew];
+    [newFolder resetTag:tagTreeItemReadOnly];
     [[self selectedView] insertItem:newFolder];
     [[self selectedView] startEditItemName:newFolder];
 }
@@ -577,6 +575,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // The cut: is identical to the copy: but the isCutPending is activated.
     // Its on the paste operation that the a decision is taken whether the cut
     // Can be done, if the application still maintains ownership of the pasteboard
+
+    // First will mark the selected files to move
     for (TreeItem *item in selectedFiles) {
         [item setTag:tagTreeItemToMove+tagTreeItemDirty];
     }
@@ -598,9 +598,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Get The clipboard
     NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
 
-    // Store the Pasteboard counter for later to check ownership
-    generalPasteBoardChangeCount = [clipboard changeCount];
-    isCutPending = NO;
 
     // TODO:!! multi copy, where an additional copy will append items to the pasteboard
     /* use the following function of NSFileManager to create a directory that will serve as
@@ -616,6 +613,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [clipboard writeObjects:urls];
     //Now add the pathsPerLine as a string
     [clipboard setString:pathPerLine forType:NSStringPboardType];
+
+    // Store the Pasteboard counter for later to check ownership
+    generalPasteBoardChangeCount = [clipboard changeCount];
+    isCutPending = NO;
 
     NSUInteger count = [urls count];
     NSString *statusText;
@@ -771,7 +772,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if ([sender isKindOfClass:[BrowserController class]]) {
         [self goHome:[self selectedView]];
         [(BrowserController*)[self selectedView] selectFirstRoot];
-        [(BrowserController*)[self selectedView] refreshTrees];
+        [(BrowserController*)[self selectedView] refresh];
     }
 }
 
@@ -811,58 +812,30 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 
 - (IBAction)cut:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        // First will mark the selected files to move
-        [self executeCut:[[self selectedView] getSelectedItems]];
-    }
-    else {
-        // other objects that can send a cut:
-    }
+    [self executeCut:[[self selectedView] getSelectedItems]];
 }
 
 - (IBAction)contextualCut:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        // First will mark the selected files to move
-        [self executeCut:[[self selectedView] getSelectedItemsForContextMenu]];
-    }
+    [self executeCut:[[self selectedView] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)copy:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        [self executeCopy:[[self selectedView] getSelectedItems]];
-    }
-    else {
-        // other objects that can send a copy:
-    }
+    [self executeCopy:[[self selectedView] getSelectedItems]];
 }
 
 - (IBAction)contextualCopy:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu]];
-    }
+    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)paste:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        TreeBranch *destinationBranch = [[self selectedView] treeNodeSelected];
-        [self executePaste:destinationBranch];
-    }
-    else {
-        // other objects that can send a paste:
-    }
+    TreeBranch *destinationBranch = [[self selectedView] treeNodeSelected];
+    [self executePaste:destinationBranch];
+
 }
 
 - (IBAction)contextualPaste:(id)sender {
-    if ([sender isKindOfClass:[BrowserController class]] &&
-        (sender==myLeftView || sender==myRightView)) {
-        // the validateMenuItems insures that node is Branch
-        [self executePaste:(TreeBranch*)[[self selectedView] getLastClickedItem]];
-    }
+    // the validateMenuItems insures that node is Branch
+    [self executePaste:(TreeBranch*)[[self selectedView] getLastClickedItem]];
 }
 
 -(IBAction)delete:(id)sender {
@@ -1158,8 +1131,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 for (TreeItem* item in [info objectForKey:kDFOFilesKey]) {
                     [item removeItem];
                 }
-                // Since the item was never inserted in the tree structure, it sufices to refresh the Table
-                [(BrowserController*)_selectedView refreshTableView];
 
                 // Inform User
                 NSAlert *alert = [NSAlert alertWithMessageText:@"Error creating Folder"
@@ -1173,6 +1144,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         else {
             assert(NO); // Unknown operation
         }
+
+        if (!OK)
+            // refreshes the view to clear any errors, such as in the new Folder or failed drop
+            [(id<MYViewProtocol>)[info objectForKey:kSourceViewKey] refresh];
+
         if (statusText!=nil) // If nothing was set, don't update status
             [_StatusBar setTitle: statusText];
 
@@ -1219,14 +1195,23 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [myRightView selectFirstRoot];
             }
             if ([selectedFiles count]==0) {
-                //[self.toolbarDeleteButton setEnabled:NO];
-//                if (selectedView==myLeftView) {
-//                    [self.toolbarCopySegmentedButton setEnabled:NO];
-//                }
-//                else if (selectedView==myRightView) {
-//                    [self.toolbarCopySegmentedButton setEnabled:NO];
-//                }
                 statusText = [NSString stringWithFormat:@"No Files Selected"];
+            }
+            else if ([selectedFiles count] == 1) {
+                TreeItem *item = [selectedFiles objectAtIndex:0];
+                NSString *sizeText;
+                NSString *type;
+                if ([item isKindOfClass:[TreeLeaf class]]) {
+                    type = @"File";
+                    sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
+                }
+                else {
+                    // TODO:!! Check if Folder Size is valid, make change also in the condition below
+                    type = @"Folder";
+                    sizeText = @"";
+                }
+
+                statusText = [NSString stringWithFormat:@"%@ (%@%@)", [item name], type, sizeText];
             }
             else {
                 for (TreeItem *item in selectedFiles ) {
@@ -1239,25 +1224,25 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                         folders_size += [(TreeBranch*)item filesize];
                     }
                 }
-                //[self.toolbarDeleteButton setEnabled:YES];
-//                if (selectedView==myLeftView) {
-//                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
-//                    //[self.toolbarCopyLeftButton setEnabled:NO];
-//                }
-//                else if (selectedView==myRightView) {
-//                    //[self.toolbarCopyRightButton setEnabled:NO];
-//                    [self.self.toolbarCopySegmentedButton setEnabled:YES];
-//                }
-                if ([(BrowserController*)selView viewMode]==BViewBrowserMode) {
-                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
-                    statusText = [NSString stringWithFormat:@"%lu Directories, %lu Files adding up to %@ bytes",
-                                  num_directories, num_files, sizeText];
-                }
-                else {
-                    NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size+folders_size countStyle:NSByteCountFormatterCountStyleFile];
-                    statusText = [NSString stringWithFormat:@"%lu Files and %lu Directories, Total Size %@",
-                                  num_files, num_directories, sizeText];
-                }
+
+                NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
+
+                NSString *dir_info, *file_info;
+                if (num_directories==0)
+                    dir_info = @"";
+                else if (num_directories == 1)
+                    dir_info = @"1 Folder selected. ";
+                else
+                    dir_info = [NSString stringWithFormat:@"%lu Folders selected. ", num_directories];
+
+                if (num_files==0)
+                    file_info = @"";
+                else if (num_files == 1)
+                    file_info = [NSString stringWithFormat:@"1 File selected (File Size:%@).", sizeText];
+                else
+                    file_info = [NSString stringWithFormat:@"%lu Files selected (File Total:%@).", num_files, sizeText];
+
+                statusText = [NSString stringWithFormat:@"%@%@", dir_info, file_info];
 
             }
             [_StatusBar setTitle: statusText];
@@ -1326,20 +1311,23 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 #pragma mark File Manager Delegate
 -(void) processNextError:(NSNotification*)theNotification {
-    NSArray *note = pendingOperationErrors[0]; // Fifo Like structure
-    NSURL* sourceURL = note[0];
-    NSURL* destinationURL = note[1];
-    NSError *error = note[2];
-    NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
 
+    if (pendingOperationErrors==nil || [pendingOperationErrors count]==0)
+        return;
 
     if (theNotification!=nil) { // It cames from the window closing
-        NSString *new_name;
+        NSArray *note = pendingOperationErrors[0]; // Fifo Like structure
+        NSURL* sourceURL = note[0];
+        NSURL* destinationURL = note[1];
+        NSError *error = note[2];
+        NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
+
+        NSDictionary *info = [theNotification userInfo];
+        NSString *new_name = [info objectForKey:kFileExistsNewFilenameKey];
         // Lauch the new Operation based on the user choice
-        fileExistsQuestionResult answer = [fileExistsWindow answer];
+        fileExistsQuestionResult answer = [[info objectForKey:kFileExistsAnswerKey] integerValue];
         switch (answer) {
             case FileExistsRename:
-                new_name = [fileExistsWindow new_filename];
                 // Creating the renamed URL
                 destinationURL = urlWithRename(destinationURL, new_name) ;
                 if ([operation isEqualToString:@"Copy"]) {
@@ -1372,6 +1360,12 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         [pendingOperationErrors removeObjectAtIndex:0];
     }
     if ([pendingOperationErrors count]>=1) { // If only one open the
+        NSArray *note = pendingOperationErrors[0]; // Fifo Like structure
+        NSURL* sourceURL = note[0];
+        NSURL* destinationURL = note[1];
+        NSError *error = note[2];
+        //NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
+
         if (error.code==516) { // File already exists
             if (fileExistsWindow==nil) {
                 fileExistsWindow = [[FileExistsChoice alloc] initWithWindowNibName:@"FileExistsChoice"];
@@ -1389,8 +1383,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
             if (sourceItem!=nil && destItem!=nil) {
                 BOOL OK = [fileExistsWindow makeTableWithSource:sourceItem andDestination:destItem];
-                if (OK)
-                    [fileExistsWindow showWindow:self];
+                if (OK) {
+                    [fileExistsWindow displayWindow:self];
+                }
             }
             else {
                 // Failed to created either the source or the destination. Not likely to happen but...
@@ -1408,7 +1403,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         }
 
     }
-
+    else {
+        // The window needs to be closed
+        [fileExistsWindow closeWindow];
+        //fileExistsWindow = nil;
+    }
 }
 
 -(void) mainThreadErrorHandler:(NSArray*) note {
@@ -1420,7 +1419,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if ([pendingOperationErrors count] == 1) { // Call it if there aren't more pending
         [self processNextError:nil];
     }
-
+    else if ([pendingOperationErrors count] > 1) {
+        // Focus on the Window
+        [fileExistsWindow displayWindow:self];
+    }
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {

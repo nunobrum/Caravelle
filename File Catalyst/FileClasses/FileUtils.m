@@ -130,8 +130,8 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
         destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     }
 
-    // if one file is contained in another, or the same, abort operation
-    if (url_relation(srcURL, destFileURL)!=pathsHaveNoRelation) {
+    // if one folder is contained in another, abort operation
+    if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
         //TODO:! create an error subclass
         return NULL;
     }
@@ -151,7 +151,7 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
         destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
     }
     // if one file is contained in another, or the same, abort operation
-    if (url_relation(srcURL, destFileURL)!=pathsHaveNoRelation) {
+    if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
         //TODO:! create an error subclass
         return NULL;
     }

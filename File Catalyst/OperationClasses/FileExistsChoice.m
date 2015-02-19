@@ -11,6 +11,8 @@
 
 
 NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
+NSString *kFileExistsAnswerKey = @"FileExistsAnswer";
+NSString *kFileExistsNewFilenameKey = @"NewFilename";
 
 #define COL_NAME @"name"
 #define COL_SOURCE @"source"
@@ -38,25 +40,37 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
     NSLog(@"FileExistsChoice Window didLoad");
 }
 
-- (IBAction)pbReplace:(id)sender {
-    _answer = FileExistsReplace;
-    // Notify AppDelegate that an option was taken
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationClosedFileExistsWindow object:nil userInfo:nil];
-    [self close];
+-(void) closeWindow {
+    [[self windowOutlet] setIsVisible:NO];
 }
 
-- (IBAction)pbSkip:(id)sender {
-    // Notify AppDelegate that an option was taken
-    _answer = FileExistsSkip;
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationClosedFileExistsWindow object:nil userInfo:nil];
-    _answer = FileExistsSkip;
-    [self close];
+-(void) displayWindow:(id) sender {
+    [[self windowOutlet] setIsVisible:YES];
+    [self showWindow:sender];
+    [[self windowOutlet] makeKeyAndOrderFront:sender];
 }
-- (IBAction)pbRename:(id)sender {
+
+-(void) sendNotification:(NSInteger) answer {
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          [NSNumber numberWithInteger:answer], kFileExistsAnswerKey,
+                          [_tfNewFilename stringValue], kFileExistsNewFilenameKey, nil];
     // Notify AppDelegate that an option was taken
-    _answer = FileExistsRename;
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationClosedFileExistsWindow object:nil userInfo:nil];
-    [self close];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationClosedFileExistsWindow object:self userInfo:info];
+
+}
+
+- (IBAction)actionOverwrite:(id)sender {
+    // Notify AppDelegate that an option was taken
+    [self sendNotification:FileExistsReplace];
+}
+
+- (IBAction)actionSkip:(id)sender {
+    // Notify AppDelegate that an option was taken
+    [self sendNotification:FileExistsSkip];
+}
+- (IBAction)actionRename:(id)sender {
+    // Notify AppDelegate that an option was taken
+    [self sendNotification:FileExistsRename];
 }
 
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest {
@@ -70,14 +84,14 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
     // If the paths are the same, i.e. the same file, just offer to rename
     if ([source compareTo: dest]==pathIsSame) {
         [_pbReplace setHidden:YES];
-        //[_pbSkip setTitle:@"Skip"];
-        [_labelKeep setStringValue:@"Source and destination are the same"];
+        [_labelKeep setHidden:YES];
+        [_labelFilesAreTheSame setHidden:NO];
     }
     // Put as before
     else {
         [_pbReplace setHidden:NO];
-        //[_pbSkip setTitle:@"Cancel"];
-        [_labelKeep setStringValue:@"Keep"];
+        [_labelKeep setHidden:NO];
+        [_labelFilesAreTheSame setHidden:YES];
 
     }
 
@@ -92,7 +106,7 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
     [[self tfNewFilename] setStringValue:name];
 
 
-    // !!! TODO: Fill comparison Table
+    // !!! TODO: Fill comparison Table based upon the Plist
 
     // Path
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -109,13 +123,12 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
            [dest fileSize],@"destination",
            nil];
     [attributesTable addObject:dic];
-
     [_attributeTableView reloadData];
-    return YES;
-}
 
--(NSString*) new_filename {
-    return [_tfNewFilename stringValue];
+    // set focus
+    //[_windowOutlet makeFirstResponder:_tfNewFilename];
+    [_windowOutlet setIsVisible:YES];
+    return YES;
 }
 
 
@@ -143,13 +156,23 @@ NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
 /*
  * NSTextDelegate
  */
+#pragma mark - NSControlTextDelegate Protocol
 
-//- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor {
-//    return YES;
-//}
+
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
+{
+    //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+    if (commandSelector == @selector(cancelOperation:)) {
+        // In cancel close the dialog
+        [self actionSkip:nil];
+    }
+
+    return NO;
+}
+
 
 - (void)controlTextDidEndEditing:(NSNotification *)obj {
-    [self pbRename:nil];
+    [self actionRename:nil];
 }
 
 @end

@@ -16,25 +16,29 @@ typedef NS_ENUM(NSInteger, fileExistsQuestionResult) {
 };
 
 extern NSString *notificationClosedFileExistsWindow;
+extern NSString *kFileExistsAnswerKey;
+extern NSString *kFileExistsNewFilenameKey;
 
 @interface FileExistsChoice : NSWindowController <NSTableViewDataSource,NSTableViewDelegate, NSTextFieldDelegate> {
     //fileExistsQuestionResult _answer;
     NSMutableArray *attributesTable;
 }
+@property (strong) IBOutlet NSWindow *windowOutlet;
 @property (strong) IBOutlet NSTextField *tfFilename;
 //@property (strong) IBOutlet NSArrayController *attributesContent;
 @property (strong) IBOutlet NSTextField *tfNewFilename;
 @property (strong) IBOutlet NSButton *pbReplace;
 @property (strong) IBOutlet NSButton *pbSkip;
 @property (strong) IBOutlet NSTableView *attributeTableView;
+@property (strong) IBOutlet NSTextField *labelFilesAreTheSame;
 @property (strong) IBOutlet NSTextField *labelKeep;
 
-@property (readonly) fileExistsQuestionResult answer;
+-(void) closeWindow;
+-(void) displayWindow:(id) sender;
 
-- (IBAction)pbReplace:(id)sender;
-- (IBAction)pbSkip:(id)sender;
+- (IBAction)actionOverwrite:(id)sender;
+- (IBAction)actionSkip:(id)sender;
 
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest;
--(NSString*) new_filename;
 
 @end

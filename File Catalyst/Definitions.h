@@ -20,6 +20,7 @@ extern NSString *kDFOFilesKey;
 
 extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
+extern NSString *kSourceViewKey;
 
 
 extern NSString *opCopyOperation;
@@ -94,6 +95,8 @@ extern NSString *kOptionsKey;
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types;
+
+- (void) refresh;
 
 @end
 

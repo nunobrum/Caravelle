@@ -117,7 +117,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(void) reloadItem:(id) item;
 -(void) refreshTableView;
 -(void) refreshTableViewKeepingSelections;
--(void) refreshTrees;
+-(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;

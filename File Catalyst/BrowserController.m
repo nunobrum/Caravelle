@@ -91,7 +91,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 #endif
     // Use the myPathPopDownMenu outlet to get the maximum tag number
     // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
-    NSLog(@"Init Browser Controller");
     return self;
 }
 
@@ -884,6 +883,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                               operation, kDFOOperationKey,
                               [sender stringValue], kDFORenameFileKey,
                               _treeNodeSelected, kDFODestinationKey,
+                              self, kSourceViewKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
@@ -1144,6 +1144,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                               files, kDFOFilesKey,
                               operation, kDFOOperationKey,
                               _validatedDestinationItem, kDFODestinationKey,
+                              self, kSourceViewKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
     }
@@ -1350,6 +1351,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger row = [_myTableView rowForView:fieldEditor];
     assert(row!=-1);
     id item = [tableData objectAtIndex:row];
+
+    // In order to allow the creation of new files
+    if ([item hasTags:tagTreeItemNew])
+        return YES;
     return [item hasTags:tagTreeItemReadOnly]==NO;
 }
 
@@ -1440,7 +1445,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setViewMode:(BViewMode)viewMode {
     if (viewMode!=_viewMode) {
         [self removeAll];
-        [self refreshTrees];
+        [self refresh];
         tableData = nil;
         [_myTableView reloadData];
         [self startAllBusyAnimations];
@@ -1504,7 +1509,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [self setTableViewSelectedURLs:selectedURLs];
 }
 
--(void) refreshTrees {
+-(void) refresh {
     if (_viewMode!=BViewBrowserMode) {
         // TODO:! In catalyst Mode, there is no automatic Update
     }
