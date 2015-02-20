@@ -1031,6 +1031,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     /* Use the modifiers keys to select */
     //if (modifiers & NSShiftKeyMask) {
     //}
+    //TODO:!! Use Space to cycle through the options
     if (modifiers & NSAlternateKeyMask) {
         if (modifiers & NSCommandKeyMask) {
             if      (sourceDragMask & NSDragOperationLink)
@@ -1062,6 +1063,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else
             _validatedOperation= NSDragOperationNone;
     }
+
+    // TODO:!! Implement the Link Operation
+    if (_validatedOperation ==  NSDragOperationLink)
+        _validatedOperation=  NSDragOperationNone;
+    
     return _validatedOperation;
 }
 
@@ -1349,13 +1355,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
     NSInteger row = [_myTableView rowForView:fieldEditor];
-    assert(row!=-1);
-    id item = [tableData objectAtIndex:row];
+    if (row!=-1) {
+        id item = [tableData objectAtIndex:row];
 
-    // In order to allow the creation of new files
-    if ([item hasTags:tagTreeItemNew])
+        // In order to allow the creation of new files
+        if ([item hasTags:tagTreeItemNew])
+            return YES;
+        return [item hasTags:tagTreeItemReadOnly]==NO;
+    }
+    else
         return YES;
-    return [item hasTags:tagTreeItemReadOnly]==NO;
 }
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector

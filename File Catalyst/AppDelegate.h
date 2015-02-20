@@ -64,5 +64,8 @@
 - (IBAction)paste:(id)sender;
 - (IBAction)delete:(id)sender;
 
+- (IBAction)copyName:(id)sender ;
+- (IBAction)contextualCopyName:(id)sender ;
+
 
 @end

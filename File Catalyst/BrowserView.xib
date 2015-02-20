@@ -516,6 +516,12 @@
                         <action selector="contextualCopy:" target="-1" id="wPL-zM-oXt"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Copy Name" keyEquivalent="c" id="NNa-AH-9Gc">
+                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
+                    <connections>
+                        <action selector="contextualCopyName:" target="-1" id="aWx-JL-CIx"/>
+                    </connections>
+                </menuItem>
                 <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO">
                     <connections>
                         <action selector="contextualPaste:" target="-1" id="zQK-QA-jGk"/>

@@ -581,24 +581,17 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         [item setTag:tagTreeItemToMove+tagTreeItemDirty];
     }
     [[self selectedView] refreshTableViewKeepingSelections];
-    [self executeCopy:selectedFiles];
+    [self executeCopy:selectedFiles onlyNames:NO];
     isCutPending = YES;
 }
 
-- (void)executeCopy:(NSArray*) selectedFiles {
+
+- (void)executeCopy:(NSArray*) selectedFiles onlyNames:(BOOL)onlyNames {
 
     // Get the urls from the view
     NSArray* items = [[self selectedView] getSelectedItems];
-    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+
     // Will create name list for text application paste
-    NSArray* names = [items valueForKeyPath:@"@unionOfObjects.name"];
-    // Join the paths, one name per line
-    NSString* pathPerLine = [names componentsJoinedByString:@"\n"];
-
-    // Get The clipboard
-    NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
-
-
     // TODO:!! multi copy, where an additional copy will append items to the pasteboard
     /* use the following function of NSFileManager to create a directory that will serve as
      clipboard for situation where the Application can be closed.
@@ -609,16 +602,30 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
      error:(NSError **)error
      */
 
+
+    // Get The clipboard
+    NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
     [clipboard clearContents];
-    [clipboard writeObjects:urls];
-    //Now add the pathsPerLine as a string
-    [clipboard setString:pathPerLine forType:NSStringPboardType];
+    
+
+    if (onlyNames==YES) {
+        NSArray* str_representation = [items valueForKeyPath:@"@unionOfObjects.name"];
+        // Join the paths, one name per line
+        NSString* pathPerLine = [str_representation componentsJoinedByString:@"\n"];
+        //Now add the pathsPerLine as a string
+        [clipboard setString:pathPerLine forType:NSStringPboardType];
+    }
+    // if only names are copied, the urls are not
+    else {
+        NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+        [clipboard writeObjects:urls];
+    }
 
     // Store the Pasteboard counter for later to check ownership
     generalPasteBoardChangeCount = [clipboard changeCount];
     isCutPending = NO;
 
-    NSUInteger count = [urls count];
+    NSUInteger count = [items count];
     NSString *statusText;
     if (count==0) {
         statusText = [NSString stringWithFormat:@"No files selected"];
@@ -820,11 +827,19 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)copy:(id)sender {
-    [self executeCopy:[[self selectedView] getSelectedItems]];
+    [self executeCopy:[[self selectedView] getSelectedItems] onlyNames:NO];
 }
 
 - (IBAction)contextualCopy:(id)sender {
-    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu] onlyNames:NO];
+}
+
+- (IBAction)copyName:(id)sender {
+    [self executeCopy:[[self selectedView] getSelectedItems] onlyNames:YES];
+}
+
+- (IBAction)contextualCopyName:(id)sender {
+    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu] onlyNames:YES];
 }
 
 - (IBAction)paste:(id)sender {
@@ -887,6 +902,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     // Actions that require a contextual selection
     if (theAction == @selector(contextualCopy:) ||
+        theAction == @selector(contextualCopyName:) ||
         theAction == @selector(contextualCopyTo:) ||
         theAction == @selector(contextualCut:) ||
         theAction == @selector(contextualDelete:) ||
@@ -946,10 +962,12 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         for (TreeItem *item in itemsSelected) {
             // Actions that can always be made
             if (theAction == @selector(contextualCopy:) ||
+                theAction == @selector(contextualCopyName:) ||
                 theAction == @selector(contextualCopyTo:) ||
                 theAction == @selector(contextualInformation:) ||
                 theAction == @selector(contextualOpen:) ||
                 theAction == @selector(copy:) ||
+                theAction == @selector(copyName:) ||
                 theAction == @selector(toolbarCopyTo:) ||
                 theAction == @selector(toolbarInformation:) ||
                 theAction == @selector(toolbarOpen:)
