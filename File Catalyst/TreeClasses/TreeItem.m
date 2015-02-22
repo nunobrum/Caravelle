@@ -50,10 +50,10 @@
                     }
                 }
                 /* Debug Code */
-                else if ([typeIdentifier isEqualToString:@"com.apple.xcode.project"] ||
+                /*else if ([typeIdentifier isEqualToString:@"com.apple.xcode.project"] ||
                          [typeIdentifier isEqualToString:@"com.apple.dt.document.workspace"]) {
                     return [[TreeLeaf alloc] initWithURL:url parent:parent];
-                }
+                }*/
             }
             if (//[typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
                 [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {

@@ -189,23 +189,23 @@
 		3CD788A719D52DEE0042E8B9 /* TreeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeManager.h; sourceTree = "<group>"; };
 		3CD788A819D52DEE0042E8B9 /* TreeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeManager.m; sourceTree = "<group>"; };
 		3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefault.plist; sourceTree = "<group>"; };
-		3CEA673F18F87C2F0080C4FC /* File Catalyst.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "File Catalyst.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CEA673F18F87C2F0080C4FC /* Envision.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Envision.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		3CEA674618F87C2F0080C4FC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		3CEA674718F87C2F0080C4FC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		3CEA674A18F87C2F0080C4FC /* File Catalyst-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File Catalyst-Info.plist"; sourceTree = "<group>"; };
+		3CEA674A18F87C2F0080C4FC /* Envision-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Envision-Info.plist"; sourceTree = "<group>"; };
 		3CEA674C18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA674E18F87C2F0080C4FC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3CEA675018F87C2F0080C4FC /* File Catalyst-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "File Catalyst-Prefix.pch"; sourceTree = "<group>"; };
+		3CEA675018F87C2F0080C4FC /* Envision-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Envision-Prefix.pch"; sourceTree = "<group>"; };
 		3CEA675218F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		3CEA675418F87C2F0080C4FC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3CEA675518F87C2F0080C4FC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		3CEA675818F87C2F0080C4FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3CEA675A18F87C2F0080C4FC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3CEA676018F87C2F0080C4FC /* File CatalystTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "File CatalystTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CEA676018F87C2F0080C4FC /* EnvisionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EnvisionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA676118F87C2F0080C4FC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "File CatalystTests-Info.plist"; sourceTree = "<group>"; };
+		3CEA676818F87C2F0080C4FC /* EnvisionTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "EnvisionTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
 		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
@@ -330,8 +330,8 @@
 		3CEA674018F87C2F0080C4FC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA673F18F87C2F0080C4FC /* File Catalyst.app */,
-				3CEA676018F87C2F0080C4FC /* File CatalystTests.xctest */,
+				3CEA673F18F87C2F0080C4FC /* Envision.app */,
+				3CEA676018F87C2F0080C4FC /* EnvisionTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -387,10 +387,10 @@
 		3CEA674918F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA674A18F87C2F0080C4FC /* File Catalyst-Info.plist */,
+				3CEA674A18F87C2F0080C4FC /* Envision-Info.plist */,
 				3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */,
 				3CEA674E18F87C2F0080C4FC /* main.m */,
-				3CEA675018F87C2F0080C4FC /* File Catalyst-Prefix.pch */,
+				3CEA675018F87C2F0080C4FC /* Envision-Prefix.pch */,
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
 				3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */,
@@ -410,7 +410,7 @@
 		3CEA676718F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA676818F87C2F0080C4FC /* File CatalystTests-Info.plist */,
+				3CEA676818F87C2F0080C4FC /* EnvisionTests-Info.plist */,
 				3CEA676918F87C2F0080C4FC /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -518,9 +518,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3CEA673E18F87C2F0080C4FC /* File Catalyst */ = {
+		3CEA673E18F87C2F0080C4FC /* Envision */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "File Catalyst" */;
+			buildConfigurationList = 3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Envision" */;
 			buildPhases = (
 				3CEA673B18F87C2F0080C4FC /* Sources */,
 				3CEA673C18F87C2F0080C4FC /* Frameworks */,
@@ -530,14 +530,14 @@
 			);
 			dependencies = (
 			);
-			name = "File Catalyst";
+			name = Envision;
 			productName = "File Catalyst";
-			productReference = 3CEA673F18F87C2F0080C4FC /* File Catalyst.app */;
+			productReference = 3CEA673F18F87C2F0080C4FC /* Envision.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3CEA675F18F87C2F0080C4FC /* File CatalystTests */ = {
+		3CEA675F18F87C2F0080C4FC /* EnvisionTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "File CatalystTests" */;
+			buildConfigurationList = 3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "EnvisionTests" */;
 			buildPhases = (
 				3CEA675C18F87C2F0080C4FC /* Sources */,
 				3CEA675D18F87C2F0080C4FC /* Frameworks */,
@@ -548,9 +548,9 @@
 			dependencies = (
 				3CEA676518F87C2F0080C4FC /* PBXTargetDependency */,
 			);
-			name = "File CatalystTests";
+			name = EnvisionTests;
 			productName = "File CatalystTests";
-			productReference = 3CEA676018F87C2F0080C4FC /* File CatalystTests.xctest */;
+			productReference = 3CEA676018F87C2F0080C4FC /* EnvisionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -570,7 +570,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "File Catalyst" */;
+			buildConfigurationList = 3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Envision" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -583,8 +583,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3CEA673E18F87C2F0080C4FC /* File Catalyst */,
-				3CEA675F18F87C2F0080C4FC /* File CatalystTests */,
+				3CEA673E18F87C2F0080C4FC /* Envision */,
+				3CEA675F18F87C2F0080C4FC /* EnvisionTests */,
 			);
 		};
 /* End PBXProject section */
@@ -710,7 +710,7 @@
 /* Begin PBXTargetDependency section */
 		3CEA676518F87C2F0080C4FC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3CEA673E18F87C2F0080C4FC /* File Catalyst */;
+			target = 3CEA673E18F87C2F0080C4FC /* Envision */;
 			targetProxy = 3CEA676418F87C2F0080C4FC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -829,10 +829,10 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "File Catalyst/File Catalyst-Info.plist";
+				GCC_PREFIX_HEADER = "File Catalyst/Envision-Prefix.pch";
+				INFOPLIST_FILE = "File Catalyst/Envision-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Envision;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -846,10 +846,10 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "File Catalyst/File Catalyst-Info.plist";
+				GCC_PREFIX_HEADER = "File Catalyst/Envision-Prefix.pch";
+				INFOPLIST_FILE = "File Catalyst/Envision-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = Envision;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -870,8 +870,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "File CatalystTests/File CatalystTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "File CatalystTests/EnvisionTests-Info.plist";
+				PRODUCT_NAME = EnvisionTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -888,8 +888,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "File CatalystTests/File CatalystTests-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				INFOPLIST_FILE = "File CatalystTests/EnvisionTests-Info.plist";
+				PRODUCT_NAME = EnvisionTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -898,7 +898,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "File Catalyst" */ = {
+		3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Envision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA676E18F87C2F0080C4FC /* Debug */,
@@ -907,7 +907,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "File Catalyst" */ = {
+		3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Envision" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA677118F87C2F0080C4FC /* Debug */,
@@ -916,7 +916,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "File CatalystTests" */ = {
+		3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "EnvisionTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA677418F87C300080C4FC /* Debug */,

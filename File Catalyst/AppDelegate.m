@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  FileCatalyst1
+//  Envision
 //
 //  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
@@ -140,7 +140,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         else if (view == myRightView) {
             homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserRight"] objectForKey:@"prefHomeDir"];
         }
-        //DEBUG CODE !!! == homepath = @"/Users/vika/testedir";
+        //DEBUG CODE == homepath = @"/Users/vika/testedir";
 
         
         if (homepath == nil || [homepath isEqualToString:@""])
