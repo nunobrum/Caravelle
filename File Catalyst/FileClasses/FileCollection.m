@@ -67,8 +67,7 @@
         // Retrieve the file name. From NSURLNameKey, cached during the enumeration.
         NSString *fileName;
         [theURL getResourceValue:&fileName forKey:NSURLNameKey error:NULL];
-        //NSLog(@"File %@",fileName);
-        
+
         // Retrieve whether a directory. From NSURLIsDirectoryKey, also
         // cached during the enumeration.
         NSNumber *isDirectory;
@@ -79,7 +78,6 @@
             ([isDirectory boolValue]==YES))
         {
             [dirEnumerator skipDescendants];
-            NSLog(@"Skipping %@",fileName);
         }
         else*/
         if ([isDirectory boolValue]==NO)
@@ -159,7 +157,6 @@
 //                r.location = 0;
 //                r.length = 0+ci;
 //                rootDirectory = [NSString pathWithComponents:[common_path objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:r]]];
-//                NSLog(@"common path %li %@",ci, rootDirectory);
 
             }
         }

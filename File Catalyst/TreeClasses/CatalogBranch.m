@@ -23,7 +23,7 @@
                 branchName = [self.valueTransformer transformedValue:branchName];
             }
             @catch (NSException *exception) {
-                NSLog(@"Cant create a branch with this name");
+                NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch with this name");
                 // then not adds it to itself. Can also create an "others" branch.
                 return [self addTreeItem:treeItem];
             }

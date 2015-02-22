@@ -169,6 +169,9 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
     int i;
     CFArrayRef paths = eventPaths;
 
+    // TODO: !!! Bundle all in one single notification
+    //NSMutableArray *events = [NSMutableArray arrayWithCapacity:numEvents];
+
     // printf("Callback called\n");
     for (i=0; i<numEvents; i++) {
         CFStringRef path = CFArrayGetValueAtIndex(paths, i);
@@ -214,11 +217,9 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
         CFArraySetValueAtIndex(monitoredPaths, i, mypath);
     }
 
-    //CFStringRef mypath = CFSTR("/Users/vika/Downloads");
-
     void *callbackInfo = NULL; // could put stream-specific data here.
 
-    CFAbsoluteTime latency = 0.5; /* Latency in seconds */
+    CFAbsoluteTime latency = 1.0; /* Latency in seconds */
 
     /* Create the stream, passing in a callback */
     stream = FSEventStreamCreate(NULL,
@@ -260,7 +261,7 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
     CFRelease(monitoredPaths);
     [super cancel];
     while (![self isCancelled]) {
-        NSLog(@".");
+        NSLog(@"FileSystemMonitoring.cancel - Trying to Cancel task");
     }
 }
 

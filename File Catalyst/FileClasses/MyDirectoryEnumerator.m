@@ -33,7 +33,7 @@
     }
 
     if (dirEnumOptions==0)  {
-        NSLog(@"Ooops! This shouldn't be happening. No options set in the Enumeration");
+        NSLog(@"MyDirectoryEnumerator.initWithMode: - No options set in the Enumerator");
     }
     NSFileManager *localFileManager=[[NSFileManager alloc] init];
 

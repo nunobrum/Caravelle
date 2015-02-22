@@ -44,7 +44,7 @@ TreeManager *appTreeManager;
                     return (TreeBranch*)[aux parent];
                 }
                 else {
-                    NSLog(@"Ooops! what happened here ?");
+                    NSLog(@"TreeManager.addTreeItemWithURL: - Error: The URL was not created");
                 }
             }
             index++;
@@ -223,32 +223,36 @@ TreeManager *appTreeManager;
          kFSEventStreamEventFlagUnmount, // When a device is unmounted underneath the path being monitored.
          */
 
-
+        //NSLog(@"FSEvent %@", changedPath);
 
         NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
         id itemToRefresh = [self getNodeWithURL:aURL];
 
         if  (itemToRefresh != nil) { // Its already being monitored
-
-
             BOOL scanSubdirs = (flags &
                                 (kFSEventStreamEventFlagMustScanSubDirs |
                                  kFSEventStreamEventFlagUserDropped |
                                  kFSEventStreamEventFlagKernelDropped))!=0;
             if (scanSubdirs) {
-                NSLog(@"Not Implemented ! System is asking a full rescan of the tree:\n%@", changedPath);
-                // TODO:!!! Implement this.
-                // Easiest is to make an Catalyst enumerator
+                NSLog(@"TreeManager.fileSystemChangePath: - System is asking a full rescan of the tree:\n%@", changedPath);
+
+                if ([itemToRefresh respondsToSelector:@selector(refreshBranchOnQueue:)]) {
+                    [itemToRefresh setTag:tagTreeItemDirty];
+                    [itemToRefresh refreshBranchOnQueue:operationsQueue];
+                }
+                else {
+                        NSLog(@"TreeManager:fileSystemChangePath: Not implemented ! Not expected to receive non branches.\nReceived ""%@""", changedPath);
+                    }
             }
-            //else
+            else
             {
-                NSLog(@"Refreshing %@", [itemToRefresh url]);
+                NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];
                 }
-                else { // TODO: Scan the parent directory
-                    NSLog(@"Not implemented ! Not expected to receive files.\nReceived ""%@""", changedPath);
+                else {
+                    NSLog(@"TreeManager:fileSystemChangePath: Not implemented ! Not expected to receive non branches.\nReceived ""%@""", changedPath);
                 }
             }
         }

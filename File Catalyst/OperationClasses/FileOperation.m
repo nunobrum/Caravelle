@@ -63,8 +63,9 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                          else
                              blk_OK = NO;
                          NSDictionary *OKError = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                  [NSNumber numberWithBool:blk_OK], kDFOOkKey,
                                                   blk_error, kDFOErrorKey,
-                                                  [NSNumber numberWithBool:OK], kDFOOkKey, nil];
+                                                   nil];
                          [_taskInfo addEntriesFromDictionary:OKError];
 
                          [[NSNotificationCenter defaultCenter]

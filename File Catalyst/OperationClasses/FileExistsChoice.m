@@ -34,12 +34,6 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     _pendingUserDecision = NO;
     return self;
 }
-- (void)windowDidLoad {
-    [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    NSLog(@"FileExistsChoice Window didLoad");
-}
 
 -(BOOL) pendingUserDecision {
     return _pendingUserDecision;
@@ -105,6 +99,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 
     // If the file names are the same, create a copy name
     if ([[source name] isEqualToString:[dest name]]) {
+        // TODO: !!! make rename proposal more inline with the MACOSX standard
         name = [NSString stringWithFormat:@"Copy of %@",[dest name]];
     }
     else {

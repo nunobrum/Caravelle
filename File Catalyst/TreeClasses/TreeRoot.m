@@ -43,7 +43,7 @@
         NSString *patH = [fileCollection commonPath];
         NSURL *rootURL = [NSURL fileURLWithPath:patH isDirectory:YES];
         if (rootURL==nil) {
-            NSLog(@"We have a problem here. The NSURL wasnt sucessfully created after commonPath");
+            NSLog(@"TreeRoot.treeWithFileCollection: - Error: The NSURL wasnt sucessfully created after commonPath");
         }
         TreeRoot *rootDir = [[TreeRoot new] initWithURL:rootURL parent:nil];
 

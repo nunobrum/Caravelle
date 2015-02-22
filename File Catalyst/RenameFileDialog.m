@@ -39,14 +39,14 @@
 
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
 {
-    NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+    //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
     if (commandSelector == @selector(insertNewline:)) {
         if (control == _ebFilename) {
             //Do something against ENTER key
             [self RenameAction:nil];
             return YES;
         }
-    } else if (commandSelector == @selector(deleteForward:)) {
+    } /*else if (commandSelector == @selector(deleteForward:)) {
         //Do something against DELETE key
 
     } else if (commandSelector == @selector(deleteBackward:)) {
@@ -54,7 +54,7 @@
 
     } else if (commandSelector == @selector(insertTab:)) {
         //Do something against TAB key
-    }
+    }*/
 
     return NO;
 }

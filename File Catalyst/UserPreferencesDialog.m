@@ -80,10 +80,7 @@
 //}
 
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-    //if ((tableColumn != nil) || [[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-    //       [item setTitle:object];
-    //
-    //}
+    NSLog(@"UserPreferencesDialog.outlineView:setObjectValue:forTableColumn:byItem - Not implemented");
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
 }
 

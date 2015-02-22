@@ -189,7 +189,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else if ([item isKindOfClass:[TreeBranch class]]) {
         answer = ([(TreeBranch*)item isExpandable]);
     }
-    //NSLog(@"%@ is expandable %hhd", [item name], answer);
     return answer;
 }
 
@@ -233,7 +232,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
         else {
-            NSLog(@"What else?");
+            NSLog(@"BrowserController.outlineView:viewForTableColumn:item - Unknown class %@", [item className]);
         }
     }
     return cellView;
@@ -243,11 +242,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //
 //}
 
+// TODO: !! This doesn't seem to be used, but its needed.
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
-    //if ((tableColumn != nil) || [[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-    //       [item setTitle:object];
-    //
-    //}
+    NSLog(@"BrowserController.outlineView:setObjectValue:forTableColumn:byItem - Not implemented");
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
 }
 
@@ -255,13 +252,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 - (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item {
-    //    if ([item isKindOfClass:[TreeBranch class]]) {
-    //        TreeItem *treeItem = item;
-    //        if (treeItem  != nil) {
-    //            // We could dynamically change the thumbnail size, if desired
-    //            return IMAGE_SIZE + PADDING_AROUND_INFO_IMAGE; // The extra space is padding around the cell
-    //        }
-    //    }
     CGFloat answer;
     if (_viewMode!=BViewBrowserMode) {
         answer = [outlineView rowHeight];
@@ -359,7 +349,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
         else {
-            NSLog(@"Houston we have a problem");
+            NSLog(@"BrowserController.outlineViewSelectionDidChange - More than one item Selected");
             return;
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[notification userInfo]];
@@ -385,7 +375,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([identifier isEqualToString:COL_FILENAME]) {
         // We pass us as the owner so we can setup target/actions into this main controller object
         cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
-        //NSLog(@"View is of class %@", [cellView class]);
         [cellView setObjectValue:objectValue];
         if ([objectValue isKindOfClass:[TreeItem class]]) {
             TreeItem *theFile = objectValue;
@@ -425,7 +414,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
             // We pass us as the owner so we can setup target/actions into this main controller object
             cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
-            //NSLog(@"View is of class %@", [cellView class]);
 
             NSDictionary *colControl = [columnInfo() objectForKey:identifier];
             if (colControl!=nil) { // The column exists
@@ -435,7 +423,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                     prop = [objectValue valueForKey:prop_name];
                 }
                 @catch (NSException *exception) {
-                    NSLog(@"property '%@' not found", prop_name);
+                    NSLog(@"BrowserController.tableView:viewForTableColumn:row - Property '%@' not found", prop_name);
                 }
 
                 if (prop){
@@ -606,7 +594,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 {
     if ([sendType isEqual:NSFilenamesPboardType] ||
         [sendType isEqual:NSURLPboardType]) {
-        //NSLog(@"Service return type is %@", returnType);
         return self;
     }
     //return [super validRequestorForSendType:sendType returnType:returnType];
@@ -786,7 +773,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [self selectFolderByItem:node];
         }
         else
-            NSLog(@"This wasn't supposed to happen. Expecting TreeBranch only");
+            NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
     }
 }
 
@@ -820,7 +807,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             break; /* Only one Folder can be Opened */
         }
         else
-            NSLog(@"Can't open this TreeClass: %@",[node class]);
+            NSLog(@"BrowserController.TableDoubleClickEvent: - Unknown Class '%@'", [node className]);
         index = [rowsSelected indexGreaterThanIndex:index];
 
     }
@@ -939,7 +926,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //}
 
 - (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
-    NSLog(@"write to paste board, passing handle to item at row %ld",row);
     return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
 }
 
@@ -985,9 +971,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
-//- (void)tableView:(NSTableView *)tableView updateDraggingItemsForDrag:(id < NSDraggingInfo >)draggingInfo {
-//    NSLog(@"info : update dragging items");
-//}
 - (NSDragOperation) validateDrop:(id < NSDraggingInfo >)info  {
 
     NSPasteboard *pboard;
@@ -1112,7 +1095,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     if ([_validatedDestinationItem isKindOfClass:[TreeLeaf class]]) {
         // TODO: !! Dropping Application on top of file or File on top of Application
-        NSLog(@"Not impplemented open the file with the application");
+        NSLog(@"BrowserController.acceptDrop: - Not impplemented Drop on Files");
         // TODO:! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
     }
     else if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
@@ -1139,7 +1122,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // TODO: !! Operation Link
         }
         else {
-            NSLog(@"Unsupported drop operation");
+            // Invalid case
+            fireNotfication = NO;
         }
 
     }
@@ -1154,7 +1138,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
     }
     else
-        NSLog(@"Unsupported Operation %lu", (unsigned long)_validatedOperation);
+        NSLog(@"BrowserController.acceptDrop: - Unsupported Operation %lu", (unsigned long)_validatedOperation);
     return fireNotfication;
 }
 
@@ -1179,7 +1163,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 if (newItem) {
                     [tableData insertObject:newItem atIndex:row+i];
                     [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
-                    NSLog(@"Copy Item %@ creating line %ld", [pastedItem lastPathComponent], row+i);
                     i++;
                 }
             }
@@ -1252,7 +1235,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (object == _treeNodeSelected) {
         // test if the object was released
         if ([object hasTags:tagTreeItemRelease]) {
-            NSLog(@"Reloading Released %@", [object path]);
+            //NSLog(@"Reloading Released %@", [object path]);
 
             // Tries to jump into a valid parent
             TreeItem *parent = [(TreeItem*)object parent];
@@ -1840,8 +1823,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_myFileViewProgressIndicator setHidden:YES];
 	[_myOutlineProgressIndicator stopAnimation:self];
     [_myFileViewProgressIndicator stopAnimation:self];
-    //NSLog(@"stop Busy animations %@", self);
-
 }
 
 -(void) startAllBusyAnimations {
@@ -1849,15 +1830,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [_myFileViewProgressIndicator setHidden:NO];
 	[_myOutlineProgressIndicator startAnimation:self];
     [_myFileViewProgressIndicator startAnimation:self];
-    //NSLog(@"start All Busy animations %@", self);
-
 }
 
 -(void) startTableBusyAnimations {
     [_myFileViewProgressIndicator setHidden:NO];
     [_myFileViewProgressIndicator startAnimation:self];
-    //NSLog(@"start Table Busy animations %@", self);
-    
 }
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
@@ -1908,12 +1885,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
 }
-- (void)didAddRowView:(NSTableRowView *)rowView
-               forRow:(NSInteger)row {
-// TODO: !!! This this.
-    NSLog(@"Make the edit here");
-}
-
 
 #pragma mark - MRU Routines
 

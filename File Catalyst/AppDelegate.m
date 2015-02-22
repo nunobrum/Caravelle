@@ -140,6 +140,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         else if (view == myRightView) {
             homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserRight"] objectForKey:@"prefHomeDir"];
         }
+        //DEBUG CODE !!! == homepath = @"/Users/vika/testedir";
+
+        
         if (homepath == nil || [homepath isEqualToString:@""])
             homepath = NSHomeDirectory();
 
@@ -766,7 +769,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if (sender == myLeftView || sender == myRightView)
         _selectedView = sender;
     else {
-        NSLog(@"Case not expected");
+        NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
         assert(false);
     }
 }
@@ -858,7 +861,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 
 - (IBAction)orderPreferencePanel:(id)sender {
-    NSLog(@"Preference Panel");
     if (userPreferenceWindow==nil)
         userPreferenceWindow =[[UserPreferencesDialog alloc] initWithWindowNibName:@"UserPreferencesDialog"];
     [userPreferenceWindow showWindow:self];
@@ -991,12 +993,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     else {
         itemsSelected = [(BrowserController*)[self selectedView] getSelectedItems];
     }
-
-
-    //NSLog(@"Items selected");
-    //for (TreeItem *d in itemsSelected) {
-    //    NSLog(@"%@", [d path]);
-    //}
 
     if (itemsSelected==nil) {
         // If nothing was returned is selected then don't allow anything
@@ -1140,7 +1136,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     //[operationInfoTimer release];
         [timer invalidate];
         [self _stopOperationBusyIndication];
-        NSLog(@"operation Status Updating after a stop");
+        //NSLog(@"operation Status Updating after a stop");
     }
     else {
         // Get from Operation the status Text
@@ -1370,7 +1366,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 /* invoked by Find Duplicates Dialog on OK Button */
 - (void) startDuplicateFind:(NSNotification*)theNotification {
-    NSLog(@"Starting Duplicate Find");
     [myLeftView setViewMode:BViewDuplicateMode];
     [myRightView setViewMode:BViewDuplicateMode];
     [self _startOperationBusyIndication];
@@ -1396,7 +1391,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [myRightView stopBusyAnimations];
     [myRightView selectFolderByItem:rootDir];
 
-    NSLog(@"Duplicate Find Finish");
 }
 // -------------------------------------------------------------------------------
 //	anyThread_handleLoadedImages:note
@@ -1504,7 +1498,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             }
         }
         else {
-            NSLog(@"Error not processed %@", error); // Don't comment this, before all tests are completed.
+            NSLog(@"AppDelegate.processNext:Error: Error not processed %@", error); // Don't comment this, before all tests are completed.
         }
 
     }
@@ -1556,27 +1550,21 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after copy error");
-    NSLog(@"-------------------------------");    return NO;
+    NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:copyingItemAtPath:toPath");
+    return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after move error");
-    NSLog(@"-------------------------------");    return NO;
+    NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:movingItemAtPath:toPath");
+    return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after remove error");
-    NSLog(@"-------------------------------");
+    NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtPath:toPath");
     return NO;
 }
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtURL:(NSURL *)URL {
-    NSLog(@"FileManagerDelegate -----------");
-    NSLog(@"Not proceeding after remove error");
-    NSLog(@"-------------------------------");
+    NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtURL:toPath");
     return NO;
 }
 

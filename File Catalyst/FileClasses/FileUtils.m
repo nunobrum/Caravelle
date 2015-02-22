@@ -110,9 +110,7 @@ enumPathCompare path_relation(NSString *aPath, NSString* otherPath) {
 BOOL eraseFile(NSURL*url, NSError *error) {
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];
     if (error) {
-        NSLog(@"=================ERASE ERROR ====================");
-        NSLog(@"%@", error);
-        NSLog(@"=================================================");
+        NSLog(@"FileUtils.eraseFile - Error:\n%@\n\n", error);
     }
     return answer;
 }
@@ -273,7 +271,7 @@ NSDictionary *getDiskInformation(NSURL *diskPath) {
         diskInfos = [[NSMutableDictionary alloc] init];
 
     if (![diskPath isKindOfClass:[NSURL class]]) {
-        NSLog(@"The return class for the getDiskInformation info is not an URL");
+        NSLog(@"FileUtils.getDiskInformation - The return class for the getDiskInformation info is not an URL");
         return nil;
     }
 

@@ -201,7 +201,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 if ([item isKindOfClass:[TreeBranch class]]) {
                     [(TreeBranch*)item releaseChildren];
                 }
-                NSLog(@"Removing %@", [item path]);
+                //NSLog(@"Removing %@", [item path]);
                 [_children removeObjectAtIndex:index];
             }
             else
@@ -279,8 +279,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return answer;
 }
 
-- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
-    //NSLog(@"Refreshing %@", [self path]);
+- (void) refreshContentsOnQueue: (NSOperationQueue *) queue {
+    //NSLog(@"TreeBranch.refreshContentsOnQueue:(%@)", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
         [queue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
@@ -330,6 +330,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
+// trying to invalidate all existing tree and lauching a refresh on the views
+// TODO:!! Come up with a better way to do this
+- (void) refreshBranchOnQueue: (NSOperationQueue *) queue {
+    NSLog(@"TreeBranch.refreshBranchOnQueue:(%@)", [self path]);
+    [self forceRefreshOnBranch];
+
+}
+
 #pragma mark -
 #pragma mark Tree Access
 /*
@@ -337,6 +345,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  */
 
 -(TreeItem*) getNodeWithURL:(NSURL*)url {
+    //NSLog(@"TreeBranch.getNodeWithURL:(%@)", url);
     if ([[self url] isEqual:url])
         return self;
     else {
@@ -392,7 +401,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             return [(TreeBranch*)child addURL:theURL];
         }
         else {
-            NSLog(@"Error in addURL: URL received is supposed to be a TreeBranch");
+            NSLog(@"TreeBranch.addURL: URL(%@) is not aTreeBranch",[self url]);
             assert(NO);
         }
     }
@@ -419,7 +428,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     else if ([[self url] isEqualTo:theURL]) {
         return self; // This condition is equal to level-1==leaf_level
     }
-    NSLog(@"addURL: URL(%@) is not added to self(%@)", theURL, self->_url);
+    NSLog(@"TreeBranch.addURL: URL(%@) is not added to self(%@)", theURL, self->_url);
     return nil;
 }
 
@@ -429,7 +438,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     /* Check first if base path is common */
     //NSRange result;
     if (theURL==nil) {
-        NSLog(@"OOOOPSS! Something went deadly wrong here.\nThe URL is null");
+        NSLog(@"TreeBranch._addURLnoRecurr: - The received URL is null");
         assert(NO);
         return nil;
     }
@@ -459,7 +468,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 }
             }
             else {
-                NSLog(@"Couldn't create path %@",pathURL);
+                NSLog(@"TreeBranch._addURLnoRecurr: Couldn't create path %@",pathURL);
             }
         }
         if ([child isKindOfClass:[TreeBranch class]])
@@ -472,7 +481,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         else {
             // Will ignore this child and just addd the size to the current node
             // TODO:!! Once the size is again on the class, update the size here
-            NSLog(@"%@ is not added to %@", theURL, pathURL);
+            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", theURL, pathURL);
             return nil;
         }
         level++;
@@ -487,7 +496,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             }
         }
         else {
-            NSLog(@"Couldn't create item %@",theURL);
+            NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
         }
     }
     return newObj; /* Stops here Nothing More to Add */
@@ -709,7 +718,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NULL;
 }
 -(FileCollection*) filesInBranch {
-    return nil; // TODO: Pending Implementation
+    return nil; // TODO:!! Pending Implementation
 }
 -(NSMutableArray*) itemsInNode {
     @synchronized(self) {
@@ -826,6 +835,20 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
 }
+
+-(void) forceRefreshOnBranch {
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        [self setTag:tagTreeItemDirty];
+        for (TreeItem *item in self->_children) {
+            if ([item isKindOfClass:[TreeBranch class]]==YES) {
+                [(TreeBranch*)item forceRefreshOnBranch];
+            }
+        }
+    }
+    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+}
+
 
 //-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags {
 //    @synchronized(self) {
