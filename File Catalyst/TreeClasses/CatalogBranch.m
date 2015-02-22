@@ -24,7 +24,7 @@
             }
             @catch (NSException *exception) {
                 NSLog(@"Cant create a branch with this name");
-                // then not adds it to itself !!! Can also create an "others" branch !!!
+                // then not adds it to itself. Can also create an "others" branch.
                 return [self addTreeItem:treeItem];
             }
         }
@@ -33,7 +33,7 @@
         filterBranch *fb = (filterBranch*)[self childWithName:branchName class:[filterBranch class]];
         if (fb==nil) {
             // The folder doesn't exist. It will created it
-            NSPredicate *pred = nil; // !!! TODO:Create the predicate [NSPredicate predicateWithFormat:];
+            NSPredicate *pred = nil; // TODO:!Create the predicate [NSPredicate predicateWithFormat:];
             fb = [[filterBranch alloc] initWithFilter:pred name:branchName parent:self];
             return [self addChild:fb];
         }
@@ -43,7 +43,7 @@
             return [fb addTreeItem:treeItem];
         }
         else {
-            // if not adds it to itself !!! Can also create an "others" branch !!!
+            // if not adds it to itself 
             return [self addChild:treeItem];
         }
     }

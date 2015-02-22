@@ -134,7 +134,7 @@ NSString *kOptionsKey = @"Options";
                     {
                     if ([duplicateList FileCount]==0)
                         duplicateList = nil;
-                    // !!!-2 Consider creating the Tree here.
+                    // TODO:?? - Consider creating the Tree here.
                     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                           duplicateList, kDuplicateList,  // pass back to check if user cancelled/started a new scan
                                           nil];

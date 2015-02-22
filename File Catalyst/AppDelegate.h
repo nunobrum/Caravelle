@@ -10,7 +10,7 @@
 #import "FileCollection.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSFileManagerDelegate, NSTextFieldDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate> {
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;

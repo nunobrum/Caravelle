@@ -273,7 +273,7 @@ NSDictionary *getDiskInformation(NSURL *diskPath) {
         diskInfos = [[NSMutableDictionary alloc] init];
 
     if (![diskPath isKindOfClass:[NSURL class]]) {
-        NSLog(@"Houston we have a problem !!!");
+        NSLog(@"The return class for the getDiskInformation info is not an URL");
         return nil;
     }
 

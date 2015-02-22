@@ -4,6 +4,8 @@
 <dict>
 	<key>prefBrowseAppsAsFolder</key>
 	<false/>
+	<key>prefBrowseAHiddenFiles</key>
+	<false/>
 	<key>prefMostRecentLocationCount</key>
 	<integer>10</integer>
 	<key>prefsBrowserLeft</key>

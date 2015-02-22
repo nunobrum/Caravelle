@@ -22,6 +22,7 @@ extern NSString *kFileExistsNewFilenameKey;
 @interface FileExistsChoice : NSWindowController <NSTableViewDataSource,NSTableViewDelegate, NSTextFieldDelegate> {
     //fileExistsQuestionResult _answer;
     NSMutableArray *attributesTable;
+    BOOL _pendingUserDecision;
 }
 @property (strong) IBOutlet NSWindow *windowOutlet;
 @property (strong) IBOutlet NSTextField *tfFilename;
@@ -40,5 +41,6 @@ extern NSString *kFileExistsNewFilenameKey;
 - (IBAction)actionSkip:(id)sender;
 
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest;
+-(BOOL) pendingUserDecision;
 
 @end

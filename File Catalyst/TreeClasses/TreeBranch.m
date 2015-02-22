@@ -283,7 +283,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     //NSLog(@"Refreshing %@", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
-        [queue addOperationWithBlock:^(void) {  // !!! Consider using localOperationsQueue as defined above
+        [queue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewBrowserMode];
@@ -358,7 +358,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //            return [(TreeBranch*)child addURL:theURL];
 //        }
 //        else {
-//            NSLog(@"Agony!!! Something went wrong");
+//            NSLog(@"Something went wrong");
 //        }
 //    }
 //    @synchronized(self) {
@@ -381,8 +381,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    else if ([[self url] isEqualTo:theURL]) {
 //        return self; // This condition is equal to level-1==leaf_level
 //    }
-//    NSLog(@"Ai Caramba!!! This Item can't contain this URL !!! ");
-//    return nil; // Ai Caramba !!!
+//    NSLog(@"Ai Caramba! This Item can't contain this URL ");
+//    return nil;
 //}
 
 -(TreeItem*) addURL:(NSURL*)theURL {
@@ -392,7 +392,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             return [(TreeBranch*)child addURL:theURL];
         }
         else {
-            NSLog(@"Agony!!! Something went wrong");
+            NSLog(@"Error in addURL: URL received is supposed to be a TreeBranch");
             assert(NO);
         }
     }
@@ -419,8 +419,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     else if ([[self url] isEqualTo:theURL]) {
         return self; // This condition is equal to level-1==leaf_level
     }
-    NSLog(@"%@ is not added to %@", theURL, self->_url);
-    return nil; // Ai Caramba !!!
+    NSLog(@"addURL: URL(%@) is not added to self(%@)", theURL, self->_url);
+    return nil;
 }
 
 
@@ -471,7 +471,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
         else {
             // Will ignore this child and just addd the size to the current node
-            // !!! TODO: Once the size is again on the class, update the size here
+            // TODO:!! Once the size is again on the class, update the size here
             NSLog(@"%@ is not added to %@", theURL, pathURL);
             return nil;
         }
@@ -709,7 +709,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NULL;
 }
 -(FileCollection*) filesInBranch {
-    return nil; // Pending Implementation
+    return nil; // TODO: Pending Implementation
 }
 -(NSMutableArray*) itemsInNode {
     @synchronized(self) {
@@ -899,32 +899,5 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    return answer;
 //}
 
-/*
- * File Manipulation methods
- */
-//-(BOOL) sendToRecycleBinItem:(TreeItem*) item {
-//    BOOL ok = [appFileManager removeItemAtPath:[self path] error:nil];
-//    if (ok) {
-//        [self removeItem:item];
-//    }
-//    return ok;
-//}
-//
-//-(BOOL) eraseItem:(TreeItem*) item {
-//    return NO; // !!! TODO
-//}
-//
-//-(BOOL) copyItem:(TreeItem*)item To:(NSString*)path {
-//    BOOL ok = [appFileManager copyItemAtPath:[item path] toPath:path error:nil];
-//    return ok;
-//}
-//
-//-(BOOL) MoveItem:(TreeItem*)item To:(NSString*)path {
-//    BOOL ok = [appFileManager moveItemAtPath:[item path] toPath:path error:nil];
-//    if (ok) {
-//        [self removeItem:item];
-//    }
-//    return ok;
-//}
 
 @end

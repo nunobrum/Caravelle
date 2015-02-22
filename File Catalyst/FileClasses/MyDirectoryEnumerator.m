@@ -17,14 +17,23 @@
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles;
     }
     else if (viewMode == BViewBrowserMode){
-        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles |
-        // TODO:!!!! Get this from the UserDefinitions
-            NSDirectoryEnumerationSkipsPackageDescendants;
+        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+
     } else if (viewMode == BViewDuplicateMode){
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
+    // Checks whether to browse packages or if to treat them as folders
+    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"prefBrowseAppsAsFolder"] boolValue]) {
+        dirEnumOptions |= NSDirectoryEnumerationSkipsPackageDescendants;
+    }
+
+    // Checks whether to display hidden files
+    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"prefBrowseAHiddenFiles"] boolValue]) {
+        dirEnumOptions |= NSDirectoryEnumerationSkipsHiddenFiles;
+    }
+
     if (dirEnumOptions==0)  {
-        NSLog(@"Ooops! This should be happening. No options set in the Enumeration");
+        NSLog(@"Ooops! This shouldn't be happening. No options set in the Enumeration");
     }
     NSFileManager *localFileManager=[[NSFileManager alloc] init];
 

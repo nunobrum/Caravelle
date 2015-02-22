@@ -57,8 +57,7 @@
             }
             if (//[typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
                 [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
-                // !!! TODO: Create a dedicated class for a Volume
-                NSLog(@"This is a Volume. !!! TODO: Create a dedicated class" );
+                // TODO:!!! Create a dedicated class for a Volume
             }
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
@@ -66,7 +65,7 @@
             /* Check if it is an image type */
             NSArray *imageUTIs = [NSImage imageTypes];
             if ([imageUTIs containsObject:typeIdentifier]) {
-                // !!! TODO: Treat here other file types other than just not folders
+                //  TODO:!!! Treat here other file types other than just not folders
                 return [[TreeLeaf alloc] initWithURL:url parent:parent];
             }
             return [[TreeLeaf alloc] initWithURL:url parent:parent];
@@ -292,7 +291,7 @@
     NSPasteboardWritingOptions answer;
 #ifdef USE_UTI
     if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
-        // !!! TODO: If a custom UTI is ever considered, write the Write to pasteboard
+        // TODO:! If a custom UTI is ever considered, write the Write to pasteboard
         answer = 0;
     }
     else
@@ -324,7 +323,7 @@
 #ifdef USE_UTI
     if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
         // ! TODO: If a custom UTI is ever considered, write the Write to pasteboard
-        return propertyList; // !!! TODO: If ever the custom UTI is created. Check if this works
+        return propertyList; // TODO:! If ever the custom UTI is created. Check if this works
     }
     else 
 #endif

@@ -24,9 +24,9 @@
 #import "RenameFileDialog.h"
 
 
-// Debug CODE !!! To delete
-#import "filterBranch.h"
-#import "CatalogBranch.h"
+// TODO:! Virtual Folders
+// #import "filterBranch.h"
+// #import "CatalogBranch.h"
 #import "myValueTransformers.h"
 
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
@@ -95,6 +95,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     NSMutableArray *pendingOperationErrors;
     FileCollection *duplicates;
     BOOL isCutPending;
+    BOOL isApplicationTerminating;
+    BOOL isWindowClosing;
     NSInteger generalPasteBoardChangeCount;
 }
 
@@ -111,13 +113,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         appTreeManager = [[TreeManager alloc] init];
         [appFileManager setDelegate:self];
         /* Registering Transformers */
-        // !!! TODO: Put formats in the User Definitions
         NSValueTransformer *date_transformer = [[DateToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:date_transformer forName:@"date"];
         NSValueTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
 
         isCutPending = NO; // used for the Cut to Clipboard operations.
+        isApplicationTerminating = NO; // to inform that the application should quit after all processes are finished.
+        isWindowClosing = NO;
         //FSMonitorThread = [[FileSystemMonitoring alloc] init];
 
 	}
@@ -152,6 +155,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     return _selectedView;
 }
 
+#pragma mark - Application Delegate
+
 // -------------------------------------------------------------------------------
 //	applicationShouldTerminateAfterLastWindowClosed:sender
 //
@@ -163,15 +168,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 	return YES;
 }
 
-
-// -------------------------------------------------------------------------------
-//	awakeFromNib
-// -------------------------------------------------------------------------------
-//- (void)awakeFromNib
-//{
-//    NSLog(@"App Delegate: awakeFromNib");
-//
-//}
 
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -205,6 +201,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:nil];
 
     [center addObserver:self selector:@selector(refreshAllViews:) name:notificationRefreshViews object:nil];
+
+    // register self as the the Delegate for the main window
+    [_myWindow setDelegate:self];
 
     [myLeftView setFoldersDisplayed:
             [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
@@ -245,7 +244,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if (firstAppActivation == YES) {
         firstAppActivation = NO;
 
-        if (0) { // Testing Catalyst Mode
+        /*if (0) { // Testing Catalyst Mode
             [(BrowserController*)myLeftView initBrowserView:BViewCatalystMode twin:@"Right"];
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
@@ -257,13 +256,13 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             treeUpdateOperationID = [Op operationID];
             [operationsQueue addOperation:Op];
             [self _startOperationBusyIndication];
-        }
-        if (0) { // Testing filter and catalog Branches
+        }*/
+        /*if (0) { // TODO:! Testing filter and catalog Branches
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
             //item = [(TreeManager*)appTreeManager addTreeBranchWithURL:url];
             if(0) { // Debug Code
                 searchTree *st = [[searchTree alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
-                [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+                [st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
                 NSPredicate *filter;
                 filterBranch *fb;
                 filter = [NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"];
@@ -281,7 +280,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             }
             else {
                 CatalogBranch *st = [[CatalogBranch alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
-                [st setUrl:url]; // Setting the url since the init doesn't !!! This is a workaround for the time being
+                [st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
                 [st setFilter:[NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"]];
                 [st setCatalogKey:@"date_modified"];
                 [st setValueTransformer:DateToYearTransformer()];
@@ -291,27 +290,128 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
             }
             [(BrowserController*)myLeftView selectFirstRoot];
-        }
+        }*/
     }
     /* Ajust the subView window Sizes */
     [_ContentSplitView adjustSubviews];
     [_ContentSplitView setNeedsDisplay:YES];
+
+    // Showing non Modal child dialogs
+    [fileExistsWindow displayWindow:self];
 }
 
--(void) applicationWillTerminate:(NSNotification *)aNotification {
-    // !!! TODO: applicationWillTerminate :Save Application State
+-(NSApplicationTerminateReply) shouldTerminate:(id) sender {
+    // are you sure you want to close, (threads running)
+    NSInteger numOperationsRunning = [[operationsQueue operations] count];
+    NSInteger numErrorsPending = [pendingOperationErrors count];
+
+    BOOL fromWindowClosing = sender == _myWindow;
+
+    if (numOperationsRunning ==0 && numErrorsPending==0) {
+        return NSTerminateNow;
+    }
+    else {
+        if (numErrorsPending) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            if (fromWindowClosing) {
+                [alert addButtonWithTitle:@"Exit"];
+                [alert addButtonWithTitle:@"Cancel"];
+                [alert addButtonWithTitle:@"Wait"];
+            }
+            else {
+                [alert addButtonWithTitle:@"Exit"];
+                [alert addButtonWithTitle:@"Show Errors"];
+            }
+            [alert setMessageText:@"There are pending errors to be evaluated. Are you sure to exit the Application"];
+            [alert setInformativeText:@"Errors were found in copy/move operations and\nuser input is being requested."];
+
+            [alert setAlertStyle:NSWarningAlertStyle];
+            NSModalResponse reponse = [alert runModal];
+            if (reponse == NSAlertFirstButtonReturn) {
+                [fileExistsWindow closeWindow];
+                return NSTerminateNow;
+            }
+            else if (reponse == NSAlertSecondButtonReturn) {
+                [fileExistsWindow displayWindow:self];
+                return NSTerminateCancel;
+            }
+
+            // only displayed if message is comming from window closing
+            else if (reponse == NSAlertThirdButtonReturn) {
+                return NSTerminateLater;
+            }
+
+        }
+        // Repeat the the text. Operations might have been finished.
+        numOperationsRunning = [[operationsQueue operations] count];
+
+        if (numOperationsRunning!=0) {
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert addButtonWithTitle:@"Exit"];
+            if (fromWindowClosing)
+                [alert addButtonWithTitle:@"Cancel"];
+            else
+                [alert addButtonWithTitle:@"Wait"];
+            [alert setMessageText:@"There are still operations ongoing. Are you sure to exit the Application"];
+            [alert setInformativeText:@"If wait is selected, the application will terminate\nonce ongoing operations are finished."];
+            [alert setAlertStyle:NSWarningAlertStyle];
+            NSModalResponse reponse = [alert runModal];
+            if (reponse == NSAlertFirstButtonReturn) {
+                return NSTerminateNow;
+            }
+            else if (reponse == NSAlertSecondButtonReturn) {
+                if (fromWindowClosing) {
+                    return NSTerminateCancel;
+                }
+                else {
+                    return NSTerminateLater;
+                }
+            }
+        }
+        else {
+            return NSTerminateNow;
+        }
+        return NSTerminateCancel;
+    }
+}
+
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+{
+    NSApplicationTerminateReply answer = [self shouldTerminate:sender];
+    if (answer==NSTerminateLater)
+        // Will terminate the application once the operations finish
+        isApplicationTerminating = YES;
+    return answer;
+}
+
+/*-(void) applicationWillTerminate:(NSNotification *)aNotification {
+    // TODO:!! applicationWillTerminate :Save Application State
     NSLog(@"Application Will Terminate");
-}
+}*/
 //When the app is deactivated
--(void) applicationWillResignActive:(NSNotification *)aNotification {
-    // TODO:!! Save Application State
-    // TODO:!!! Close all active windows
+/*-(void) applicationWillResignActive:(NSNotification *)aNotification {
+        [fileExistsWindow closeWindow];
     NSLog(@"Application Will Resign Active");
-}
+}*/
+
+
 //When the user hides your app
 -(void) applicationWillHide:(NSNotification *)aNotification {
-    // !!! TODO: applicationWillHide :Save Application State
-    NSLog(@"Application Will Hide");
+    [fileExistsWindow closeWindow];
+}
+
+#pragma mark - NSWindow Delegate
+-(BOOL) windowShouldClose:(id)sender {
+    // closes the window if the application is OK to terminate
+    NSApplicationTerminateReply answer = [self shouldTerminate:sender];
+    if (answer==NSTerminateNow) {
+        return YES;
+    }
+    else if (answer == NSTerminateLater) {
+        isApplicationTerminating = YES;
+        isWindowClosing = YES;
+    }
+    return NO;
 }
 
 #pragma mark Services Support
@@ -322,7 +422,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 {
     if ([sendType isEqual:NSFilenamesPboardType] ||
         [sendType isEqual:NSURLPboardType]) {
-        //NSLog(@"Service return type is %@", returnType);
         return self;
     }
     //return [super validRequestorForSendType:sendType returnType:returnType];
@@ -366,7 +465,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 /* Receives the notification from the BrowserView to reload the Tree */
 
-//TODO:!!! Revise this code
+//TODO:!! Revise this code. Only used in notificationCatalystRootUpdate
 - (void) rootUpdate:(NSNotification*)theNotification {
     NSMutableDictionary *notifInfo = [NSMutableDictionary dictionaryWithDictionary:[theNotification userInfo]];
     BrowserController *BrowserView = [theNotification object];
@@ -427,32 +526,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 
-#pragma mark Application Delegate
-
-// -------------------------------------------------------------------------------
-//	windowShouldClose:sender
-// -------------------------------------------------------------------------------
-- (BOOL)windowShouldClose:(id)sender
-{
-    // TODO:!!! Why isn't this being called ?
-    NSLog(@"windowShoudClose");
-	// are you sure you want to close, (threads running)
-	NSInteger numOperationsRunning = [[operationsQueue operations] count];
-
-	if (numOperationsRunning > 0)
-	{
-		NSAlert *alert = [NSAlert alertWithMessageText:@"Image files are currently loading."
-                                         defaultButton:@"OK"
-                                       alternateButton:nil
-                                           otherButton:nil
-                             informativeTextWithFormat:@"Please click the \"Stop\" button before closing."];
-		[alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-	}
-    // TODO:!!! Put here the remaining conditions to close
-	return (numOperationsRunning == 0);
-}
-
-#pragma mark -
 
 #pragma mark execution of Actions
 
@@ -1095,8 +1168,19 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (void) mainThread_operationFinished:(NSNotification*)theNotification {
-    if ([operationsQueue operationCount]==0) {
+    if ([operationsQueue operationCount] == 0) {
         [self _stopOperationBusyIndication];
+
+        if (isApplicationTerminating == YES) {
+            if ([pendingOperationErrors count]==0) {
+                if (isWindowClosing) {
+                    [_myWindow close];
+                }
+                else {
+                    [NSApp replyToApplicationShouldTerminate:YES];
+                }
+            }
+        }
 
         // Make Status Update here
         NSString *statusText=nil;
@@ -1166,6 +1250,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (!OK)
             // refreshes the view to clear any errors, such as in the new Folder or failed drop
             [(id<MYViewProtocol>)[info objectForKey:kSourceViewKey] refresh];
+        else {
+            // TODO:!! MRU Option that only includes directories where operations have hapened.
+        }
 
         if (statusText!=nil) // If nothing was set, don't update status
             [_StatusBar setTitle: statusText];
@@ -1424,6 +1511,19 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     else {
         // The window needs to be closed
         [fileExistsWindow closeWindow];
+
+        // If there was a request for terminating the application
+        if (isApplicationTerminating == YES) {
+            // and if all is done and clean.
+            if ([[operationsQueue operations] count]==0) {
+                if (isWindowClosing) {
+                    [_myWindow close];
+                }
+                else {
+                    [NSApp replyToApplicationShouldTerminate:YES];
+                }
+            }
+        }
         //fileExistsWindow = nil;
     }
 }

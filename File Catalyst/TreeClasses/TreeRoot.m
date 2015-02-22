@@ -19,7 +19,9 @@
 
 -(FileCollection *) fileCollection {
     if (_isCollectionSet== NO) {
-        // !!! To be implemented : Will construct the file collection from the tree
+        _fileCollection = [self filesInBranch];
+        if (_fileCollection!=nil)
+            _isCollectionSet  = YES;
     }
     return _fileCollection;
 }

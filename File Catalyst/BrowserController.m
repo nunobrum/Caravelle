@@ -312,7 +312,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* Called before the outline is selected.
  Can be used later to block access to private directories */
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    // !!! TOCONSIDER : Avoid selecting protected files
+    // ??? Avoid selecting protected files
     return YES;
 }
 
@@ -527,7 +527,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 // -------------------------------------------------------------------------------
 - (void)tableView:(NSTableView *)inTableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-    // !!! TODO:(Later) if Control or Alt is presssed the new column is just added to the sortDescriptor
+    // TODO:!! if Control or Alt is presssed the new column is just added to the sortDescriptor
     // NSUInteger modifierKeys = [NSEvent modifierFlags];
     // test NSControlKeyMask and NSAlternateKeyMask
 
@@ -570,11 +570,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
         // Get the needed informtion from the notification
         NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
-        assert(changedColumnID); // Ooops !!! Problem in getting information from notification. Abort!!!
+        assert(changedColumnID); // Ooops! Problem in getting information from notification. Abort.
         NSInteger colHeaderClicked = [[[note userInfo] objectForKey:kReferenceViewKey] integerValue];
         NSDictionary *colInfo = [columnInfo() objectForKey:changedColumnID];
 
-        assert (colInfo); // Ooops !!! Problem in getting
+        assert (colInfo); // Checking Problem in getting
         // Checks whether to add or to delete a column
         if ([[self myTableView] columnWithIdentifier:changedColumnID]==-1) { // column not existing
             // It was added
@@ -749,9 +749,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [pathComponentCells removeObjectsInRange:rng];
         }
         [self.myPathBarControl setPathComponentCells:pathComponentCells];
-        //[super setURL:aURL];
 
-        // !!! TODO: MRU Option that only includes directories where operations have hapened.
         [self mruSet:url];
         _treeNodeSelected = node;
     }
@@ -760,7 +758,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - Action Selectors
 
-// !!! TODO: Put here the code for the after Grouping/search button
+// TODO:!! Put here the code for the after Grouping/search button
 - (IBAction)tableSelected:(id)sender {
     _focusedView = sender;
 #pragma clang diagnostic push
@@ -1091,7 +1089,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
-        // !!! TODO: Put here a timer for opening the Folder
+        // TODO:!! Put here a timer for opening the Folder
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }
@@ -1129,10 +1127,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // Check whether the destination item is equal to the parent of the item do nothing
             for (NSURL* file in files) {
                 NSURL *folder = [file URLByDeletingLastPathComponent];
-                if ([[_validatedDestinationItem url] isEqualTo:folder]) // TODO:!!!! Check this condition
+                if ([[_validatedDestinationItem url] isEqualTo:folder])
                 {
                 // If true : abort
                     fireNotfication = NO;
+                    return fireNotfication;
                 }
             }
         }
@@ -1140,7 +1139,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // TODO: !! Operation Link
         }
         else {
-            // Unsupported !!!
+            NSLog(@"Unsupported drop operation");
         }
 
     }
@@ -1238,8 +1237,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [_myOutlineView reloadData];
         }
         else {
-            // !!! Consider calling the viewForTableColumn: method here.
-            // makeIfNecessary is set to no. All views should have been created at this point.
             NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
             assert(nameView!=nil);
             if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
@@ -1251,10 +1248,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [_myOutlineView reloadItem:object reloadChildren:YES];
 
         }
-        //    if ([_sharedOperationQueue operationCount]==0) {
-        //        NSLog(@"Finished all operations launched. Reloading data");
-        //        [_myOutlineView reloadData];
-        //    }
     }
     if (object == _treeNodeSelected) {
         // test if the object was released
@@ -1888,8 +1881,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     return NO;
 }
-
--(void) insertItem:(id)item {
+-(void) insertItem:(id)item  {
     NSInteger row = [tableData count];
     if (_focusedView == _myOutlineView) {
         // Will change to the table view and make the edit there.
@@ -1914,8 +1906,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else {
         [tableData addObject:item];
     }
-    [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation:NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
-    // TODO:!!! Add a timer in order to delay the execution and fit one nice animation. Check DidAnimation...
+    [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
+}
+- (void)didAddRowView:(NSTableRowView *)rowView
+               forRow:(NSInteger)row {
+// TODO: !!! This this.
+    NSLog(@"Make the edit here");
 }
 
 

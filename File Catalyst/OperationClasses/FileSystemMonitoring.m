@@ -218,7 +218,7 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
 
     void *callbackInfo = NULL; // could put stream-specific data here.
 
-    CFAbsoluteTime latency = 3.0; /* Latency in seconds */
+    CFAbsoluteTime latency = 0.5; /* Latency in seconds */
 
     /* Create the stream, passing in a callback */
     stream = FSEventStreamCreate(NULL,
@@ -247,7 +247,7 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
     CFRunLoopRef cfRunLoop  = CFRunLoopGetCurrent();
     FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
     BOOL OK = FSEventStreamStart(stream);
-    NSLog(@"The task was created %d", OK);
+    //NSLog(@"The task was created %d", OK);
     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
     [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode]; // adding some input source, that is required for runLoop to runing
     while (![self isCancelled] && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]); // starting infinite loop which can be stopped by changing the shouldKeepRunning's value

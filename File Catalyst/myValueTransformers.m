@@ -38,6 +38,7 @@
 
 DateToStringTransformer *DateToYearTransformer() {
     static DateToStringTransformer *DateTransformer=nil;
+    // !! TODO: Put formats in the User Definitions
     if (DateTransformer==nil)
         DateTransformer = [[DateToStringTransformer alloc] initWithFormat:@"yyyy"];
     return DateTransformer ;

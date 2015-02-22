@@ -182,7 +182,7 @@ TreeManager *appTreeManager;
     NSInteger flags = [[info objectForKey:flagsKey] integerValue];
 
     if (flags & kFSEventStreamEventFlagRootChanged) { // When the parent is moved deleted or renamed.
-        // !!! TODO: delete this from iArray and send messages to BrowserControllers for the objects to be deleted
+        // Delete this from iArray and send messages to BrowserControllers for the objects to be deleted
         // Strategy : Mark item with a deletion mark and notify App->Browser Views
         NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
 
@@ -199,10 +199,8 @@ TreeManager *appTreeManager;
     }
     else if (flags & ( // Ignored Flags
             kFSEventStreamEventFlagEventIdsWrapped | //When the EventId wraps around on the 64 bit counter
-            kFSEventStreamEventFlagHistoryDone     | // When using the "EventsSinceDate" Not used.
-            kFSEventStreamEventFlagMount           | // When a mount is done underneath the paths being monitored. Ignored for the time being !!!
-            kFSEventStreamEventFlagUnmount // When a device is unmounted underneath the path being monitored. Ignored for the time being !!!
-                      )) {
+            kFSEventStreamEventFlagHistoryDone      // When using the "EventsSinceDate" Not used.
+            )) {
 
         /* Do Nothing Here. This condition is here for further implementation */
 
@@ -220,8 +218,11 @@ TreeManager *appTreeManager;
          kFSEventStreamEventFlagItemIsFile,
          kFSEventStreamEventFlagItemIsDir,
          kFSEventStreamEventFlagItemIsSymlink,
+         kFSEventStreamEventFlagOwnEvent,
+         kFSEventStreamEventFlagMount,           | // When a mount is done underneath the paths being monitored.
+         kFSEventStreamEventFlagUnmount, // When a device is unmounted underneath the path being monitored.
+         */
 
-         kFSEventStreamEventFlagOwnEvent */
 
 
         NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
@@ -235,10 +236,12 @@ TreeManager *appTreeManager;
                                  kFSEventStreamEventFlagUserDropped |
                                  kFSEventStreamEventFlagKernelDropped))!=0;
             if (scanSubdirs) {
-                // !!! TODO: Implement this.
+                NSLog(@"Not Implemented ! System is asking a full rescan of the tree:\n%@", changedPath);
+                // TODO:!!! Implement this.
                 // Easiest is to make an Catalyst enumerator
             }
-            else {
+            //else
+            {
                 NSLog(@"Refreshing %@", [itemToRefresh url]);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];

@@ -31,6 +31,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     if (windowNibName==nil)
         windowNibName = @"FileExistsChoice";
     self = [super initWithWindowNibName:windowNibName];
+    _pendingUserDecision = NO;
     return self;
 }
 - (void)windowDidLoad {
@@ -40,14 +41,20 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     NSLog(@"FileExistsChoice Window didLoad");
 }
 
+-(BOOL) pendingUserDecision {
+    return _pendingUserDecision;
+}
+
 -(void) closeWindow {
     [[self windowOutlet] setIsVisible:NO];
 }
 
 -(void) displayWindow:(id) sender {
-    [[self windowOutlet] setIsVisible:YES];
-    [self showWindow:sender];
-    [[self windowOutlet] makeKeyAndOrderFront:sender];
+    if (_pendingUserDecision==YES) {
+        [[self windowOutlet] setIsVisible:YES];
+        [self showWindow:sender];
+        [[self windowOutlet] makeKeyAndOrderFront:sender];
+    }
 }
 
 -(void) sendNotification:(NSInteger) answer {
@@ -56,6 +63,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
                           [_tfNewFilename stringValue], kFileExistsNewFilenameKey, nil];
     // Notify AppDelegate that an option was taken
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationClosedFileExistsWindow object:self userInfo:info];
+    _pendingUserDecision = NO;
 
 }
 
@@ -126,8 +134,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     [_attributeTableView reloadData];
 
     // set focus
-    //[_windowOutlet makeFirstResponder:_tfNewFilename];
-    [_windowOutlet setIsVisible:YES];
+    _pendingUserDecision = YES;
     return YES;
 }
 
