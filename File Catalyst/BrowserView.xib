@@ -476,7 +476,7 @@
                         <action selector="contextualRename:" target="-1" id="e6x-L7-73M"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Open" id="WFz-fS-fZg">
+                <menuItem title="Open" keyEquivalent="" id="WFz-fS-fZg">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualOpen:" target="-1" id="IAK-9r-0qf"/>

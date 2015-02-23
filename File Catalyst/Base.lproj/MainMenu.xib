@@ -153,6 +153,11 @@
                                     <action selector="toolbarOpen:" target="-1" id="3jp-t9-SM9"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Information" keyEquivalent="i" id="GC3-Ko-ddH">
+                                <connections>
+                                    <action selector="toolbarInformation:" target="-1" id="eeb-oc-Giz"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Delete" id="202">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 CA

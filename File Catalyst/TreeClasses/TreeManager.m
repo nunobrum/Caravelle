@@ -234,7 +234,7 @@ TreeManager *appTreeManager;
                                  kFSEventStreamEventFlagUserDropped |
                                  kFSEventStreamEventFlagKernelDropped))!=0;
             if (scanSubdirs) {
-                NSLog(@"TreeManager.fileSystemChangePath: - System is asking a full rescan of the tree:\n%@", changedPath);
+                //NSLog(@"TreeManager.fileSystemChangePath: - System is asking a full rescan of the tree:\n%@", changedPath);
 
                 if ([itemToRefresh respondsToSelector:@selector(refreshBranchOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
@@ -246,7 +246,7 @@ TreeManager *appTreeManager;
             }
             else
             {
-                NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
+                //NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContentsOnQueue:)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];
