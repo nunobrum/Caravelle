@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  Envision
+//  Magellan
 //
 //  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
@@ -1267,7 +1267,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     NSString *statusText;
     id selView = [theNotification object];
     // Updates the window Title
-    NSArray *titleComponents = [NSArray arrayWithObjects:@"Envision",
+    NSArray *titleComponents = [NSArray arrayWithObjects:@"Magellan",
                                 [myLeftView title],
                                 [myRightView title], nil];
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];

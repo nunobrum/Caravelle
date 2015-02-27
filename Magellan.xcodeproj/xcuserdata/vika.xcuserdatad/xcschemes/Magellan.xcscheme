@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-               BuildableName = "Envision.app"
-               BlueprintName = "Envision"
-               ReferencedContainer = "container:Envision.xcodeproj">
+               BuildableName = "Magellan.app"
+               BlueprintName = "Magellan"
+               ReferencedContainer = "container:Magellan.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Envision.app"
-            BlueprintName = "Envision"
-            ReferencedContainer = "container:Envision.xcodeproj">
+            BuildableName = "Magellan.app"
+            BlueprintName = "Magellan"
+            ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -52,9 +52,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Envision.app"
-            BlueprintName = "Envision"
-            ReferencedContainer = "container:Envision.xcodeproj">
+            BuildableName = "Magellan.app"
+            BlueprintName = "Magellan"
+            ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Envision.app"
-            BlueprintName = "Envision"
-            ReferencedContainer = "container:Envision.xcodeproj">
+            BuildableName = "Magellan.app"
+            BlueprintName = "Magellan"
+            ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

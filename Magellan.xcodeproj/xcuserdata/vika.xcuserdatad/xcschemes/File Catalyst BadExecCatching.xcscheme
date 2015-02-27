@@ -7,6 +7,20 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
+            buildForTesting = "NO"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
+               BuildableName = "File Catalyst.app"
+               BlueprintName = "File Catalyst"
+               ReferencedContainer = "container:File Catalyst.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
             buildForProfiling = "YES"
@@ -15,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-               BuildableName = "File Catalyst.app"
-               BlueprintName = "File Catalyst"
-               ReferencedContainer = "container:File Catalyst.xcodeproj">
+               BuildableName = "Magellan.app"
+               BlueprintName = "Magellan"
+               ReferencedContainer = "container:Magellan.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

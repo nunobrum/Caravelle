@@ -1,6 +1,7 @@
 //
 //  FileCollection.h
-//  Envision
+//  Magellan
+
 //
 //  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
