@@ -1329,6 +1329,26 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - NSControlTextDelegate Protocol
 
+- (void)keyDown:(NSEvent *)theEvent {
+    // Get the origin
+
+    // Per hypothesis its commming from the TableView
+    // For the time being We are not resending it from no where else
+
+    if ([[theEvent characters] isEqualToString:@"\r"]) {
+        // The Return key will open the file
+        [self TableDoubleClickEvent:theEvent];
+    }
+    else if ([[theEvent characters] isEqualToString:@"\t"]) {
+        // the tab key will switch Panes
+
+    }
+    else if ([[theEvent characters] isEqualToString:@" "]) {
+        // the Space Key will mark the file
+
+    }
+}
+
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
     NSInteger row = [_myTableView rowForView:fieldEditor];
     if (row!=-1) {
@@ -1363,7 +1383,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     return NO;
 }
-
+- (void)cancelOperation:(id)sender {
+    [_myFilterText setStringValue:@""];
+    _filterText = @"";
+    [self refreshTableViewKeepingSelections];
+}
 #pragma mark - Interface Methods
 
 
@@ -1384,11 +1408,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setTwinName:(NSString *)twinName {
     if (twinName==nil) { // there is no twin view
         _contextualToMenusEnabled = [NSNumber numberWithBool:NO];
+        [[self myTableView] setAutosaveName:@"SingleTable"];
     }
     else {
         _titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
         _titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
         _contextualToMenusEnabled = [NSNumber numberWithBool:YES];
+
+        // Setting the AutoSave Settings
+        [[self myTableView] setAutosaveName:[twinName stringByAppendingString:@"Table"]];
+        [[self myTableView] setAutosaveTableColumns:YES];
+        // The Outline view has no customizable settings
+        //[[self myOutlineView] setAutosaveName:[twinName stringByAppendingString:@"Outline"]];
     }
 }
 

@@ -29,6 +29,53 @@
 }
 
 
+- (void)keyDown:(NSEvent *)theEvent {
+    //NSLog(@"KD: type:%lu code:%@",[theEvent type],[theEvent characters]);
+    if ([[theEvent characters] isEqualToString:@"\r"] ) { //|| // The Return key will open the file
+        [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
+    }
+    else if ([[theEvent characters] isEqualToString:@"\t"]) {
+         // the tab key will switch Panes
+        // perform nextView
+        // TODO:! Option Cursor to change side
+
+    }
+    // TODO:!!the Space Key will mark the file
+
+    else {
+        // propagate to super
+        [super keyDown:theEvent];
+    }
+}
+
+//- (void)interpretKeyEvents:(NSArray *)eventArray {
+//    NSLog(@"intrepret");
+//    [super interpretKeyEvents:eventArray];
+//}
+//
+//- (BOOL)performKeyEquivalent:(NSEvent *)theEvent {
+//    NSLog(@"PKE: type:%lu code:%@",[theEvent type],[theEvent characters]);
+//    return NO;
+//}
+//
+//- (void)flagsChanged:(NSEvent *)theEvent {
+//    NSLog(@"flagsChanged:");
+//    [super flagsChanged:theEvent];
+//}
+//
+- (void)cancelOperation:(id)sender {
+    // clean the filter
+    [[self delegate] performSelector:@selector(cancelOperation:) withObject:self];
+    // and pass the cancel operation upwards anyway
+    [super cancelOperation:sender];
+}
+
+//- (void) insertTab:(id)sender {
+//    NSLog(@"insertTab:");
+//}
+//- (void)moveLeft:(id)sender {
+//    NSLog(@"moveLeft");
+//}
 
 /*
  * This will enable the View to respond to Keys and mouse events

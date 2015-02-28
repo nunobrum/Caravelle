@@ -14,5 +14,17 @@
 }
 
 //@property NSInteger rightMouseLocation;
+//
+//- (void)interpretKeyEvents:(NSArray *)eventArray;
+//
+//- (BOOL)performKeyEquivalent:(NSEvent *)theEvent;
+//
+//- (void)flagsChanged:(NSEvent *)theEvent;
+//
+//- (void)cancelOperation:(id)sender;
+//- (void)insertNewline:(id)sender;
+//- (void)moveLeft:(id)sender;
+
+
 
 @end
