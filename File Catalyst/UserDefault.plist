@@ -2,25 +2,21 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>prefBrowseAppsAsFolder</key>
+	<key>BrowseAppsAsFolder</key>
 	<false/>
-	<key>prefBrowseAHiddenFiles</key>
+	<key>BrowseAHiddenFiles</key>
 	<false/>
-	<key>prefMostRecentLocationCount</key>
+	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
-	<key>prefsBrowserLeft</key>
-	<dict>
-		<key>prefHomeDir</key>
-		<string></string>
-		<key>prefDisplayFoldersInTable</key>
-		<true/>
-	</dict>
-	<key>prefsBrowserRight</key>
-	<dict>
-		<key>prefHomeDir</key>
-		<string></string>
-		<key>prefDisplayFoldersInTable</key>
-		<false/>
-	</dict>
+	<key>BrowserLeftHomeDir</key>
+	<string></string>
+	<key>BrowserLeftDisplayFoldersInTable</key>
+	<true/>
+	<key>BrowserRightHomeDir</key>
+	<string></string>
+	<key>BrowserRightDisplayFoldersInTable</key>
+	<true/>
+	<key>SecurityScopeBookmarks</key>
+	<array/>
 </dict>
 </plist>

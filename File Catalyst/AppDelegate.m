@@ -135,22 +135,25 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         NSString *homepath;
         if (view == myLeftView) {
             // Get from User Parameters
-            homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserLeft"] objectForKey:@"prefHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] objectForKey:@"BrowserLeftHomeDir"];
         }
         else if (view == myRightView) {
-            homepath = [[[NSUserDefaults standardUserDefaults] objectForKey:@"prefsBrowserRight"] objectForKey:@"prefHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] objectForKey:@"BrowserRightHomeDir"];
         }
-        //DEBUG CODE == homepath = @"/Users/vika/testedir";
+        //DEBUG CODE ==> homepath = @"/Users/vika/testedir";
 
-        
-        if (homepath == nil || [homepath isEqualToString:@""])
+        if (homepath == nil || [homepath isEqualToString:@""]) {
+#if (APP_IS_SANDBOXED==YES)
+            [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
+#else
             homepath = NSHomeDirectory();
-
-        NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
-        id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
-        [(BrowserController*)view removeAll];
-        [(BrowserController*)view setViewMode:BViewBrowserMode];
-        [(BrowserController*)view addTreeRoot: item];
+            NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
+            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+            [(BrowserController*)view removeAll];
+            [(BrowserController*)view setViewMode:BViewBrowserMode];
+            [(BrowserController*)view addTreeRoot: item];
+#endif
+        }
     }
 }
 
@@ -209,11 +212,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [_myWindow setDelegate:self];
 
     [myLeftView setFoldersDisplayed:
-            [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
-                                      objectForKey:@"prefDisplayFoldersInTable"] boolValue]];
+     [[userDefaultsValuesDict objectForKey:@"BrowserLeftDisplayFoldersInTable"] boolValue]];
     [myRightView setFoldersDisplayed:
-            [[[userDefaultsValuesDict objectForKey:@"prefsBrowserLeft"]
-                                      objectForKey:@"prefDisplayFoldersInTable"] boolValue]];
+     [[userDefaultsValuesDict objectForKey:@"BrowserRightDisplayFoldersInTable"] boolValue]];
     [myLeftView setTwinName:@"Right"];
     [myRightView setTwinName:@"Left"];
 
@@ -310,6 +311,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     BOOL fromWindowClosing = sender == _myWindow;
 
+    // Force a store of the User Defaults
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     if (numOperationsRunning ==0 && numErrorsPending==0) {
         return NSTerminateNow;
     }
@@ -384,6 +388,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if (answer==NSTerminateLater)
         // Will terminate the application once the operations finish
         isApplicationTerminating = YES;
+    else if (answer == NSTerminateNow) {
+        // liberate resources
+        [appTreeManager stopAccesses];
+    }
     return answer;
 }
 
@@ -391,11 +399,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // TODO:!! applicationWillTerminate :Save Application State
     NSLog(@"Application Will Terminate");
 }*/
+
 //When the app is deactivated
-/*-(void) applicationWillResignActive:(NSNotification *)aNotification {
-        [fileExistsWindow closeWindow];
-    NSLog(@"Application Will Resign Active");
-}*/
+-(void) applicationWillResignActive:(NSNotification *)aNotification {
+    //NSLog(@"Application Will Resign Active");
+
+    // Force a store of the User Defaults
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 
 //When the user hides your app
@@ -563,6 +574,38 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         NSPerformService(@"Finder/Show Info", pboard);
     }
 
+}
+
+// TODO:!!! Add this to the user interface
+- (void) executeOpenFolderInView:(id)view withTitle:(NSString*) dialogTitle {
+    if ([view isKindOfClass:[BrowserController class]]) {
+        /* Will get a new node from shared tree Manager and add it to the root */
+        /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
+
+        NSURL *url = [appTreeManager powerboxOpenFolderWithTitle:dialogTitle];
+        if (url != nil) {
+            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+            if (item != nil) {
+                // Add to the Browser View
+                [(BrowserController*)view removeAll];
+                [(BrowserController*)view setViewMode:BViewBrowserMode];
+                [(BrowserController*)view addTreeRoot: item];
+//
+//                // Register new default
+//                NSString *homepath = [url path];
+//                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+//                if (view == myLeftView) {
+//                    // Get from User Parameters
+//                    [defaults setObject:homepath forKey:@"BrowserLeftHomeDir"];
+//                }
+//                else if (view == myRightView) {
+//                    [defaults setObject: homepath forKey:@"BrowserRightHomeDir"];
+//                }
+
+            }
+        }
+
+    }
 }
 
 - (void) executeRename:(NSArray*) selectedFiles {
@@ -1174,6 +1217,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 }
                 else {
                     [NSApp replyToApplicationShouldTerminate:YES];
+                    // liberate resources
+                    [appTreeManager stopAccesses];
                 }
             }
         }
@@ -1515,6 +1560,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 }
                 else {
                     [NSApp replyToApplicationShouldTerminate:YES];
+                    // liberate resources
+                    [appTreeManager stopAccesses];
                 }
             }
         }

@@ -25,6 +25,7 @@ extern NSString *notificationCatalystRootUpdate;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
     BViewMode _viewMode;
+    NSString * _twinName;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;

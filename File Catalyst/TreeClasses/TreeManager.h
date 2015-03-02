@@ -22,11 +22,19 @@ extern NSString *notificationRefreshViews;
 
 -(TreeBranch*) addTreeItemWithURL:(NSURL*)url;
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
+-(TreeItem*) getNodeWithPath:(NSString*)path;
+
 
 -(void) addTreeBranch:(TreeBranch*)node;
 -(void) removeTreeBranch:(TreeBranch*)node;
 
 -(void) fileSystemChangePath:(NSNotification *)note;
+
+-(NSURL*) powerboxOpenFolderWithTitle:(NSString*)dialogTitle;
+-(NSURL*) secScopeContainer:(NSURL*) url;
+
+-(BOOL) startAccessToURL:(NSURL*)url;
+-(void) stopAccesses;
 
 @end
 

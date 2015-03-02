@@ -8,6 +8,19 @@
 
 #import "MyDirectoryEnumerator.h"
 
+NSArray *urlKeyFieldsToStore() {
+    NSArray * URL_KEY_FIELDS = nil;
+    if (URL_KEY_FIELDS==nil)
+        URL_KEY_FIELDS = [NSArray arrayWithObjects:
+                          NSURLNameKey,
+                          NSURLIsDirectoryKey,
+                          NSURLContentModificationDateKey,
+                          NSURLFileSizeKey,
+                          NSURLIsWritableKey,
+                          NSURLIsRegularFileKey,
+                          nil];
+    return URL_KEY_FIELDS;
+}
 
 @implementation MyDirectoryEnumerator
 
@@ -23,12 +36,12 @@
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
     // Checks whether to browse packages or if to treat them as folders
-    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"prefBrowseAppsAsFolder"] boolValue]) {
+    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"BrowseAppsAsFolder"] boolValue]) {
         dirEnumOptions |= NSDirectoryEnumerationSkipsPackageDescendants;
     }
 
     // Checks whether to display hidden files
-    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"prefBrowseAHiddenFiles"] boolValue]) {
+    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"BrowseAHiddenFiles"] boolValue]) {
         dirEnumOptions |= NSDirectoryEnumerationSkipsHiddenFiles;
     }
 
@@ -41,14 +54,7 @@
 
 
     self = (MyDirectoryEnumerator*)[localFileManager enumeratorAtURL:directoryToScan
-                                                  includingPropertiesForKeys:[NSArray arrayWithObjects:
-                                                                              NSURLNameKey,
-                                                                              NSURLIsDirectoryKey,
-                                                                              NSURLContentModificationDateKey,
-                                                                              NSURLFileSizeKey,
-                                                                              NSURLIsWritableKey,
-                                                                              NSURLIsRegularFileKey,
-                                                                              nil]
+                                                  includingPropertiesForKeys:urlKeyFieldsToStore()
                                                                      options:dirEnumOptions
                                                                 errorHandler:nil];
 

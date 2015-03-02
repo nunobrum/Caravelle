@@ -10,6 +10,8 @@
 #import "Definitions.h"
 #import "TreeItem.h"
 
+extern NSArray *urlKeyFieldsToStore();
+
 @interface MyDirectoryEnumerator : NSDirectoryEnumerator
 
 -(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode;

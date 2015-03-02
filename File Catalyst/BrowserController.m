@@ -817,7 +817,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* Called from the pop up button. Uses the Cocoa openPanel to navigate to a path */
 - (IBAction) ChooseDirectory:(id)sender {
     NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
-    [SelectDirectoryDialog setTitle:@"Select a new Directory"];
+    [SelectDirectoryDialog setTitle:@"Select a Folder to Browse"];
     [SelectDirectoryDialog setCanChooseFiles:NO];
     [SelectDirectoryDialog setCanChooseDirectories:YES];
     NSInteger returnOption =[SelectDirectoryDialog runModal];
@@ -1406,6 +1406,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) setTwinName:(NSString *)twinName {
+    self->_twinName = twinName;
     if (twinName==nil) { // there is no twin view
         _contextualToMenusEnabled = [NSNumber numberWithBool:NO];
         [[self myTableView] setAutosaveName:@"SingleTable"];
@@ -1566,6 +1567,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         BOOL answer = [self canAddRoot:[theRoot path]];
         if (answer == YES) {
             [BaseDirectoriesArray addObject: theRoot];
+            if ([BaseDirectoriesArray count]==1) {
+                NSString *root_path = [theRoot path];
+                if ([self->_twinName isEqualToString: @"Right"]) { // If twin is Right then this is the Left
+                    [[NSUserDefaults standardUserDefaults] setObject:root_path forKey:@"BrowserLeftHomeDir"];
+                }
+                else {
+                    [[NSUserDefaults standardUserDefaults] setObject:root_path forKey:@"BrowserRightHomeDir"];
+                }
+            }
         }
         /* Refresh the Trees so that the trees are displayed */
         //[self refreshTrees];

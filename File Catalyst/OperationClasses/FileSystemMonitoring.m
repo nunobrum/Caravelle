@@ -199,8 +199,21 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
 
 }
 
+/*
+ - (id)initWithPaths:(NSArray *)paths {
+ self=[super init];
+ if (self) {
+ trackedPaths=paths;
+ CFTimeInterval latency=1.0;
+ FSEventStreamContext context={0,(__bridge void *)self,NULL,NULL,NULL};
+ FSEventStreamRef eeventStream=FSEventStreamCreate(kCFAllocatorDefault,&callback,&context,(__bridge CFArrayRef)trackedPaths,kFSEventStreamEventIdSinceNow,latency,kFSEventStreamCreateFlagUseCFTypes|kFSEventStreamCreateFlagWatchRoot|kFSEventStreamCreateFlagFileEvents);
+ FSEventStreamScheduleWithRunLoop(eeventStream,[[NSRunLoop mainRunLoop] getCFRunLoop],kCFRunLoopDefaultMode);
+ FSEventStreamStart(eeventStream);
+ }
+ return self;
+ }
 
-
+*/
 
 @implementation FileSystemMonitoring
 
@@ -217,14 +230,14 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
         CFArraySetValueAtIndex(monitoredPaths, i, mypath);
     }
 
-    void *callbackInfo = NULL; // could put stream-specific data here.
+    FSEventStreamContext context={0,(__bridge void *)self,NULL,NULL,NULL};
 
-    CFAbsoluteTime latency = 1.0; /* Latency in seconds */
+    CFTimeInterval latency = 1.0; /* Latency in seconds */
 
     /* Create the stream, passing in a callback */
-    stream = FSEventStreamCreate(NULL,
+    stream = FSEventStreamCreate(kCFAllocatorDefault,
                                  &myCallbackFunction,
-                                 callbackInfo,
+                                 &context,
                                  monitoredPaths,
                                  kFSEventStreamEventIdSinceNow, /* Or a previous event ID */
                                  latency,
@@ -233,10 +246,12 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
                                  | kFSEventStreamCreateFlagNoDefer // Immediate delivery when the last event is aged more than latency time
                                  | kFSEventStreamCreateFlagWatchRoot // Monitors if the Root disappears
                                  // | kFSEventStreamCreateFlagIgnoreSelf
-                                 // | kFSEventStreamCreateFlagFileEvents
+                                 | kFSEventStreamCreateFlagFileEvents
                                  // | kFSEventStreamCreateFlagMarkSelf
                                  
                                                                   );
+    if (stream == NULL)
+        NSLog(@"FileSystemMonitoring.configureFSEventStream : failed to create stream for paths %@",monitoredPaths );
     return self;
 
 }
@@ -245,23 +260,30 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
 
 
 -(void) main {
+    if (stream != NULL) {
     CFRunLoopRef cfRunLoop  = CFRunLoopGetCurrent();
-    FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
-    BOOL OK = FSEventStreamStart(stream);
-    //NSLog(@"The task was created %d", OK);
-    NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
-    [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode]; // adding some input source, that is required for runLoop to runing
-    while (![self isCancelled] && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]); // starting infinite loop which can be stopped by changing the shouldKeepRunning's value
-    
+        FSEventStreamScheduleWithRunLoop(stream, cfRunLoop, kCFRunLoopDefaultMode);
+        BOOL OK = FSEventStreamStart(stream);
+        if (OK) {
+            //NSLog(@"The task was created %d", OK);
+            NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+            [runLoop addPort:[NSMachPort port] forMode:NSDefaultRunLoopMode]; // adding some input source, that is required for runLoop to runing
+            while (![self isCancelled] && [runLoop runMode:NSDefaultRunLoopMode beforeDate:[NSDate distantFuture]]); // starting infinite loop which can be stopped by changing the shouldKeepRunning's value
+        }
+        else
+            NSLog(@"FileSystemMonitoring.main : failed to start stream");
+    }
 }
 
 -(void) cancel {
-    FSEventStreamStop(stream);
-    FSEventStreamInvalidate(stream);
-    CFRelease(monitoredPaths);
-    [super cancel];
-    while (![self isCancelled]) {
-        NSLog(@"FileSystemMonitoring.cancel - Trying to Cancel task");
+    if (stream != NULL) {
+        FSEventStreamStop(stream);
+        FSEventStreamInvalidate(stream);
+        CFRelease(monitoredPaths);
+        [super cancel];
+        while (![self isCancelled]) {
+            NSLog(@"FileSystemMonitoring.cancel - Trying to Cancel task");
+        }
     }
 }
 

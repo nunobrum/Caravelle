@@ -9,6 +9,7 @@
 #import "TreeManager.h"
 //#import "TreeBranch_TreeBranchPrivate.h"
 #import "FileUtils.h"
+#import "MyDirectoryEnumerator.h"
 
 NSString *notificationRefreshViews = @"RefreshViews";
 
@@ -22,6 +23,32 @@ TreeManager *appTreeManager;
     return self;
 }
 
+-(BOOL) startAccessToURL:(NSURL*)url {
+#if (APP_IS_SANDBOXED==YES)
+    for (TreeBranch *item in self->iArray) {
+        if ([item canContainURL: url]) {
+            [[item url] startAccessingSecurityScopedResource];
+            return YES;
+        }
+    }
+#endif
+    return NO;
+}
+
+
+-(void) stopAccesses {
+#if (APP_IS_SANDBOXED==YES)
+    for (TreeBranch *item in self->iArray) {
+        [[item url] stopAccessingSecurityScopedResource];
+    }
+#endif
+}
+
+-(void) dealloc {
+    [self stopAccesses];
+    //self->iArray = nil;
+    //[super dealloc];
+}
 
 -(TreeBranch*) addTreeItemWithURL:(NSURL*)url {
     NSUInteger index=0;
@@ -29,7 +56,7 @@ TreeManager *appTreeManager;
     BOOL iArrayChanged = NO;
     id parent =  nil;
     while (index < [self->iArray count]) {
-        TreeBranch *item = self->iArray[index];
+        TreeBranch *item = self->iArray[index++];
         enumPathCompare comparison = [item relationToPath:[url path]];
         if (comparison == pathIsSame) {
             return item;
@@ -50,61 +77,112 @@ TreeManager *appTreeManager;
             index++;
         }
         else if (comparison==pathIsParent) {
-            /* Will add this to the node being inserted */
-            NSUInteger level = [[url pathComponents] count]; // Get the level above the new root;
-            NSArray *pathComponents = [[item url] pathComponents];
-            NSUInteger top_level = [pathComponents count]-1;
-            if (parent==nil) {
-                parent =[TreeItem treeItemForURL:url parent:nil];
-            }
-            if ([parent isKindOfClass:[TreeBranch class]]) {
-                [parent setTag:tagTreeItemDirty]; // Will force the refresh
-                answer = parent;
-                TreeBranch *cursor = parent;
-                while (level < top_level) {
-                    NSString *path = pathComponents[level];
-                    TreeItem *child = [cursor childWithName:path class:[TreeBranch class]];
-                    if (child==nil) {
-                        NSRange rng;
-                        rng.location=0;
-                        rng.length = level+1;
-                        NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
-                        child = [cursor addURL:newURL];
-                    }
-                    if ([child isBranch]) {
-                        cursor = (TreeBranch*)child;
-                        [cursor setTag:tagTreeItemDirty];
-                        level++;
-                    }
-                    else
-                        return nil; //Failing here is serious . Giving up search
-                }
-                [cursor addChild:item]; // Finally add the node
-                @synchronized(self) {
-                    [self->iArray removeObjectAtIndex:index]; // Remove the node, It will
-                    iArrayChanged = YES;
+            NSURL *url_allowed;
+#if (APP_IS_SANDBOXED==YES)
+            url_allowed =[self secScopeContainer:url];
+            // checks if part of the allowed urls
+            if (url_allowed==nil) {
+                // if fails then will open it with a Powerbox
+                NSString *title = [NSString stringWithFormat:@"Access Denied! Please grant access to Folder %@", [url path]];
+                url = [self powerboxOpenFolderWithTitle:title];
+                if (url!=nil) {
+                    url_allowed = url;
                 }
             }
-            else {
-                index++;
+#else
+            url_allowed = url;
+#endif
+            if (url_allowed!=nil) {
+                /* Will add this to the node being inserted */
+                NSUInteger level = [[url_allowed pathComponents] count]; // Get the level above the new root;
+                NSArray *pathComponents = [[item url] pathComponents];
+                NSUInteger top_level = [pathComponents count]-1;
+                if (parent==nil) {
+                    parent =[TreeItem treeItemForURL:url parent:nil];
+                }
+                if ([parent isKindOfClass:[TreeBranch class]]) {
+                    [parent setTag:tagTreeItemDirty]; // Will force the refresh
+                    answer = parent;
+                    TreeBranch *cursor = parent;
+                    while (level < top_level) {
+                        NSString *path = pathComponents[level];
+                        TreeItem *child = [cursor childWithName:path class:[TreeBranch class]];
+                        if (child==nil) {
+                            NSRange rng;
+                            rng.location=0;
+                            rng.length = level+1;
+                            NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
+                            child = [cursor addURL:newURL];
+                        }
+                        if ([child isBranch]) {
+                            cursor = (TreeBranch*)child;
+                            [cursor setTag:tagTreeItemDirty];
+                            level++;
+                        }
+                        else
+                            return nil; //Failing here is serious . Giving up search
+                    }
+                    [cursor addChild:item]; // Finally add the node
+                    @synchronized(self) {
+#if (APP_IS_SANDBOXED==YES)
+
+                        TreeBranch *item_to_release = [self->iArray objectAtIndex:index-1];
+                        [[item_to_release url] stopAccessingSecurityScopedResource];
+#endif
+                        [self->iArray removeObjectAtIndex:index-1]; // Remove the node, 1 is subtracted since one was already added
+                        iArrayChanged = YES;
+                    }
+                }
             }
         }
-        else
-            index++;
     }
     if (answer==nil) { // If not found in existing trees will create it
-        id aux = [TreeItem treeItemForURL:url parent:nil];
-        [aux setTag:tagTreeItemDirty]; // Forcing its update
-        // But will only return it if is a Branch Like
-        if ([aux isBranch]) {
-            answer = aux;
-            @synchronized(self) {
-                [self->iArray addObject:answer];
+        NSURL *url_allowed;
+#if (APP_IS_SANDBOXED==YES)
+        url_allowed =[self secScopeContainer:url];
+        // checks if part of the allowed urls
+        if (url_allowed==nil) {
+            // if fails then will open it with a Powerbox
+            NSString *title = [NSString stringWithFormat:@"Access Denied! Please grant access to Folder %@", [url path]];
+            url = [self powerboxOpenFolderWithTitle:title];
+            if (url!=nil) {
+                url_allowed = url;
             }
-            iArrayChanged = YES;
+        }
+#else
+        url_allowed = url;
+#endif
+        if (url_allowed) {
+            id aux = [TreeItem treeItemForURL:url_allowed parent:nil];
+            [aux setTag:tagTreeItemDirty]; // Forcing its update
+            // But will only return it if is a Branch Like
+            if ([aux isBranch]) {
+                if (pathIsSame == url_relation(url_allowed,url)) {
+                    answer = aux;
+                }
+                else {
+                    TreeItem *ti;
+                    ti = [aux getNodeWithURL:url];
+                    if (ti==nil) // didn't find, will have to create it
+                        ti = (TreeBranch*)[aux addURL:url];
+                    // sanity check before assigning
+                    if (ti!=nil && [ti isKindOfClass:[TreeBranch class]])
+                        answer = (TreeBranch*) ti;
+                }
+#if (APP_IS_SANDBOXED==YES)
+                [[aux url] startAccessingSecurityScopedResource];
+#endif
+                @synchronized(self) {
+                    [self->iArray addObject:aux]; // Adds the Security Scope Element
+                }
+                iArrayChanged = YES;
+            }
         }
     }
     else if (parent!=nil) { // There is a new parent
+#if (APP_IS_SANDBOXED==YES)
+        [[parent url] startAccessingSecurityScopedResource];
+#endif
         @synchronized(self) {
             [self->iArray addObject:parent];
         }
@@ -131,6 +209,17 @@ TreeManager *appTreeManager;
     for (TreeBranch *item in self->iArray) {
         if ([item canContainURL:url]) {
             answer = [item getNodeWithURL:url];
+            break;
+        }
+    }
+    return answer;
+}
+
+-(TreeItem*) getNodeWithPath:(NSString*)path {
+    TreeItem *answer=nil;
+    for (TreeBranch *item in self->iArray) {
+        if ([item canContainPath:path]) {
+            answer = [item getNodeWithPath:path];
             break;
         }
     }
@@ -225,8 +314,11 @@ TreeManager *appTreeManager;
 
         //NSLog(@"FSEvent %@", changedPath);
 
-        NSURL *aURL = [NSURL fileURLWithPath:changedPath isDirectory:YES]; // Assuming that we are always going to receive directories.
-        id itemToRefresh = [self getNodeWithURL:aURL];
+        id itemToRefresh = [self getNodeWithPath:changedPath];
+        if (itemToRefresh==nil) {// This could be because its a new File
+            // Then force a refresh to the parent directory
+            itemToRefresh = [self getNodeWithPath:[changedPath stringByDeletingLastPathComponent]];
+        }
 
         if  (itemToRefresh != nil) { // Its already being monitored
             BOOL scanSubdirs = (flags &
@@ -251,12 +343,72 @@ TreeManager *appTreeManager;
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];
                 }
-                else {
-                    NSLog(@"TreeManager:fileSystemChangePath: Not implemented ! Not expected to receive non branches.\nReceived ""%@""", changedPath);
+                else { // It will try to refresh the parent
+                    id itemParent = [itemToRefresh parent];
+                    if ([itemParent respondsToSelector:@selector(refreshContentsOnQueue:)]) {
+                        [itemParent setTag:tagTreeItemDirty];
+                        [itemParent refreshContentsOnQueue:operationsQueue];
+                    }
                 }
             }
         }
     }
+}
+
+-(NSURL*) powerboxOpenFolderWithTitle:(NSString*)dialogTitle {
+    NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
+    [SelectDirectoryDialog setTitle:dialogTitle];
+    [SelectDirectoryDialog setCanChooseFiles:NO];
+    [SelectDirectoryDialog setCanChooseDirectories:YES];
+    NSInteger returnOption =[SelectDirectoryDialog runModal];
+    if (returnOption == NSFileHandlingPanelOKButton) {
+        /* Will get a new node from shared tree Manager and add it to the root */
+        /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
+
+        NSURL *url = [SelectDirectoryDialog URL];
+#if (APP_IS_SANDBOXED==YES)
+        NSError *error;
+        // Store the Bookmark for another Application Launch
+        NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                         includingResourceValuesForKeys:urlKeyFieldsToStore()
+                                          relativeToURL:nil error:&error];
+        if (error==nil) {
+            // Add the the User Defaults
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            NSArray *secScopeBookmarks = [defaults objectForKey:@"SecurityScopeBookmarks"];
+            NSMutableArray *updtSecScopeBookmarks =[NSMutableArray arrayWithArray:secScopeBookmarks];
+            [updtSecScopeBookmarks addObject:bookmark];
+            [defaults setObject:updtSecScopeBookmarks forKey:@"SecurityScopeBookmarks"];
+        }
+#endif
+        return url;
+
+    }
+    return nil;
+}
+
+- (NSURL*) secScopeContainer:(NSURL*) url {
+    NSURL *url_accessible = nil;
+    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] objectForKey:@"SecurityScopeBookmarks"];
+
+    // Retrieve allowed URLs
+    for (NSData *bookmark in secBookmarks) {
+        BOOL dataStalled;
+        NSError *error;
+        NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
+                                                      options:NSURLBookmarkResolutionWithSecurityScope
+                                                relativeToURL:nil
+                                          bookmarkDataIsStale:&dataStalled
+                                                        error:&error];
+        if (error==nil && dataStalled==NO) {
+            enumPathCompare compare = url_relation(allowedURL, url);
+            if (compare==pathIsChild || compare == pathIsSame) {
+                url_accessible = allowedURL;
+                break;
+            }
+        }
+    }
+    return url_accessible;
 }
 
 @end

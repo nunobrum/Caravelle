@@ -359,6 +359,22 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
+-(TreeItem*) getNodeWithPath:(NSString*)path {
+    //NSLog(@"TreeBranch.getNodeWithURL:(%@)", url);
+    if ([[self path] isEqualToString:path])
+        return self;
+    else {
+        id child = [self childContainingPath:path];
+        if (child!=nil) {
+            if ([child isKindOfClass:[TreeBranch class]]) {
+                return [(TreeBranch*)child getNodeWithPath:path];
+            }
+        }
+        return child;
+    }
+}
+
+
 // TODO: !!! Optimize code
 //-(TreeItem*) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pcomps inLevel:(NSUInteger) level {
 //    id child = [self childContainingURL:theURL];
