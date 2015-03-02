@@ -41,6 +41,8 @@
 		<string>date_created</string>
 		<key>selected</key>
 		<false/>
+		<key>transformer</key>
+		<string>date</string>
 	</dict>
 	<key>COL_DATE_ACCESSED</key>
 	<dict>
@@ -50,6 +52,8 @@
 		<string>date_accessed</string>
 		<key>selected</key>
 		<false/>
+		<key>transformer</key>
+		<string>date</string>
 	</dict>
 </dict>
 </plist>

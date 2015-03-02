@@ -52,6 +52,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(BOOL) isBranch;
 -(NSString*) name;
 -(NSDate*)   date_modified;
+-(NSDate*)   date_accessed;
+-(NSDate*)   date_created;
 -(NSString*) path ;
 -(NSImage*) image;
 -(long long) filesize ;

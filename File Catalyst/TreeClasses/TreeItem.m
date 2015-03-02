@@ -134,14 +134,37 @@
     NSError *errorCode;
     if ([_url isFileURL]) {
         [_url getResourceValue:&date forKey:NSURLContentModificationDateKey error:&errorCode];
-        if (errorCode || date==nil) {
-            [_url getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
-            
-        }
     }
     else {
         NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_url path] error:NULL];
         date = [dirAttributes fileModificationDate];
+
+    }
+    return date;
+}
+
+-(NSDate*)   date_accessed {
+    NSDate *date=nil;
+    NSError *errorCode;
+    if ([_url isFileURL]) {
+        [_url getResourceValue:&date forKey:NSURLContentAccessDateKey error:&errorCode];
+    }
+    else {
+        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_url path] error:NULL];
+        date = [dirAttributes fileModificationDate];
+
+    }
+    return date;
+}
+-(NSDate*)   date_created {
+    NSDate *date=nil;
+    NSError *errorCode;
+    if ([_url isFileURL]) {
+        [_url getResourceValue:&date forKey:NSURLCreationDateKey error:&errorCode];
+    }
+    else {
+        NSDictionary *dirAttributes =[[NSFileManager defaultManager] attributesOfItemAtPath:[_url path] error:NULL];
+        date = [dirAttributes fileCreationDate];
 
     }
     return date;
