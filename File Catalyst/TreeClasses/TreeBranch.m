@@ -299,7 +299,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                     bool found=NO;
                     /* Retrieves existing Element */
                     for (TreeItem *it in self->_children) {
-                        if ([[it url] isEqual:theURL]) {
+                        if ([[it path] isEqualToString:[theURL path]]) { // Comparing paths as comparing URLs is dangerous
                             // Found it
                             // resets the release Flag. Doesn't neet to be deleted
                             [it resetTag:tagTreeItemRelease];
@@ -413,12 +413,19 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(TreeItem*) addURL:(NSURL*)theURL {
     id child = [self childContainingURL:theURL];
     if (child!=nil) {
+
+        // If it is still a branch
         if ([child isKindOfClass:[TreeBranch class]]) {
             return [(TreeBranch*)child addURL:theURL];
         }
+        // if it is a Leaf, it should be it. Test to make sure.
+        else if ([[child path] isEqualToString:[theURL path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
+            return child;
+        }
         else {
-            NSLog(@"TreeBranch.addURL: URL(%@) is not aTreeBranch",[self url]);
+            NSLog(@"TreeBranch.addURL: Failed to add URL(%@) to %@",theURL, [self url]);
             assert(NO);
+            return nil;
         }
     }
     @synchronized(self) {
@@ -441,7 +448,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         [self addChild:newObj];
         return newObj; /* Stops here Nothing More to Add */
     }
-    else if ([[self url] isEqualTo:theURL]) {
+    else if ([[self path] isEqualToString:[theURL path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
         return self; // This condition is equal to level-1==leaf_level
     }
     NSLog(@"TreeBranch.addURL: URL(%@) is not added to self(%@)", theURL, self->_url);
@@ -458,12 +465,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         assert(NO);
         return nil;
     }
-    //    result = [[theURL path] rangeOfString:[self path]];
-    //    if (NSNotFound==result.location) {
-    //        // The new root is already contained in the existing trees
-    //        return nil;
-    //    }
-
+   
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];

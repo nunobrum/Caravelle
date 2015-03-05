@@ -84,28 +84,74 @@ NSURL *urlWithRename(NSURL* original, NSString *new_name) {
 }
 
 enumPathCompare path_relation(NSString *aPath, NSString* otherPath) {
-    NSRange result;
-    NSInteger answer = pathsHaveNoRelation;
+    NSArray *pathComponents      = [aPath pathComponents];
+    NSArray *otherPathComponents = [otherPath pathComponents];
+    NSUInteger pcount = [pathComponents count];
+    NSUInteger ocount = [otherPathComponents count];
 
-    if ([aPath isEqualToString:otherPath])
-        return pathIsSame;
-
-    result = [otherPath rangeOfString:aPath];
-    if (NSNotFound!=result.location) {
-        // The new root is already contained in the existing trees
-        answer = pathIsChild;
+    if (pcount == ocount) {
+        // test if path is the same
+        NSUInteger i;
+        for (i=0 ; i < pcount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
+        }
+        return  pathIsSame;
+    }
+    else if (pcount < ocount) {
+        // Test if path is a child
+        NSUInteger i;
+        for (i=0 ; i < pcount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
+        }
+        return  pathIsChild;
     }
     else {
-        /* The new contains exiting */
-        result = [aPath rangeOfString:otherPath];
-        if (NSNotFound!=result.location) {
-            // Will need to replace current position
-            answer = pathIsParent;
+        // test if s parent
+        NSUInteger i;
+        for (i=0 ; i < ocount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
         }
+        return  pathIsParent;
     }
-    return answer;
 }
 
+enumPathCompare url_relation(NSURL *aURL, NSURL* otherURL) {
+    NSArray *pathComponents      = [aURL pathComponents];
+    NSArray *otherPathComponents = [otherURL pathComponents];
+    NSUInteger pcount = [pathComponents count];
+    NSUInteger ocount = [otherPathComponents count];
+
+    if (pcount == ocount) {
+        // test if path is the same
+        NSUInteger i;
+        for (i=0 ; i < pcount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
+        }
+        return  pathIsSame;
+    }
+    else if (pcount < ocount) {
+        // Test if path is a child
+        NSUInteger i;
+        for (i=0 ; i < pcount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
+        }
+        return  pathIsChild;
+    }
+    else {
+        // test if s parent
+        NSUInteger i;
+        for (i=0 ; i < ocount ; i++) {
+            if (NO==[[pathComponents objectAtIndex:i] isEqualToString: [otherPathComponents objectAtIndex:i]])
+                return pathsHaveNoRelation;
+        }
+        return  pathIsParent;
+    }
+}
 
 BOOL eraseFile(NSURL*url, NSError *error) {
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];

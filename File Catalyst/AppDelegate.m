@@ -135,10 +135,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         NSString *homepath;
         if (view == myLeftView) {
             // Get from User Parameters
-            homepath = [[NSUserDefaults standardUserDefaults] objectForKey:@"BrowserLeftHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:@"BrowserLeftHomeDir"];
         }
         else if (view == myRightView) {
-            homepath = [[NSUserDefaults standardUserDefaults] objectForKey:@"BrowserRightHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:@"BrowserRightHomeDir"];
+            if (homepath == nil || [homepath isEqualToString:@""]) {
+                // if there is no path assigned, just use the one of the left
+                homepath = [[myLeftView treeNodeSelected] path];
+            }
         }
         //DEBUG CODE ==> homepath = @"/Users/vika/testedir";
 
@@ -152,7 +156,19 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             [(BrowserController*)view removeAll];
             [(BrowserController*)view setViewMode:BViewBrowserMode];
             [(BrowserController*)view addTreeRoot: item];
+            [(BrowserController*)view selectFirstRoot];
+            [(BrowserController*)view refresh];
+
 #endif
+        }
+        else {
+            NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
+            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+            [(BrowserController*)view removeAll];
+            [(BrowserController*)view setViewMode:BViewBrowserMode];
+            [(BrowserController*)view addTreeRoot: item];
+            [(BrowserController*)view selectFirstRoot];
+            [(BrowserController*)view refresh];
         }
     }
 }
@@ -180,14 +196,12 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 {
     /* Setting up user defaults */
     NSString *userDefaultsValuesPath=[[NSBundle mainBundle] pathForResource:@"UserDefault"
-                                                           ofType:@"plist"];
+                                                                     ofType:@"plist"];
     NSDictionary *userDefaultsValuesDict=[NSDictionary dictionaryWithContentsOfFile:userDefaultsValuesPath];
     // set them in the standard user defaults
     [[NSUserDefaults standardUserDefaults] registerDefaults:userDefaultsValuesDict];
 
-
     /* Now setting notifications */
-
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -212,9 +226,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [_myWindow setDelegate:self];
 
     [myLeftView setFoldersDisplayed:
-     [[userDefaultsValuesDict objectForKey:@"BrowserLeftDisplayFoldersInTable"] boolValue]];
+     [[NSUserDefaults standardUserDefaults] boolForKey:@"BrowserLeftDisplayFoldersInTable"]];
     [myRightView setFoldersDisplayed:
-     [[userDefaultsValuesDict objectForKey:@"BrowserRightDisplayFoldersInTable"] boolValue]];
+     [[NSUserDefaults standardUserDefaults] boolForKey:@"BrowserRightDisplayFoldersInTable"] ];
     [myLeftView setTwinName:@"Right"];
     [myRightView setTwinName:@"Left"];
 
@@ -235,11 +249,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Right side
     [self goHome: myRightView]; // Display the User Preferences Left Home
 
-    [(BrowserController*)myLeftView selectFirstRoot];
-    [(BrowserController*)myRightView selectFirstRoot];
-    [(BrowserController*)myLeftView refresh];
-    [(BrowserController*)myRightView refresh];
-
+    // Make a default focus
+    self->_selectedView = myLeftView;
+    // TODO:!!! Set the Left view as first responder
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
@@ -311,8 +323,15 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     BOOL fromWindowClosing = sender == _myWindow;
 
-    // Force a store of the User Defaults
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    if (fromWindowClosing) {
+        // Force a store of the User Defaults
+        [[NSUserDefaults standardUserDefaults] setObject:[[myLeftView treeNodeSelected] path] forKey:@"BrowserLeftHomeDir"];
+        [[NSUserDefaults standardUserDefaults] setObject:[[myRightView treeNodeSelected] path] forKey:@"BrowserRightHomeDir"];
+
+        BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
+        if (!OK)
+            NSLog(@"AppDelegate.shouldTerminate: Failed to store User Defaults");
+    }
 
     if (numOperationsRunning ==0 && numErrorsPending==0) {
         return NSTerminateNow;
@@ -405,7 +424,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     //NSLog(@"Application Will Resign Active");
 
     // Force a store of the User Defaults
-    [[NSUserDefaults standardUserDefaults] synchronize];
+    BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
+    if (!OK)
+        NSLog(@"AppDelegate.applicationWillResignActive: Failed to store User Defaults");
 }
 
 
@@ -590,6 +611,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [(BrowserController*)view removeAll];
                 [(BrowserController*)view setViewMode:BViewBrowserMode];
                 [(BrowserController*)view addTreeRoot: item];
+                [(BrowserController*)view selectFirstRoot];
+                [(BrowserController*)view refresh];
+
 //
 //                // Register new default
 //                NSString *homepath = [url path];
@@ -880,6 +904,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [self executeNewFolder:(TreeBranch*)[[self selectedView] getLastClickedItem]];
 }
 
+- (IBAction)toolbarGotoFolder:(id)sender {
+    [self executeOpenFolderInView:[self selectedView] withTitle:@"Select a Folder"];
+}
+
+- (IBAction)contextualGotoFolder:(id)sender {
+    [self executeOpenFolderInView:sender withTitle:@"Select a Folder"];
+}
+
 
 - (IBAction)toolbarSearch:(id)sender {
     // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
@@ -1013,7 +1045,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     if (theAction == @selector(toolbarHome:) ||
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
-        theAction == @selector(toolbarGrouping:)
+        theAction == @selector(toolbarGrouping:) ||
+        theAction == @selector(toolbarGotoFolder:)
         ) {
         return YES;
     }

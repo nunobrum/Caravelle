@@ -49,6 +49,8 @@
 - (IBAction)toolbarNewFolder:(id)sender;
 - (IBAction)contextualNewFolder:(id)sender;
 
+- (IBAction)toolbarGotoFolder:(id)sender;
+
 - (IBAction)toolbarSearch:(id)sender;
 - (IBAction)toolbarGrouping:(id)sender;
 - (IBAction)toolbarRefresh:(id)sender;

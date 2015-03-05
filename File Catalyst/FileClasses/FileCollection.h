@@ -35,11 +35,11 @@
 -(FileCollection*) filesInPath:(NSString*) path;
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount;
 
--(BOOL) isRootContainedInPath:(NSString *)otherRoot;
+/*-(BOOL) isRootContainedInPath:(NSString *)otherRoot;
 -(BOOL) rootContainsPath:(NSString *)otherRoot;
 -(BOOL) isRootContainedIn:(FileCollection *)otherCollection;
 -(BOOL) rootContains:(FileCollection *)otherCollection;
-
+*/
 -(void) concatenateFileCollection: (FileCollection *)otherCollection;
 -(void) resetDuplicateLists;
 -(FileCollection*) FilesWithDuplicates;

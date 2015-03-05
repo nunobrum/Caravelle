@@ -8,15 +8,9 @@
 	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
-	<key>BrowserLeftHomeDir</key>
-	<string></string>
 	<key>BrowserLeftDisplayFoldersInTable</key>
 	<true/>
-	<key>BrowserRightHomeDir</key>
-	<string></string>
 	<key>BrowserRightDisplayFoldersInTable</key>
 	<true/>
-	<key>SecurityScopeBookmarks</key>
-	<array/>
 </dict>
 </plist>

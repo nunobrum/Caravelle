@@ -36,12 +36,12 @@ NSArray *urlKeyFieldsToStore() {
         dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
     // Checks whether to browse packages or if to treat them as folders
-    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"BrowseAppsAsFolder"] boolValue]) {
+    if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:@"BrowseAppsAsFolder"]) {
         dirEnumOptions |= NSDirectoryEnumerationSkipsPackageDescendants;
     }
 
     // Checks whether to display hidden files
-    if (NO==[[[NSUserDefaults standardUserDefaults] objectForKey:@"BrowseAHiddenFiles"] boolValue]) {
+    if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:@"BrowseAHiddenFiles"]) {
         dirEnumOptions |= NSDirectoryEnumerationSkipsHiddenFiles;
     }
 

@@ -28,7 +28,7 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
     pathIsChild = 3
 };
 enumPathCompare path_relation(NSString *aPath, NSString* otherPath);
-#define url_relation(aURL, otherURL) path_relation([aURL path], [otherURL path])
+enumPathCompare url_relation(NSURL *aURL, NSURL* otherURL);
 
 // Support Routines
 NSString *pathWithRename(NSString *original, NSString *new_name);

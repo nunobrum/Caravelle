@@ -244,34 +244,5 @@
 }
 
 
--(BOOL) sendToRecycleBin {
-    BOOL remove_sucess = [[NSFileManager defaultManager] removeItemAtPath:self->path error:nil];
-    // Must delete the file from the duplicate
-    if (remove_sucess) {
-        [self removeFromDuplicateRing];
-    }
-    return remove_sucess;
-}
-
--(BOOL) eraseFile {
-    // Missing implementation
-    NSLog(@"Erase File Method not implemented");
-    return NO;
-}
--(BOOL) copyFileTo:(NSString *)path {
-    // Missing implementation
-    NSLog(@"Copy File Method not implemented");
-    return NO;
-}
--(BOOL) moveFileTo:(NSString *)path {
-    // Missing implementation
-    NSLog(@"Move File Method not implemented");
-    return NO;
-}
-
--(BOOL) openFile {
-    [[NSWorkspace sharedWorkspace] openFile:self->path];
-    return YES;
-}
 
 @end

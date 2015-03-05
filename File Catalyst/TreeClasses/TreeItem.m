@@ -41,8 +41,8 @@
                 if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
                     //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
                     [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-                    NSNumber *appsAsFolders =[[NSUserDefaults standardUserDefaults] objectForKey:@"BrowseAppsAsFolder"];
-                    if ([appsAsFolders boolValue]) {
+                    BOOL appsAsFolders =[[NSUserDefaults standardUserDefaults] boolForKey:@"BrowseAppsAsFolder"];
+                    if (appsAsFolders) {
                         return [[TreeBranch alloc] initWithURL:url parent:parent];
                     }
                     else {
@@ -254,27 +254,31 @@
 
 /* This is a test if it can contain the URL */
 -(BOOL) canContainPath:(NSString*)path {
-    NSRange result;
-    result = [path rangeOfString:[self path]];
-    if (NSNotFound!=result.location) {
-        // The new root is already contained in the existing trees
-        return YES;
-    }
-    else {
+    NSArray *cpself = [[self path] pathComponents];
+    NSArray *cppath = [path pathComponents];
+    NSUInteger cpsc = [cpself count];
+    if (cpsc> [cppath count])
         return NO;
+    for (NSUInteger i = 0 ; i < cpsc ; i++) {
+        if (NO == [cpself[i] isEqualToString:cppath[i]]) {
+            return NO;
+        }
     }
+    return YES;
 }
 
 -(BOOL) containedInPath: (NSString*) path {
-    NSRange result;
-    result = [[self path] rangeOfString:path];
-    if (NSNotFound!=result.location) {
-        // The new root is already contained in the existing trees
-        return YES;
-    }
-    else {
+    NSArray *cpself = [[self path] pathComponents];
+    NSArray *cppath = [path pathComponents];
+    NSUInteger cppc = [cppath count];
+    if (cppc> [cppath count])
         return NO;
+    for (NSUInteger i = 0 ; i < cppc ; i++) {
+        if (NO == [cpself[i] isEqualToString:cppath[i]]) {
+            return NO;
+        }
     }
+    return YES;
 }
 /* This is a test if it can contain the URL */
 -(BOOL) canContainURL:(NSURL*)url {

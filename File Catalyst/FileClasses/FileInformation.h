@@ -59,10 +59,10 @@
 -(void) resetDuplicates;
 
 // File Operations
--(BOOL) sendToRecycleBin;
+/*-(BOOL) sendToRecycleBin;
 -(BOOL) eraseFile;
 -(BOOL) copyFileTo:(NSString *)path;
 -(BOOL) moveFileTo:(NSString *)path;
 -(BOOL) openFile;
-
+*/
 @end

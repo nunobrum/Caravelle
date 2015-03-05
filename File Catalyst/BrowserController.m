@@ -785,7 +785,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         /* Do something here */
         id node = [tableData objectAtIndex:index];;
         if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
-            [[node getFileInformation] openFile];
+            [node openFile];
         }
         else if ([node isKindOfClass: [TreeBranch class]]) { // It is a directory
             // Going to open the Select That directory on the Outline View
@@ -814,35 +814,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 
-/* Called from the pop up button. Uses the Cocoa openPanel to navigate to a path */
+/* Called from the pop up button.  */
 - (IBAction) ChooseDirectory:(id)sender {
-    NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
-    [SelectDirectoryDialog setTitle:@"Select a Folder to Browse"];
-    [SelectDirectoryDialog setCanChooseFiles:NO];
-    [SelectDirectoryDialog setCanChooseDirectories:YES];
-    NSInteger returnOption =[SelectDirectoryDialog runModal];
-    if (returnOption == NSFileHandlingPanelOKButton) {
-        if (_viewMode==BViewCatalystMode){
-            NSString *rootPath = [[SelectDirectoryDialog URL] path];
-            NSDictionary *answer = [NSDictionary dictionaryWithObjectsAndKeys:
-                                    rootPath,kRootPathKey,
-                                    self, kSenderKey,
-                                    [NSNumber numberWithInteger:_viewMode], kModeKey,
-                                    nil];
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationCatalystRootUpdate object:self userInfo:answer];
-        }
-        else {
-            /* Will get a new node from shared tree Manager and add it to the root */
-            /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
-            TreeBranch *node = [appTreeManager addTreeItemWithURL:[SelectDirectoryDialog URL]];
-            [self removeRootWithIndex:0];
-            [self addTreeRoot:node];
-            node = [BaseDirectoriesArray objectAtIndex:0];
-            if (NULL != node){
-                [self selectFolderByItem:node];
-            }
-        }
-    }
+    [NSApp sendAction:@selector(contextualGotoFolder:) to:nil from:self];
 }
 
 // This selector is invoked when the file was renamed or a New File was created
@@ -898,9 +872,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 /* Will get a new node from shared tree Manager and add it to the root */
                 /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
                 node = [appTreeManager addTreeItemWithURL:newURL];
-                [self removeRootWithIndex:0];
-                [self addTreeRoot:node];
-                node = [BaseDirectoriesArray objectAtIndex:0];
+                if (node) { // sanity check
+                    [self removeRootWithIndex:0];
+                    [self addTreeRoot:node];
+                }
+                else { // if it doesn't exist then put it back as it was
+                    node = [BaseDirectoriesArray objectAtIndex:0];
+                }
             }
         }
         if (NULL != node){
@@ -1110,7 +1088,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // Check whether the destination item is equal to the parent of the item do nothing
             for (NSURL* file in files) {
                 NSURL *folder = [file URLByDeletingLastPathComponent];
-                if ([[_validatedDestinationItem url] isEqualTo:folder])
+                if ([[_validatedDestinationItem path] isEqualToString:[folder path]]) // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs 
                 {
                 // If true : abort
                     fireNotfication = NO;
@@ -1567,15 +1545,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         BOOL answer = [self canAddRoot:[theRoot path]];
         if (answer == YES) {
             [BaseDirectoriesArray addObject: theRoot];
-            if ([BaseDirectoriesArray count]==1) {
-                NSString *root_path = [theRoot path];
-                if ([self->_twinName isEqualToString: @"Right"]) { // If twin is Right then this is the Left
-                    [[NSUserDefaults standardUserDefaults] setObject:root_path forKey:@"BrowserLeftHomeDir"];
-                }
-                else {
-                    [[NSUserDefaults standardUserDefaults] setObject:root_path forKey:@"BrowserRightHomeDir"];
-                }
-            }
         }
         /* Refresh the Trees so that the trees are displayed */
         //[self refreshTrees];

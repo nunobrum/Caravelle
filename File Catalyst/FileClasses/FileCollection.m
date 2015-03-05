@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "FileUtils.h"
 #import "FileCollection.h"
 #import "FileInformation.h"
 
@@ -181,10 +182,8 @@
 -(FileCollection*) filesInPath:(NSString*) path {
     FileCollection *newCollection = [[FileCollection new] init];
     for (FileInformation *finfo in fileArray) {
-        NSString *fpath = finfo.getPath;
-        NSRange result;
-        result = [fpath rangeOfString:path];
-        if (result.location == 0)
+        enumPathCompare test = path_relation(path, finfo.getPath);
+        if (test == pathIsChild || test == pathIsSame)
             [newCollection AddFileInformation:finfo];
 
     }
@@ -194,10 +193,8 @@
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount {
     FileCollection *newCollection = [[FileCollection new] init];
     for (FileInformation *finfo in fileArray) {
-        NSString *fpath = finfo.getPath;
-        NSRange result;
-        result = [fpath rangeOfString:path];
-        if (result.location == 0) {
+        enumPathCompare test = path_relation(path, finfo.getPath);
+        if (test == pathIsChild || test == pathIsSame) {
             FileInformation *cursor=finfo->duplicate_chain;
             while (cursor!=finfo) {
                 if (cursor->dCounter!=dCount) {
@@ -211,28 +208,26 @@
     return newCollection;
 }
 
-
--(BOOL) isRootContainedInPath:(NSString *)otherRoot {
-    NSRange result;
-    result = [otherRoot rangeOfString:rootDirectory];
-    if (result.location == NSNotFound)
-        return NO;
-    else
+/*
+-(BOOL) isRootContainedInPath:(NSString *)path {
+    enumPathCompare test = path_relation(rootDirectory, path);
+    if (test == pathIsParent)
         return YES;
+    else
+        return NO;
 }
 
 -(BOOL) rootContainsPath:(NSString *)otherRoot {
-    NSRange result;
-    result = [rootDirectory rangeOfString:otherRoot];
-    if (result.location == NSNotFound)
-        return NO;
-    else
+    enumPathCompare test = path_relation(rootDirectory, otherRoot);
+    if (test == pathIsChild || test == pathIsSame)
         return YES;
+    else
+        return NO;
 }
 
 -(BOOL) isRootContainedIn:(FileCollection *)otherCollection {
     NSRange result;
-    result = [[otherCollection commonPath] rangeOfString:rootDirectory];
+    result = [ rangeOfString:rootDirectory];
     if (result.location == NSNotFound)
         return NO;
     else
@@ -247,7 +242,7 @@
     else
         return YES;
 }
-
+*/
 -(void) concatenateFileCollection: (FileCollection *)otherCollection {
     [fileArray addObjectsFromArray:[otherCollection fileArray]];
     rootDirectory = nil; // It will be calculated next time the rootPath is called
