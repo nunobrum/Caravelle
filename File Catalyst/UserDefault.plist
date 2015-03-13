@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>KeyMappings</key>
+	<dict>
+		<key>cmdOpenInRight</key>
+		<string>Ctrl+Arrow Right</string>
+		<key>cmdOpenInLeft</key>
+		<string>Ctrl+Arrow Left</string>
+		<key>cmdCopyLeft</key>
+		<string>None</string>
+		<key>cmdCopyRight</key>
+		<string>None</string>
+		<key>cmdMoveLeft</key>
+		<string>None</string>
+		<key>cmdMoveRight</key>
+		<string>None</string>
+		<key>cmdOpen</key>
+		<string>Return</string>
+		<key>cmdDelete</key>
+		<string>Cmd+Backspace</string>
+	</dict>
 	<key>BrowseAppsAsFolder</key>
 	<false/>
 	<key>BrowseAHiddenFiles</key>
@@ -12,5 +31,7 @@
 	<true/>
 	<key>BrowserRightDisplayFoldersInTable</key>
 	<true/>
+	<key>StoreAllowedURLs</key>
+	<false/>
 </dict>
 </plist>

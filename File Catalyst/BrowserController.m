@@ -921,6 +921,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 - (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation {
+
+#ifdef UPDATE_TREE
+    // This is not needed if the FSEvents is activated and updates the Tables
     NSPasteboard *pboard = [session draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     if (operation == (NSDragOperationMove)) {
@@ -931,9 +934,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];
         sendItemsToRecycleBin(files);
     }
+#endif
 }
 
 - (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation {
+#ifdef UPDATE_TREE
+    // This is not needed if the FSEvents is activated and updates the Tables
     NSPasteboard *pboard = [session draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     TreeBranch *parent = [outlineView parentForItem:_draggedOutlineItem];
@@ -947,6 +953,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [outlineView removeItemsAtIndexes:_draggedItemsIndexSet inParent:parent withAnimation:NSTableViewAnimationEffectFade];
         sendItemsToRecycleBin(files);
     }
+#endif
 }
 
 - (NSDragOperation) validateDrop:(id < NSDraggingInfo >)info  {
@@ -1318,6 +1325,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self TableDoubleClickEvent:theEvent];
     }
     else if ([[theEvent characters] isEqualToString:@"\t"]) {
+        // TODO:! Option Cursor to change side
         // the tab key will switch Panes
 
     }

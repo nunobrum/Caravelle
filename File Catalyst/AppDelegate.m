@@ -148,6 +148,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
         if (homepath == nil || [homepath isEqualToString:@""]) {
 #if (APP_IS_SANDBOXED==YES)
+            NSLog(@"Failed to retrieve home folder from NSUserDefaults");
             [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
 #else
             homepath = NSHomeDirectory();
@@ -327,7 +328,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         // Force a store of the User Defaults
         [[NSUserDefaults standardUserDefaults] setObject:[[myLeftView treeNodeSelected] path] forKey:@"BrowserLeftHomeDir"];
         [[NSUserDefaults standardUserDefaults] setObject:[[myRightView treeNodeSelected] path] forKey:@"BrowserRightHomeDir"];
-
+        if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:@"StoreAllowedURLs"]) {
+            // Delete eventually stored bookmarks
+            [[NSUserDefaults standardUserDefaults] setObject:[NSArray array] forKey:@"SecurityScopeBookmarks"];
+        }
         BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
         if (!OK)
             NSLog(@"AppDelegate.shouldTerminate: Failed to store User Defaults");
@@ -843,7 +847,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 
 - (IBAction)toolbarInformation:(id)sender {
-    [self executeInformation: [[self selectedView] getSelectedItems]];
+    NSArray *selectedFiles = [[self selectedView] getSelectedItems];
+    if (selectedFiles != nil && [selectedFiles count]!=0) {
+        [self executeInformation: selectedFiles];
+    }
 }
 
 - (IBAction)contextualInformation:(id)sender {
@@ -1523,8 +1530,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 // Erase the file ... and copy again.
                 //sendToRecycleBin();
 
+                // TODO: !!! Put this in the operations
                 [[NSWorkspace sharedWorkspace] recycleURLs:[NSArray arrayWithObject:destinationURL] completionHandler:^(NSDictionary *newURLs, NSError *error) {
-                    if (error!=nil) {
+                    if (error==nil) {
                         copyURLToURL(sourceURL, destinationURL);
                     }
                 }];

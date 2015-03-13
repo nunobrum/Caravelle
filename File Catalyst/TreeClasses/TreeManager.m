@@ -278,13 +278,13 @@ TreeManager *appTreeManager;
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContentsOnQueue:operationsQueue];
                 }
-                else { // It will try to refresh the parent
-                    id itemParent = [itemToRefresh parent];
-                    if ([itemParent respondsToSelector:@selector(refreshContentsOnQueue:)]) {
-                        [itemParent setTag:tagTreeItemDirty];
-                        [itemParent refreshContentsOnQueue:operationsQueue];
-                    }
+                // It will try to refresh the parent
+                id itemParent = [itemToRefresh parent];
+                if ([itemParent respondsToSelector:@selector(refreshContentsOnQueue:)]) {
+                    [itemParent setTag:tagTreeItemDirty];
+                    [itemParent refreshContentsOnQueue:operationsQueue];
                 }
+
             }
         }
     }
@@ -303,20 +303,22 @@ TreeManager *appTreeManager;
         NSURL *url = [SelectDirectoryDialog URL];
 #if (APP_IS_SANDBOXED==YES)
         // First check if the Bookmarks already exists, if it doesnt, then it creates it
-        if ([self secScopeContainer:url]==nil) {
-            NSError *error;
-            // Store the Bookmark for another Application Launch
-            NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
-                             includingResourceValuesForKeys:urlKeyFieldsToStore()
-                                              relativeToURL:nil error:&error];
-            if (error==nil) {
-               // Add the the User Defaults
-                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-                NSArray *secScopeBookmarks = [defaults arrayForKey:@"SecurityScopeBookmarks"];
-                NSMutableArray *updtSecScopeBookmarks =[NSMutableArray arrayWithArray:secScopeBookmarks];
-                [updtSecScopeBookmarks addObject:bookmark];
-                [defaults setObject:updtSecScopeBookmarks forKey:@"SecurityScopeBookmarks"];
-                [defaults synchronize];
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"StoreAllowedURLs"]) {
+            if ([self secScopeContainer:url]==nil) {
+                NSError *error;
+                // Store the Bookmark for another Application Launch
+                NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
+                                 includingResourceValuesForKeys:urlKeyFieldsToStore()
+                                                  relativeToURL:nil error:&error];
+                if (error==nil) {
+                    // Add the the User Defaults
+                    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                    NSArray *secScopeBookmarks = [defaults arrayForKey:@"SecurityScopeBookmarks"];
+                    NSMutableArray *updtSecScopeBookmarks =[NSMutableArray arrayWithArray:secScopeBookmarks];
+                    [updtSecScopeBookmarks addObject:bookmark];
+                    [defaults setObject:updtSecScopeBookmarks forKey:@"SecurityScopeBookmarks"];
+                    [defaults synchronize];
+                }
             }
         }
 #endif

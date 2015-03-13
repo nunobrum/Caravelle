@@ -30,16 +30,14 @@
 
 
 - (void)keyDown:(NSEvent *)theEvent {
-    //NSLog(@"KD: type:%lu code:%@",[theEvent type],[theEvent characters]);
-    if ([[theEvent characters] isEqualToString:@"\r"] ) { //|| // The Return key will open the file
+    //NSLog(@"KD: code:%@",[theEvent characters]);
+    if ([[theEvent characters] isEqualToString:@"\r"] || // The Return key will open the file
+        [[theEvent characters] isEqualToString:@"\t"]) { // the tab key will switch Panes
         [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
     }
-    else if ([[theEvent characters] isEqualToString:@"\t"]) {
-         // the tab key will switch Panes
-        // perform nextView
-        // TODO:! Option Cursor to change side
 
-    }
+        // perform nextView
+    
     // TODO:!!the Space Key will mark the file
 
     else {

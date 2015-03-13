@@ -80,10 +80,10 @@
                                     <action selector="toolbarGotoFolder:" target="494" id="XwZ-oA-0Np"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open Recent" id="124">
+                            <menuItem title="Open Recent" hidden="YES" enabled="NO" id="124">
                                 <menu key="submenu" title="Open Recent" systemMenu="recentDocuments" id="125">
                                     <items>
-                                        <menuItem title="Clear Menu" id="126">
+                                        <menuItem title="Clear Menu" enabled="NO" id="126">
                                             <connections>
                                                 <action selector="clearRecentDocuments:" target="-1" id="127"/>
                                             </connections>
@@ -360,7 +360,7 @@ CA
                                 <font key="titleFont" metaFont="system"/>
                             </box>
                             <button toolTip="Trash (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="228" y="1" width="44" height="32"/>
+                                <rect key="frame" x="204" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Trash" bezelStyle="rounded" image="trashcanman32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -369,13 +369,6 @@ CA
                                 <connections>
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
-                            </button>
-                            <button toolTip="Open" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="184" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
                             </button>
                             <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
                                 <rect key="frame" x="116" y="1" width="44" height="32"/>
@@ -388,8 +381,8 @@ CA
                                     <action selector="toolbarRename:" target="494" id="6My-yD-mQw"/>
                                 </connections>
                             </button>
-                            <button toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
-                                <rect key="frame" x="150" y="1" width="44" height="32"/>
+                            <button hidden="YES" toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
+                                <rect key="frame" x="349" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Search" bezelStyle="rounded" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -411,7 +404,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Add Folder (F8)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
-                                <rect key="frame" x="330" y="1" width="44" height="32"/>
+                                <rect key="frame" x="306" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" bezelStyle="rounded" image="NewFolderGrey20" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -422,7 +415,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
-                                <rect key="frame" x="262" y="1" width="44" height="32"/>
+                                <rect key="frame" x="238" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Copy" bezelStyle="rounded" image="mancopy32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -433,7 +426,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Move (F7)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="296" y="1" width="44" height="32"/>
+                                <rect key="frame" x="272" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Move" bezelStyle="rounded" image="manmove32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -442,6 +435,13 @@ CA
                                 <connections>
                                     <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
                                 </connections>
+                            </button>
+                            <button toolTip="Open" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                                <rect key="frame" x="160" y="1" width="44" height="32"/>
+                                <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
                             </button>
                         </subviews>
                         <constraints>
