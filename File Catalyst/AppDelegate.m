@@ -147,7 +147,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         //DEBUG CODE ==> homepath = @"/Users/vika/testedir";
 
         if (homepath == nil || [homepath isEqualToString:@""]) {
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
             NSLog(@"Failed to retrieve home folder from NSUserDefaults");
             [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
 #else

@@ -24,7 +24,7 @@ TreeManager *appTreeManager;
 }
 
 -(BOOL) startAccessToURL:(NSURL*)url {
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
     for (TreeBranch *item in self->iArray) {
         if ([item canContainURL: url]) {
             [[item url] startAccessingSecurityScopedResource];
@@ -37,7 +37,7 @@ TreeManager *appTreeManager;
 
 
 -(void) stopAccesses {
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
     for (TreeBranch *item in self->iArray) {
         [[item url] stopAccessingSecurityScopedResource];
     }
@@ -88,7 +88,7 @@ TreeManager *appTreeManager;
                     if (OK) {
                         // answer can now replace item in iArray.
                         @synchronized(self) {
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
                             [[item url] stopAccessingSecurityScopedResource];
 #endif
                             [self->iArray setObject:answer atIndexedSubscript:index];
@@ -103,7 +103,7 @@ TreeManager *appTreeManager;
                 if (OK) {
                     // answer can now replace item in iArray.
                     @synchronized(self) {
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
                         [[item url] stopAccessingSecurityScopedResource];
 #endif
                         [self->iArray removeObjectAtIndex:index];
@@ -126,7 +126,7 @@ TreeManager *appTreeManager;
     }
 
     if (answer!=nil) { //
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
         [[answer url] startAccessingSecurityScopedResource];
 #endif
 
@@ -301,7 +301,7 @@ TreeManager *appTreeManager;
         /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
 
         NSURL *url = [SelectDirectoryDialog URL];
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
         // First check if the Bookmarks already exists, if it doesnt, then it creates it
         if ([[NSUserDefaults standardUserDefaults] boolForKey:@"StoreAllowedURLs"]) {
             if ([self secScopeContainer:url]==nil) {
@@ -379,7 +379,7 @@ TreeManager *appTreeManager;
 - (TreeItem*) sandboxTreeItemFromURL:(NSURL*) url {
     TreeItem *answer = nil;
     NSURL *url_allowed;
-#if (APP_IS_SANDBOXED==YES)
+#if (APP_IS_SANDBOXED==1)
     url_allowed =[self validateURSecurity:url];
 #else
     url_allowed = url;
