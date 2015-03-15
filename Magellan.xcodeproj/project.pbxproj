@@ -63,7 +63,6 @@
 		3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
 		3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
 		3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
-		3C8960211A9A85AD00458013 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C8960201A9A85AD00458013 /* StoreKit.framework */; };
 		3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */; };
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
@@ -180,7 +179,6 @@
 		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
 		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
 		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
-		3C8960201A9A85AD00458013 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		3C8960221A9A9AB700458013 /* Magellan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Magellan.entitlements; sourceTree = "<group>"; };
 		3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemMonitoring.h; path = "File Catalyst/OperationClasses/FileSystemMonitoring.h"; sourceTree = SOURCE_ROOT; };
 		3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileSystemMonitoring.m; path = "File Catalyst/OperationClasses/FileSystemMonitoring.m"; sourceTree = SOURCE_ROOT; };
@@ -246,7 +244,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C8960211A9A85AD00458013 /* StoreKit.framework in Frameworks */,
 				3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */,
 				3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */,
 			);
@@ -344,7 +341,6 @@
 		3CEA674118F87C2F0080C4FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3C8960201A9A85AD00458013 /* StoreKit.framework */,
 				3C20FCC719CB7FAE00826246 /* Automator.framework */,
 				3CEA674218F87C2F0080C4FC /* Cocoa.framework */,
 				3CEA676118F87C2F0080C4FC /* XCTest.framework */,
@@ -572,7 +568,7 @@
 						DevelopmentTeam = 8VR93E5FNL;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.Sandbox = {
 								enabled = 1;
