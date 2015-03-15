@@ -364,7 +364,7 @@ TreeManager *appTreeManager;
         NSString *title = [NSString stringWithFormat:@"Magellan will ask access to Folder\n%@", [url path]];
 
         [alert setMessageText:title];
-        [alert setInformativeText:@"Magellan respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated."];
+        [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated."];
 
         [alert setAlertStyle:NSWarningAlertStyle];
         NSModalResponse reponse = [alert runModal];

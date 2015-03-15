@@ -63,7 +63,6 @@
 		3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
 		3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
 		3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
-		3C8960211A9A85AD00458013 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C8960201A9A85AD00458013 /* StoreKit.framework */; };
 		3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */; };
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
@@ -180,8 +179,7 @@
 		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
 		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
 		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
-		3C8960201A9A85AD00458013 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		3C8960221A9A9AB700458013 /* Magellan.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Magellan.entitlements; sourceTree = "<group>"; };
+		3C8960221A9A9AB700458013 /* Caravelle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Caravelle.entitlements; sourceTree = "<group>"; };
 		3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemMonitoring.h; path = "File Catalyst/OperationClasses/FileSystemMonitoring.h"; sourceTree = SOURCE_ROOT; };
 		3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileSystemMonitoring.m; path = "File Catalyst/OperationClasses/FileSystemMonitoring.m"; sourceTree = SOURCE_ROOT; };
 		3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TreeBranch_TreeBranchPrivate.h; sourceTree = "<group>"; };
@@ -192,23 +190,23 @@
 		3CD788A719D52DEE0042E8B9 /* TreeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeManager.h; sourceTree = "<group>"; };
 		3CD788A819D52DEE0042E8B9 /* TreeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeManager.m; sourceTree = "<group>"; };
 		3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserDefault.plist; sourceTree = "<group>"; };
-		3CEA673F18F87C2F0080C4FC /* Magellan.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Magellan.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CEA673F18F87C2F0080C4FC /* Caravelle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caravelle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA674218F87C2F0080C4FC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		3CEA674518F87C2F0080C4FC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		3CEA674618F87C2F0080C4FC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		3CEA674718F87C2F0080C4FC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		3CEA674A18F87C2F0080C4FC /* Magellan-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Magellan-Info.plist"; sourceTree = "<group>"; };
+		3CEA674A18F87C2F0080C4FC /* Caravelle-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Caravelle-Info.plist"; sourceTree = "<group>"; };
 		3CEA674C18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA674E18F87C2F0080C4FC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		3CEA675018F87C2F0080C4FC /* Magellan-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Magellan-Prefix.pch"; sourceTree = "<group>"; };
+		3CEA675018F87C2F0080C4FC /* Caravelle-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Caravelle-Prefix.pch"; sourceTree = "<group>"; };
 		3CEA675218F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
 		3CEA675418F87C2F0080C4FC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		3CEA675518F87C2F0080C4FC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		3CEA675818F87C2F0080C4FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3CEA675A18F87C2F0080C4FC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		3CEA676018F87C2F0080C4FC /* MagellanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MagellanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3CEA676118F87C2F0080C4FC /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		3CEA676818F87C2F0080C4FC /* MagellanTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MagellanTests-Info.plist"; sourceTree = "<group>"; };
+		3CEA676818F87C2F0080C4FC /* CaravelleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CaravelleTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
 		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
@@ -246,7 +244,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3C8960211A9A85AD00458013 /* StoreKit.framework in Frameworks */,
 				3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */,
 				3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */,
 			);
@@ -324,7 +321,7 @@
 		3CEA673618F87C2F0080C4FC = {
 			isa = PBXGroup;
 			children = (
-				3C8960221A9A9AB700458013 /* Magellan.entitlements */,
+				3C8960221A9A9AB700458013 /* Caravelle.entitlements */,
 				3CEA674818F87C2F0080C4FC /* File Catalyst */,
 				3CEA676618F87C2F0080C4FC /* File CatalystTests */,
 				3CEA674118F87C2F0080C4FC /* Frameworks */,
@@ -335,8 +332,8 @@
 		3CEA674018F87C2F0080C4FC /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA673F18F87C2F0080C4FC /* Magellan.app */,
-				3CEA676018F87C2F0080C4FC /* MagellanTests.xctest */,
+				3CEA673F18F87C2F0080C4FC /* Caravelle.app */,
+				3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -344,7 +341,6 @@
 		3CEA674118F87C2F0080C4FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				3C8960201A9A85AD00458013 /* StoreKit.framework */,
 				3C20FCC719CB7FAE00826246 /* Automator.framework */,
 				3CEA674218F87C2F0080C4FC /* Cocoa.framework */,
 				3CEA676118F87C2F0080C4FC /* XCTest.framework */,
@@ -393,10 +389,10 @@
 		3CEA674918F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA674A18F87C2F0080C4FC /* Magellan-Info.plist */,
+				3CEA674A18F87C2F0080C4FC /* Caravelle-Info.plist */,
 				3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */,
 				3CEA674E18F87C2F0080C4FC /* main.m */,
-				3CEA675018F87C2F0080C4FC /* Magellan-Prefix.pch */,
+				3CEA675018F87C2F0080C4FC /* Caravelle-Prefix.pch */,
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
 				3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */,
@@ -416,7 +412,7 @@
 		3CEA676718F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				3CEA676818F87C2F0080C4FC /* MagellanTests-Info.plist */,
+				3CEA676818F87C2F0080C4FC /* CaravelleTests-Info.plist */,
 				3CEA676918F87C2F0080C4FC /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -524,9 +520,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3CEA673E18F87C2F0080C4FC /* Magellan */ = {
+		3CEA673E18F87C2F0080C4FC /* Caravelle */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Magellan" */;
+			buildConfigurationList = 3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Caravelle" */;
 			buildPhases = (
 				3CEA673B18F87C2F0080C4FC /* Sources */,
 				3CEA673C18F87C2F0080C4FC /* Frameworks */,
@@ -536,14 +532,14 @@
 			);
 			dependencies = (
 			);
-			name = Magellan;
+			name = Caravelle;
 			productName = "File Catalyst";
-			productReference = 3CEA673F18F87C2F0080C4FC /* Magellan.app */;
+			productReference = 3CEA673F18F87C2F0080C4FC /* Caravelle.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3CEA675F18F87C2F0080C4FC /* MagellanTests */ = {
+		3CEA675F18F87C2F0080C4FC /* CaravelleTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "MagellanTests" */;
+			buildConfigurationList = 3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "CaravelleTests" */;
 			buildPhases = (
 				3CEA675C18F87C2F0080C4FC /* Sources */,
 				3CEA675D18F87C2F0080C4FC /* Frameworks */,
@@ -554,9 +550,9 @@
 			dependencies = (
 				3CEA676518F87C2F0080C4FC /* PBXTargetDependency */,
 			);
-			name = MagellanTests;
+			name = CaravelleTests;
 			productName = "File CatalystTests";
-			productReference = 3CEA676018F87C2F0080C4FC /* MagellanTests.xctest */;
+			productReference = 3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -572,10 +568,10 @@
 						DevelopmentTeam = 8VR93E5FNL;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.Sandbox = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};
@@ -584,7 +580,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Magellan" */;
+			buildConfigurationList = 3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Caravelle" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -597,8 +593,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3CEA673E18F87C2F0080C4FC /* Magellan */,
-				3CEA675F18F87C2F0080C4FC /* MagellanTests */,
+				3CEA673E18F87C2F0080C4FC /* Caravelle */,
+				3CEA675F18F87C2F0080C4FC /* CaravelleTests */,
 			);
 		};
 /* End PBXProject section */
@@ -724,7 +720,7 @@
 /* Begin PBXTargetDependency section */
 		3CEA676518F87C2F0080C4FC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 3CEA673E18F87C2F0080C4FC /* Magellan */;
+			target = 3CEA673E18F87C2F0080C4FC /* Caravelle */;
 			targetProxy = 3CEA676418F87C2F0080C4FC /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -839,15 +835,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Magellan.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Caravelle.entitlements;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "File Catalyst/Magellan-Prefix.pch";
-				INFOPLIST_FILE = "File Catalyst/Magellan-Info.plist";
+				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = Magellan;
+				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -857,15 +853,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Magellan.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Caravelle.entitlements;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "File Catalyst/Magellan-Prefix.pch";
-				INFOPLIST_FILE = "File Catalyst/Magellan-Info.plist";
+				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = Magellan;
+				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
@@ -886,8 +882,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "File CatalystTests/MagellanTests-Info.plist";
-				PRODUCT_NAME = MagellanTests;
+				INFOPLIST_FILE = "File CatalystTests/CaravelleTests-Info.plist";
+				PRODUCT_NAME = CaravelleTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -904,8 +900,8 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/File Catalyst-Prefix.pch";
-				INFOPLIST_FILE = "File CatalystTests/MagellanTests-Info.plist";
-				PRODUCT_NAME = MagellanTests;
+				INFOPLIST_FILE = "File CatalystTests/CaravelleTests-Info.plist";
+				PRODUCT_NAME = CaravelleTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -914,7 +910,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Magellan" */ = {
+		3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Caravelle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA676E18F87C2F0080C4FC /* Debug */,
@@ -923,7 +919,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Magellan" */ = {
+		3CEA677018F87C2F0080C4FC /* Build configuration list for PBXNativeTarget "Caravelle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA677118F87C2F0080C4FC /* Debug */,
@@ -932,7 +928,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "MagellanTests" */ = {
+		3CEA677318F87C300080C4FC /* Build configuration list for PBXNativeTarget "CaravelleTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3CEA677418F87C300080C4FC /* Debug */,

@@ -1352,7 +1352,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     NSString *statusText;
     id selView = [theNotification object];
     // Updates the window Title
-    NSArray *titleComponents = [NSArray arrayWithObjects:@"Magellan",
+    NSArray *titleComponents = [NSArray arrayWithObjects:@"Caravelle",
                                 [myLeftView title],
                                 [myRightView title], nil];
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
