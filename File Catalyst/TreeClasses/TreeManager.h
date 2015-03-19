@@ -14,7 +14,8 @@ extern NSString *notificationRefreshViews;
 
 
 @interface TreeManager : NSObject {
-    NSMutableArray *iArray;
+    NSMutableArray *iArray;                 // Used to store the root paths
+    NSMutableArray *authorizedURLs;        // Used to store the authorized URL bookmarks
     FileSystemMonitoring *FSMonitorThread;
 }
 

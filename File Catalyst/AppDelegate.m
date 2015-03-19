@@ -133,44 +133,63 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Change the selected view to go Home in Browser Mode
     if ([view isKindOfClass:[BrowserController class]]) {
         NSString *homepath;
+        NSURL *url;
         if (view == myLeftView) {
             // Get from User Parameters
-            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:@"BrowserLeftHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:USER_DEF_LEFT_HOME];
         }
         else if (view == myRightView) {
-            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:@"BrowserRightHomeDir"];
+            homepath = [[NSUserDefaults standardUserDefaults] stringForKey:USER_DEF_RIGHT_HOME];
             if (homepath == nil || [homepath isEqualToString:@""]) {
                 // if there is no path assigned, just use the one of the left
                 homepath = [[myLeftView treeNodeSelected] path];
             }
         }
-        //DEBUG CODE ==> homepath = @"/Users/vika/testedir";
 
-        if (homepath == nil || [homepath isEqualToString:@""]) {
+        // Check whether the url is authorized
 #if (APP_IS_SANDBOXED==1)
-            NSLog(@"Failed to retrieve home folder from NSUserDefaults");
-            [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
-#else
-            homepath = NSHomeDirectory();
-            NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
-            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
-            [(BrowserController*)view removeAll];
-            [(BrowserController*)view setViewMode:BViewBrowserMode];
-            [(BrowserController*)view addTreeRoot: item];
-            [(BrowserController*)view selectFirstRoot];
-            [(BrowserController*)view refresh];
 
-#endif
+        // there is a stored homepath
+        if (homepath != nil && ![homepath isEqualToString:@""]) {
+            url = [NSURL fileURLWithPath:homepath isDirectory:YES];
+            NSURL *url_allowed = [(TreeManager*)appTreeManager secScopeContainer:url];
+
+            // and this homepath is authorized
+            if (url_allowed!=nil) {
+                id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed];
+                [(BrowserController*)view removeAll];
+                [(BrowserController*)view setViewMode:BViewBrowserMode];
+                [(BrowserController*)view addTreeRoot: item];
+                [(BrowserController*)view selectFirstRoot];
+                [(BrowserController*)view refresh];
+                return;
+            }
+            else {
+                NSLog(@"No authorization to access: %@", homepath);
+            }
         }
         else {
-            NSURL *url = [NSURL fileURLWithPath:homepath isDirectory:YES];
-            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
-            [(BrowserController*)view removeAll];
-            [(BrowserController*)view setViewMode:BViewBrowserMode];
-            [(BrowserController*)view addTreeRoot: item];
-            [(BrowserController*)view selectFirstRoot];
-            [(BrowserController*)view refresh];
+            NSLog(@"Failed to retrieve home folder from NSUserDefaults");
         }
+
+        [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
+
+
+#else
+        if (homepath == nil || [homepath isEqualToString:@""]) {
+            NSLog(@"Failed to retrieve home folder from NSUserDefaults. Using Home Directory");
+            homepath = NSHomeDirectory();
+        }
+
+        url = [NSURL fileURLWithPath:homepath isDirectory:YES];
+        id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+        [(BrowserController*)view removeAll];
+        [(BrowserController*)view setViewMode:BViewBrowserMode];
+        [(BrowserController*)view addTreeRoot: item];
+        [(BrowserController*)view selectFirstRoot];
+        [(BrowserController*)view refresh];
+#endif
+
     }
 }
 
@@ -205,8 +224,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     /* Now setting notifications */
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     // Insert code here to initialize your application
-    myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
 
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
 	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
@@ -226,16 +243,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // register self as the the Delegate for the main window
     [_myWindow setDelegate:self];
 
-    [myLeftView setFoldersDisplayed:
-     [[NSUserDefaults standardUserDefaults] boolForKey:@"BrowserLeftDisplayFoldersInTable"]];
-    [myRightView setFoldersDisplayed:
-     [[NSUserDefaults standardUserDefaults] boolForKey:@"BrowserRightDisplayFoldersInTable"] ];
-    [myLeftView setTwinName:@"Right"];
-    [myRightView setTwinName:@"Left"];
-
-    [_ContentSplitView addSubview:myLeftView.view];
-    [_ContentSplitView addSubview:myRightView.view];
-
     /* Registering for receiving services */
     NSArray *sendTypes = [NSArray arrayWithObjects:NSURLPboardType,
                           NSFilenamesPboardType, nil];
@@ -244,6 +251,22 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [NSApp registerServicesMenuSendTypes:sendTypes
                              returnTypes:returnTypes];
 
+    myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+
+    [myLeftView setFoldersDisplayed:
+     [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_FOLDERS_ON_TABLE]];
+    [myRightView setFoldersDisplayed:
+     [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
+    [myLeftView setTwinName:@"Right"];
+    [myRightView setTwinName:@"Left"];
+
+    [_ContentSplitView addSubview:myLeftView.view];
+    [_ContentSplitView addSubview:myRightView.view];
+    //NSDictionary *viewsDictionary = [NSDictionary dictionaryWithObject:myLeftView.view forKey:@"myLeftView"];
+    //NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-0-[myLeftView]-0-|"
+    //                                                               options:0 metrics:nil views:viewsDictionary];
+    //[myLeftView.view addConstraints:constraints];
 
     // Left Side
     [self goHome: myLeftView]; // Display the User Preferences Left Home
@@ -326,12 +349,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     if (fromWindowClosing) {
         // Force a store of the User Defaults
-        [[NSUserDefaults standardUserDefaults] setObject:[[myLeftView treeNodeSelected] path] forKey:@"BrowserLeftHomeDir"];
-        [[NSUserDefaults standardUserDefaults] setObject:[[myRightView treeNodeSelected] path] forKey:@"BrowserRightHomeDir"];
-        if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:@"StoreAllowedURLs"]) {
-            // Delete eventually stored bookmarks
-            [[NSUserDefaults standardUserDefaults] setObject:[NSArray array] forKey:@"SecurityScopeBookmarks"];
-        }
+        NSString *homepath = [[myLeftView treeNodeSelected] path];
+        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
+        homepath = [[myRightView treeNodeSelected] path];
+        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
         BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
         if (!OK)
             NSLog(@"AppDelegate.shouldTerminate: Failed to store User Defaults");
@@ -617,18 +638,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [(BrowserController*)view addTreeRoot: item];
                 [(BrowserController*)view selectFirstRoot];
                 [(BrowserController*)view refresh];
-
-//
-//                // Register new default
-//                NSString *homepath = [url path];
-//                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-//                if (view == myLeftView) {
-//                    // Get from User Parameters
-//                    [defaults setObject:homepath forKey:@"BrowserLeftHomeDir"];
-//                }
-//                else if (view == myRightView) {
-//                    [defaults setObject: homepath forKey:@"BrowserRightHomeDir"];
-//                }
 
             }
         }

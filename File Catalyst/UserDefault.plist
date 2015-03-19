@@ -23,7 +23,7 @@
 	</dict>
 	<key>BrowseAppsAsFolder</key>
 	<false/>
-	<key>BrowseAHiddenFiles</key>
+	<key>BrowseHiddenFiles</key>
 	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>

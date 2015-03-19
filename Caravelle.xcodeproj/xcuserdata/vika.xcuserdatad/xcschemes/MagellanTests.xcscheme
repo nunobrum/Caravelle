@@ -9,14 +9,14 @@
          <BuildActionEntry
             buildForTesting = "YES"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-               BuildableName = "Magellan.app"
-               BlueprintName = "Magellan"
+               BlueprintIdentifier = "3CEA675F18F87C2F0080C4FC"
+               BuildableName = "MagellanTests.xctest"
+               BlueprintName = "MagellanTests"
                ReferencedContainer = "container:Magellan.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,13 +28,23 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3CEA675F18F87C2F0080C4FC"
+               BuildableName = "MagellanTests.xctest"
+               BlueprintName = "MagellanTests"
+               ReferencedContainer = "container:Magellan.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Magellan.app"
-            BlueprintName = "Magellan"
+            BlueprintIdentifier = "3CEA675F18F87C2F0080C4FC"
+            BuildableName = "MagellanTests.xctest"
+            BlueprintName = "MagellanTests"
             ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -48,16 +58,15 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Magellan.app"
-            BlueprintName = "Magellan"
+            BlueprintIdentifier = "3CEA675F18F87C2F0080C4FC"
+            BuildableName = "MagellanTests.xctest"
+            BlueprintName = "MagellanTests"
             ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -67,16 +76,15 @@
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3CEA673E18F87C2F0080C4FC"
-            BuildableName = "Magellan.app"
-            BlueprintName = "Magellan"
+            BlueprintIdentifier = "3CEA675F18F87C2F0080C4FC"
+            BuildableName = "MagellanTests.xctest"
+            BlueprintName = "MagellanTests"
             ReferencedContainer = "container:Magellan.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

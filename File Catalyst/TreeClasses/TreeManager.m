@@ -302,9 +302,13 @@ TreeManager *appTreeManager;
 
         NSURL *url = [SelectDirectoryDialog URL];
 #if (APP_IS_SANDBOXED==1)
-        // First check if the Bookmarks already exists, if it doesnt, then it creates it
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:@"StoreAllowedURLs"]) {
-            if ([self secScopeContainer:url]==nil) {
+        // Verify if the URL is already on the list
+        if ([self secScopeContainer:url]==nil) {
+            // it isnt on the list, going to add it
+            [self->authorizedURLs addObject:url];
+
+            // First check if the Bookmarks already exists, if it doesnt, then it creates it
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_STORE_BOOKMARKS]) {
                 NSError *error;
                 // Store the Bookmark for another Application Launch
                 NSData *bookmark = [url bookmarkDataWithOptions:NSURLBookmarkCreationWithSecurityScope
@@ -313,10 +317,10 @@ TreeManager *appTreeManager;
                 if (error==nil) {
                     // Add the the User Defaults
                     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-                    NSArray *secScopeBookmarks = [defaults arrayForKey:@"SecurityScopeBookmarks"];
+                    NSArray *secScopeBookmarks = [defaults arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
                     NSMutableArray *updtSecScopeBookmarks =[NSMutableArray arrayWithArray:secScopeBookmarks];
                     [updtSecScopeBookmarks addObject:bookmark];
-                    [defaults setObject:updtSecScopeBookmarks forKey:@"SecurityScopeBookmarks"];
+                    [defaults setObject:updtSecScopeBookmarks forKey:USER_DEF_SECURITY_BOOKMARKS];
                     [defaults synchronize];
                 }
             }
@@ -328,28 +332,39 @@ TreeManager *appTreeManager;
     return nil;
 }
 
-- (NSURL*) secScopeContainer:(NSURL*) url {
-    NSURL *url_accessible = nil;
-    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:@"SecurityScopeBookmarks"];
 
-    // Retrieve allowed URLs
-    for (NSData *bookmark in secBookmarks) {
-        BOOL dataStalled;
-        NSError *error;
-        NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
-                                                      options:NSURLBookmarkResolutionWithSecurityScope
-                                                relativeToURL:nil
-                                          bookmarkDataIsStale:&dataStalled
-                                                        error:&error];
-        if (error==nil && dataStalled==NO) {
-            enumPathCompare compare = url_relation(allowedURL, url);
-            if (compare==pathIsChild || compare == pathIsSame) {
-                url_accessible = allowedURL;
-                break;
+// This selector verifies if an URL is authorized or not, if yes, it returns a security approved version of it
+// otherwise it returns nil
+- (NSURL*) secScopeContainer:(NSURL*) url {
+    // First check if the allowedURLs is already loaded
+    if (self->authorizedURLs==nil) {
+        // load it from the NS User Defaults
+        NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
+        self->authorizedURLs = [NSMutableArray arrayWithCapacity:[secBookmarks count]];
+
+        // Retrieve allowed URLs
+        for (NSData *bookmark in secBookmarks) {
+            BOOL dataStalled;
+            NSError *error;
+            NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
+                                                          options:NSURLBookmarkResolutionWithSecurityScope
+                                                    relativeToURL:nil
+                                              bookmarkDataIsStale:&dataStalled
+                                                            error:&error];
+            if (error==nil && dataStalled==NO) {
+                [self->authorizedURLs addObject:allowedURL]; // Store it for future use
             }
         }
     }
-    return url_accessible;
+    else {
+        for (NSURL *allowedURL in self->authorizedURLs) {
+            enumPathCompare compare = url_relation(allowedURL, url);
+            if (compare==pathIsChild || compare == pathIsSame) {
+                return  allowedURL;
+            }
+        }
+    }
+    return nil;
 }
 
 -(NSURL*) validateURSecurity:(NSURL*) url {

@@ -41,13 +41,25 @@ extern const CFStringRef kTreeItemDropUTI;
 #endif
 
 
-#define APP_IS_SANDBOXED 0
+#define APP_IS_SANDBOXED 1
 
 
 //#define COL_ID_KEY @"ID"
 #define COL_ACCESSOR_KEY @"accessor"
 #define COL_TITLE_KEY @"title"
 #define COL_TRANS_KEY @"transformer" 
+
+
+// User Definitions
+#define USER_DEF_LEFT_HOME @"BrowserLeftHomeDir"
+#define USER_DEF_LEFT_FOLDERS_ON_TABLE @"BrowserLeftDisplayFoldersInTable"
+#define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
+#define USER_DEF_RIGHT_FOLDERS_ON_TABLE @"BrowserRightDisplayFoldersInTable"
+#define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
+#define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
+#define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
+#define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
+#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used. Why ?
 
 
 // Used to check where is the focus of the window for the contextual selection

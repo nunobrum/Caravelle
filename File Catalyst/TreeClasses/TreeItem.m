@@ -41,7 +41,7 @@
                 if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
                     //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
                     [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-                    BOOL appsAsFolders =[[NSUserDefaults standardUserDefaults] boolForKey:@"BrowseAppsAsFolder"];
+                    BOOL appsAsFolders =[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS];
                     if (appsAsFolders) {
                         return [[TreeBranch alloc] initWithURL:url parent:parent];
                     }
