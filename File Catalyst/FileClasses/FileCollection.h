@@ -1,6 +1,6 @@
 //
 //  FileCollection.h
-//  Magellan
+//  Caravelle
 
 //
 //  Created by Nuno Brum on 12/28/12.

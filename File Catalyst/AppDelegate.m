@@ -1,6 +1,6 @@
 //
 //  AppDelegate.m
-//  Magellan
+//  Caravelle
 //
 //  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
@@ -165,11 +165,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 return;
             }
             else {
-                NSLog(@"No authorization to access: %@", homepath);
+                NSLog(@"AppDelegate.goHome: No authorization to access: %@", homepath);
             }
         }
         else {
-            NSLog(@"Failed to retrieve home folder from NSUserDefaults");
+            NSLog(@"AppDelegate.goHome:Failed to retrieve home folder from NSUserDefaults");
         }
 
         [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
@@ -845,6 +845,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 #pragma mark Action Outlets
 
+
 - (IBAction)updateSelected:(id)sender {
     if (sender == myLeftView || sender == myRightView)
         _selectedView = sender;
@@ -1062,7 +1063,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
         theAction == @selector(toolbarGrouping:) ||
-        theAction == @selector(toolbarGotoFolder:)
+        theAction == @selector(toolbarGotoFolder:) ||
+        theAction == @selector(orderPreferencePanel:)
         ) {
         return YES;
     }

@@ -32,6 +32,6 @@
 	<key>BrowserRightDisplayFoldersInTable</key>
 	<true/>
 	<key>StoreAllowedURLs</key>
-	<false/>
+	<true/>
 </dict>
 </plist>

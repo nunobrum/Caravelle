@@ -816,7 +816,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 /* Called from the pop up button.  */
 - (IBAction) ChooseDirectory:(id)sender {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
     [NSApp sendAction:@selector(contextualGotoFolder:) to:nil from:self];
+#pragma clang diagnostic pop
+
 }
 
 // This selector is invoked when the file was renamed or a New File was created
@@ -1394,13 +1398,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setTwinName:(NSString *)twinName {
     self->_twinName = twinName;
     if (twinName==nil) { // there is no twin view
-        _contextualToMenusEnabled = [NSNumber numberWithBool:NO];
+        self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
         [[self myTableView] setAutosaveName:@"SingleTable"];
     }
     else {
         _titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
         _titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
-        _contextualToMenusEnabled = [NSNumber numberWithBool:YES];
+        self.contextualToMenusEnabled = [NSNumber numberWithBool:YES];
 
         // Setting the AutoSave Settings
         [[self myTableView] setAutosaveName:[twinName stringByAppendingString:@"Table"]];

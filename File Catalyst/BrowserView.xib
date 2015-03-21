@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="13F34" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1066" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
@@ -110,11 +110,11 @@
                             <subviews>
                                 <scrollView autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
                                     <rect key="frame" x="0.0" y="0.0" width="160" height="563"/>
-                                    <clipView key="contentView" id="Y6z-1n-4Bv">
+                                    <clipView key="contentView" horizontalHuggingPriority="50" horizontalCompressionResistancePriority="50" id="Y6z-1n-4Bv">
                                         <rect key="frame" x="1" y="17" width="157" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <outlineView verticalHuggingPriority="750" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
+                                            <outlineView horizontalHuggingPriority="50" verticalHuggingPriority="750" horizontalCompressionResistancePriority="50" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="infinite" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -264,11 +264,11 @@
                             <subviews>
                                 <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G6N-YM-Dnh">
                                     <rect key="frame" x="0.0" y="0.0" width="259" height="563"/>
-                                    <clipView key="contentView" id="HVr-2d-ABM">
+                                    <clipView key="contentView" horizontalHuggingPriority="51" horizontalCompressionResistancePriority="51" id="HVr-2d-ABM">
                                         <rect key="frame" x="1" y="17" width="256" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1" customClass="BrowserTableView">
+                                            <tableView horizontalHuggingPriority="60" verticalHuggingPriority="750" horizontalCompressionResistancePriority="60" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" autosaveColumns="NO" rowSizeStyle="automatic" headerView="HEQ-AN-lOF" viewBased="YES" id="rV7-ue-1E1" customClass="BrowserTableView">
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
