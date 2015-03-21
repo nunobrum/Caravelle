@@ -356,12 +356,10 @@ TreeManager *appTreeManager;
             }
         }
     }
-    else {
-        for (NSURL *allowedURL in self->authorizedURLs) {
-            enumPathCompare compare = url_relation(allowedURL, url);
-            if (compare==pathIsChild || compare == pathIsSame) {
-                return  allowedURL;
-            }
+    for (NSURL *allowedURL in self->authorizedURLs) {
+        enumPathCompare compare = url_relation(allowedURL, url);
+        if (compare==pathIsChild || compare == pathIsSame) {
+            return  allowedURL;
         }
     }
     return nil;
@@ -376,7 +374,7 @@ TreeManager *appTreeManager;
         [alert addButtonWithTitle:@"Proceed"];
         [alert addButtonWithTitle:@"Cancel"];
 
-        NSString *title = [NSString stringWithFormat:@"Magellan will ask access to Folder\n%@", [url path]];
+        NSString *title = [NSString stringWithFormat:@"Caravelle will ask access to Folder\n%@", [url path]];
 
         [alert setMessageText:title];
         [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated."];
