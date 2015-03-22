@@ -137,6 +137,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;
 
+-(id) focusedView;
 -(NSArray*) getSelectedItems;
 -(NSArray*) getSelectedItemsForContextMenu;
 -(TreeItem*) getLastClickedItem;

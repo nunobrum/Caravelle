@@ -275,6 +275,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     // Make a default focus
     self->_selectedView = myLeftView;
+    [self.myWindow makeFirstResponder:myLeftView.myTableView];
     // TODO:!!! Set the Left view as first responder
 }
 

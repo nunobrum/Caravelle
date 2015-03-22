@@ -369,6 +369,7 @@ TreeManager *appTreeManager;
     NSURL *url_allowed =[self secScopeContainer:url];
     // checks if part of the allowed urls
     if (url_allowed==nil) {
+#ifdef BEFORE_POWERBOX_ALERT
         // if fails then will open it with a Powerbox
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"Proceed"];
@@ -385,6 +386,21 @@ TreeManager *appTreeManager;
             title = [NSString stringWithFormat:@"Please grant access to Folder %@", [url path]];
             url_allowed = [self powerboxOpenFolderWithTitle:title];
         }
+#else
+        NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", [url path]];
+        url_allowed = [self powerboxOpenFolderWithTitle:title];
+#endif
+#ifdef AFTER_POWERBOX_INFORMATION
+        // TODO:!! Make this a information with a checkbox to skip future messages
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert addButtonWithTitle:@"OK"];
+
+        [alert setMessageText:@"Information"];
+        [alert setInformativeText:@"Authorizations given to Caravelle can be revoked in the User Preferences Menu."];
+        [alert setAlertStyle:NSInformationalAlertStyle];
+        [alert runModal];
+
+#endif
     }
     return url_allowed;
 }

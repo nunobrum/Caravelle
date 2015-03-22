@@ -38,7 +38,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 @interface BrowserController () {
-    NSTableView *_focusedView; // Contains the currently selected view
+    id _focusedView; // Contains the currently selected view
     NSMutableArray *tableData;
     NSSortDescriptor *TableSortDesc;
     NSMutableArray *_observedVisibleItems;
@@ -1320,21 +1320,33 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)keyDown:(NSEvent *)theEvent {
     // Get the origin
-
-    // Per hypothesis its commming from the TableView
-    // For the time being We are not resending it from no where else
-
     if ([[theEvent characters] isEqualToString:@"\r"]) {
         // The Return key will open the file
-        [self TableDoubleClickEvent:theEvent];
+        if (self.focusedView == _myTableView) {
+            [self TableDoubleClickEvent:theEvent];
+        }
+        else if (self.focusedView == _myOutlineView) {
+            [self OutlineDoubleClickEvent:theEvent];
+        }
     }
     else if ([[theEvent characters] isEqualToString:@"\t"]) {
-        // TODO:! Option Cursor to change side
+        if (self.focusedView == _myTableView) {
+            // TODO:! Option Cursor to change side
+            [self.view.window makeFirstResponder:_myOutlineView];
+        }
+        else {
+            [self.view.window makeFirstResponder:_myTableView];
+            _focusedView = _myTableView;
+            if ([[_myTableView selectedRowIndexes] count]==0) {
+                [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+            }
+        }
         // the tab key will switch Panes
 
     }
     else if ([[theEvent characters] isEqualToString:@" "]) {
         // the Space Key will mark the file
+        // TODO:!!the Space Key will mark the file
 
     }
 }
@@ -1648,9 +1660,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+-(id) focusedView {
+    // Get the first responder view
+    id responderView = [self.view.window firstResponder];
+
+    // Check whether is one of the accepted views
+    if (responderView==_myOutlineView) {
+        _focusedView = _myOutlineView;
+    }
+    else if (responderView == _myTableView) {
+        _focusedView = _myTableView;
+    }
+    return _focusedView;
+}
+
 -(NSArray*) getSelectedItems {
     NSArray* answer = nil;
-    if (_focusedView==_myOutlineView) {
+    if (self.focusedView==_myOutlineView) {
         /* This is done like this so that not more than one folder is selected */
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
         if ([rowsSelected count]) {
@@ -1660,7 +1686,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             answer = [[NSArray alloc] init]; // will send an empty array
         }
     }
-    else if (_focusedView == _myTableView) {
+    else if (self.focusedView == _myTableView) {
         NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
         answer = [tableData objectsAtIndexes:rowsSelected];
     }
@@ -1677,7 +1703,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSLog(@"Clicked Row (%ld)-(%ld)\nRightClick (%ld)-(%ld)", outlineClickedRow, tableClickedRow, outlineRightClickedRow, tableRightClickedRow);*/
 
     // The condition below is used to detect which table view is selected. 
-    if (_focusedView == _myOutlineView) {
+    if (self.focusedView == _myOutlineView) {
         if ([_myOutlineView clickedRow]==-1)
             answer = nil; // Not going to process this case
         else{
@@ -1685,7 +1711,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
 
     }
-    else if (_focusedView == _myTableView) {
+    else if (self.focusedView == _myTableView) {
         // if the click was outside the items displayed
         if ([_myTableView clickedRow] == -1 ) {
             // it returns nothing
@@ -1705,7 +1731,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(TreeItem*) getLastClickedItem {
-    if (_focusedView==_myOutlineView) {
+    if (self.focusedView==_myOutlineView) {
         NSInteger row = [_myOutlineView clickedRow];
         if (row >=0) {
             // Returns the current selected item
@@ -1861,7 +1887,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
     // TODO: when the focused view is the treeOutline
-    if (_focusedView==_myTableView) {
+    if (self.focusedView==_myTableView) {
         NSUInteger row = [tableData indexOfObject:item];
         if (row!=NSNotFound) {
             NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME];
@@ -1882,11 +1908,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 -(void) insertItem:(id)item  {
     NSInteger row = [tableData count];
-    if (_focusedView == _myOutlineView) {
+    if (self.focusedView == _myOutlineView) {
         // Will change to the table view and make the edit there.
         _focusedView = _myTableView;
     }
-    if (_focusedView==_myTableView) {
+    if (self.focusedView==_myTableView) {
         NSIndexSet *selection = [_myTableView selectedRowIndexes];
         if ([selection count]>0) {
             // Will insert a row on the bottom of the selection.

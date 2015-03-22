@@ -43,7 +43,11 @@ extern const CFStringRef kTreeItemDropUTI;
 
 #define APP_IS_SANDBOXED 1
 
+#if (APP_IS_SANDBOXED==1)
 
+#define AFTER_POWERBOX_INFORMATION 1
+
+#endif
 //#define COL_ID_KEY @"ID"
 #define COL_ACCESSOR_KEY @"accessor"
 #define COL_TITLE_KEY @"title"

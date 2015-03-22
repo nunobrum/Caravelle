@@ -30,6 +30,22 @@
     [super rightMouseDown:theEvent];
 }
 
+- (void)keyDown:(NSEvent *)theEvent {
+    //NSLog(@"KD: code:%@",[theEvent characters]);
+    if ([[theEvent characters] isEqualToString:@"\r"] || // The Return key will open the file
+        [[theEvent characters] isEqualToString:@"\t"] || // the tab key will switch Panes
+        [[theEvent characters] isEqualToString:@" "]) {  // The space will mark the file
+        [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
+    }
+
+    // perform nextView
+
+    else {
+        // propagate to super
+        [super keyDown:theEvent];
+    }
+}
+
 
 /* The menu handling is forwarded to the Delegate. 
    For the contextual Menus the selection is different, than for the application */
