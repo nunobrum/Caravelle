@@ -78,3 +78,55 @@ DateToStringTransformer *DateToDayTransformer() {
 }
 
 @end
+
+@implementation BookmarkToPathTransformer
+
++ (Class)transformedValueClass {
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+    return NO;
+}
+
+//
+// Transforms URL bookmarks into visible paths to display in the User Definitions
+- (id)transformedValue:(id)value {
+    if ([value isKindOfClass:[NSData class] ]) {
+        BOOL dataStalled;
+        NSError *error;
+        NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:value
+                                                      options:NSURLBookmarkResolutionWithSecurityScope
+                                                relativeToURL:nil
+                                          bookmarkDataIsStale:&dataStalled
+                                                        error:&error];
+        if (error==nil && dataStalled==NO) {
+            return [allowedURL path];
+        }
+    }
+    else if ([value isKindOfClass:[NSArray class]]) {
+        NSMutableArray *result = [NSMutableArray arrayWithCapacity:[value count]];
+        for (id bookmark in value) {
+            if ([bookmark isKindOfClass:[NSData class] ]) {
+                BOOL dataStalled;
+                NSError *error;
+                NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
+                                                              options:NSURLBookmarkResolutionWithSecurityScope
+                                                        relativeToURL:nil
+                                                  bookmarkDataIsStale:&dataStalled
+                                                                error:&error];
+                if (error==nil && dataStalled==NO) {
+                    [result addObject: [allowedURL path]];
+                }
+                else {
+                    [result addObject:@"unrecognized authorization token"];
+                }
+            }
+        }
+        return result;
+    }
+    return nil;
+}
+
+
+@end
