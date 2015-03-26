@@ -31,14 +31,22 @@
 
 - (void)keyDown:(NSEvent *)theEvent {
     //NSLog(@"KD: code:%@",[theEvent characters]);
-    if ([[theEvent characters] isEqualToString:@"\r"] || // The Return key will open the file
-        [[theEvent characters] isEqualToString:@"\t"] || // the tab key will switch Panes
-        [[theEvent characters] isEqualToString:@" "]) {  // The space will mark the file
-        [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
-    }
 
-        // perform nextView
-    
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+
+    if (behave == APP_BEHAVIOUR_MULTIPLATFORM &&
+        ([[theEvent characters] isEqualToString:@"\r"] || // The Return key will open the file
+         [[theEvent characters] isEqualToString:@"\t"] || // the tab key will switch Panes
+         [[theEvent characters] isEqualToString:@" "])) {  // The space will mark the file
+            [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
+        }
+    else if (behave == APP_BEHAVIOUR_NATIVE &&
+             ([[theEvent characters] isEqualToString:@" "] || // The Space will open the file
+              [[theEvent characters] isEqualToString:@"\t"])) { // the tab key will move to next file
+                 [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
+             }
+
+    // perform nextView
     else {
         // propagate to super
         [super keyDown:theEvent];

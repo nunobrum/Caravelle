@@ -169,8 +169,8 @@
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QH9-YL-ESl">
-                                <rect key="frame" x="213" y="86" width="41" height="17"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Select" id="7iK-QI-L8L">
+                                <rect key="frame" x="213" y="86" width="36" height="17"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Mark" id="7iK-QI-L8L">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -270,6 +270,9 @@
                             </buttonCell>
                         </column>
                     </cells>
+                    <connections>
+                        <binding destination="UJJ-hI-XTA" name="selectedIndex" keyPath="values.ApplicationBehaviour" id="84h-MU-E3r"/>
+                    </connections>
                 </matrix>
             </subviews>
             <constraints>

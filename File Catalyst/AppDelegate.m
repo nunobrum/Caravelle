@@ -739,7 +739,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
     [[self selectedView] refreshTableViewKeepingSelections];
     [self executeCopy:selectedFiles onlyNames:NO];
-    isCutPending = YES;
+    isCutPending = YES; // This instruction has to be always made after the executeCopy
 }
 
 
@@ -763,7 +763,12 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Get The clipboard
     NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
     [clipboard clearContents];
-    
+    [clipboard declareTypes:[NSArray arrayWithObjects:
+                                    NSURLPboardType,
+                                    NSFilenamesPboardType,
+                                    // NSFileContentsPboardType, not passing file contents
+                                    NSStringPboardType, nil]
+                      owner:nil];
 
     if (onlyNames==YES) {
         NSArray* str_representation = [items valueForKeyPath:@"@unionOfObjects.name"];

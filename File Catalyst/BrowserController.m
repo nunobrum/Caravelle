@@ -53,6 +53,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
+    NSMutableIndexSet *extendedSelection;
 }
 
 @end
@@ -64,6 +65,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     self->BaseDirectoriesArray = [[NSMutableArray new] init];
+    self->extendedSelection = nil; // Used in the extended selection mode
     self->_focusedView = nil;
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -365,6 +367,21 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return [tableData count];
 }
 
+//- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
+//    NSTableRowView *rowView = [[NSTableRowView alloc] init];
+//    id objectValue = [tableData objectAtIndex:row];
+//    if ([objectValue isKindOfClass:[TreeItem class]]) {
+//        TreeItem *theFile = objectValue;
+//        if ([theFile hasTags:tagTreeItemMarked]) {
+//            [rowView setBackgroundColor:[NSColor selectedTextBackgroundColor]];
+//        }
+//        else {
+//            [rowView setBackgroundColor:[NSColor textBackgroundColor]];
+//        }
+//    }
+//    return rowView;
+//}
+
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     id objectValue = [tableData objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
@@ -372,12 +389,20 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     NSTableCellView *cellView = nil;
 
-    if ([identifier isEqualToString:COL_FILENAME]) {
-        // We pass us as the owner so we can setup target/actions into this main controller object
-        cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
-        [cellView setObjectValue:objectValue];
-        if ([objectValue isKindOfClass:[TreeItem class]]) {
-            TreeItem *theFile = objectValue;
+    if ([objectValue isKindOfClass:[TreeItem class]]) {
+        TreeItem *theFile = objectValue;
+        NSColor *foreground;
+        if ([theFile hasTags:tagTreeItemMarked]) {
+            foreground = [NSColor redColor];
+        }
+        else {
+            foreground = [NSColor textColor];
+        }
+
+        if ([identifier isEqualToString:COL_FILENAME]) {
+            // We pass us as the owner so we can setup target/actions into this main controller object
+            cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
+            [cellView setObjectValue:objectValue];
 
             // If it's a new file, then assume a default ICON
             if ([theFile hasTags:tagTreeItemNew]) {
@@ -388,18 +413,22 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 else
                     cellView.imageView.objectValue = [NSImage imageNamed:@"GenericDocumentIcon"];
             }
-            
+
             else  {
                 NSString *path = [[theFile url] path];
                 if (path) {
                     // Then setup properties on the cellView based on the column
                     cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
                     cellView.imageView.objectValue = [theFile image];
+
+                    // Setting the color
                     if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
                         [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
                     }
                     else {
-                        [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+                        // Set color back to normal
+                        [cellView.textField setTextColor:foreground];
+
                     }
                 }
                 else {
@@ -408,9 +437,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
             }
         }
-    }
-    else { // All other cases are handled here
-        if ([objectValue isKindOfClass:[TreeItem class]]) {
+
+        else { // All other cases are handled here
 
             // We pass us as the owner so we can setup target/actions into this main controller object
             cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
@@ -501,9 +529,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
  * Table Data View Delegate Protocol
  */
 
-
-
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
+
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
         _focusedView = _myTableView;
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[aNotification userInfo]];
@@ -964,6 +991,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
+    NSDragOperation  supportedMask = NSDragOperationNone;
     NSArray *ptypes;
     NSUInteger modifiers = [NSEvent modifierFlags];
 
@@ -972,20 +1000,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     ptypes =[pboard types];
 
     /* Limit the options in function of the dropped Element */
+    // TODO: !!!! Investigate if this is correct. The sourceDragMask should be an or of all the possiblities, and not the only first one.
     if ( [ptypes containsObject:NSFilenamesPboardType] ) {
-        sourceDragMask &= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+    }
+    if ( [ptypes containsObject:(id)NSURLPboardType] ) {
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
     }
     else if ( [ptypes containsObject:(id)kUTTypeFileURL] ) {
-        sourceDragMask &= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
     }
 #ifdef USE_UTI
     else if ( [ptypes containsObject:(id)kTreeItemDropUTI] ) {
-        sourceDragMask &= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+        suportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
     }
 #endif
-    else {
-        sourceDragMask = NSDragOperationNone;
-    }
+
+    sourceDragMask &= supportedMask; // The offered types and the supported types.
+
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
@@ -1320,34 +1352,73 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)keyDown:(NSEvent *)theEvent {
     // Get the origin
-    if ([[theEvent characters] isEqualToString:@"\r"]) {
-        // The Return key will open the file
-        if (self.focusedView == _myTableView) {
-            [self TableDoubleClickEvent:theEvent];
-        }
-        else if (self.focusedView == _myOutlineView) {
-            [self OutlineDoubleClickEvent:theEvent];
-        }
-    }
-    else if ([[theEvent characters] isEqualToString:@"\t"]) {
-        if (self.focusedView == _myTableView) {
-            // TODO:! Option Cursor to change side
-            [self.view.window makeFirstResponder:_myOutlineView];
-        }
-        else {
-            [self.view.window makeFirstResponder:_myTableView];
-            _focusedView = _myTableView;
-            if ([[_myTableView selectedRowIndexes] count]==0) {
-                [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+    id sentView = [self.view.window firstResponder];
+
+    // self.focused view can only be _my
+    if (sentView == _myTableView || sentView == _myOutlineView) {
+        NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+
+        if (([[theEvent characters] isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
+            ([[theEvent characters] isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
+        {
+            // The Return key will open the file
+            if (self.focusedView == _myTableView) {
+                [self TableDoubleClickEvent:theEvent];
+            }
+            else if (self.focusedView == _myOutlineView) {
+                [self OutlineDoubleClickEvent:theEvent];
             }
         }
-        // the tab key will switch Panes
 
-    }
-    else if ([[theEvent characters] isEqualToString:@" "]) {
-        // the Space Key will mark the file
-        // TODO:!!the Space Key will mark the file
+        else if ([[theEvent characters] isEqualToString:@"\t"]) {
 
+            // the tab key will switch Panes
+            if (self.focusedView == _myTableView) {
+                // TODO:! Option Cursor to change side
+                [self.view.window makeFirstResponder:_myOutlineView];
+            }
+            else {
+                [self.view.window makeFirstResponder:_myTableView];
+                _focusedView = _myTableView;
+                if ([[_myTableView selectedRowIndexes] count]==0) {
+                    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+                }
+            }
+        }
+
+        else if ([[theEvent characters] isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
+            // the Space Key will mark the file
+            // only works the TableView
+            if (self.focusedView == _myTableView) {
+                if (self->extendedSelection==nil) {
+                    self->extendedSelection = [NSMutableIndexSet indexSet];
+                }
+                NSIndexSet *indexset = [_myTableView selectedRowIndexes];
+                [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
+                    id item = [self->tableData objectAtIndex:index];
+                    if ([item isKindOfClass:[TreeItem class]]) {
+                        [(TreeItem*)item toggleTag:tagTreeItemMarked];
+                    }
+                    if ([self->extendedSelection containsIndex:index])
+                        [self->extendedSelection removeIndex:index];
+                    else
+                        [self->extendedSelection addIndex:index];
+                }];
+
+                // TODO:!!!! Check what is the preferred method
+#ifdef REFRESH_ONLY_FILENAME
+                // Only update the FileName Column
+                NSIndexSet *colIndex = [NSIndexSet indexSetWithIndex:
+                                        [self->_myTableView columnWithIdentifier:COL_FILENAME]];
+#else
+                NSRange columns = {0, [self->_myTableView numberOfColumns]};
+                NSIndexSet *colIndex = [NSIndexSet indexSetWithIndexesInRange:columns];
+#endif
+                [self->_myTableView reloadDataForRowIndexes:indexset
+                                              columnIndexes: colIndex];
+
+            }
+        }
     }
 }
 

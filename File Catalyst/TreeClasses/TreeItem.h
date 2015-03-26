@@ -66,6 +66,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 
 -(void) setTag:(TreeItemTagEnum)tag;
 -(void) resetTag:(TreeItemTagEnum)tag;
+-(void) toggleTag:(TreeItemTagEnum)tag;
+
 -(TreeItemTagEnum) tag;
 -(BOOL) hasTags:(TreeItemTagEnum) tag;
 -(void) updateFileTags;

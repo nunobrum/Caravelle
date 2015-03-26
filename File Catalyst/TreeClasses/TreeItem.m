@@ -100,6 +100,10 @@
 -(void) resetTag:(TreeItemTagEnum)tag {
     _tag &= ~tag;
 }
+-(void) toggleTag:(TreeItemTagEnum)tag {
+    _tag ^= tag;
+}
+
 -(TreeItemTagEnum) tag {
     return _tag;
 }
@@ -292,6 +296,8 @@
 #pragma mark -
 #pragma mark NSPasteboardWriting support
 
+
+//TODO:!!! Try to pass NSFilenamePboardType to see if drag to recycle bin can be executed
 - (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
 #ifdef USE_UTI
     /* Adding the TreeType */
@@ -302,6 +308,7 @@
     return [self.url writableTypesForPasteboard:pasteboard];
 #endif
 }
+
 - (id)pasteboardPropertyListForType:(NSString *)type {
     id answer;
 #ifdef USE_UTI
@@ -323,7 +330,7 @@
     }
     else
 #endif
-        if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
+    if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
         answer = [self.url writingOptionsForType:type pasteboard:pasteboard];
     } else {
         answer = 0;

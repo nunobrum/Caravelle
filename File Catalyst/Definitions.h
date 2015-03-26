@@ -64,6 +64,13 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
 #define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
 #define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used. Why ?
+#define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
+
+
+// These following definitions should be set accordingly to the Radio Buttons
+// on the behaviour panel on the User Preferences dialog.
+#define APP_BEHAVIOUR_NATIVE        0
+#define APP_BEHAVIOUR_MULTIPLATFORM 1
 
 
 // Used to check where is the focus of the window for the contextual selection
