@@ -19,12 +19,12 @@ extern NSString *notificationClosedFileExistsWindow;
 extern NSString *kFileExistsAnswerKey;
 extern NSString *kFileExistsNewFilenameKey;
 
-@interface FileExistsChoice : NSWindowController <NSTableViewDataSource,NSTableViewDelegate, NSTextFieldDelegate> {
+@interface FileExistsChoice : NSWindowController <NSWindowDelegate, NSTableViewDataSource,NSTableViewDelegate, NSTextFieldDelegate> {
     //fileExistsQuestionResult _answer;
     NSMutableArray *attributesTable;
     BOOL _pendingUserDecision;
 }
-@property (strong) IBOutlet NSWindow *windowOutlet;
+;
 @property (strong) IBOutlet NSTextField *tfFilename;
 //@property (strong) IBOutlet NSArrayController *attributesContent;
 @property (strong) IBOutlet NSTextField *tfNewFilename;

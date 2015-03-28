@@ -8,7 +8,7 @@
 
 #import "FileExistsChoice.h"
 #import "FileUtils.h"
-
+#import "myValueTransformers.h"
 
 NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
 NSString *kFileExistsAnswerKey = @"FileExistsAnswer";
@@ -39,15 +39,16 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     return _pendingUserDecision;
 }
 
+
 -(void) closeWindow {
-    [[self windowOutlet] setIsVisible:NO];
+    [[self window] setIsVisible:NO];
 }
 
 -(void) displayWindow:(id) sender {
     if (_pendingUserDecision==YES) {
-        [[self windowOutlet] setIsVisible:YES];
+        [[self window] setIsVisible:YES];
         [self showWindow:sender];
-        [[self windowOutlet] makeKeyAndOrderFront:sender];
+        [[self window] makeKeyAndOrderFront:sender];
     }
 }
 
@@ -75,8 +76,17 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     [self sendNotification:FileExistsRename];
 }
 
+//- (IBAction) close:(id)sender {
+//    NSLog(@"FileExistsChoice.close: User trying to close");
+//}
+//
+//-(BOOL) windowShouldClose:(id)sender {
+//    return NO; // Always block the close button
+//}
+
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest {
     NSString *name;
+    DateToStringTransformer *dateFormater = [[DateToStringTransformer alloc] initWithFormat:@"dd MMM YYYY hh:mm"];
     /* Remove all objects */
     if (attributesTable==nil)
         attributesTable = [[NSMutableArray alloc] init];
@@ -126,6 +136,34 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
            [dest fileSize],@"destination",
            nil];
     [attributesTable addObject:dic];
+
+    // Date Created
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:
+           @"Date Created",@"name",
+           [dateFormater transformedValue: [source date_created]],@"source",
+           [dateFormater transformedValue:[dest date_created]],@"destination",
+           nil];
+    [attributesTable addObject:dic];
+    [_attributeTableView reloadData];
+
+    // Date Modified
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:
+           @"Date Modified",@"name",
+           [dateFormater transformedValue: [source date_modified]],@"source",
+           [dateFormater transformedValue:[dest date_modified]],@"destination",
+           nil];
+    [attributesTable addObject:dic];
+    [_attributeTableView reloadData];
+
+    // Date Accessed
+    dic = [NSDictionary dictionaryWithObjectsAndKeys:
+           @"Date Accessed",@"name",
+           [dateFormater transformedValue: [source date_accessed]],@"source",
+           [dateFormater transformedValue: [dest date_accessed]],@"destination",
+           nil];
+    [attributesTable addObject:dic];
+
+
     [_attributeTableView reloadData];
 
     // set focus

@@ -368,11 +368,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             if (fromWindowClosing) {
                 [alert addButtonWithTitle:@"Exit"];
                 [alert addButtonWithTitle:@"Cancel"];
-                [alert addButtonWithTitle:@"Wait"];
+                [alert addButtonWithTitle:@"Show Window"];
             }
             else {
                 [alert addButtonWithTitle:@"Exit"];
-                [alert addButtonWithTitle:@"Show Errors"];
+                [alert addButtonWithTitle:@"Show Window"];
             }
             [alert setMessageText:@"There are pending errors to be evaluated. Are you sure to exit the Application"];
             [alert setInformativeText:@"Errors were found in copy/move operations and\nuser input is being requested."];
@@ -384,12 +384,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 return NSTerminateNow;
             }
             else if (reponse == NSAlertSecondButtonReturn) {
-                [fileExistsWindow displayWindow:self];
+                if (!fromWindowClosing)
+                    [fileExistsWindow displayWindow:self];
                 return NSTerminateCancel;
             }
 
             // only displayed if message is comming from window closing
             else if (reponse == NSAlertThirdButtonReturn) {
+                [fileExistsWindow displayWindow:self];
                 return NSTerminateLater;
             }
 
@@ -765,7 +767,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [clipboard clearContents];
     [clipboard declareTypes:[NSArray arrayWithObjects:
                                     NSURLPboardType,
-                                    NSFilenamesPboardType,
+                                    //NSFilenamesPboardType,
                                     // NSFileContentsPboardType, not passing file contents
                                     NSStringPboardType, nil]
                       owner:nil];
@@ -1271,6 +1273,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             if ([pendingOperationErrors count]==0) {
                 if (isWindowClosing) {
                     [_myWindow close];
+                    isWindowClosing = NO;
                 }
                 else {
                     [NSApp replyToApplicationShouldTerminate:YES];
@@ -1615,6 +1618,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             if ([[operationsQueue operations] count]==0) {
                 if (isWindowClosing) {
                     [_myWindow close];
+                    isWindowClosing = NO;
                 }
                 else {
                     [NSApp replyToApplicationShouldTerminate:YES];
