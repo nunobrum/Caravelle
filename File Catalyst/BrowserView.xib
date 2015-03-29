@@ -470,7 +470,7 @@
                 </segmentedControl>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
                     <rect key="frame" x="111" y="567" width="71" height="24"/>
-                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
+                    <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
                         <font key="font" metaFont="system"/>
                         <segments>
                             <segment image="NSIconViewTemplate" width="32" enabled="NO"/>
@@ -486,7 +486,7 @@
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="5mA-10-BVS">
                         <font key="font" metaFont="system"/>
                         <segments>
-                            <segment image="IconTreeView32" width="32" selected="YES"/>
+                            <segment image="IconTreeView20" width="32" selected="YES"/>
                         </segments>
                     </segmentedCell>
                     <connections>
@@ -598,7 +598,7 @@
     <resources>
         <image name="GenericDocumentIcon" width="512" height="512"/>
         <image name="GenericFolderIcon" width="512" height="512"/>
-        <image name="IconTreeView32" width="32" height="32"/>
+        <image name="IconTreeView20" width="20" height="20"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSIconViewTemplate" width="11" height="10"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>

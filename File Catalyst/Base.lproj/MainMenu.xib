@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14D87p" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1066" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -332,7 +332,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="95" y="99" width="856" height="660"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="778"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -340,27 +340,36 @@ CA
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="l3N-JB-c9m">
                         <rect key="frame" x="1" y="623" width="854" height="37"/>
                         <subviews>
-                            <segmentedControl toolTip="Jump to Recent Locations" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1gr-uk-pbS">
-                                <rect key="frame" x="18" y="7" width="59" height="24"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="gli-Mt-Phx">
-                                    <font key="font" metaFont="system"/>
-                                    <segments>
-                                        <segment image="NSLeftFacingTriangleTemplate" width="26"/>
-                                        <segment image="NSRightFacingTriangleTemplate" width="26" tag="1"/>
-                                    </segments>
-                                    <connections>
-                                        <action selector="mruBackForwardAction:" target="494" id="f4o-Bu-7KK"/>
-                                    </connections>
-                                </segmentedCell>
-                            </segmentedControl>
                             <box verticalHuggingPriority="750" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="685-pk-2bz">
                                 <rect key="frame" x="0.0" y="-2" width="854" height="5"/>
                                 <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
+                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
+                                <rect key="frame" x="18" y="6" width="65" height="24"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment image="singlePane" width="29">
+                                            <nil key="label"/>
+                                        </segment>
+                                        <segment image="dualPane" width="29" selected="YES" tag="1">
+                                            <nil key="label"/>
+                                        </segment>
+                                    </segments>
+                                    <connections>
+                                        <action selector="appModeChanged:" target="494" id="PwH-zO-nbE"/>
+                                        <binding destination="652" name="selectedIndex" keyPath="values.ApplicationViewMode" id="ULa-7K-OFD">
+                                            <dictionary key="options">
+                                                <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                            </dictionary>
+                                        </binding>
+                                    </connections>
+                                </segmentedCell>
+                            </segmentedControl>
                             <button toolTip="Trash (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="204" y="1" width="44" height="32"/>
+                                <rect key="frame" x="205" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Trash" bezelStyle="rounded" image="trashcanman32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -371,7 +380,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
-                                <rect key="frame" x="116" y="1" width="44" height="32"/>
+                                <rect key="frame" x="117" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Rename" bezelStyle="rounded" image="NSFontPanel" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -382,7 +391,7 @@ CA
                                 </connections>
                             </button>
                             <button hidden="YES" toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
-                                <rect key="frame" x="349" y="1" width="44" height="32"/>
+                                <rect key="frame" x="350" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Search" bezelStyle="rounded" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -393,7 +402,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="File Information" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
-                                <rect key="frame" x="82" y="1" width="44" height="32"/>
+                                <rect key="frame" x="83" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="View" bezelStyle="rounded" image="FileInfo32x32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -404,7 +413,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Add Folder (F8)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
-                                <rect key="frame" x="306" y="1" width="44" height="32"/>
+                                <rect key="frame" x="307" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" bezelStyle="rounded" image="NewFolderGrey20" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -415,7 +424,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
-                                <rect key="frame" x="238" y="1" width="44" height="32"/>
+                                <rect key="frame" x="239" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Copy" bezelStyle="rounded" image="mancopy32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -426,7 +435,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Move (F7)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="272" y="1" width="44" height="32"/>
+                                <rect key="frame" x="273" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Move" bezelStyle="rounded" image="manmove32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -437,7 +446,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Open" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="160" y="1" width="44" height="32"/>
+                                <rect key="frame" x="161" y="1" width="44" height="32"/>
                                 <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -520,14 +529,14 @@ CA
     <resources>
         <image name="FileInfo32x32" width="32" height="32"/>
         <image name="NSFontPanel" width="32" height="32"/>
-        <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
-        <image name="NSQuickLookTemplate" width="19" height="12"/>
+        <image name="NSQuickLookTemplate" width="21" height="16"/>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
-        <image name="NSRightFacingTriangleTemplate" width="9" height="12"/>
         <image name="NewFolderGrey20" width="20" height="20"/>
         <image name="StopButton" width="11" height="11"/>
+        <image name="dualPane" width="20" height="20"/>
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>
+        <image name="singlePane" width="20" height="20"/>
         <image name="trashcanman32" width="32" height="32"/>
     </resources>
 </document>

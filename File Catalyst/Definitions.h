@@ -65,6 +65,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
 #define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used. Why ?
 #define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
+#define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 
 
 // These following definitions should be set accordingly to the Radio Buttons
@@ -93,9 +94,11 @@ typedef NS_ENUM(NSInteger, BViewMode) {
 };
 
 typedef NS_ENUM(NSInteger, ApplicationwMode) {
-    ApplicationwMode2Views = 0, /* Each View is independent of the other */
-    ApplicationwModeDuplicate,
-    ApplicationwModePreview
+    ApplicationMode1View = 0,
+    ApplicationMode2Views, /* Each View is independent of the other */
+    ApplicationModePreview,
+    ApplicationModeDuplicate,
+
 };
 
 typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {

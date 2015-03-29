@@ -186,7 +186,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (index == 0)
     {
         constrainedCoordinate = proposedCoordinate + kMinContrainValue;
-        NSLog(@"Index: %ld MinCoordinate: %f",(long)index, proposedCoordinate);
+        //NSLog(@"Index: %ld MinCoordinate: %f",(long)index, proposedCoordinate);
     }
     return constrainedCoordinate;
 }
@@ -201,7 +201,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     //{
     //    constrainedCoordinate = proposedCoordinate - kMinContrainValue;
     //}
-    NSLog(@"MaxCoordinate: %f",proposedCoordinate);
+    //NSLog(@"MaxCoordinate: %f",proposedCoordinate);
     return constrainedCoordinate;
 }
 

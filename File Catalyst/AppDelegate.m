@@ -187,9 +187,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         [(BrowserController*)view setViewMode:BViewBrowserMode];
         [(BrowserController*)view addTreeRoot: item];
         [(BrowserController*)view selectFirstRoot];
-        [(BrowserController*)view refresh];
 #endif
-
+        [(BrowserController*)view refresh];
     }
 }
 
@@ -252,17 +251,29 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                              returnTypes:returnTypes];
 
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-
     [myLeftView setFoldersDisplayed:
      [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_FOLDERS_ON_TABLE]];
-    [myRightView setFoldersDisplayed:
-     [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
-    [myLeftView setTwinName:@"Right"];
-    [myRightView setTwinName:@"Left"];
 
-    [_ContentSplitView addSubview:myLeftView.view];
-    [_ContentSplitView addSubview:myRightView.view];
+    applicationMode = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_APP_VIEW_MODE];
+
+    if (applicationMode == ApplicationMode2Views) {
+        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+        [myRightView setFoldersDisplayed:
+         [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
+        [myLeftView setTwinName:@"Right"];
+        [myRightView setTwinName:@"Left"];
+        [_ContentSplitView addSubview:myLeftView.view];
+        [_ContentSplitView addSubview:myRightView.view];
+
+    }
+    else if (applicationMode == ApplicationMode1View) {
+        myRightView = nil;
+        [myLeftView setTwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
+        [_ContentSplitView addSubview:myLeftView.view];
+
+    }
+
+
     //NSDictionary *viewsDictionary = [NSDictionary dictionaryWithObject:myLeftView.view forKey:@"myLeftView"];
     //NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-0-[myLeftView]-0-|"
     //                                                               options:0 metrics:nil views:viewsDictionary];
@@ -271,8 +282,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Left Side
     [self goHome: myLeftView]; // Display the User Preferences Left Home
     // Right side
-    [self goHome: myRightView]; // Display the User Preferences Left Home
+    if (myRightView)
+        [self goHome: myRightView]; // Display the User Preferences Left Home
 
+    [self.ContentSplitView adjustSubviews];
     // Make a default focus
     self->_selectedView = myLeftView;
     [self.myWindow makeFirstResponder:myLeftView.myTableView];
@@ -1017,6 +1030,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu] onlyNames:YES];
 }
 
+
 - (IBAction)paste:(id)sender {
     TreeBranch *destinationBranch = [[self selectedView] treeNodeSelected];
     [self executePaste:destinationBranch];
@@ -1036,6 +1050,39 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     else {
         // other objects that can send a delete:
     }
+}
+
+- (IBAction)appModeChanged:(id)sender {
+    NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
+    NSLog(@"Index Selected %ld",mode);
+
+    if (mode == ApplicationMode1View) {
+        if (myRightView!=nil) {
+            [myLeftView setTwinName:nil];
+            [myRightView.view removeFromSuperview];
+            //myRightView.view = nil;
+        }
+    }
+    else if (mode == ApplicationMode2Views) {
+        if (myRightView == nil) {
+            myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+            [myRightView setFoldersDisplayed:
+             [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
+            [myLeftView setTwinName:@"Right"];
+            [myRightView setTwinName:@"Left"];
+            [_ContentSplitView addSubview:myRightView.view];
+            [self goHome:myRightView];
+        }
+        else if (myRightView.view==nil) {
+            NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
+            return;
+        }
+        else {
+            [_ContentSplitView addSubview:myRightView.view];
+            [myRightView refresh]; // Just Refreshes
+        }
+    }
+    [self.ContentSplitView adjustSubviews];
 }
 
 
@@ -1387,7 +1434,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             NSInteger files_size=0;
             NSInteger folders_size=0;
             NSInteger num_directories=0;
-            if (applicationMode==ApplicationwModeDuplicate && selView==myLeftView) {
+            if (applicationMode==ApplicationModeDuplicate && selView==myLeftView) {
                 dupShow++;
                 FileCollection *selectedDuplicates = [[FileCollection alloc] init];
                 for (TreeItem *item in selectedFiles ) {
@@ -1486,7 +1533,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
-    self->applicationMode = ApplicationwModeDuplicate;
+    self->applicationMode = ApplicationModeDuplicate;
     TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates];
     [myLeftView addTreeRoot:rootDir];
     [myLeftView stopBusyAnimations];

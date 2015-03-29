@@ -69,5 +69,6 @@
 - (IBAction)copyName:(id)sender ;
 - (IBAction)contextualCopyName:(id)sender ;
 
+- (IBAction)appModeChanged:(id)sender;
 
 @end
