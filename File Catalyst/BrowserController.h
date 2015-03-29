@@ -20,7 +20,7 @@ extern NSString *notificationStatusUpdate;
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol, NSTextDelegate> {
+@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate> {
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
@@ -40,6 +40,13 @@ extern NSString *notificationCatalystRootUpdate;
 
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 @property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
+
+@property (strong) IBOutlet NSSegmentedControl *myViewSelectorButton;
+
+@property (strong) IBOutlet NSSplitView *mySplitView;
+@property (strong) IBOutlet NSView *myTreeContainerView;
+@property (strong) IBOutlet NSView *myTableContainerView;
+@property (strong) IBOutlet NSSegmentedControl *treeEnableSwitch;
 
 
 
@@ -90,6 +97,9 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
 - (IBAction) filenameDidChange:(id)sender;
+- (IBAction) treeViewEnable:(id)sender;
+- (IBAction) viewTypeSelection:(id)sender;
+- (IBAction) mruBackForwardAction:(id)sender;
 
 /*
  * Notifications Received 
@@ -110,7 +120,6 @@ extern NSString *notificationCatalystRootUpdate;
 -(BViewMode) viewMode;
 
 -(TreeBranch*) treeNodeSelected;
-
 
 -(id) getFileAtIndex:(NSUInteger)index;
 -(void) set_filterText:(NSString *) filterText;

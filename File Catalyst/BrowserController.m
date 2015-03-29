@@ -144,6 +144,74 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+#pragma mark - NSSplitViewDelegate methods
+#define kMinContrainValue 150.0f
+
+// -------------------------------------------------------------------------------
+//	awakeFromNib:
+//
+//	This delegate allows the collapsing of the first and last subview.
+// -------------------------------------------------------------------------------
+- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview
+{
+    BOOL canCollapseSubview = NO;
+
+    NSArray *splitViewSubviews = [splitView subviews];
+    //NSUInteger splitViewSubviewCount = [splitViewSubviews count];
+    if (subview == [splitViewSubviews objectAtIndex:0] )
+    {
+        canCollapseSubview = YES;
+        //[self->treeEnableSwitch setSelected:NO forSegment:0];
+    }
+    return canCollapseSubview;
+}
+
+// -------------------------------------------------------------------------------
+//	shouldCollapseSubview:subView:dividerIndex
+//
+//	This delegate allows the collapsing of the first and last subview.
+// -------------------------------------------------------------------------------
+- (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex
+{
+    // yes, if you can collapse you should collapse it
+    return YES;
+}
+
+// -------------------------------------------------------------------------------
+//	constrainMinCoordinate:proposedCoordinate:index
+// -------------------------------------------------------------------------------
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
+{
+    CGFloat constrainedCoordinate = proposedCoordinate;
+    if (index == 0)
+    {
+        constrainedCoordinate = proposedCoordinate + kMinContrainValue;
+        NSLog(@"Index: %ld MinCoordinate: %f",(long)index, proposedCoordinate);
+    }
+    return constrainedCoordinate;
+}
+
+// -------------------------------------------------------------------------------
+//	constrainMaxCoordinate:proposedCoordinate:proposedCoordinate:index
+// -------------------------------------------------------------------------------
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
+{
+    CGFloat constrainedCoordinate = proposedCoordinate;
+    //if (index == ([[splitView subviews] count] - 2))
+    //{
+    //    constrainedCoordinate = proposedCoordinate - kMinContrainValue;
+    //}
+    NSLog(@"MaxCoordinate: %f",proposedCoordinate);
+    return constrainedCoordinate;
+}
+
+
+- (void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
+    // Use this notfication to set the select state of the button
+    NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
+    BOOL collapsed = [self->_mySplitView isSubviewCollapsed:firstView];
+    [self->_treeEnableSwitch setSelected:!collapsed forSegment:0];
+}
 
 #pragma mark - Tree Outline DataSource Protocol
 
@@ -880,6 +948,39 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+- (IBAction)treeViewEnable:(id)sender {
+    BOOL treeEnable = [self->_treeEnableSwitch isSelectedForSegment:0];
+    // TODO:! Animate collapsing and showing of the treeView
+    if (treeEnable) {
+        // Adding the tree view
+        [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
+        //[self->_myTreeViewEnableButton setSelected:NO forSegment:0];
+    }
+    else {
+        // Collapsing the tree view
+        [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
+        //[self->_myTreeViewEnableButton setSelected:YES forSegment:0];
+    }
+}
+
+- (IBAction)viewTypeSelection:(id)sender {
+
+}
+
+- (IBAction)mruBackForwardAction:(id)sender {
+    NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
+    // TODO:! Disable Back at the beginning Disable Forward
+    // Create isABackFlag for the forward highlight and to test the Back
+    // isAForward will make sure that the Forward is highlighted
+    // otherwise Forward is disabled and Back Enabled
+    if (backOrForward==0) { // Backward
+        [self backSelectedFolder];
+    }
+    else {
+        [self forwardSelectedFolder];
+    }
+}
+
 - (IBAction)PathSelect:(id)sender {
     NSURL *newURL;
     if ([sender isKindOfClass:[NSPopUpButton class]]) {
@@ -929,11 +1030,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
  * Drag and Drop Methods
  */
 
-
-//- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
-//    return YES;
-//}
-
+#define USE_TREEITEM_PASTEBOARD_WRITING
+#ifdef USE_TREEITEM_PASTEBOARD_WRITING
 - (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
     return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
 }
@@ -941,6 +1039,37 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(id)item {
     return (id <NSPasteboardWriting>) item;
 }
+#else
+
+- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
+    [pboard declareTypes:[NSArray arrayWithObjects:
+                             NSURLPboardType,
+                             NSFilenamesPboardType,
+                             // NSFileContentsPboardType, not passing file contents
+                             NSStringPboardType, nil]
+                      owner:nil];
+
+
+    NSArray *items = [tableData objectsAtIndexes:rowIndexes];
+    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+    return[ pboard writeObjects:urls];
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView
+         writeItems:(NSArray *)items
+       toPasteboard:(NSPasteboard *)pboard {
+    [pboard declareTypes:[NSArray arrayWithObjects:
+                          NSURLPboardType,
+                          NSFilenamesPboardType,
+                          // NSFileContentsPboardType, not passing file contents
+                          NSStringPboardType, nil]
+                   owner:nil];
+
+
+    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+    return[ pboard writeObjects:urls];
+}
+#endif
 
 
 - (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forRowIndexes:(NSIndexSet *)rowIndexes {
