@@ -476,7 +476,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             if ([theFile hasTags:tagTreeItemNew]) {
                 cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
                 if ([theFile isKindOfClass:[TreeBranch class]])
-                    // TODO:! Put these strings into a User Defaults setting
                     cellView.imageView.objectValue = [NSImage imageNamed:@"GenericFolderIcon"];
                 else
                     cellView.imageView.objectValue = [NSImage imageNamed:@"GenericDocumentIcon"];
@@ -969,7 +968,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-    // TODO:! Disable Back at the beginning Disable Forward
+    // TODO:!! Disable Back at the beginning Disable Forward
     // Create isABackFlag for the forward highlight and to test the Back
     // isAForward will make sure that the Forward is highlighted
     // otherwise Forward is disabled and Back Enabled
@@ -1129,7 +1128,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     ptypes =[pboard types];
 
     /* Limit the options in function of the dropped Element */
-    // TODO: !!!! Investigate if this is correct. The sourceDragMask should be an or of all the possiblities, and not the only first one.
+    // The sourceDragMask should be an or of all the possiblities, and not the only first one.
     if ( [ptypes containsObject:NSFilenamesPboardType] ) {
         supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
     }
@@ -1195,7 +1194,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             _validatedOperation= NSDragOperationNone;
     }
 
-    // TODO:!! Implement the Link Operation
+    // TODO:!!! Implement the Link Operation
     if (_validatedOperation ==  NSDragOperationLink)
         _validatedOperation=  NSDragOperationNone;
     
@@ -1222,7 +1221,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([_validatedDestinationItem isKindOfClass:[TreeBranch class]]) {
-        // TODO:!! Put here a timer for opening the Folder
+        // TODO:!!! Put here a timer for opening the Folder
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }
@@ -1269,7 +1268,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
         else if (_validatedOperation == NSDragOperationLink) {
-            // TODO: !! Operation Link
+            // TODO: !!! Operation Link
         }
         else {
             // Invalid case
@@ -1482,13 +1481,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (void)keyDown:(NSEvent *)theEvent {
     // Get the origin
     id sentView = [self.view.window firstResponder];
+    NSString *key = [theEvent characters];
+    NSString *keyWM = [theEvent charactersIgnoringModifiers];
 
-    // self.focused view can only be _my
     if (sentView == _myTableView || sentView == _myOutlineView) {
         NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
-        if (([[theEvent characters] isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
-            ([[theEvent characters] isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
+        if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
+            ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
         {
             // The Return key will open the file
             if (self.focusedView == _myTableView) {
@@ -1499,23 +1499,25 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
 
-        else if ([[theEvent characters] isEqualToString:@"\t"]) {
-
+        else if ([keyWM isEqualToString:@"\t"]) {
             // the tab key will switch Panes
             if (self.focusedView == _myTableView) {
-                // TODO:! Option Cursor to change side
-                [self.view.window makeFirstResponder:_myOutlineView];
+                [NSApp sendAction:@selector(gotoNextValidKeyView:) to:nil from:self];
             }
             else {
-                [self.view.window makeFirstResponder:_myTableView];
-                _focusedView = _myTableView;
-                if ([[_myTableView selectedRowIndexes] count]==0) {
-                    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
-                }
+                [self.view.window makeFirstResponder:[self lastFocusView]];
             }
         }
+        else if ([key isEqualToString:@"\x19"]) {
+            if ((self.focusedView == _myTableView) && ([self.treeEnableSwitch isSelectedForSegment:0])) {
+                [self.view.window makeFirstResponder:[self firstFocusView]];
+            }
+            else {
+                [NSApp sendAction:@selector(gotoPreviousValidKeyView:) to:nil from:self];
+            }
 
-        else if ([[theEvent characters] isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
+        }
+        else if ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
             // the Space Key will mark the file
             // only works the TableView
             if (self.focusedView == _myTableView) {
@@ -1605,6 +1607,29 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [self setTwinName:twinName];
     viewMode = BViewModeVoid; // Forces the viewMode Update;
     [self setViewMode:viewMode];
+}
+
+-(NSView*) firstFocusView {
+    if ([_treeEnableSwitch isSelectedForSegment:0]) {
+        // The Tree Outline View is selected
+        if ([[_myOutlineView selectedRowIndexes] count]==0) {
+            [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+        }
+        return self.myOutlineView;
+    }
+    else {
+        if ([[_myTableView selectedRowIndexes] count]==0) {
+            [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+        }
+        return self.myTableView;
+    }
+}
+
+- (NSView*) lastFocusView {
+    if ([[_myTableView selectedRowIndexes] count]==0) {
+        [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+    }
+    return self.myTableView;
 }
 
 -(void) setTwinName:(NSString *)twinName {

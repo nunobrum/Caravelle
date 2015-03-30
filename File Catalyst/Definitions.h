@@ -127,6 +127,9 @@ extern NSString *kOptionsKey;
 
 - (void) refresh;
 
+- (NSView*) firstFocusView;
+- (NSView*) lastFocusView;
+
 @end
 
 #endif

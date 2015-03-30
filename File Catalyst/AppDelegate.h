@@ -71,4 +71,7 @@
 
 - (IBAction)appModeChanged:(id)sender;
 
+- (IBAction)gotoNextValidKeyView:(id)sender;
+- (IBAction)gotoPreviousValidKeyView:(id)sender;
+
 @end

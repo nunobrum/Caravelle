@@ -30,19 +30,23 @@
 
 
 - (void)keyDown:(NSEvent *)theEvent {
-    //NSLog(@"KD: code:%@",[theEvent characters]);
+    NSString *key = [theEvent characters];
+//    NSString *keyIM = [theEvent charactersIgnoringModifiers];
+//    NSLog(@"KD: code:%@ - %@",key, keyIM);
 
     NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
     if (behave == APP_BEHAVIOUR_MULTIPLATFORM &&
-        ([[theEvent characters] isEqualToString:@"\r"] || // The Return key will open the file
-         [[theEvent characters] isEqualToString:@"\t"] || // the tab key will switch Panes
-         [[theEvent characters] isEqualToString:@" "])) {  // The space will mark the file
+        ([key isEqualToString:@"\r"] || // The Return key will open the file
+         [key isEqualToString:@"\t"] || // the tab key will switch Panes
+         [key isEqualToString:@"\x19"] || // Shift-Tab will also switch Panes
+         [key isEqualToString:@" "])) {  // The space will mark the file
             [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
         }
     else if (behave == APP_BEHAVIOUR_NATIVE &&
-             ([[theEvent characters] isEqualToString:@" "] || // The Space will open the file
-              [[theEvent characters] isEqualToString:@"\t"])) { // the tab key will move to next file
+             ([key isEqualToString:@" "] || // The Space will open the file
+              [key isEqualToString:@"\x19"] || // Shift-Tab will move to previous file
+              [key isEqualToString:@"\t"])) { // the tab key will move to next file
                  [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
              }
 

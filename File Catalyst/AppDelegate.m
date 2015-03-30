@@ -288,8 +288,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [self.ContentSplitView adjustSubviews];
     // Make a default focus
     self->_selectedView = myLeftView;
+    // Set the Left view as first responder
     [self.myWindow makeFirstResponder:myLeftView.myTableView];
-    // TODO:!!! Set the Left view as first responder
+
 }
 
 - (void)applicationDidBecomeActive:(NSNotification *)aNotification {
@@ -638,7 +639,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 }
 
-// TODO:!!! Add this to the user interface
 - (void) executeOpenFolderInView:(id)view withTitle:(NSString*) dialogTitle {
     if ([view isKindOfClass:[BrowserController class]]) {
         /* Will get a new node from shared tree Manager and add it to the root */
@@ -867,6 +867,32 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 #pragma mark Action Outlets
 
 
+- (IBAction)gotoNextValidKeyView:(id)sender {
+    if (sender == myLeftView) {
+        if (applicationMode == ApplicationMode2Views) {
+            [self.myWindow makeFirstResponder:myRightView.firstFocusView];
+        }
+
+    }
+    else if (sender == myRightView) {
+        [self.myWindow makeFirstResponder:myLeftView.firstFocusView];
+    }
+
+}
+
+- (IBAction)gotoPreviousValidKeyView:(id)sender {
+    if (sender == myLeftView) {
+        if (applicationMode == ApplicationMode2Views) {
+            [self.myWindow makeFirstResponder:myRightView.lastFocusView];
+        }
+
+    }
+    else if (sender == myRightView) {
+        [self.myWindow makeFirstResponder:myLeftView.lastFocusView];
+    }
+    
+}
+
 - (IBAction)updateSelected:(id)sender {
     if (sender == myLeftView || sender == myRightView)
         _selectedView = sender;
@@ -957,7 +983,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)toolbarGrouping:(id)sender {
-    // TODO:! Grouping pointer, select column to use for grouping
+    // TODO:!!! Grouping pointer, select column to use for grouping
 }
 
 - (IBAction)toolbarRefresh:(id)sender {
@@ -985,25 +1011,25 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [(NSOperation*)[operations firstObject] cancel];
 }
 
-- (IBAction)mruBackForwardAction:(id)sender {
-    NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-    // TODO:! Disable Back at the beginning Disable Forward
-    // Create isABackFlag for the forward highlight and to test the Back
-    // isAForward will make sure that the Forward is highlighted
-    // otherwise Forward is disabled and Back Enabled
-    id focused_browser = [self selectedView];
-    if ([focused_browser isKindOfClass:[BrowserController class]]) {
-        if (backOrForward==0) { // Backward
-            [focused_browser backSelectedFolder];
-        }
-        else {
-            [focused_browser forwardSelectedFolder];
-        }
-    }
-    else {
-        // TODO:! When other View Constrollers are implemented
-    }
-}
+//- (IBAction)mruBackForwardAction:(id)sender {
+//    NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
+//    //To do: ! Disable Back at the beginning Disable Forward
+//    // Create isABackFlag for the forward highlight and to test the Back
+//    // isAForward will make sure that the Forward is highlighted
+//    // otherwise Forward is disabled and Back Enabled
+//    id focused_browser = [self selectedView];
+//    if ([focused_browser isKindOfClass:[BrowserController class]]) {
+//        if (backOrForward==0) { // Backward
+//            [focused_browser backSelectedFolder];
+//        }
+//        else {
+//            [focused_browser forwardSelectedFolder];
+//        }
+//    }
+//    else {
+//        // TODO:! When other View Constrollers are implemented
+//    }
+//}
 
 
 - (IBAction)cut:(id)sender {
@@ -1054,35 +1080,38 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 - (IBAction)appModeChanged:(id)sender {
     NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
-    NSLog(@"Index Selected %ld",mode);
+    NSUInteger count = [[self.ContentSplitView subviews] count];
 
     if (mode == ApplicationMode1View) {
-        if (myRightView!=nil) {
+        if (myRightView!=nil && count == 2) {
             [myLeftView setTwinName:nil];
             [myRightView.view removeFromSuperview];
             //myRightView.view = nil;
         }
     }
     else if (mode == ApplicationMode2Views) {
-        if (myRightView == nil) {
-            myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-            [myRightView setFoldersDisplayed:
-             [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
-            [myLeftView setTwinName:@"Right"];
-            [myRightView setTwinName:@"Left"];
-            [_ContentSplitView addSubview:myRightView.view];
-            [self goHome:myRightView];
-        }
-        else if (myRightView.view==nil) {
-            NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
-            return;
-        }
-        else {
-            [_ContentSplitView addSubview:myRightView.view];
-            [myRightView refresh]; // Just Refreshes
+        if (count==1) {
+            if (myRightView == nil) {
+                myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+                [myRightView setFoldersDisplayed:
+                 [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
+                [myLeftView setTwinName:@"Right"];
+                [myRightView setTwinName:@"Left"];
+                [_ContentSplitView addSubview:myRightView.view];
+                [self goHome:myRightView];
+            }
+            else if (myRightView.view==nil) {
+                NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
+                return;
+            }
+            else {
+                [_ContentSplitView addSubview:myRightView.view];
+                [myRightView refresh]; // Just Refreshes
+            }
         }
     }
     [self.ContentSplitView adjustSubviews];
+    [self.ContentSplitView displayIfNeeded];
 }
 
 
@@ -1262,7 +1291,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         ([operation isEqualToString:opMoveOperation]) ||
         ([operation isEqualToString:opNewFolder])||
         ([operation isEqualToString:opRename])) {
-        // TODO: Register the folder as a last Steps one
         // Redirects all to file operation
         putInQueue([note userInfo]);
     }
@@ -1400,6 +1428,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             [(id<MYViewProtocol>)[info objectForKey:kSourceViewKey] refresh];
         else {
             // TODO:!! MRU Option that only includes directories where operations have hapened.
+            // Register the folder in a list of last *used* locations
+
         }
 
         if (statusText!=nil) // If nothing was set, don't update status
@@ -1597,7 +1627,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 // Erase the file ... and copy again.
                 //sendToRecycleBin();
 
-                // TODO: !!! Put this in the operations
+                // TODO: !!!! Put this in the operations
                 [[NSWorkspace sharedWorkspace] recycleURLs:[NSArray arrayWithObject:destinationURL] completionHandler:^(NSDictionary *newURLs, NSError *error) {
                     if (error==nil) {
                         copyURLToURL(sourceURL, destinationURL);

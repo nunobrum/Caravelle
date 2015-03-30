@@ -32,7 +32,7 @@
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
                 <searchField horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
-                    <rect key="frame" x="292" y="568" width="118" height="22"/>
+                    <rect key="frame" x="300" y="568" width="118" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="150" id="3Va-0l-feg"/>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="R0r-fz-hiG"/>
@@ -48,7 +48,7 @@
                     </connections>
                 </searchField>
                 <pathControl horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Fc-gb-5JC">
-                    <rect key="frame" x="58" y="541" width="352" height="20"/>
+                    <rect key="frame" x="58" y="541" width="360" height="20"/>
                     <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" id="VZQ-Zq-Xa7">
                         <font key="font" metaFont="smallSystem"/>
                         <url key="url" string="file://localhost/Applications/"/>
@@ -507,12 +507,12 @@
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="tKW-QN-AmC" secondAttribute="bottom" constant="8" id="Saq-V9-NkH"/>
                 <constraint firstItem="Wu7-Ak-lRK" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="Wyv-PX-EZG"/>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lBL-vj-lCz" secondAttribute="trailing" constant="12" id="Xih-Bn-3cc"/>
-                <constraint firstAttribute="trailing" secondItem="Lo2-4t-2Jl" secondAttribute="trailing" constant="20" symbolic="YES" id="h4m-2Z-PXg"/>
+                <constraint firstAttribute="trailing" secondItem="Lo2-4t-2Jl" secondAttribute="trailing" constant="12" id="h4m-2Z-PXg"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="hzk-jj-vBn"/>
                 <constraint firstAttribute="bottom" secondItem="BA4-h9-PGe" secondAttribute="bottom" constant="1" id="iS4-PA-gdW"/>
                 <constraint firstItem="5Fc-gb-5JC" firstAttribute="top" secondItem="Lo2-4t-2Jl" secondAttribute="bottom" constant="7" id="kk1-E4-YUf"/>
                 <constraint firstItem="5Fc-gb-5JC" firstAttribute="leading" secondItem="tKW-QN-AmC" secondAttribute="trailing" constant="8" id="mPY-Iu-fbN"/>
-                <constraint firstAttribute="trailing" secondItem="5Fc-gb-5JC" secondAttribute="trailing" constant="20" symbolic="YES" id="sVa-ZO-XHS"/>
+                <constraint firstAttribute="trailing" secondItem="5Fc-gb-5JC" secondAttribute="trailing" constant="12" id="sVa-ZO-XHS"/>
                 <constraint firstItem="lBL-vj-lCz" firstAttribute="leading" secondItem="olD-ez-fNy" secondAttribute="trailing" constant="8" id="ymZ-Hc-sk4"/>
             </constraints>
         </customView>
