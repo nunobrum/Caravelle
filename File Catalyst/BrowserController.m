@@ -1499,6 +1499,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
         else if ([keyWM isEqualToString:@"\t"]) {
             // the tab key will switch Panes
             if (self.focusedView == _myTableView) {
@@ -1517,6 +1519,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
 
         }
+#pragma clang diagnostic pop
         else if ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
             // the Space Key will mark the file
             // only works the TableView

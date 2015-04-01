@@ -31,7 +31,7 @@
             <rect key="frame" x="0.0" y="0.0" width="430" height="600"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <searchField horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
+                <searchField toolTip="Filter Table Contents" horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
                     <rect key="frame" x="300" y="568" width="118" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="150" id="3Va-0l-feg"/>
@@ -58,7 +58,7 @@
                         <outlet property="delegate" destination="-2" id="Yu4-N1-chj"/>
                     </connections>
                 </pathControl>
-                <popUpButton verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="tKW-QN-AmC">
+                <popUpButton toolTip="Navigate upwards" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="tKW-QN-AmC">
                     <rect key="frame" x="5" y="540" width="48" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="xJy-Gr-AlN" id="3Sm-Pr-bFB">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -468,7 +468,7 @@
                         <action selector="mruBackForwardAction:" target="-2" id="3M5-dJ-RoV"/>
                     </connections>
                 </segmentedControl>
-                <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
+                <segmentedControl hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
                     <rect key="frame" x="111" y="567" width="71" height="24"/>
                     <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
                         <font key="font" metaFont="system"/>
@@ -481,7 +481,7 @@
                         <action selector="viewTypeSelection:" target="-2" id="DHC-Zf-uCu"/>
                     </connections>
                 </segmentedControl>
-                <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
+                <segmentedControl toolTip="Turn ON or OFF the tree view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
                     <rect key="frame" x="69" y="567" width="38" height="24"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="5mA-10-BVS">
                         <font key="font" metaFont="system"/>
@@ -530,20 +530,20 @@
                         <action selector="contextualRename:" target="-1" id="e6x-L7-73M"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Open" keyEquivalent="" id="WFz-fS-fZg">
+                <menuItem title="Open" keyEquivalent="" id="WFz-fS-fZg">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualOpen:" target="-1" id="IAK-9r-0qf"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Delete" tag="9" keyEquivalent="" id="AiJ-65-eUG">
+                <menuItem title="Delete" tag="9" keyEquivalent="" id="AiJ-65-eUG">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualDelete:" target="-1" id="izf-rs-02N"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="MXg-ci-KvD"/>
-                <menuItem title="Copy Right" tag="6" keyEquivalent="" id="wht-kT-dyW">
+                <menuItem title="Copy Right" tag="6" keyEquivalent="" id="wht-kT-dyW">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
@@ -551,7 +551,7 @@
                         <binding destination="-2" name="enabled" keyPath="self.validateContextualCopyTo" id="0Qw-44-ici"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
+                <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
@@ -582,7 +582,7 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="gvN-b3-nLQ"/>
-                <menuItem title="New Folder" keyEquivalent="" id="xKl-Mj-ZxK">
+                <menuItem title="New Folder" keyEquivalent="" id="xKl-Mj-ZxK">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualNewFolder:" target="-1" id="5Cr-mg-hqS"/>

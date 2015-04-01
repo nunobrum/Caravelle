@@ -70,12 +70,12 @@
                 <menuItem title="Folders" id="83">
                     <menu key="submenu" title="Folders" id="81">
                         <items>
-                            <menuItem title="New Folder" keyEquivalent="n" id="82">
+                            <menuItem title="New Folder" keyEquivalent="n" toolTip="Add a new Folder" id="82">
                                 <connections>
                                     <action selector="toolbarNewFolder:" target="-1" id="77c-gp-p3Y"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Go To Folder" keyEquivalent="g" id="tGu-kw-dlD">
+                            <menuItem title="Go to Folder" keyEquivalent="g" toolTip="Go to a new Folder Location" id="tGu-kw-dlD">
                                 <connections>
                                     <action selector="toolbarGotoFolder:" target="494" id="XwZ-oA-0Np"/>
                                 </connections>
@@ -92,13 +92,14 @@
                                 </menu>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="LCy-Ep-2Zd"/>
-                            <menuItem title="Multi-Rename*" toolTip="Comming Soon" id="Aeu-Ix-kNE">
+                            <menuItem title="Multi-Rename" image="UnderConstruction20" enabled="NO" toolTip="Comming Soon (Under Construction)" id="Aeu-Ix-kNE">
+                                <attributedString key="attributedTitle"/>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                             </menuItem>
-                            <menuItem title="Folder Compare*" toolTip="Comming Soon" id="plT-sk-e0v">
+                            <menuItem title="Folder Compare" image="UnderConstruction20" enabled="NO" toolTip="Comming Soon (Under Construction)" id="plT-sk-e0v">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                             </menuItem>
-                            <menuItem title="Duplicate Finder*" toolTip="Comming Soon" id="qJs-p7-soh">
+                            <menuItem title="Duplicate Finder" image="UnderConstruction20" enabled="NO" toolTip="Comming Soon (Under Construction)" id="qJs-p7-soh">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="FindDuplicates:" target="494" id="YpT-40-dvY"/>
@@ -346,7 +347,7 @@ CA
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
-                            <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
+                            <segmentedControl toolTip="Change between Single and Dual Pane" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
                                 <rect key="frame" x="18" y="6" width="65" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
                                     <font key="font" metaFont="system"/>
@@ -368,99 +369,213 @@ CA
                                     </connections>
                                 </segmentedCell>
                             </segmentedControl>
-                            <button toolTip="Trash (F9)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="205" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Trash" bezelStyle="rounded" image="trashcanman32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
+                            <button toolTip="Send to Recycle Bin" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
+                                <rect key="frame" x="673" y="7" width="61" height="22"/>
+                                <buttonCell key="cell" type="roundRect" title="Delete" alternateTitle="Trash" bezelStyle="roundedRect" image="trashcanman32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <button toolTip="Rename (F2)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
-                                <rect key="frame" x="117" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Rename" bezelStyle="rounded" image="NSFontPanel" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
+                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
+                                <rect key="frame" x="187" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Rename" alternateTitle="Rename" bezelStyle="roundedRect" image="NSFontPanel" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="cellTitle"/>
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarRename:" target="494" id="6My-yD-mQw"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" toolTip="Search (F3)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
-                                <rect key="frame" x="350" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Search" bezelStyle="rounded" image="NSRevealFreestandingTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
+                            <button toolTip="Comming Soon (Under Construction)" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
+                                <rect key="frame" x="268" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="View" alternateTitle="Search" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="cellTitle"/>
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarSearch:" target="494" id="7Y3-Xw-frd"/>
                                 </connections>
                             </button>
-                            <button toolTip="File Information" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
-                                <rect key="frame" x="83" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="View" bezelStyle="rounded" image="FileInfo32x32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
+                            <button toolTip="Add a new Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
+                                <rect key="frame" x="592" y="7" width="61" height="22"/>
+                                <buttonCell key="cell" type="roundRect" title="Folder+" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarNewFolder:" target="494" id="SGC-h4-9GO"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Copy to the side selected Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
+                                <rect key="frame" x="430" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Copy" alternateTitle="Copy" bezelStyle="roundedRect" image="mancopy32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarCopyTo:" target="-1" id="D2V-Ze-9rH"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Move to the side selected Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
+                                <rect key="frame" x="511" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Move" alternateTitle="Move" bezelStyle="roundedRect" image="manmove32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
+                                </connections>
+                            </button>
+                            <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                                <rect key="frame" x="349" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Open" bezelStyle="roundedRect" image="NSQuickLookTemplate" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
+                                    <string key="keyEquivalent"></string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toolbarOpen:" target="-1" id="Jwn-Pi-YB7"/>
+                                </connections>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="dmc-2q-uga">
+                                <rect key="frame" x="92" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F1" id="6Gt-hF-JfV">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lLM-DO-IvQ">
+                                <rect key="frame" x="173" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F2" id="mSM-fn-Xw1">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5pY-T3-u1r">
+                                <rect key="frame" x="254" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F3" id="NUI-eV-Tf6">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-oh-KH9">
+                                <rect key="frame" x="335" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F4" id="D3W-cm-n4y">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="twh-j1-43J">
+                                <rect key="frame" x="416" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F5" id="aJg-MJ-qpM">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j0g-ZO-QjL">
+                                <rect key="frame" x="497" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F6" id="csw-Qb-bcB">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hsp-sw-ygQ">
+                                <rect key="frame" x="578" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F7" id="r5J-Wx-vXM">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q3S-UC-RWi">
+                                <rect key="frame" x="659" y="13" width="15" height="11"/>
+                                <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F8" id="5dk-vB-CiF">
+                                    <font key="font" metaFont="miniSystem"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button toolTip="File Information" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
+                                <rect key="frame" x="106" y="8" width="61" height="19"/>
+                                <buttonCell key="cell" type="roundRect" title="Info" alternateTitle="View" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="cellTitle"/>
                                     <string key="keyEquivalent"></string>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarInformation:" target="-1" id="RvQ-gX-CD4"/>
                                 </connections>
                             </button>
-                            <button toolTip="Add Folder (F8)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
-                                <rect key="frame" x="307" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" bezelStyle="rounded" image="NewFolderGrey20" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarNewFolder:" target="494" id="SGC-h4-9GO"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Copy (F6)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
-                                <rect key="frame" x="239" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Copy" bezelStyle="rounded" image="mancopy32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarCopyTo:" target="-1" id="D2V-Ze-9rH"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Move (F7)" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="273" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Move" bezelStyle="rounded" image="manmove32" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                    <string key="keyEquivalent"></string>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
-                                </connections>
-                            </button>
-                            <button toolTip="Open" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="161" y="1" width="44" height="32"/>
-                                <buttonCell key="cell" type="push" alternateTitle="Info" bezelStyle="rounded" image="NSQuickLookTemplate" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="toolbarOpen:" target="-1" id="Jwn-Pi-YB7"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="5de-cw-kiE" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="3HE-QM-lxt"/>
+                            <constraint firstAttribute="centerY" secondItem="twh-j1-43J" secondAttribute="centerY" id="664-Dc-N94"/>
+                            <constraint firstAttribute="centerY" secondItem="1b1-sW-OtC" secondAttribute="centerY" id="6Hh-uN-PYD"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="leading" secondItem="j0g-ZO-QjL" secondAttribute="trailing" constant="1" id="AtV-WA-qhJ"/>
+                            <constraint firstAttribute="centerY" secondItem="j0g-ZO-QjL" secondAttribute="centerY" id="BjE-6K-Wai"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="ewn-wA-GNa" secondAttribute="width" id="CY4-v0-35x"/>
+                            <constraint firstAttribute="centerY" secondItem="71S-Xk-3oe" secondAttribute="centerY" id="DiW-CP-U5Y"/>
+                            <constraint firstAttribute="centerY" secondItem="ZOe-oh-KH9" secondAttribute="centerY" id="E0N-lA-uY5"/>
+                            <constraint firstItem="iTH-8p-hwY" firstAttribute="leading" secondItem="hsp-sw-ygQ" secondAttribute="trailing" constant="1" id="Eom-pq-EP6"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
+                            <constraint firstAttribute="centerY" secondItem="CDW-lv-RO9" secondAttribute="centerY" id="FU4-xB-ZTg"/>
+                            <constraint firstAttribute="centerY" secondItem="FfT-nd-Mhm" secondAttribute="centerY" id="GId-PJ-Ftr"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="centerY" secondItem="ewn-wA-GNa" secondAttribute="centerY" id="IBt-ef-JbG"/>
+                            <constraint firstItem="CDW-lv-RO9" firstAttribute="leading" secondItem="ewn-wA-GNa" secondAttribute="trailing" constant="20" id="IT1-z4-J6D"/>
                             <constraint firstAttribute="trailing" secondItem="685-pk-2bz" secondAttribute="trailing" id="Jyr-L0-vZi"/>
+                            <constraint firstItem="71S-Xk-3oe" firstAttribute="leading" secondItem="twh-j1-43J" secondAttribute="trailing" constant="1" id="Kbo-Nf-Xxe"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="CDW-lv-RO9" secondAttribute="width" id="MUP-s0-bu3"/>
+                            <constraint firstItem="ewn-wA-GNa" firstAttribute="leading" secondItem="FfT-nd-Mhm" secondAttribute="trailing" constant="20" id="P1K-Uk-DQz"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="centerY" secondItem="FfT-nd-Mhm" secondAttribute="centerY" id="Pl0-g8-KgZ"/>
+                            <constraint firstItem="FfT-nd-Mhm" firstAttribute="leading" secondItem="lLM-DO-IvQ" secondAttribute="trailing" constant="1" id="QxG-z1-HwK"/>
+                            <constraint firstItem="5de-cw-kiE" firstAttribute="baseline" secondItem="3l9-hq-0eM" secondAttribute="baseline" id="TfP-oR-A78"/>
+                            <constraint firstAttribute="centerY" secondItem="3l9-hq-0eM" secondAttribute="centerY" id="Vdj-sD-Kyt"/>
+                            <constraint firstAttribute="centerY" secondItem="iTH-8p-hwY" secondAttribute="centerY" id="WFc-lm-lFD"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="FfT-nd-Mhm" secondAttribute="width" id="XOM-uJ-eWR"/>
+                            <constraint firstAttribute="centerY" secondItem="lLM-DO-IvQ" secondAttribute="centerY" id="Yuv-Qz-9kc"/>
+                            <constraint firstItem="685-pk-2bz" firstAttribute="top" secondItem="5de-cw-kiE" secondAttribute="bottom" constant="7" id="a2k-qe-iFs"/>
+                            <constraint firstAttribute="centerY" secondItem="ewn-wA-GNa" secondAttribute="centerY" id="bkD-RF-wdw"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="1b1-sW-OtC" secondAttribute="width" id="dC1-VY-4Pz"/>
+                            <constraint firstItem="71S-Xk-3oe" firstAttribute="leading" secondItem="CDW-lv-RO9" secondAttribute="trailing" constant="20" id="dac-M7-LGP"/>
+                            <constraint firstAttribute="centerY" secondItem="dmc-2q-uga" secondAttribute="centerY" id="dyW-mC-qjn"/>
+                            <constraint firstItem="5de-cw-kiE" firstAttribute="baseline" secondItem="iTH-8p-hwY" secondAttribute="baseline" id="eGr-AS-shA"/>
+                            <constraint firstAttribute="centerY" secondItem="hsp-sw-ygQ" secondAttribute="centerY" id="eQS-0r-VFI"/>
+                            <constraint firstItem="3l9-hq-0eM" firstAttribute="leading" secondItem="iTH-8p-hwY" secondAttribute="trailing" constant="20" id="eT2-3v-van"/>
+                            <constraint firstItem="FfT-nd-Mhm" firstAttribute="leading" secondItem="1b1-sW-OtC" secondAttribute="trailing" constant="20" id="fGH-NM-n6C"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="71S-Xk-3oe" secondAttribute="width" id="iIL-Fw-zLB"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="36" id="il6-Bv-eOs"/>
+                            <constraint firstItem="ewn-wA-GNa" firstAttribute="leading" secondItem="5pY-T3-u1r" secondAttribute="trailing" constant="1" id="kdR-Cq-F3d"/>
+                            <constraint firstItem="3l9-hq-0eM" firstAttribute="leading" secondItem="Q3S-UC-RWi" secondAttribute="trailing" constant="1" id="ocP-vC-pUJ"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="iTH-8p-hwY" secondAttribute="width" id="p4f-a0-Pfy"/>
+                            <constraint firstItem="3l9-hq-0eM" firstAttribute="centerY" secondItem="Q3S-UC-RWi" secondAttribute="centerY" id="pzv-61-etU"/>
+                            <constraint firstItem="CDW-lv-RO9" firstAttribute="leading" secondItem="ZOe-oh-KH9" secondAttribute="trailing" constant="1" id="qLR-PS-cfP"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="centerY" secondItem="1b1-sW-OtC" secondAttribute="centerY" id="qVS-FJ-8S7"/>
+                            <constraint firstItem="1b1-sW-OtC" firstAttribute="leading" secondItem="dmc-2q-uga" secondAttribute="trailing" constant="1" id="qWe-o7-A8Z"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="centerY" secondItem="71S-Xk-3oe" secondAttribute="centerY" id="rFy-pn-nsj"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="width" secondItem="3l9-hq-0eM" secondAttribute="width" id="tFN-cN-gGc"/>
+                            <constraint firstAttribute="centerY" secondItem="JaY-la-eFg" secondAttribute="centerY" id="tbw-UP-LRH"/>
+                            <constraint firstAttribute="centerY" secondItem="5pY-T3-u1r" secondAttribute="centerY" id="tlD-ab-AUc"/>
+                            <constraint firstItem="1b1-sW-OtC" firstAttribute="leading" secondItem="5de-cw-kiE" secondAttribute="trailing" constant="25" id="uJo-1r-dSj"/>
+                            <constraint firstItem="71S-Xk-3oe" firstAttribute="leading" secondItem="CDW-lv-RO9" secondAttribute="trailing" constant="20" id="xVz-uD-ZdK"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="leading" secondItem="71S-Xk-3oe" secondAttribute="trailing" constant="20" id="yOm-uP-N6p"/>
+                            <constraint firstItem="iTH-8p-hwY" firstAttribute="leading" secondItem="JaY-la-eFg" secondAttribute="trailing" constant="20" id="z4z-02-5Pd"/>
                             <constraint firstAttribute="bottom" secondItem="685-pk-2bz" secondAttribute="bottom" id="zFc-K0-gVw"/>
+                            <constraint firstItem="JaY-la-eFg" firstAttribute="centerY" secondItem="CDW-lv-RO9" secondAttribute="centerY" id="zqD-hQ-rVe"/>
                         </constraints>
                     </customView>
                     <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB">
@@ -527,12 +642,11 @@ CA
         </window>
     </objects>
     <resources>
-        <image name="FileInfo32x32" width="32" height="32"/>
         <image name="NSFontPanel" width="32" height="32"/>
         <image name="NSQuickLookTemplate" width="21" height="16"/>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
-        <image name="NewFolderGrey20" width="20" height="20"/>
         <image name="StopButton" width="11" height="11"/>
+        <image name="UnderConstruction20" width="20" height="18"/>
         <image name="dualPane" width="20" height="20"/>
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>

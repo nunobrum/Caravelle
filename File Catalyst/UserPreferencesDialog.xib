@@ -192,17 +192,17 @@
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NCM-Cr-a0b">
-                                <rect key="frame" x="109" y="54" width="59" height="17"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Next File" id="WcM-1W-FJ7">
+                            <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" misplaced="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NCM-Cr-a0b">
+                                <rect key="frame" x="109" y="-99" width="90" height="170"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Switch Pane" id="WcM-1W-FJ7">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Aom-Ml-aHN">
-                                <rect key="frame" x="213" y="54" width="84" height="17"/>
-                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Switch Views" id="eBg-dV-7tS">
+                                <rect key="frame" x="213" y="54" width="79" height="17"/>
+                                <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Switch Pane" id="eBg-dV-7tS">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
