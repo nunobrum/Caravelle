@@ -1640,10 +1640,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (twinName==nil) { // there is no twin view
         self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
         [[self myTableView] setAutosaveName:@"SingleTable"];
+        self.titleCopyTo = @"Copy to ...";
+        self.titleMoveTo = @"Move to ...";
     }
     else {
-        _titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
-        _titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
+        self.titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
+        self.titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
         self.contextualToMenusEnabled = [NSNumber numberWithBool:YES];
 
         // Setting the AutoSave Settings

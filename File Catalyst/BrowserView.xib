@@ -547,16 +547,16 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
+                        <binding destination="-2" name="enabled" keyPath="self.contextualToMenusEnabled" id="YNc-fF-Xal"/>
                         <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="HYw-8b-d9W"/>
-                        <binding destination="-2" name="enabled" keyPath="self.validateContextualCopyTo" id="0Qw-44-ici"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
+                        <binding destination="-2" name="enabled" keyPath="self.contextualToMenusEnabled" id="JyN-cl-gvm"/>
                         <binding destination="-2" name="title" keyPath="self.titleMoveTo" id="CZG-6S-oid"/>
-                        <binding destination="-2" name="enabled" keyPath="self.validateContextualMoveTo" id="Eae-tY-266"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>

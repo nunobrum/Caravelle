@@ -264,12 +264,15 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         [myRightView setTwinName:@"Left"];
         [_ContentSplitView addSubview:myLeftView.view];
         [_ContentSplitView addSubview:myRightView.view];
-
+        [self.buttonCopyTo setEnabled:YES];
+        [self.buttonMoveTo setEnabled:YES];
     }
     else if (applicationMode == ApplicationMode1View) {
         myRightView = nil;
         [myLeftView setTwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
         [_ContentSplitView addSubview:myLeftView.view];
+        [self.buttonCopyTo setEnabled:NO];
+        [self.buttonMoveTo setEnabled:NO];
 
     }
 
@@ -1086,6 +1089,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (myRightView!=nil && count == 2) {
             [myLeftView setTwinName:nil];
             [myRightView.view removeFromSuperview];
+            [self.buttonCopyTo setEnabled:NO];
+            [self.buttonMoveTo setEnabled:NO];
             //myRightView.view = nil;
         }
     }
@@ -1108,6 +1113,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [_ContentSplitView addSubview:myRightView.view];
                 [myRightView refresh]; // Just Refreshes
             }
+            [self.buttonCopyTo setEnabled:YES];
+            [self.buttonMoveTo setEnabled:YES];
+
         }
     }
     [self.ContentSplitView adjustSubviews];

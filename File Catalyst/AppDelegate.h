@@ -22,6 +22,8 @@
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
 @property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
 @property (weak) IBOutlet NSTextField *statusProgressLabel;
+@property (weak) IBOutlet NSButton *buttonCopyTo;
+@property (weak) IBOutlet NSButton *buttonMoveTo;
 
 @property (weak) IBOutlet NSButton *statusCancelButton;
 

@@ -316,6 +316,8 @@ CA
             <connections>
                 <outlet property="ContentSplitView" destination="6MC-cR-BWB" id="70s-Di-Uy4"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
+                <outlet property="buttonCopyTo" destination="71S-Xk-3oe" id="A6v-Zj-6F8"/>
+                <outlet property="buttonMoveTo" destination="JaY-la-eFg" id="AlP-vS-8nF"/>
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
                 <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
                 <outlet property="statusProgressIndicator" destination="8BL-5Q-1hY" id="OZq-Hf-7Yn"/>
