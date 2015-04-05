@@ -1265,12 +1265,13 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (applicationMode == ApplicationMode2Views) {
             [myRightView focusOnFirstView];
         }
-
+        else {
+            [myLeftView focusOnFirstView];
+        }
     }
     else if (sender == myRightView) {
         [myLeftView focusOnFirstView];
     }
-
 }
 
 - (void) focusOnPreviousView:(id)sender {
@@ -1278,12 +1279,13 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (applicationMode == ApplicationMode2Views) {
             [myRightView focusOnLastView];
         }
-
+        else {
+            [myLeftView focusOnLastView];
+        }
     }
     else if (sender == myRightView) {
         [myLeftView  focusOnLastView];
     }
-    
 }
 
 

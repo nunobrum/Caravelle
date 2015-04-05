@@ -108,9 +108,9 @@
                             <rect key="frame" x="0.0" y="0.0" width="428" height="534"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
-                                <scrollView horizontalHuggingPriority="200" verticalHuggingPriority="200" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" misplaced="YES" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
-                                    <rect key="frame" x="0.0" y="0.0" width="163" height="534"/>
-                                    <clipView key="contentView" horizontalHuggingPriority="50" horizontalCompressionResistancePriority="50" misplaced="YES" id="Y6z-1n-4Bv">
+                                <scrollView horizontalHuggingPriority="200" verticalHuggingPriority="200" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
+                                    <rect key="frame" x="0.0" y="0.0" width="428" height="534"/>
+                                    <clipView key="contentView" horizontalHuggingPriority="50" horizontalCompressionResistancePriority="50" id="Y6z-1n-4Bv">
                                         <rect key="frame" x="1" y="17" width="157" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
@@ -120,7 +120,7 @@
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                                 <tableColumns>
-                                                    <tableColumn identifier="COL_NAME" width="157.77734375" minWidth="16" maxWidth="1000" id="y9F-Gr-UZs">
+                                                    <tableColumn identifier="COL_NAME" width="422.77734375" minWidth="16" maxWidth="1000" id="y9F-Gr-UZs">
                                                         <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Name">
                                                             <font key="font" metaFont="smallSystem"/>
                                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -134,7 +134,7 @@
                                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                                         <prototypeCellViews>
                                                             <tableCellView identifier="CatalystView" id="ixn-tP-krw" customClass="FolderCellView">
-                                                                <rect key="frame" x="1" y="1" width="158" height="34"/>
+                                                                <rect key="frame" x="1" y="1" width="423" height="34"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="zpT-yC-x1m">
@@ -184,7 +184,7 @@
                                                                 </connections>
                                                             </tableCellView>
                                                             <tableCellView id="bJm-ec-g32">
-                                                                <rect key="frame" x="1" y="37" width="158" height="17"/>
+                                                                <rect key="frame" x="1" y="37" width="423" height="17"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="p2w-XM-kPE">
@@ -195,7 +195,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="hta-Aw-6Ip"/>
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
-                                                                        <rect key="frame" x="25" y="0.0" width="133" height="17"/>
+                                                                        <rect key="frame" x="25" y="0.0" width="398" height="17"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
                                                                             <font key="font" metaFont="system"/>
                                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -245,8 +245,8 @@
                                         <autoresizingMask key="autoresizingMask"/>
                                     </tableHeaderView>
                                 </scrollView>
-                                <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
-                                    <rect key="frame" x="66" y="251" width="32" height="32"/>
+                                <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
+                                    <rect key="frame" x="198" y="251" width="32" height="32"/>
                                 </progressIndicator>
                             </subviews>
                             <constraints>

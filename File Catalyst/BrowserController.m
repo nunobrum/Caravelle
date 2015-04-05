@@ -935,7 +935,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             else {
                 [[self parentController] focusOnPreviousView:self];
             }
-
         }
     }
 }

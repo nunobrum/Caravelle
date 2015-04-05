@@ -614,19 +614,13 @@
         // The Return key will open the file
         [self TableDoubleClickEvent:theEvent];
     }
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wundeclared-selector"
     else if ([keyWM isEqualToString:@"\t"]) {
         // the tab key will switch Panes
-        [NSApp sendAction:@selector(gotoNextValidKeyView:) to:nil from:self];
+        [[self parentController] focusOnNextView:self];
     }
-
     else if ([key isEqualToString:@"\x19"]) {
-        [NSApp sendAction:@selector(gotoPreviousValidKeyView:) to:nil from:self];
-
+        [[self parentController] focusOnPreviousView:self];
     }
-#pragma clang diagnostic pop
     else if ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
         // the Space Key will mark the file
         // only works the TableView
@@ -742,19 +736,19 @@
 }
 
 
-- (NSView*) firstFocusView {
+
+-(void) focusOnFirstView {
     if ([[_myTableView selectedRowIndexes] count]==0) {
         [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
     }
-    return self.myTableView;
-}
+    [self.myTableView.window makeFirstResponder:self.myTableView];
 
-- (NSView*) lastFocusView {
+}
+-(void) focusOnLastView {
     if ([[_myTableView selectedRowIndexes] count]==0) {
         [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
     }
-    return self.myTableView;
+    [self.myTableView.window makeFirstResponder:self.myTableView];
 }
-
 
 @end
