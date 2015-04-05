@@ -7,31 +7,30 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CustomTableHeaderView.h"
+#import "NodeViewController.h"
 #import "BrowserTableView.h"
 #import "BrowserOutlineView.h"
 #import "FileCollection.h"
 #import "TreeRoot.h"
 #include "Definitions.h"
 
-extern NSString *notificationStatusUpdate;
+
 
 
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <NSOutlineViewDataSource, NSTableViewDataSource, NSOutlineViewDelegate, NSTableViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate> {
+@interface BrowserController : NSViewController <ParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate> {
     NSSize iconSize;
     NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
     BViewMode _viewMode;
+    BViewType _viewType;
     NSString * _twinName;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;
 @property (strong) IBOutlet BrowserOutlineView *myOutlineView;
-@property (strong) IBOutlet BrowserTableView *myTableView;
-@property (strong) IBOutlet CustomTableHeaderView *myTableViewHeader;
 @property (strong) IBOutlet NSPathCell *myPathBarCell;
 @property (strong) IBOutlet NSPathControl *myPathBarControl;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
@@ -39,23 +38,25 @@ extern NSString *notificationCatalystRootUpdate;
 @property (strong) IBOutlet NSMenu *myPathPopDownMenu;
 
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
-@property (strong) IBOutlet NSProgressIndicator *myFileViewProgressIndicator;
 
 @property (strong) IBOutlet NSSegmentedControl *myViewSelectorButton;
 
 @property (strong) IBOutlet NSSplitView *mySplitView;
-@property (strong) IBOutlet NSView *myTreeContainerView;
-@property (strong) IBOutlet NSView *myTableContainerView;
 @property (strong) IBOutlet NSSegmentedControl *treeEnableSwitch;
 
+@property (strong) IBOutlet NSObjectController *viewPreferences;
+
+@property (strong) IBOutlet NSMenu *contextualMenu;
 
 
-@property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
-@property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
+@property (readwrite, weak) id<ParentProtocol> parentController;
+@property (strong) NodeViewController *detailedViewController;
+
 
 @property NSString *titleCopyTo;
 @property NSString *titleMoveTo;
 @property NSNumber *contextualToMenusEnabled;
+@property NSString *viewName;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
@@ -76,19 +77,8 @@ extern NSString *notificationCatalystRootUpdate;
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 
-/*
- * Table Data Source Protocol
- */
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
-- (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex;
-/*
- * Table Data Delegate Protocol
- */
-
-- (void)tableViewSelectionDidChange:(NSNotification *)aNotification;
 /* Binding is done manually in the initialization procedure */
 - (IBAction)OutlineDoubleClickEvent:(id)sender;
-- (IBAction)TableDoubleClickEvent:(id)sender;
 
 /*
  * Selectors Binded in XIB
@@ -96,7 +86,7 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) PathSelect:(id)sender;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
-- (IBAction) filenameDidChange:(id)sender;
+//- (IBAction) filenameDidChange:(id)sender;
 - (IBAction) treeViewEnable:(id)sender;
 - (IBAction) viewTypeSelection:(id)sender;
 - (IBAction) mruBackForwardAction:(id)sender;
@@ -114,19 +104,18 @@ extern NSString *notificationCatalystRootUpdate;
  * Parent access routines
  */
 
--(void) initBrowserView:(BViewMode)viewMode twin:(NSString*)twinName;
--(void) setTwinName:(NSString *)twinName;
+-(void) setName:(NSString*)viewName TwinName:(NSString *)twinName;
+-(void) setViewType:(BViewType)viewType;
+-(BViewType) viewType;
+
 -(void) setViewMode:(BViewMode)viewMode;
 -(BViewMode) viewMode;
 
 -(TreeBranch*) treeNodeSelected;
 
--(id) getFileAtIndex:(NSUInteger)index;
 -(void) set_filterText:(NSString *) filterText;
 
 -(void) reloadItem:(id) item;
--(void) refreshTableView;
--(void) refreshTableViewKeepingSelections;
 -(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) removeRootWithIndex:(NSInteger)index;
@@ -140,11 +129,8 @@ extern NSString *notificationCatalystRootUpdate;
 -(BOOL) selectFolderByURL:(NSURL*)theURL;
 -(TreeBranch*) getItemByURL:(NSURL*)theURL;
 -(void) startAllBusyAnimations;
--(void) startTableBusyAnimations;
 -(void) stopBusyAnimations;
 -(NSURL*) getTreeViewSelectedURL;
--(NSArray*) getTableViewSelectedURLs;
--(void) setTableViewSelectedURLs:(NSArray*) urls;
 
 -(id) focusedView;
 -(NSArray*) getSelectedItems;

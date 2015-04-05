@@ -35,5 +35,20 @@
 	<true/>
 	<key>StoreAllowedURLs</key>
 	<true/>
+	<key>LeftPreferences</key>
+	<dict>
+		<key>ViewType</key>
+		<integer>1</integer>
+	</dict>
+	<key>RightPreferences</key>
+	<dict>
+		<key>ViewType</key>
+		<integer>1</integer>
+	</dict>
+	<key>SinglePreferences</key>
+	<dict>
+		<key>ViewType</key>
+		<integer>1</integer>
+	</dict>
 </dict>
 </plist>

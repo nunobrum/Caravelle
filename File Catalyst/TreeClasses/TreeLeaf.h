@@ -14,6 +14,5 @@
 }
 //-(void)       SetFileInformation: (FileInformation *) fileInfo;
 -(FileInformation*) getFileInformation;
--(BOOL) isBranch;
 
 @end

@@ -19,12 +19,8 @@
 }
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
-    // Now register menu location for the delegate to read
-    /*NSPoint event_location = [theEvent locationInWindow];
-    NSPoint local_point = [self convertPoint:event_location fromView:nil];
-    NSInteger row = [self rowAtPoint:local_point];
-    [self setRightMouseLocation: row];*/
-    [(BrowserController*)[self delegate] tableSelected:self];
+    // Before this was done to ensure that the right click got the correct view.
+    [(id<ParentProtocol>)[self delegate] updateFocus:self];
     [super rightMouseDown:theEvent];
 }
 

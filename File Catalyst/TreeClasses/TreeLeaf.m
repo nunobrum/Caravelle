@@ -17,7 +17,8 @@
 -(FileInformation*)getFileInformation {
     return [FileInformation createWithURL: self.url];
 }
--(BOOL) isBranch {
-    return NO;
+-(ItemType) itemType {
+    return ItemTypeLeaf;
 }
+
 @end

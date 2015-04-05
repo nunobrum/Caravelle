@@ -20,9 +20,9 @@ extern NSString *kDFOFilesKey;
 
 extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
-extern NSString *kSourceViewKey;
+extern NSString *kFromObjectKey;
 
-
+extern NSString *opOpenOperation;
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
 extern NSString *opEraseOperation;
@@ -30,6 +30,7 @@ extern NSString *opNewFolder;
 extern NSString *opRename;
 extern NSString *opSendRecycleBinOperation;
 
+extern NSString *notificationStatusUpdate;
 
 //#define USE_UTI
 #ifdef USE_UTI
@@ -48,6 +49,10 @@ extern const CFStringRef kTreeItemDropUTI;
 #define AFTER_POWERBOX_INFORMATION 1
 
 #endif
+
+#define USE_TREEITEM_PASTEBOARD_WRITING // Controls how paste to board is done
+
+
 //#define COL_ID_KEY @"ID"
 #define COL_ACCESSOR_KEY @"accessor"
 #define COL_TITLE_KEY @"title"
@@ -86,12 +91,21 @@ extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
 extern id appTreeManager;
 
+typedef NS_ENUM(NSInteger, BViewType) { // Needs to be synchronized with the BrowserView segmentedButton
+    BViewTypeInvalid = -2,
+    BViewTypeVoid = -1,
+    BViewTypeIcon = 0,
+    BViewTypeTable = 1,
+    BViewTypeBrowser = 2
+};
+
 typedef NS_ENUM(NSInteger, BViewMode) {
     BViewModeVoid = 0,
     BViewBrowserMode = 1,
     BViewCatalystMode,
     BViewDuplicateMode
 };
+
 
 typedef NS_ENUM(NSInteger, ApplicationwMode) {
     ApplicationMode1View = 0,
@@ -127,8 +141,19 @@ extern NSString *kOptionsKey;
 
 - (void) refresh;
 
-- (NSView*) firstFocusView;
-- (NSView*) lastFocusView;
+
+-(void) focusOnFirstView;
+-(void) focusOnLastView;
+- (NSView*) focusedView;
+
+@end
+
+@protocol ParentProtocol <NSObject>
+
+- (void) focusOnNextView:(id)sender;
+- (void) focusOnPreviousView:(id)sender;
+- (void) updateFocus:(id)sender;
+- (void) updateStatus:(NSDictionary*)status;
 
 @end
 

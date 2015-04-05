@@ -41,6 +41,11 @@
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
 		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
 		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
+		3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E31ACFB03900E09A85 /* IconView.xib */; };
+		3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E51ACFB03900E09A85 /* IconViewController.m */; };
+		3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */; };
+		3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E91ACFCE7400E09A85 /* TableViewController.m */; };
+		3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */; };
 		3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */; };
 		3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */; };
 		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
@@ -135,6 +140,14 @@
 		3CEA676818F87C2F0080C4FC /* CaravelleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CaravelleTests-Info.plist"; sourceTree = "<group>"; };
 		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
+		3CEB61E31ACFB03900E09A85 /* IconView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = IconView.xib; path = BrowserClasses/IconView.xib; sourceTree = "<group>"; };
+		3CEB61E41ACFB03900E09A85 /* IconViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconViewController.h; path = BrowserClasses/IconViewController.h; sourceTree = "<group>"; };
+		3CEB61E51ACFB03900E09A85 /* IconViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IconViewController.m; path = BrowserClasses/IconViewController.m; sourceTree = "<group>"; };
+		3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TableViewController.xib; path = BrowserClasses/TableViewController.xib; sourceTree = "<group>"; };
+		3CEB61E91ACFCE7400E09A85 /* TableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TableViewController.m; path = BrowserClasses/TableViewController.m; sourceTree = "<group>"; };
+		3CEB61EA1ACFCE7400E09A85 /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewController.h; path = BrowserClasses/TableViewController.h; sourceTree = "<group>"; };
+		3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeViewController.h; path = BrowserClasses/NodeViewController.h; sourceTree = "<group>"; };
+		3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeViewController.m; path = BrowserClasses/NodeViewController.m; sourceTree = "<group>"; };
 		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
 		3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesDialog.m; sourceTree = "<group>"; };
 		3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserPreferencesDialog.xib; sourceTree = "<group>"; };
@@ -355,6 +368,20 @@
 			path = IconResources;
 			sourceTree = "<group>";
 		};
+		3CEB61F01ACFD53C00E09A85 /* TableView */ = {
+			isa = PBXGroup;
+			children = (
+				3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */,
+				3CEB61EA1ACFCE7400E09A85 /* TableViewController.h */,
+				3CEB61E91ACFCE7400E09A85 /* TableViewController.m */,
+				3CF5DA841A5F1CA100786D64 /* BrowserTableView.h */,
+				3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */,
+				3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */,
+				3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */,
+			);
+			name = TableView;
+			sourceTree = "<group>";
+		};
 		3CF32B9919FCEDF800B14A85 /* Branches */ = {
 			isa = PBXGroup;
 			children = (
@@ -386,15 +413,17 @@
 				3C717C05198D54720025E28A /* BrowserView.xib */,
 				3C717C07198D5B200025E28A /* BrowserController.h */,
 				3C717C08198D5B200025E28A /* BrowserController.m */,
+				3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */,
+				3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */,
 				3C84EFE01A05254A00ED6392 /* FileAttributesController.h */,
 				3C84EFE11A05254A00ED6392 /* FileAttributesController.m */,
 				3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */,
-				3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */,
-				3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */,
-				3CF5DA841A5F1CA100786D64 /* BrowserTableView.h */,
-				3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */,
 				3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */,
 				3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */,
+				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
+				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
+				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
+				3CEB61F01ACFD53C00E09A85 /* TableView */,
 			);
 			name = BrowserViewClasses;
 			sourceTree = "<group>";
@@ -503,6 +532,7 @@
 				3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */,
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
+				3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */,
 				3CF5B6C31ABF76630065E543 /* GenericFolderIcon.icns in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
 				3CF5B6C21ABF76630065E543 /* GenericDocumentIcon.icns in Resources */,
@@ -510,6 +540,7 @@
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
 				3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */,
 				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
+				3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,17 +571,20 @@
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
+				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
+				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
 				3CF5DA8D1A65D09800786D64 /* RenameFileDialog.m in Sources */,
 				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
+				3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
 				3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */,

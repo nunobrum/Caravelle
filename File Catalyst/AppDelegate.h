@@ -7,10 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "Definitions.h"
 #import "FileCollection.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate, ParentProtocol> {
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
@@ -73,7 +74,5 @@
 
 - (IBAction)appModeChanged:(id)sender;
 
-- (IBAction)gotoNextValidKeyView:(id)sender;
-- (IBAction)gotoPreviousValidKeyView:(id)sender;
 
 @end

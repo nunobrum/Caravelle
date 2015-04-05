@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+
 #import "FileUtils.h"
 
 
@@ -24,9 +25,17 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 };
 
 
+typedef NS_ENUM(NSInteger, ItemType) {
+    ItemTypeNone = 0,
+    ItemTypeLeaf = 1,
+    ItemTypeBranch,
+    ItemTypeFilter
+};
+
+
 @protocol TreeProtocol <NSObject>
 
--(BOOL) isBranch;
+- (ItemType) itemType;
 
 @end
 
@@ -49,7 +58,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(NSArray *) treeComponents;
 -(NSArray *) treeComponentsToParent:(id)parent;
 
--(BOOL) isBranch;
+-(ItemType)  itemType;
 -(NSString*) name;
 -(NSDate*)   date_modified;
 -(NSDate*)   date_accessed;

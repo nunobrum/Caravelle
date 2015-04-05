@@ -64,10 +64,10 @@ TreeManager *appTreeManager;
         else if (comparison == pathIsChild) {
             TreeItem *aux = [item addURL:url];
             if (aux) {
-                if ([aux isKindOfClass:[TreeBranch class]])
+                if ([aux itemType] == ItemTypeBranch)
                     return (TreeBranch*)aux;
                 else if ([aux parent]) {
-                    if ([[aux parent] isKindOfClass:[TreeBranch class]])
+                    if ([[aux parent] itemType] == ItemTypeBranch)
                     return (TreeBranch*)[aux parent];
                 }
                 else {
@@ -427,7 +427,7 @@ TreeManager *appTreeManager;
                 if (ti==nil) // didn't find, will have to create it
                     ti = (TreeBranch*)[aux addURL:url];
                 // sanity check before assigning
-                if (ti!=nil && [ti isKindOfClass:[TreeBranch class]])
+                if (ti!=nil && [ti itemType] == ItemTypeBranch)
                     answer = (TreeBranch*) ti;
             }*/
     }

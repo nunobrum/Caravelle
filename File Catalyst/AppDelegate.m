@@ -6,7 +6,6 @@
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
-#include "Definitions.h"
 
 #import "AppDelegate.h"
 #import "FileCollection.h"
@@ -44,12 +43,13 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
-NSString *kSourceViewKey = @"SourceViewKey";
+NSString *kFromObjectKey = @"FromObjectKey";
 
 #ifdef USE_UTI
 const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
 #endif
 
+NSString *opOpenOperation=@"OpenOperation";
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
 NSString *opEraseOperation =@"EraseOperation";
@@ -158,7 +158,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             if (url_allowed!=nil) {
                 id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed];
                 [(BrowserController*)view removeAll];
-                [(BrowserController*)view setViewMode:BViewBrowserMode];
+                [(BrowserController*)view setViewMode:BViewBrowserMode ];
+                [(BrowserController*)view setViewType:BViewTypeVoid]; // TODO:!!!! Get from user Defaults
                 [(BrowserController*)view addTreeRoot: item];
                 [(BrowserController*)view selectFirstRoot];
                 [(BrowserController*)view refresh];
@@ -185,6 +186,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
         [(BrowserController*)view removeAll];
         [(BrowserController*)view setViewMode:BViewBrowserMode];
+        [(BrowserController*)view setViewType:BViewTypeVoid]; // TODO:!!!! Get from user Defaults
         [(BrowserController*)view addTreeRoot: item];
         [(BrowserController*)view selectFirstRoot];
 #endif
@@ -251,17 +253,16 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                              returnTypes:returnTypes];
 
     myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-    [myLeftView setFoldersDisplayed:
-     [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_FOLDERS_ON_TABLE]];
+    [myLeftView setParentController:self];
 
     applicationMode = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_APP_VIEW_MODE];
 
     if (applicationMode == ApplicationMode2Views) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-        [myRightView setFoldersDisplayed:
-         [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
-        [myLeftView setTwinName:@"Right"];
-        [myRightView setTwinName:@"Left"];
+        [myRightView setParentController:self];
+
+        [myLeftView  setName:@"Left"  TwinName:@"Right"];
+        [myRightView setName:@"Right" TwinName:@"Left"];
         [_ContentSplitView addSubview:myLeftView.view];
         [_ContentSplitView addSubview:myRightView.view];
         [self.buttonCopyTo setEnabled:YES];
@@ -269,7 +270,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
     else if (applicationMode == ApplicationMode1View) {
         myRightView = nil;
-        [myLeftView setTwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
+        [myLeftView setName:@"Single" TwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
         [_ContentSplitView addSubview:myLeftView.view];
         [self.buttonCopyTo setEnabled:NO];
         [self.buttonMoveTo setEnabled:NO];
@@ -292,7 +293,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     // Make a default focus
     self->_selectedView = myLeftView;
     // Set the Left view as first responder
-    [self.myWindow makeFirstResponder:myLeftView.myTableView];
+    [myLeftView focusOnFirstView];
 
 }
 
@@ -323,7 +324,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
                 NSPredicate *filter;
                 filterBranch *fb;
-                filter = [NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"];
+                filter = [NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"];
                 [st setFilter:filter];
                 for (int sz=1; sz < 10; sz+=1) {
                     NSString *pred = [NSString stringWithFormat:@"SELF.filesize < %d", sz*1000000];
@@ -339,7 +340,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             else {
                 CatalogBranch *st = [[CatalogBranch alloc] initWithSearch:@"*" name:@"Document Search" parent:nil];
                 [st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
-                [st setFilter:[NSPredicate predicateWithFormat:@"SELF.isBranch==FALSE"]];
+                [st setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
                 [st setCatalogKey:@"date_modified"];
                 [st setValueTransformer:DateToYearTransformer()];
                 [st createSearchPredicate];
@@ -654,6 +655,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 // Add to the Browser View
                 [(BrowserController*)view removeAll];
                 [(BrowserController*)view setViewMode:BViewBrowserMode];
+                [(BrowserController*)view setViewType:BViewTypeVoid];
                 [(BrowserController*)view addTreeRoot: item];
                 [(BrowserController*)view selectFirstRoot];
                 [(BrowserController*)view refresh];
@@ -755,7 +757,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     for (TreeItem *item in selectedFiles) {
         [item setTag:tagTreeItemToMove+tagTreeItemDirty];
     }
-    [[self selectedView] refreshTableViewKeepingSelections];
+    [[self selectedView] refresh]; // TODO:! replace this with KVO observed->reloadItem
     [self executeCopy:selectedFiles onlyNames:NO];
     isCutPending = YES; // This instruction has to be always made after the executeCopy
 }
@@ -870,33 +872,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 #pragma mark Action Outlets
 
 
-- (IBAction)gotoNextValidKeyView:(id)sender {
-    if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views) {
-            [self.myWindow makeFirstResponder:myRightView.firstFocusView];
-        }
-
-    }
-    else if (sender == myRightView) {
-        [self.myWindow makeFirstResponder:myLeftView.firstFocusView];
-    }
-
-}
-
-- (IBAction)gotoPreviousValidKeyView:(id)sender {
-    if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views) {
-            [self.myWindow makeFirstResponder:myRightView.lastFocusView];
-        }
-
-    }
-    else if (sender == myRightView) {
-        [self.myWindow makeFirstResponder:myLeftView.lastFocusView];
-    }
-    
-}
-
-- (IBAction)updateSelected:(id)sender {
+- (void) updateFocus:(id)sender {
     if (sender == myLeftView || sender == myRightView)
         _selectedView = sender;
     else {
@@ -1087,7 +1063,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     if (mode == ApplicationMode1View) {
         if (myRightView!=nil && count == 2) {
-            [myLeftView setTwinName:nil];
+            [myLeftView setName:@"Single" TwinName:nil];
             [myRightView.view removeFromSuperview];
             [self.buttonCopyTo setEnabled:NO];
             [self.buttonMoveTo setEnabled:NO];
@@ -1098,10 +1074,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (count==1) {
             if (myRightView == nil) {
                 myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-                [myRightView setFoldersDisplayed:
-                 [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_RIGHT_FOLDERS_ON_TABLE] ];
-                [myLeftView setTwinName:@"Right"];
-                [myRightView setTwinName:@"Left"];
+                [myLeftView setName:@"Left" TwinName:@"Right"];
+                [myRightView setName:@"Right" TwinName:@"Left"];
                 [_ContentSplitView addSubview:myRightView.view];
                 [self goHome:myRightView];
             }
@@ -1241,7 +1215,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             else if (theAction == @selector(paste:) ||
                      theAction == @selector(contextualPaste:)
                 ) {
-                if ([item isKindOfClass:[TreeBranch class]]==NO) {
+                if ([item itemType] == ItemTypeBranch==NO) {
                     allow = NO;
                 }
                 else if ([item hasTags:tagTreeItemReadOnly]) {
@@ -1251,7 +1225,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             // actions that require one folder with Right access
             else if (theAction == @selector(toolbarNewFolder:) ||
                      theAction == @selector(contextualNewFolder:)) {
-                if ([item isKindOfClass:[TreeBranch class]]==NO) {
+                if ([item itemType] == ItemTypeBranch==NO) {
                     allow = NO;
                 }
                 else if ([item hasTags:tagTreeItemReadOnly]) {
@@ -1284,26 +1258,72 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     return allow; //[super validateUserInterfaceItem:anItem];
 }
 
-#pragma mark -
+#pragma mark - Parent Protocol
+
+- (void)focusOnNextView:(id)sender {
+    if (sender == myLeftView) {
+        if (applicationMode == ApplicationMode2Views) {
+            [myRightView focusOnFirstView];
+        }
+
+    }
+    else if (sender == myRightView) {
+        [myLeftView focusOnFirstView];
+    }
+
+}
+
+- (void) focusOnPreviousView:(id)sender {
+    if (sender == myLeftView) {
+        if (applicationMode == ApplicationMode2Views) {
+            [myRightView focusOnLastView];
+        }
+
+    }
+    else if (sender == myRightView) {
+        [myLeftView  focusOnLastView];
+    }
+    
+}
 
 
-#pragma mark Operations Handling
+
+#pragma mark - Operations Handling
 /* Called for the notificationDoFileOperation notification 
  This routine is called by the views to initiate opeations, such as 
  the case of the edit of the file name or the drag/drop operations */
 -(void) startOperationHandler: (NSNotification*) note {
 
     NSString *operation = [[note userInfo] objectForKey:kDFOOperationKey];
+    if ([operation isEqualToString:opOpenOperation]) {
+        NSArray *receivedItems = [[note userInfo] objectForKey:kDFOFilesKey];
+        BOOL oneFolder=YES;
+        for (TreeItem *node in receivedItems) {
+            /* Do something here */
+            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
+                [node openFile]; // TODO:!!! Register this folder as one of the MRU
+            }
+            else if ([node isKindOfClass: [TreeBranch class]] && oneFolder==YES) { // It is a directory
+                // Going to open the Select That directory on the Outline View
+                /* This also sets the node for Table Display and path bar */
+                [(BrowserController*)self.selectedView selectFolderByItem:node];
+                oneFolder = NO; /* Only one Folder can be Opened */
+            }
+            else
+                NSLog(@"BrowserController.TableDoubleClickEvent: - Unknown Class '%@'", [node className]);
 
-    if (([operation isEqualToString:opCopyOperation]) ||
+        }
+    }
+    else if (([operation isEqualToString:opCopyOperation]) ||
         ([operation isEqualToString:opMoveOperation]) ||
         ([operation isEqualToString:opNewFolder])||
         ([operation isEqualToString:opRename])) {
         // Redirects all to file operation
         putInQueue([note userInfo]);
+
+        // Presently this only starts the Busy indications on the statusBar.
+        [self _startOperationBusyIndication];
     }
-    // Presently this only starts the Busy indications on the statusBar.
-    [self _startOperationBusyIndication];
 }
 
 -(void) _startOperationBusyIndication {
@@ -1433,7 +1453,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
         if (!OK)
             // refreshes the view to clear any errors, such as in the new Folder or failed drop
-            [(id<MYViewProtocol>)[info objectForKey:kSourceViewKey] refresh];
+            [(id<MYViewProtocol>)[info objectForKey:kFromObjectKey] refresh];
         else {
             // TODO:!! MRU Option that only includes directories where operations have hapened.
             // Register the folder in a list of last *used* locations
@@ -1452,6 +1472,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 }
 
+-(void) updateStatus:(NSDictionary *)status {
+    NSLog(@"Status Update missing");
+}
+
 - (void) statusUpdate:(NSNotification*)theNotification {
     static NSUInteger dupShow = 0;
     NSString *statusText;
@@ -1463,7 +1487,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
     [[self myWindow] setTitle:windowTitle];
 
-    if ([selView isKindOfClass:[BrowserController class]]) {
+    //if ([selView isKindOfClass:[BrowserController class]]) {
 
         NSArray *selectedFiles = [selView getSelectedItems];
 
@@ -1492,7 +1516,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 TreeItem *item = [selectedFiles objectAtIndex:0];
                 NSString *sizeText;
                 NSString *type;
-                if ([item isKindOfClass:[TreeLeaf class]]) {
+                if ([item itemType] == ItemTypeLeaf) {
                     type = @"File";
                     sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
                 }
@@ -1506,11 +1530,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             }
             else {
                 for (TreeItem *item in selectedFiles ) {
-                    if ([item isKindOfClass:[TreeLeaf class]]) {
+                    if ([item itemType] == ItemTypeLeaf) {
                         num_files++;
                         files_size += [(TreeLeaf*)item filesize];
                     }
-                    else if ([item isKindOfClass:[TreeBranch class]]) {
+                    else if ([item itemType] == ItemTypeBranch) {
                         num_directories++;
                         folders_size += [(TreeBranch*)item filesize];
                     }
@@ -1541,7 +1565,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         else {
             [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
         }
-    }
+
 }
 
 
@@ -1557,7 +1581,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 /* invoked by Find Duplicates Dialog on OK Button */
 - (void) startDuplicateFind:(NSNotification*)theNotification {
     [myLeftView setViewMode:BViewDuplicateMode];
+    [myLeftView setViewType:BViewTypeTable];
     [myRightView setViewMode:BViewDuplicateMode];
+    [myRightView setViewType:BViewTypeTable];
     [self _startOperationBusyIndication];
     NSDictionary *notifInfo = [theNotification userInfo];
 	// start the GetPathsOperation with the root path to start the search

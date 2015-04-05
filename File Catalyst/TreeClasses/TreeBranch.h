@@ -25,7 +25,6 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
 
 
--(BOOL)      isBranch;
 -(NSInteger) numberOfLeafsInNode;
 -(NSInteger) numberOfBranchesInNode;
 -(NSInteger) numberOfItemsInNode;

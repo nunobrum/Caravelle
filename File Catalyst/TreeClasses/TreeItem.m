@@ -13,6 +13,10 @@
 
 @implementation TreeItem
 
+-(ItemType) itemType {
+    NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
+    return ItemTypeNone;
+}
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
@@ -118,11 +122,6 @@
         _tag &= ~tagTreeItemReadOnly;
     else
         _tag |= tagTreeItemReadOnly;
-}
-
--(BOOL) isBranch {
-    NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
-    return NO;
 }
 
 -(NSString*) name {
