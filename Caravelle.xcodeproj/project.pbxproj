@@ -382,6 +382,26 @@
 			name = TableView;
 			sourceTree = "<group>";
 		};
+		3CEB61F11AD293C300E09A85 /* Icon View */ = {
+			isa = PBXGroup;
+			children = (
+				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
+				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
+				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
+			);
+			name = "Icon View";
+			sourceTree = "<group>";
+		};
+		3CEB61F21AD293F500E09A85 /* AttributesPanel */ = {
+			isa = PBXGroup;
+			children = (
+				3C84EFE01A05254A00ED6392 /* FileAttributesController.h */,
+				3C84EFE11A05254A00ED6392 /* FileAttributesController.m */,
+				3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */,
+			);
+			name = AttributesPanel;
+			sourceTree = "<group>";
+		};
 		3CF32B9919FCEDF800B14A85 /* Branches */ = {
 			isa = PBXGroup;
 			children = (
@@ -415,15 +435,11 @@
 				3C717C08198D5B200025E28A /* BrowserController.m */,
 				3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */,
 				3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */,
-				3C84EFE01A05254A00ED6392 /* FileAttributesController.h */,
-				3C84EFE11A05254A00ED6392 /* FileAttributesController.m */,
-				3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */,
 				3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */,
 				3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */,
-				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
-				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
-				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
+				3CEB61F11AD293C300E09A85 /* Icon View */,
 				3CEB61F01ACFD53C00E09A85 /* TableView */,
+				3CEB61F21AD293F500E09A85 /* AttributesPanel */,
 			);
 			name = BrowserViewClasses;
 			sourceTree = "<group>";

@@ -131,8 +131,8 @@
                                             <tableCellView identifier="COL_TEXT" id="ges-uL-9Ql">
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="hLo-fT-LGr">
-                                                        <rect key="frame" x="1" y="0.0" width="99" height="17"/>
+                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hLo-fT-LGr">
+                                                        <rect key="frame" x="-0.5" y="-9" width="99" height="17"/>
                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="a3m-mS-pfa">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -152,6 +152,11 @@
                                     </tableColumn>
                                 </tableColumns>
                                 <connections>
+                                    <binding destination="-2" name="doubleClickTarget" keyPath="self" id="0Ag-xj-ZHY">
+                                        <dictionary key="options">
+                                            <string key="NSSelectorName">TableDoubleClickEvent:</string>
+                                        </dictionary>
+                                    </binding>
                                     <outlet property="dataSource" destination="-2" id="FGL-He-skr"/>
                                     <outlet property="delegate" destination="-2" id="Q4P-w6-NrT"/>
                                     <outlet property="menu" destination="tT9-xp-B4H" id="7vE-8d-DNV"/>

@@ -744,7 +744,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
     if (item!=nil) {
         _validatedDestinationItem = item;
-        return validateDrop(info, item);
+        _validatedOperation = validateDrop(info, item);
+        return _validatedOperation;
     }
     return NSDragOperationNone;
 }
