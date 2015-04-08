@@ -40,104 +40,27 @@ NSString *KEY_ICON = @"icon";
 // -------------------------------------------------------------------------------
 - (void)awakeFromNib
 {
-	// listen for changes in the url for this view
-	[self addObserver:	self
-						forKeyPath:@"url"
-						options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) 
-						context:NULL];
+
 }
 
-// -------------------------------------------------------------------------------
-//	dealloc
-// -------------------------------------------------------------------------------
-- (void)dealloc
-{
-	[self removeObserver:self forKeyPath:@"url"];
-}
-
-// -------------------------------------------------------------------------------
-//	updateIcons:iconArray
-//
-//	The incoming object is the NSArray of file system objects to display.
-//-------------------------------------------------------------------------------
-- (void)updateIcons:(id)iconArray
-{
-    self.icons = iconArray;
-    
-    //[[NSNotificationCenter defaultCenter] postNotificationName:NodeURLChangedNotification object:nil];
-}
-
-// -------------------------------------------------------------------------------
-//	gatherContents:inObject
-//
-//	Gathering the contents and their icons could be expensive.
-//	This method is being called on a separate thread to avoid blocking the UI.
-// -------------------------------------------------------------------------------
-- (void)gatherContents:(id)inObject
-{
-	@autoreleasepool {
-	
-        NSMutableArray *contentArray = [[NSMutableArray alloc] init];
-        
-        NSArray *fileURLs = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:self.currentNode.url
-                                                          includingPropertiesForKeys:[NSArray array]
-                                                                             options:0
-                                                                        error:nil];
-        if (fileURLs)
-        {
-            for (NSURL *element in fileURLs)
-            {
-                NSString *elementNameStr = nil;
-                NSImage *elementIcon = [[NSWorkspace sharedWorkspace] iconForFile:[element path]];
-
-                // only allow visible objects
-                NSNumber *hiddenFlag = nil;
-                if ([element getResourceValue:&hiddenFlag forKey:NSURLIsHiddenKey error:nil])
-                {
-                    if (![hiddenFlag boolValue])
-                    {
-                        if ([element getResourceValue:&elementNameStr forKey:NSURLNameKey error:nil])
-                        {
-                            // file system object is visible so add to our array
-                            [contentArray addObject:[NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                                        elementIcon, KEY_ICON,
-                                                        elementNameStr, KEY_NAME,
-                                                     nil]];
-                        }
-                    }
-                }
-            }
-        }
-        
-        // call back on the main thread to update the icons in our view
-        [self performSelectorOnMainThread:@selector(updateIcons:) withObject:contentArray waitUntilDone:YES];
-	}
-}
-
-// -------------------------------------------------------------------------------
-//	observeValueForKeyPath:ofObject:change:context
-//
-//	Listen for changes in the file url.
-//	Given a url, obtain its contents and add only the invisible items to the collection.
-// -------------------------------------------------------------------------------
-- (void)observeValueForKeyPath:(NSString *)keyPath
-								ofObject:(id)object 
-								change:(NSDictionary *)change 
-								context:(void *)context
-{
-	// build our directory contents on a separate thread,
-	// some portions are from disk which could get expensive depending on the size
-    //
-	[NSThread detachNewThreadSelector:	@selector(gatherContents:)
-										toTarget:self		// we are the target
-										withObject:self.currentNode.url];
+-(NSView*) containerView {
+    return self.collectionView;
 }
 
 -(void) refresh {
+    self.icons = [self itemsToDisplay];
 
 }
--(void) reloadItem:(id)object {
 
+-(void) refreshKeepingSelections {
+    // TODO: !!!! Keep the selections
+    //Store selection
+    [self refresh];
+    // Reposition Selections
+}
+
+-(void) reloadItem:(id)object {
+    [self refreshKeepingSelections];
 }
 
 @end

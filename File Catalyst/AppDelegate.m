@@ -159,7 +159,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed];
                 [(BrowserController*)view removeAll];
                 [(BrowserController*)view setViewMode:BViewBrowserMode ];
-                [(BrowserController*)view setViewType:BViewTypeVoid]; // TODO:!!!! Get from user Defaults
+                [(BrowserController*)view setViewType:BViewTypeVoid];
                 [(BrowserController*)view addTreeRoot: item];
                 [(BrowserController*)view selectFirstRoot];
                 [(BrowserController*)view refresh];
@@ -186,7 +186,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
         [(BrowserController*)view removeAll];
         [(BrowserController*)view setViewMode:BViewBrowserMode];
-        [(BrowserController*)view setViewType:BViewTypeVoid]; // TODO:!!!! Get from user Defaults
+        [(BrowserController*)view setViewType:BViewTypeVoid];
         [(BrowserController*)view addTreeRoot: item];
         [(BrowserController*)view selectFirstRoot];
 #endif
@@ -1059,10 +1059,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 - (IBAction)appModeChanged:(id)sender {
     NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
-    NSUInteger count = [[self.ContentSplitView subviews] count];
+    NSUInteger panelCount = [[self.ContentSplitView subviews] count];
 
     if (mode == ApplicationMode1View) {
-        if (myRightView!=nil && count == 2) {
+        if (myRightView!=nil && panelCount == 2) {
             [myLeftView setName:@"Single" TwinName:nil];
             [myRightView.view removeFromSuperview];
             [self.buttonCopyTo setEnabled:NO];
@@ -1071,7 +1071,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         }
     }
     else if (mode == ApplicationMode2Views) {
-        if (count==1) {
+        if (panelCount==1) {
             if (myRightView == nil) {
                 myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
                 [myLeftView setName:@"Left" TwinName:@"Right"];

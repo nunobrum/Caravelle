@@ -44,8 +44,6 @@ extern NSString *notificationCatalystRootUpdate;
 @property (strong) IBOutlet NSSplitView *mySplitView;
 @property (strong) IBOutlet NSSegmentedControl *treeEnableSwitch;
 
-@property (strong) IBOutlet NSObjectController *viewPreferences;
-
 @property (strong) IBOutlet NSMenu *contextualMenu;
 
 
@@ -57,6 +55,7 @@ extern NSString *notificationCatalystRootUpdate;
 @property NSString *titleMoveTo;
 @property NSNumber *contextualToMenusEnabled;
 @property NSString *viewName;
+@property NSMutableDictionary *preferences;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 

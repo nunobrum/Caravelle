@@ -167,6 +167,14 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 }
 
+// -------------------------------------------------------------------------------
+//	awakeFromNib
+// -------------------------------------------------------------------------------
+- (void)awakeFromNib
+{
+    
+}
+
 - (void) initController {
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -174,6 +182,12 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
     self->_currentNode = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
     [self startBusyAnimations];
+}
+
+- (void)dealloc {
+    //  Stop any observations that we may have
+    [self unobserveAll];
+    //    [super dealloc];
 }
 
 -(void) updateFocus:(id)sender {
@@ -218,6 +232,13 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
         [_observedVisibleItems removeObject:item];
     }
+}
+
+-(void) unobserveAll {
+    for (TreeBranch* item in _observedVisibleItems) {
+        [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
+    }
+    [_observedVisibleItems removeAllObjects];
 }
 
 -(void) reloadItem:(id)object {
@@ -274,15 +295,17 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 
 - (void) focusOnFirstView {
-    NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
+    //NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
+    [self.view.window makeFirstResponder:self.containerView];
 }
 
 - (void) focusOnLastView {
-    NSLog(@"NodeViewController.focusOnLastView: should be overriden");
+    //NSLog(@"NodeViewController.focusOnLastView: should be overriden");
+    [self.view.window makeFirstResponder:self.containerView];
 }
 
 - (NSView*) focusedView {
-    NSLog(@"NodeViewController.focusedView: should be overriden");
+    //NSLog(@"NodeViewController.focusedView: should be overriden");
     static NSView *lastFocus=nil;
     id control = [[[self containerView] window] firstResponder];
     if ([control isKindOfClass:[NSView class]]) {

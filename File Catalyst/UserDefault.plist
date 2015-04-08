@@ -43,7 +43,7 @@
 	<key>RightPreferences</key>
 	<dict>
 		<key>ViewType</key>
-		<integer>1</integer>
+		<integer>0</integer>
 	</dict>
 	<key>SinglePreferences</key>
 	<dict>

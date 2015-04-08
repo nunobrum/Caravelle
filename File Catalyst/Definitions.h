@@ -72,6 +72,8 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 
+#define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
+
 
 // These following definitions should be set accordingly to the Radio Buttons
 // on the behaviour panel on the User Preferences dialog.

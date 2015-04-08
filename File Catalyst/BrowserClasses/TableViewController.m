@@ -44,6 +44,10 @@
 
 }
 
+- (void)awakeFromNib
+{
+    
+}
 - (void) initController {
     [super initController];
     self->TableSortDesc = nil;
@@ -485,12 +489,9 @@
     if (branch==nil) {
         // Removing everything
         tableData = nil;
-        // TODO:!!!! Unregister the Observer
     }
     else {
-        // TODO:!!!! register an observer
     }
-    [self refresh];
 }
 
 

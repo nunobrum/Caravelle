@@ -14,6 +14,8 @@
 
 @interface IconViewController : NodeViewController <NodeViewProtocol>
 
+@property (strong) IBOutlet NSCollectionView *collectionView;
+
 @property (readwrite, strong) TreeBranch *currentNode;
 	
 @end

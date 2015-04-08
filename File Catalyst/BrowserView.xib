@@ -19,7 +19,6 @@
                 <outlet property="myViewSelectorButton" destination="lBL-vj-lCz" id="WME-0Z-T0r"/>
                 <outlet property="treeEnableSwitch" destination="olD-ez-fNy" id="3bb-hz-caP"/>
                 <outlet property="view" destination="VMb-R6-UcF" id="lVN-fP-2bR"/>
-                <outlet property="viewPreferences" destination="eMB-yc-hgM" id="Vjd-um-zpX"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -283,16 +282,15 @@
                 </segmentedControl>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
                     <rect key="frame" x="111" y="567" width="71" height="24"/>
-                    <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
+                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
                         <font key="font" metaFont="system"/>
                         <segments>
-                            <segment toolTip="Icon View" image="NSIconViewTemplate" width="32" enabled="NO"/>
-                            <segment toolTip="Table View" image="NSListViewTemplate" width="32" selected="YES" tag="1"/>
+                            <segment toolTip="Icon View" image="NSIconViewTemplate" width="32" tag="2"/>
+                            <segment toolTip="Table View" image="NSListViewTemplate" width="32" selected="YES" tag="3"/>
                         </segments>
                     </segmentedCell>
                     <connections>
                         <action selector="viewTypeSelection:" target="-2" id="DHC-Zf-uCu"/>
-                        <binding destination="eMB-yc-hgM" name="selectedIndex" keyPath="selection.ViewType" id="qn2-tv-pvV"/>
                     </connections>
                 </segmentedControl>
                 <segmentedControl toolTip="Turn ON or OFF the tree view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
@@ -408,11 +406,7 @@
             </connections>
             <point key="canvasLocation" x="139" y="133.5"/>
         </menu>
-        <objectController id="eMB-yc-hgM">
-            <declaredKeys>
-                <string>ViewType</string>
-            </declaredKeys>
-        </objectController>
+        <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
     </objects>
     <resources>
         <image name="GenericFolderIcon" width="512" height="512"/>

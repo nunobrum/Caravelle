@@ -72,6 +72,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     _rootNodeSelected = nil;
     _browserOperationQueue = [[NSOperationQueue alloc] init];
     _mruLocation = [[NSMutableArray alloc] init];
+    self.preferences = [[NSMutableDictionary alloc] initWithCapacity:50];
     _mruPointer = 0;
     
     // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
@@ -344,9 +345,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (void)outlineView:(NSOutlineView *)outlineView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row {
     // Stop observing visible things
     TreeItem *item = [[rowView viewAtColumn:0] objectValue];
-    if (item!=_treeNodeSelected) { //keep observing the selected folder
-        [self unobserveItem:item];
-    }
+    [self unobserveItem:item];
 }
 
 /*
@@ -386,15 +385,21 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
                 //[self refreshDataView];
                 // Use KVO to observe for changes of its children Array
-                [self observeItem:_treeNodeSelected];
                 if (_viewMode==BViewBrowserMode) {
                     if ([_treeNodeSelected needsRefresh]) {
                         [self.detailedViewController startBusyAnimations];
                         [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                        // This will automatically call for a refresh
+                    }
+                    else {
+                        // No need to keep the selection here since the folder is being changed
+                        [self.detailedViewController refresh];
                     }
                 }
-                // No need to keep the selection here since the folder is being changed
-                [self.detailedViewController refresh];
+                else {
+                    // No need to keep the selection here since the folder is being changed
+                    [self.detailedViewController refresh];
+                }
             }
         }
         else {
@@ -569,7 +574,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - Action Selectors
 
-// TODO:!!!! Don't think that this is really needed now. Check if now the right click gets the correct files
 - (IBAction)tableSelected:(id)sender {
     _focusedView = sender;
     [[self parentController] updateFocus:self];
@@ -595,6 +599,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
              that was called prior to this method will update _treeNodeSelected. */
             _treeNodeSelected = nil;
             [self selectFolderByItem:node];
+            [[self detailedViewController] refresh];
         }
         else // TODO:! When other types are allowed in the tree view this needs to be completed
             NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
@@ -629,6 +634,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (IBAction)viewTypeSelection:(id)sender {
     NSInteger newType = [(NSSegmentedControl*)sender selectedSegment ];
     [self setViewType:newType];
+    [[self detailedViewController] setCurrentNode:_treeNodeSelected];
+    [[self detailedViewController] refresh];
 }
 
 - (IBAction)mruBackForwardAction:(id)sender {
@@ -849,19 +856,22 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         _rootNodeSelected = nil;
                         // The path bar and pop menu should be updated accordingly.
                         [self setPathBarToItem:nil];
+                        [[self detailedViewController] refresh];
+                        [self.myOutlineView reloadData];
+
                     }
                 }
             }
         }
-        else {
-            /*If it is the selected Folder make a refresh*/
-            [self.detailedViewController refreshKeepingSelections];
-        }
+        //else {
+        //    /*If it is the selected Folder make a refresh*/
+        //    [self.detailedViewController refreshKeepingSelections];
+        //}
     }
-    else {
-        // Will see if there anything to reload on the detailed view
-        [self.detailedViewController reloadItem:object];
-    }
+    //else { The detail view maintains its own observer and will reload the object
+    //    // Will see if there anything to reload on the detailed view
+    //    [self.detailedViewController reloadItem:object];
+    //}
 }
 
 
@@ -998,20 +1008,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_viewName = viewName;
     // Setting the AutoSave Settings
 
-    // TODO:!!!! Make the bindings to the standardUserDefaults to the viewTypeSelector
     NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
-    NSDictionary *preferences = [[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr];
-    [self.viewPreferences setContent:preferences];
+    [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
 
 
-
-    // TODO:!!!! Remove with bindings are done
-    NSInteger viewType = [[preferences objectForKey:@"ViewType"] integerValue];
-    [self.myViewSelectorButton setSelected:YES forSegment:viewType];
-    self->_viewType = viewType;
-
+    [[self myOutlineView] setAutosaveName:[twinName stringByAppendingString:@"Outline"]];
     // The Outline view has no customizable settings
-    //[[self myOutlineView] setAutosaveName:[twinName stringByAppendingString:@"Outline"]];
+    [[self myOutlineView] setAutosaveTableColumns:YES];
 
     if (twinName==nil) { // there is no twin view
         self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
@@ -1064,11 +1067,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setViewType:(BViewType)viewType {
     NodeViewController *newController = nil;
 
+    if (viewType==BViewTypeVoid) {
+        viewType = [[self.preferences objectForKey:USER_DEF_PANEL_VIEW_TYPE] integerValue];
+    }
     switch (viewType) {
         case BViewTypeVoid:
-            if ([[self.mySplitView subviews] count]>=2) {
-                break; // Otherwise defaults to a TableView
-            }
         case BViewTypeInvalid:
             viewType = BViewTypeTable; // This is the default
         case BViewTypeTable:
@@ -1089,7 +1092,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [tableViewController setParentController:self];
                 [tableViewController setSaveName:[self.viewName stringByAppendingString:@"Icons"]];
             }
-            newController = tableViewController;
+            newController = iconViewController;
             break;
         default:
             break;
@@ -1105,7 +1108,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSView *newView = [newController view];
         [self.mySplitView addSubview:newView];
         [self.mySplitView displayIfNeeded];
-
+        
         // Load Preferences
         // TODO: !!!! make the bindings to UserDefaults
         [newController setFoldersDisplayed:YES];
@@ -1113,14 +1116,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [newController registerDraggedTypes];
         self.detailedViewController = newController;
 
-        //}
-        // Changing the button
-        //[self.myViewSelectorButton setEnabled:NO forSegment:self->_viewType];
-        //[self.myViewSelectorButton setEnabled:YES forSegment:viewType];
-        [self.viewPreferences.selection setValue:[NSNumber numberWithInt:viewType] forKey:@"ViewType"];
         // Changing User Defaults
-        // TODO: !!! Remove when bindings from UserDefaults to Dictionary Controller are working
         self->_viewType = viewType;
+        [self.myViewSelectorButton setSelectedSegment:viewType];
+        [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
     }
 }
 
@@ -1330,6 +1329,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         _rootNodeSelected = root;
         [self setPathBarToItem:root];
         [self outlineSelectExpandNode:root];
+        [[self detailedViewController] refresh];
         return root;
     }
     return NULL;
