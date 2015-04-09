@@ -15,7 +15,10 @@
 @interface IconViewController : NodeViewController <NodeViewProtocol>
 
 @property (strong) IBOutlet NSCollectionView *collectionView;
+@property (strong) IBOutlet NSArrayController *iconArrayController;
 
 @property (readwrite, strong) TreeBranch *currentNode;
+
+- (IBAction)doubleClick:(id)sender;
 	
 @end

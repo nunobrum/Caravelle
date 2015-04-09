@@ -202,7 +202,8 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 - (void) setCurrentNode:(TreeBranch*)branch {
     [self unobserveItem:self.currentNode];
     self->_currentNode = branch;
-    [self observeItem:self.currentNode];
+    if (branch!=nil)
+        [self observeItem:self.currentNode];
 }
 
 - (TreeBranch*) currentNode {
@@ -220,7 +221,7 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 -(void) observeItem:(TreeItem*)item {
     // Use KVO to observe for changes of its children Array
-    if (![_observedVisibleItems containsObject:item]) {
+    if (item !=nil && ![_observedVisibleItems containsObject:item]) {
         [item addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
         [_observedVisibleItems addObject:item];
     }
@@ -228,7 +229,7 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 -(void) unobserveItem:(TreeItem*)item {
     // Use KVO to observe for changes of its children Array
-    if ([_observedVisibleItems containsObject:item]) {
+    if (item!=nil && [_observedVisibleItems containsObject:item]) {
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
         [_observedVisibleItems removeObject:item];
     }
@@ -250,7 +251,7 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
  {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               orderedItems, kDFOFilesKey,
-                              opOpenOperation, kDFOOperationKey,
+                              operation, kDFOOperationKey,
                               nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:userInfo];
 }

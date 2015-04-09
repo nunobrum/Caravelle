@@ -63,6 +63,9 @@
 		3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
 		3CF8466519EB21FC008C691E /* searchTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466419EB21FB008C691E /* searchTree.m */; };
 		3CF8466819EB30D2008C691E /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
+		3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */; };
+		3CFBF5B91AD5E48E00185505 /* IconCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */; };
+		3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
 /* End PBXBuildFile section */
 
@@ -176,6 +179,11 @@
 		3CF8466419EB21FB008C691E /* searchTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = searchTree.m; sourceTree = "<group>"; };
 		3CF8466619EB30D2008C691E /* filterBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filterBranch.h; sourceTree = "<group>"; };
 		3CF8466719EB30D2008C691E /* filterBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = filterBranch.m; sourceTree = "<group>"; };
+		3CFBF5B41AD5DF9E00185505 /* IconViewBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconViewBox.h; path = BrowserClasses/IconViewBox.h; sourceTree = "<group>"; };
+		3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IconViewBox.m; path = BrowserClasses/IconViewBox.m; sourceTree = "<group>"; };
+		3CFBF5B71AD5E48E00185505 /* IconCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconCollectionItem.h; path = BrowserClasses/IconCollectionItem.h; sourceTree = "<group>"; };
+		3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IconCollectionItem.m; path = BrowserClasses/IconCollectionItem.m; sourceTree = "<group>"; };
+		3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IconViewItem.xib; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -386,8 +394,13 @@
 			isa = PBXGroup;
 			children = (
 				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
+				3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */,
 				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
 				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
+				3CFBF5B41AD5DF9E00185505 /* IconViewBox.h */,
+				3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */,
+				3CFBF5B71AD5E48E00185505 /* IconCollectionItem.h */,
+				3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */,
 			);
 			name = "Icon View";
 			sourceTree = "<group>";
@@ -552,6 +565,7 @@
 				3CF5B6C31ABF76630065E543 /* GenericFolderIcon.icns in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
 				3CF5B6C21ABF76630065E543 /* GenericDocumentIcon.icns in Resources */,
+				3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */,
 				3C717C06198D54720025E28A /* BrowserView.xib in Resources */,
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
 				3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */,
@@ -592,6 +606,7 @@
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
+				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,
 				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
@@ -603,6 +618,7 @@
 				3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
+				3CFBF5B91AD5E48E00185505 /* IconCollectionItem.m in Sources */,
 				3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */,
 				3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,

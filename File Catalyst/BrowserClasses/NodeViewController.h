@@ -38,6 +38,8 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 - (void) setCurrentNode:(TreeBranch*)branch;
 - (TreeBranch*) currentNode;
 
+- (void) updateFocus:(id)sender;
+
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
 
 - (void) registerDraggedTypes;
