@@ -304,12 +304,12 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 
 - (void) focusOnFirstView {
-    //NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
+    NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
     [self.view.window makeFirstResponder:self.containerView];
 }
 
 - (void) focusOnLastView {
-    //NSLog(@"NodeViewController.focusOnLastView: should be overriden");
+    NSLog(@"NodeViewController.focusOnLastView: should be overriden");
     [self.view.window makeFirstResponder:self.containerView];
 }
 

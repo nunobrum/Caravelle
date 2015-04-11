@@ -20,6 +20,7 @@ NSString *KEY_ICON = @"icon";
 
 @interface IconViewController () {
     IconCollectionItem * lastRightClick;
+    NSMutableIndexSet *extendedSelection;
 }
 
 @property (readwrite, strong) NSMutableArray *icons;
@@ -54,10 +55,6 @@ NSString *KEY_ICON = @"icon";
     return self.collectionView;
 }
 
--(void) refresh {
-    self.icons = [self itemsToDisplay];
-
-}
 
 -(IBAction) rightClick:(id)sender {
     [self.parentController contextualFocus:self];
@@ -73,6 +70,28 @@ NSString *KEY_ICON = @"icon";
     [self orderOperation:opOpenOperation onItems:itemsSelected];
 }
 
+
+- (void) focusOnFirstView {
+    if ([[self.iconArrayController selectedObjects] count]==0) {
+        [self.iconArrayController setSelectionIndex:0];
+    }
+    [self.view.window makeFirstResponder:self.containerView];
+}
+
+- (void) focusOnLastView {
+    if ([[self.iconArrayController selectedObjects] count]==0) {
+        [self.iconArrayController setSelectionIndex:0];
+    }
+    [self.view.window makeFirstResponder:self.containerView];
+}
+
+
+-(void) refresh {
+    self.icons = [self itemsToDisplay];
+    // Refreshing the collection
+    [self.collectionView setNeedsDisplay:YES];
+}
+
 -(void) refreshKeepingSelections {
     // TODO: !!!! Keep the selections
     //Store selection
@@ -81,7 +100,11 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(void) reloadItem:(id)object {
-    [self refreshKeepingSelections];
+    for (NSView *view in self.collectionView.subviews) {
+        if ([[(IconCollectionItem*)view representedObject] isEqual:object])
+            [view setNeedsDisplay:YES];
+    }
+    //[self refreshKeepingSelections];
 }
 
 -(NSArray*) getSelectedItems {
@@ -154,6 +177,52 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
     if (NO==[[self getSelectedItems] containsObject:obj])
         [itemBox setTransparent:YES];
     [self reloadItem:obj];
+}
+
+#pragma mark - NSControlTextDelegate Protocol
+
+- (void)keyDown:(NSEvent *)theEvent {
+    // Get the origin
+    NSString *key = [theEvent characters];
+    NSString *keyWM = [theEvent charactersIgnoringModifiers];
+
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+
+    if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
+        ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
+    {
+        // The Return key will open the file
+        [self doubleClick:theEvent];
+    }
+    else if ([keyWM isEqualToString:@"\t"]) {
+        // the tab key will switch Panes
+        [[self parentController] focusOnNextView:self];
+    }
+    else if ([key isEqualToString:@"\x19"]) {
+        [[self parentController] focusOnPreviousView:self];
+    }
+    else if ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
+        // the Space Key will mark the file
+        // only works the TableView
+        if (self->extendedSelection==nil) {
+            self->extendedSelection = [NSMutableIndexSet indexSet];
+        }
+        NSIndexSet *indexset = [self.iconArrayController selectionIndexes];
+        [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
+            id item = [self.itemsToDisplay objectAtIndex:index];
+            if ([item isKindOfClass:[TreeItem class]]) {
+                [(TreeItem*)item toggleTag:tagTreeItemMarked];
+            }
+            if ([self->extendedSelection containsIndex:index])
+                [self->extendedSelection removeIndex:index];
+            else
+                [self->extendedSelection addIndex:index];
+        }];
+
+        // TODO:!!!! Check what is the preferred method
+        [self refreshKeepingSelections];
+
+    }
 }
 
 
