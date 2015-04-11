@@ -20,10 +20,16 @@
 }
 
 
-- (void)doubleClick:(id)sender {
+- (IBAction) doubleClick:(id)sender {
     //NSLog(@"double click in the collectionItem");
     if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(doubleClick:)]) {
         [[[self collectionView] delegate] performSelector:@selector(doubleClick:) withObject:self];
+    }
+}
+
+- (IBAction)rightClick:(id)sender {
+    if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(doubleClick:)]) {
+        [[[self collectionView] delegate] performSelector:@selector(rightClick:) withObject:[self representedObject]];
     }
 }
 

@@ -16,6 +16,7 @@
     BrowserController *myLeftView;
     BrowserController *myRightView;
     id<MYViewProtocol> _selectedView;
+    id<MYViewProtocol> _contextualFocus;
     //__weak LeftDataSource *_RightDataSrc;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;

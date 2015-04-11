@@ -17,7 +17,9 @@ NSString *KEY_ICON = @"icon";
 
 
 
-@interface IconViewController ()
+@interface IconViewController () {
+    TreeItem * lastRightClick;
+}
 
 @property (readwrite, strong) NSMutableArray *icons;
 @end
@@ -30,17 +32,16 @@ NSString *KEY_ICON = @"icon";
 // -------------------------------------------------------------------------------
 - (void)awakeFromNib
 {
-// TODO: !!!!! Set observer for the selection of iconArrayController
-
+    //  Set observer for the selection of iconArrayController
     [self.iconArrayController addObserver:self forKeyPath:@"selectedObjects" options:NSKeyValueObservingOptionNew context:@"Selection Changed"];
 }
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:@"selectedObjects"]) {
-
-        // TODO: !!!! replace by a Status Notfication
         [self updateFocus:self];
+        // send a Status Notfication
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self.parentController userInfo:nil];
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -57,8 +58,10 @@ NSString *KEY_ICON = @"icon";
 
 }
 
-- (void) selectionChanged:(NSNotification*) note {
-    [self updateFocus:self];
+-(IBAction) rightClick:(id)sender {
+    [self.parentController contextualFocus:self];
+    lastRightClick = sender;
+    
 }
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
@@ -78,6 +81,65 @@ NSString *KEY_ICON = @"icon";
 
 -(void) reloadItem:(id)object {
     [self refreshKeepingSelections];
+}
+
+-(NSArray*) getSelectedItems {
+    return [self.iconArrayController selectedObjects];
+}
+
+- (NSArray*)getSelectedItemsForContextMenu {
+    NSArray *selectedItems = [self getSelectedItems];
+    if ([selectedItems indexOfObject:lastRightClick]!=NSNotFound)
+        return selectedItems;
+    else
+        return [NSArray arrayWithObject:lastRightClick];
+}
+
+-(TreeItem*) getLastClickedItem {
+    // TODO: !!!!
+    return nil;
+}
+
+#pragma - Drag & Drop
+
+- (BOOL)collectionView:(NSCollectionView *)collectionView
+ canDragItemsAtIndexes:(NSIndexSet *)indexes
+             withEvent:(NSEvent *)event {
+    return NO;
+}
+
+- (NSDragOperation)collectionView:(NSCollectionView *)collectionView
+                     validateDrop:(id<NSDraggingInfo>)draggingInfo
+                    proposedIndex:(NSInteger *)proposedDropIndex
+                    dropOperation:(NSCollectionViewDropOperation *)proposedDropOperation {
+    return NSDragOperationNone;
+}
+
+- (BOOL)collectionView:(NSCollectionView *)collectionView
+            acceptDrop:(id<NSDraggingInfo>)draggingInfo
+                 index:(NSInteger)index
+         dropOperation:(NSCollectionViewDropOperation)dropOperation {
+    return NO;
+}
+
+// Not implemented for the time being
+//- (NSImage *)collectionView:(NSCollectionView *)collectionView
+//draggingImageForItemsAtIndexes:(NSIndexSet *)indexes
+//                  withEvent:(NSEvent *)event
+//                     offset:(NSPointPointer)dragImageOffset {
+//
+//}
+
+- (NSArray *)collectionView:(NSCollectionView *)collectionView
+namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
+   forDraggedItemsAtIndexes:(NSIndexSet *)indexes {
+    return nil;
+}
+
+- (BOOL)collectionView:(NSCollectionView *)collectionView
+   writeItemsAtIndexes:(NSIndexSet *)indexes
+          toPasteboard:(NSPasteboard *)pasteboard {
+    return NO;
 }
 
 @end

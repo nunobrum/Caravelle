@@ -12,6 +12,7 @@
     IBOutlet id delegate;
 }
 
--(void)mouseDown:(NSEvent *)theEvent;
+-(void) mouseDown:(NSEvent *)theEvent;
+-(void) rightMouseDown:(NSEvent *)theEvent;
 
 @end

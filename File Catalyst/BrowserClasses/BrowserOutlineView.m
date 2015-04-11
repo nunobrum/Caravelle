@@ -22,7 +22,7 @@
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
     // Before this was done to ensure that the right click got the correct view.
-    [(id<ParentProtocol>)[self delegate] updateFocus:self];
+    [(id<ParentProtocol>)[self delegate] contextualFocus:self];
     [super rightMouseDown:theEvent];
 }
 

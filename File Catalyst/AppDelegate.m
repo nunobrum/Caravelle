@@ -198,6 +198,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     return _selectedView;
 }
 
+-(id) contextualFocus {
+    return self->_contextualFocus;
+}
+
 #pragma mark - Application Delegate
 
 // -------------------------------------------------------------------------------
@@ -881,6 +885,15 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
 }
 
+- (void) contextualFocus:(id)sender {
+    if (sender == myLeftView || sender == myRightView)
+        _contextualFocus = sender;
+    else {
+        NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
+        assert(false);
+    }
+}
+
 
 - (IBAction)toolbarInformation:(id)sender {
     NSArray *selectedFiles = [[self selectedView] getSelectedItems];
@@ -890,7 +903,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualInformation:(id)sender {
-    [self executeInformation: [[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeInformation: [[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarRename:(id)sender {
@@ -898,7 +911,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualRename:(id)sender {
-    [self executeRename:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeRename:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarDelete:(id)sender {
@@ -906,7 +919,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualDelete:(id)sender {
-    [self executeDelete:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeDelete:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarCopyTo:(id)sender {
@@ -914,7 +927,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualCopyTo:(id)sender {
-    [self executeCopyTo:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeCopyTo:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarMoveTo:(id)sender {
@@ -922,7 +935,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualMoveTo:(id)sender {
-    [self executeMoveTo:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeMoveTo:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarOpen:(id)sender {
@@ -930,7 +943,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualOpen:(id)sender {
-    [self executeOpen:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeOpen:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)toolbarNewFolder:(id)sender {
@@ -1016,7 +1029,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualCut:(id)sender {
-    [self executeCut:[[self selectedView] getSelectedItemsForContextMenu]];
+    [self executeCut:[[self contextualFocus] getSelectedItemsForContextMenu]];
 }
 
 - (IBAction)copy:(id)sender {
@@ -1024,7 +1037,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualCopy:(id)sender {
-    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu] onlyNames:NO];
+    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextMenu] onlyNames:NO];
 }
 
 - (IBAction)copyName:(id)sender {
@@ -1032,7 +1045,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (IBAction)contextualCopyName:(id)sender {
-    [self executeCopy:[[self selectedView] getSelectedItemsForContextMenu] onlyNames:YES];
+    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextMenu] onlyNames:YES];
 }
 
 
@@ -1148,7 +1161,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         theAction == @selector(contextualRename:) ||
         theAction == @selector(contextualPaste:)
         ) {
-        itemsSelected = [(BrowserController*)[self selectedView] getSelectedItemsForContextMenu];
+        itemsSelected = [(BrowserController*)[self contextualFocus] getSelectedItemsForContextMenu];
     }
     else {
         itemsSelected = [(BrowserController*)[self selectedView] getSelectedItems];
@@ -1491,82 +1504,82 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     //if ([selView isKindOfClass:[BrowserController class]]) {
 
-        NSArray *selectedFiles = [selView getSelectedItems];
+    NSArray *selectedFiles = [selView getSelectedItems];
 
-        if (selectedFiles != nil) {
-            NSInteger num_files=0;
-            NSInteger files_size=0;
-            NSInteger folders_size=0;
-            NSInteger num_directories=0;
-            if (applicationMode==ApplicationModeDuplicate && selView==myLeftView) {
-                dupShow++;
-                FileCollection *selectedDuplicates = [[FileCollection alloc] init];
-                for (TreeItem *item in selectedFiles ) {
-                    FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
-                    [selectedDuplicates concatenateFileCollection: itemDups];
-                }
-                /* will now populate the Right View with Duplicates*/
-                [myRightView removeAll];
-                TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
-                [myRightView addTreeRoot:rootDir];
-                [myRightView selectFirstRoot];
+    if (selectedFiles != nil) {
+        NSInteger num_files=0;
+        NSInteger files_size=0;
+        NSInteger folders_size=0;
+        NSInteger num_directories=0;
+        if (applicationMode==ApplicationModeDuplicate && selView==myLeftView) {
+            dupShow++;
+            FileCollection *selectedDuplicates = [[FileCollection alloc] init];
+            for (TreeItem *item in selectedFiles ) {
+                FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
+                [selectedDuplicates concatenateFileCollection: itemDups];
             }
-            if ([selectedFiles count]==0) {
-                statusText = [NSString stringWithFormat:@"No Files Selected"];
-            }
-            else if ([selectedFiles count] == 1) {
-                TreeItem *item = [selectedFiles objectAtIndex:0];
-                NSString *sizeText;
-                NSString *type;
-                if ([item itemType] == ItemTypeLeaf) {
-                    type = @"File";
-                    sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
-                }
-                else {
-                    // TODO:!! Check if Folder Size is valid, make change also in the condition below
-                    type = @"Folder";
-                    sizeText = @"";
-                }
-
-                statusText = [NSString stringWithFormat:@"%@ (%@%@)", [item name], type, sizeText];
+            /* will now populate the Right View with Duplicates*/
+            [myRightView removeAll];
+            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
+            [myRightView addTreeRoot:rootDir];
+            [myRightView selectFirstRoot];
+        }
+        if ([selectedFiles count]==0) {
+            statusText = [NSString stringWithFormat:@"No Files Selected"];
+        }
+        else if ([selectedFiles count] == 1) {
+            TreeItem *item = [selectedFiles objectAtIndex:0];
+            NSString *sizeText;
+            NSString *type;
+            if ([item itemType] == ItemTypeLeaf) {
+                type = @"File";
+                sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
             }
             else {
-                for (TreeItem *item in selectedFiles ) {
-                    if ([item itemType] == ItemTypeLeaf) {
-                        num_files++;
-                        files_size += [(TreeLeaf*)item filesize];
-                    }
-                    else if ([item itemType] == ItemTypeBranch) {
-                        num_directories++;
-                        folders_size += [(TreeBranch*)item filesize];
-                    }
-                }
-
-                NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
-
-                NSString *dir_info, *file_info;
-                if (num_directories==0)
-                    dir_info = @"";
-                else if (num_directories == 1)
-                    dir_info = @"1 Folder selected. ";
-                else
-                    dir_info = [NSString stringWithFormat:@"%lu Folders selected. ", num_directories];
-
-                if (num_files==0)
-                    file_info = @"";
-                else if (num_files == 1)
-                    file_info = [NSString stringWithFormat:@"1 File selected (File Size:%@).", sizeText];
-                else
-                    file_info = [NSString stringWithFormat:@"%lu Files selected (File Total:%@).", num_files, sizeText];
-
-                statusText = [NSString stringWithFormat:@"%@%@", dir_info, file_info];
-
+                // TODO:!! Check if Folder Size is valid, make change also in the condition below
+                type = @"Folder";
+                sizeText = @"";
             }
-            [_StatusBar setTitle: statusText];
+
+            statusText = [NSString stringWithFormat:@"%@ (%@%@)", [item name], type, sizeText];
         }
         else {
-            [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
+            for (TreeItem *item in selectedFiles ) {
+                if ([item itemType] == ItemTypeLeaf) {
+                    num_files++;
+                    files_size += [(TreeLeaf*)item filesize];
+                }
+                else if ([item itemType] == ItemTypeBranch) {
+                    num_directories++;
+                    folders_size += [(TreeBranch*)item filesize];
+                }
+            }
+
+            NSString *sizeText = [NSByteCountFormatter stringFromByteCount:files_size countStyle:NSByteCountFormatterCountStyleFile];
+
+            NSString *dir_info, *file_info;
+            if (num_directories==0)
+                dir_info = @"";
+            else if (num_directories == 1)
+                dir_info = @"1 Folder selected. ";
+            else
+                dir_info = [NSString stringWithFormat:@"%lu Folders selected. ", num_directories];
+
+            if (num_files==0)
+                file_info = @"";
+            else if (num_files == 1)
+                file_info = [NSString stringWithFormat:@"1 File selected (File Size:%@).", sizeText];
+            else
+                file_info = [NSString stringWithFormat:@"%lu Files selected (File Total:%@).", num_files, sizeText];
+
+            statusText = [NSString stringWithFormat:@"%@%@", dir_info, file_info];
+
         }
+        [_StatusBar setTitle: statusText];
+    }
+    else {
+        [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
+    }
 
 }
 

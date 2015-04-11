@@ -8,8 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface IconCollectionItem : NSCollectionViewItem
+@interface IconCollectionItem : NSCollectionViewItem 
 
-- (void)doubleClick:(id)sender;
+- (IBAction)doubleClick:(id)sender;
+- (IBAction)rightClick:(id)sender;
 
 @end

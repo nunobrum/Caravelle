@@ -33,7 +33,6 @@
 - (IBAction)TableDoubleClickEvent:(id)sender;
 
 -(void) initController;
--(void) setSaveName:(NSString*)saveName;
 
 
 @end

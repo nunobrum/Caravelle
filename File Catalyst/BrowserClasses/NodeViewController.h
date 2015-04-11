@@ -22,10 +22,15 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 -(void) refreshKeepingSelections;
 -(NSView*) containerView;
 
+
+-(NSArray*) getSelectedItems;
+-(NSArray*) getSelectedItemsForContextMenu;
+-(TreeItem*) getLastClickedItem;
+
 @end
 
 
-@interface NodeViewController : NSViewController <NodeViewProtocol>
+@interface NodeViewController : NSViewController <MYViewProtocol>
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
 @property (readwrite) NSString *filterText;
@@ -35,10 +40,16 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 
 
 - (void) initController;
+- (void) setSaveName:(NSString*)saveName;
 - (void) setCurrentNode:(TreeBranch*)branch;
 - (TreeBranch*) currentNode;
 
 - (void) updateFocus:(id)sender;
+- (void) contextualFocus:(id)sender;
+
+- (void) refresh;
+- (void) refreshKeepingSelections;
+
 
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
 

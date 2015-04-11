@@ -32,6 +32,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 @interface BrowserController () {
     id _focusedView; // Contains the currently selected view
+    id _contextualFocus; // Contains the element used for contextual menus
     NSMutableArray *_observedVisibleItems;
     NSOperationQueue *_browserOperationQueue;
     /* Internal Storage for Drag and Drop Operations */
@@ -584,6 +585,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [[self parentController] updateFocus:self];
 }
 
+-(void) contextualFocus:(id)sender {
+    _contextualFocus = sender;
+    [[self parentController] contextualFocus:self];
+}
+
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)OutlineDoubleClickEvent:(id)sender {
     NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
@@ -1088,9 +1094,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         case BViewTypeIcon:
             if (iconViewController == nil) { // If not Loaded, load it
                 iconViewController = [[IconViewController alloc] initWithNibName:@"IconView" bundle:nil];
-                [tableViewController initController];
-                [tableViewController setParentController:self];
-                [tableViewController setSaveName:[self.viewName stringByAppendingString:@"Icons"]];
+                [iconViewController initController];
+                [iconViewController setParentController:self];
+                [iconViewController setSaveName:[self.viewName stringByAppendingString:@"Icons"]];
             }
             newController = iconViewController;
             break;
@@ -1271,7 +1277,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (NSArray*)getSelectedItemsForContextMenu {
     static NSArray* answer = nil; // This will send the last answer when further requests are done
     // The condition below is used to detect which table view is selected. 
-    if (self.focusedView == _myOutlineView) {
+    if (self->_contextualFocus == _myOutlineView) {
         if ([_myOutlineView clickedRow]==-1)
             answer = nil; // Not going to process this case
         else{

@@ -41,4 +41,12 @@
     }
 }
 
+-(void) rightMouseDown:(NSEvent *)theEvent {
+    // TODO: !!!! Draw rectangle around the Box
+    if(delegate && [delegate respondsToSelector:@selector(rightClick:)])
+        [delegate performSelector:@selector(rightClick:) withObject:self];
+    [super rightMouseDown:theEvent];
+}
+
+
 @end

@@ -175,6 +175,10 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
     
 }
 
+-(void) setSaveName:(NSString *)saveName {
+
+}
+
 - (void) initController {
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -192,6 +196,10 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
 
 -(void) updateFocus:(id)sender {
     [[self parentController] updateFocus:self];
+}
+
+-(void) contextualFocus:(id)sender {
+    [[self parentController] contextualFocus:self];
 }
 
 - (NSView*) containerView {

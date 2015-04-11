@@ -12,13 +12,14 @@
 // notification for indicating file system content has been received
 //extern NSString *kReceivedContentNotification;
 
-@interface IconViewController : NodeViewController <NodeViewProtocol>
+@interface IconViewController : NodeViewController <NodeViewProtocol, NSCollectionViewDelegate>
 
 @property (strong) IBOutlet NSCollectionView *collectionView;
 @property (strong) IBOutlet NSArrayController *iconArrayController;
 
 @property (readwrite, strong) TreeBranch *currentNode;
 
-- (IBAction)doubleClick:(id)sender;
+- (IBAction) rightClick:(id)sender;
+- (IBAction) doubleClick:(id)sender;
 	
 @end
