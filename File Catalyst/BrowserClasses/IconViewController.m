@@ -7,6 +7,7 @@
 //
 
 #import "IconViewController.h"
+#import "IconCollectionItem.h"
 
 // key values for the icon view dictionary
 NSString *KEY_NAME = @"name";
@@ -18,7 +19,7 @@ NSString *KEY_ICON = @"icon";
 
 
 @interface IconViewController () {
-    TreeItem * lastRightClick;
+    IconCollectionItem * lastRightClick;
 }
 
 @property (readwrite, strong) NSMutableArray *icons;
@@ -89,10 +90,11 @@ NSString *KEY_ICON = @"icon";
 
 - (NSArray*)getSelectedItemsForContextMenu {
     NSArray *selectedItems = [self getSelectedItems];
-    if ([selectedItems indexOfObject:lastRightClick]!=NSNotFound)
+    TreeItem *item = [lastRightClick representedObject];
+    if ([selectedItems containsObject:item])
         return selectedItems;
     else
-        return [NSArray arrayWithObject:lastRightClick];
+        return [NSArray arrayWithObject:item];
 }
 
 -(TreeItem*) getLastClickedItem {
@@ -141,5 +143,18 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
           toPasteboard:(NSPasteboard *)pasteboard {
     return NO;
 }
+
+#pragma - NS Menu Delegate
+
+- (void)menuDidClose:(NSMenu *)menu {
+    // Need to reload the item which highlight was changed
+    id itemBox = [lastRightClick view];
+    [itemBox setFillColor:[NSColor alternateSelectedControlColor]];
+    TreeItem *obj = [lastRightClick representedObject];
+    if (NO==[[self getSelectedItems] containsObject:obj])
+        [itemBox setTransparent:YES];
+    [self reloadItem:obj];
+}
+
 
 @end

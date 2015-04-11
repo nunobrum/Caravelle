@@ -34,17 +34,31 @@
 
     // check for click count above one, which we assume means it's a double click
     if([theEvent clickCount] > 1) {
-        //NSLog(@"double click!");
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+        [NSApp sendAction:@selector(contextualGotoFolder:) to:nil from:self];
         if(delegate && [delegate respondsToSelector:@selector(doubleClick:)]) {
             [delegate performSelector:@selector(doubleClick:) withObject:self];
         }
+#pragma clang diagnostic pop
+
     }
 }
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
-    // TODO: !!!! Draw rectangle around the Box
+    // TODO: ! Draw rectangle around the Box
+    //[self setBorderColor:[NSColor blueColor]];
+    //[self setBorderWidth:1];
+    [self setFillColor:[NSColor windowBackgroundColor]];
+    [self setTransparent:NO];
+    [self setNeedsDisplay:YES];
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
     if(delegate && [delegate respondsToSelector:@selector(rightClick:)])
         [delegate performSelector:@selector(rightClick:) withObject:self];
+#pragma clang diagnostic pop
+
     [super rightMouseDown:theEvent];
 }
 

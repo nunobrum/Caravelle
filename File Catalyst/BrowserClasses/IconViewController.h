@@ -12,7 +12,7 @@
 // notification for indicating file system content has been received
 //extern NSString *kReceivedContentNotification;
 
-@interface IconViewController : NodeViewController <NodeViewProtocol, NSCollectionViewDelegate>
+@interface IconViewController : NodeViewController <NodeViewProtocol, NSCollectionViewDelegate, NSMenuDelegate>
 
 @property (strong) IBOutlet NSCollectionView *collectionView;
 @property (strong) IBOutlet NSArrayController *iconArrayController;
