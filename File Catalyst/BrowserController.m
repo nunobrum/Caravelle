@@ -1107,12 +1107,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (self.detailedViewController != newController && newController != nil)  {
         [self.detailedViewController unregisterDraggedTypes];
 
+        NSView *newView = [newController view];
+
         if ([[self.mySplitView subviews] count]==2) { // This is the first time
             NSView *oldView = [[self.mySplitView subviews] objectAtIndex:1];
-            [oldView removeFromSuperview];
+            [self.mySplitView replaceSubview:oldView with:newView];
         }
-        NSView *newView = [newController view];
-        [self.mySplitView addSubview:newView];
+        else {
+            [self.mySplitView addSubview:newView];
+        }
         [self.mySplitView displayIfNeeded];
         
         // Load Preferences
