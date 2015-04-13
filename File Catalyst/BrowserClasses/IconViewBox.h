@@ -11,8 +11,11 @@
 @interface IconViewBox : NSBox {
     IBOutlet id delegate;
 }
+@property (strong) IBOutlet NSImageView *image;
+@property (strong) IBOutlet NSTextField *name;
 
 -(void) mouseDown:(NSEvent *)theEvent;
 -(void) rightMouseDown:(NSEvent *)theEvent;
+-(id) representedObject;
 
 @end

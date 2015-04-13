@@ -7,7 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "IconViewBox.h"
 
 @interface BrowserIconView : NSCollectionView
+
+-(IconViewBox*) iconWithItem:(id) item;
 
 @end

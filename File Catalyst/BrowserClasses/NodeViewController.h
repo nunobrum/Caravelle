@@ -22,6 +22,8 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 -(void) refreshKeepingSelections;
 -(NSView*) containerView;
 
+- (void) setCurrentNode:(TreeBranch*)branch;
+- (TreeBranch*) currentNode;
 
 -(NSArray*) getSelectedItems;
 -(NSArray*) getSelectedItemsForContextMenu;
@@ -50,7 +52,7 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 - (void) refresh;
 - (void) refreshKeepingSelections;
 
-
+- (BOOL) startEditItemName:(TreeItem*)item;
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
 
 - (void) registerDraggedTypes;

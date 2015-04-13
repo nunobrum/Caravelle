@@ -62,5 +62,9 @@
     [super rightMouseDown:theEvent];
 }
 
+-(id) representedObject {
+    return [delegate representedObject];
+}
+
 
 @end

@@ -55,6 +55,10 @@
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
+                                                        <connections>
+                                                            <action selector="filenameDidChange:" target="-2" id="M2j-1j-iZL"/>
+                                                            <outlet property="delegate" destination="-2" id="xOw-qC-tzk"/>
+                                                        </connections>
                                                     </textField>
                                                     <imageView translatesAutoresizingMaskIntoConstraints="NO" id="Bjv-1b-YUI">
                                                         <rect key="frame" x="4" y="0.0" width="17" height="17"/>

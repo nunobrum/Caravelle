@@ -130,3 +130,23 @@ DateToStringTransformer *DateToDayTransformer() {
 
 
 @end
+
+@implementation MySelectedColorTransformer
+
++ (Class)transformedValueClass {
+    return [NSColor class];
+}
+
++ (BOOL)allowsReverseTransformation {
+    return NO;
+}
+
+- (id)transformedValue:(id)value {
+    if ([value isKindOfClass:[NSNumber class] ]) {
+        BOOL selected = [value boolValue];
+        if (selected)
+            return [NSColor alternateSelectedControlTextColor];
+    }
+    return [NSColor controlTextColor];
+}
+@end

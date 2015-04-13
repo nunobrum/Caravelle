@@ -670,6 +670,7 @@
         return YES;
 }
 
+// NSControlTextEditingDelegate
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
 {
     //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );

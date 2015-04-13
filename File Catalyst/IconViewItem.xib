@@ -28,13 +28,20 @@
                     </imageView>
                     <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ayh-rT-b9b">
                         <rect key="frame" x="-1" y="5" width="126" height="14"/>
-                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Name" id="FWR-88-ZmF">
+                        <textFieldCell key="cell" controlSize="small" lineBreakMode="truncatingMiddle" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" alignment="center" title="Name" id="FWR-88-ZmF">
                             <font key="font" metaFont="smallSystem"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
+                            <action selector="filenameDidChange:" target="-2" id="Ieh-HX-7qX"/>
                             <binding destination="-2" name="value" keyPath="representedObject.name" id="Xts-LF-du5"/>
+                            <binding destination="-2" name="textColor" keyPath="selected" id="zdY-ET-Nas">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">MySelectedColorTransformer</string>
+                                </dictionary>
+                            </binding>
+                            <outlet property="delegate" destination="-2" id="jdJ-Pr-f9k"/>
                         </connections>
                     </textField>
                 </subviews>
@@ -48,6 +55,8 @@
                     </dictionary>
                 </binding>
                 <outlet property="delegate" destination="-2" id="cNs-9d-FnW"/>
+                <outlet property="image" destination="S6t-Sn-0Ri" id="l4p-E3-5sX"/>
+                <outlet property="name" destination="ayh-rT-b9b" id="v6X-d1-8PZ"/>
             </connections>
         </box>
         <userDefaultsController representsSharedInstance="YES" id="ceg-8B-hnf"/>

@@ -254,6 +254,10 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
     NSAssert(NO, @"NodeViewController.reloadItem: This method needs to be overriden");
 }
 
+-(BOOL) startEditItemName:(TreeItem*)item {
+    NSLog(@"NodeViewController.startEditItemName: This method needs to be overriden");
+    return NO;
+}
 
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
  {

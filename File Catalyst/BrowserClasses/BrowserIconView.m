@@ -45,5 +45,13 @@
     }
 }
 
+-(IconViewBox*) iconWithItem:(id) item {
+    for (IconViewBox *icon in [self subviews]) {
+        if ([[icon representedObject] isEqual:item])
+            return icon;
+    }
+    return nil;
+}
+
 
 @end

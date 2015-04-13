@@ -1434,8 +1434,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
-    // TODO: when the focused view is the treeOutline
-    return NO;
+    if (_focusedView==self.detailedViewController) {
+        return [self.detailedViewController startEditItemName:item];
+    }
+    else {
+        // TODO: !!!! when the focused view is the treeOutline
+        return NO;
+    }
 }
 -(void) insertItem:(id)item  {
     if (self.focusedView == _myOutlineView) {

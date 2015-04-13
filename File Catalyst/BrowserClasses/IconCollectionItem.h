@@ -8,9 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface IconCollectionItem : NSCollectionViewItem 
+@interface IconCollectionItem : NSCollectionViewItem <NSControlTextEditingDelegate>
 
 - (IBAction)doubleClick:(id)sender;
 - (IBAction)rightClick:(id)sender;
+- (IBAction)filenameDidChange:(id)sender;
 
 @end

@@ -18,8 +18,6 @@
 @property (strong) IBOutlet BrowserIconView *collectionView;
 @property (strong) IBOutlet NSArrayController *iconArrayController;
 
-@property (readwrite, strong) TreeBranch *currentNode;
-
 - (IBAction) rightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;
 	

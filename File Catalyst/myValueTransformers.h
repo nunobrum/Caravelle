@@ -27,3 +27,7 @@ extern DateToStringTransformer *DateToDayTransformer();
 @interface BookmarkToPathTransformer : NSValueTransformer
 
 @end
+
+@interface MySelectedColorTransformer : NSValueTransformer
+
+@end

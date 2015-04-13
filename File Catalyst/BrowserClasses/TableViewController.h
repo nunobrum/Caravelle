@@ -31,7 +31,7 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification;
 /* Binding is done manually in the initialization procedure */
 - (IBAction)TableDoubleClickEvent:(id)sender;
-
+- (IBAction)filenameDidChange:(id)sender;
 -(void) initController;
 
 

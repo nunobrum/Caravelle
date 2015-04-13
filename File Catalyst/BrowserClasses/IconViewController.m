@@ -100,10 +100,8 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(void) reloadItem:(id)object {
-    for (NSView *view in self.collectionView.subviews) {
-        if ([[(IconCollectionItem*)view representedObject] isEqual:object])
-            [view setNeedsDisplay:YES];
-    }
+    NSView *view = [[self collectionView] iconWithItem:object];
+    [view setNeedsDisplay:YES];
     //[self refreshKeepingSelections];
 }
 
@@ -225,5 +223,75 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
     }
 }
 
+
+-(BOOL) startEditItemName:(TreeItem*)item  {
+    IconViewBox *icon = [[self collectionView] iconWithItem:item];
+    // Obtain the NSTextField from the view
+    NSTextField *textField = [icon name];
+    assert(textField!=nil);
+    [[icon window] makeFirstResponder:textField];
+    // Recuperate the old filename
+    NSString *oldFilename = [textField stringValue];
+    // Select the part up to the extension
+    NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
+    NSRange selectRange = {0, head_size};
+    [[textField currentEditor] setSelectedRange:selectRange];
+    return YES;
+}
+
+-(void) insertItem:(id)item  {
+    /*
+     
+     NSInteger row = [tableData count];
+    NSIndexSet *selection = [_myTableView selectedRowIndexes];
+    if ([selection count]>0) {
+        // Will insert a row on the bottom of the selection.
+        row = [selection lastIndex] + 1;
+    }
+    else {
+        row = [tableData count];
+    }
+    // Making the new inserted line as selected
+    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+
+    if (row < [tableData count]) {
+        [tableData insertObject:item atIndex:row];
+    }
+    else {
+        [tableData addObject:item];
+    }
+    [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
+*/
+     }
+
+// This selector is invoked when the file was renamed or a New File was created
+- (IBAction)filenameDidChange:(id)sender {
+    TreeItem *item = [sender representedObject];
+    NSString *newName = [[(IconViewBox*)[(IconCollectionItem*)sender view] name] stringValue];
+    if (item != nil) {
+        NSString *operation=nil;
+        if ([item hasTags:tagTreeItemNew]) {
+            operation = opNewFolder;
+        }
+        else {
+            // If the name didn't change. Do Nothing
+            if ([newName isEqualToString:[item name]]) {
+                return;
+            }
+            operation = opRename;
+        }
+        NSArray *items = [NSArray arrayWithObject:item];
+
+         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+         items, kDFOFilesKey,
+         operation, kDFOOperationKey,
+         newName, kDFORenameFileKey,
+         self.currentNode, kDFODestinationKey,
+         self, kFromObjectKey,
+         nil];
+         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
+    }
+}
 
 @end
