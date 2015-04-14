@@ -332,14 +332,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
-// trying to invalidate all existing tree and lauching a refresh on the views
-// TODO:!! Come up with a better way to do this
-- (void) refreshBranchOnQueue: (NSOperationQueue *) queue {
-    NSLog(@"TreeBranch.refreshBranchOnQueue:(%@)", [self path]);
-    [self forceRefreshOnBranch];
-
-}
-
 #pragma mark -
 #pragma mark Tree Access
 /*
@@ -856,12 +848,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
+// trying to invalidate all existing tree and lauching a refresh on the views
+// TODO:!! Come up with a better way to do this
 -(void) forceRefreshOnBranch {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         [self setTag:tagTreeItemDirty];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [(TreeBranch*)item forceRefreshOnBranch];
             }
         }

@@ -43,7 +43,7 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
-NSString *kFromObjectKey = @"FromObjectKey";
+//NSString *kFromObjectKey = @"FromObjectKey";
 
 #ifdef USE_UTI
 const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
@@ -1466,9 +1466,12 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             assert(NO); // Unknown operation
         }
 
-        if (!OK)
+        if (!OK) {
             // refreshes the view to clear any errors, such as in the new Folder or failed drop
-            [(id<MYViewProtocol>)[info objectForKey:kFromObjectKey] refresh];
+            TreeBranch *dest = [info objectForKey:kDFODestinationKey];
+            [dest setTag:tagTreeItemDirty];
+            [dest refreshContentsOnQueue:operationsQueue];
+        }
         else {
             // TODO:!! MRU Option that only includes directories where operations have hapened.
             // Register the folder in a list of last *used* locations

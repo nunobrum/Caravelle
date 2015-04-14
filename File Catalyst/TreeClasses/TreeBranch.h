@@ -69,7 +69,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(BOOL) needsRefresh;
 -(void) refreshContentsOnQueue: (NSOperationQueue *) queue;
--(void) refreshBranchOnQueue:   (NSOperationQueue *) queue;
+-(void) forceRefreshOnBranch;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

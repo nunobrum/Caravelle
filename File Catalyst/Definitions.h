@@ -20,7 +20,7 @@ extern NSString *kDFOFilesKey;
 
 extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
-extern NSString *kFromObjectKey;
+//extern NSString *kFromObjectKey;
 
 extern NSString *opOpenOperation;
 extern NSString *opCopyOperation;

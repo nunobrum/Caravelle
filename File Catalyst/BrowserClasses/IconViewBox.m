@@ -37,8 +37,8 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
         [NSApp sendAction:@selector(contextualGotoFolder:) to:nil from:self];
-        if(delegate && [delegate respondsToSelector:@selector(doubleClick:)]) {
-            [delegate performSelector:@selector(doubleClick:) withObject:self];
+        if(self.delegate && [self.delegate respondsToSelector:@selector(doubleClick:)]) {
+            [self.delegate performSelector:@selector(doubleClick:) withObject:self];
         }
 #pragma clang diagnostic pop
 
@@ -55,15 +55,15 @@
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-    if(delegate && [delegate respondsToSelector:@selector(rightClick:)])
-        [delegate performSelector:@selector(rightClick:) withObject:self];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(rightClick:)])
+        [self.delegate performSelector:@selector(rightClick:) withObject:self];
 #pragma clang diagnostic pop
 
     [super rightMouseDown:theEvent];
 }
 
 -(id) representedObject {
-    return [delegate representedObject];
+    return [self.delegate representedObject];
 }
 
 

@@ -9,8 +9,9 @@
 #import <Cocoa/Cocoa.h>
 
 @interface IconViewBox : NSBox {
-    IBOutlet id delegate;
+
 }
+@property (strong) IBOutlet id delegate;
 @property (strong) IBOutlet NSImageView *image;
 @property (strong) IBOutlet NSTextField *name;
 

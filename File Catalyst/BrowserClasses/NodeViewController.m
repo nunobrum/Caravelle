@@ -141,7 +141,7 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
                               files, kDFOFilesKey,
                               strOperation, kDFOOperationKey,
                               destItem, kDFODestinationKey,
-                              fromObject, kFromObjectKey,
+                              //fromObject, kFromObjectKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:fromObject userInfo:info];
     }

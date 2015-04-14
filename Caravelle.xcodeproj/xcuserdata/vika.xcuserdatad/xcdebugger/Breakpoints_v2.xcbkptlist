@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/IconViewController.m"
-            timestampString = "450577270.008624"
+            timestampString = "450689271.668575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
+            startingLineNumber = "231"
+            endingLineNumber = "231"
             landmarkName = "-startEditItemName:"
             landmarkType = "5">
          </BreakpointContent>
@@ -170,29 +170,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/IconViewController.m"
-            timestampString = "450577270.008624"
+            timestampString = "450710231.837684"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "278"
-            endingLineNumber = "278"
-            landmarkName = "-filenameDidChange:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "File Catalyst/BrowserClasses/IconViewController.m"
-            timestampString = "450577270.008624"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "270"
-            endingLineNumber = "270"
-            landmarkName = "-filenameDidChange:"
-            landmarkType = "5">
+            startingLineNumber = "282"
+            endingLineNumber = "282"
+            landmarkName = "@implementation IconViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -202,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/IconCollectionItem.m"
-            timestampString = "450577538.472001"
+            timestampString = "450689271.668575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "62"
+            endingLineNumber = "62"
             landmarkName = "-control:textView:doCommandBySelector:"
             landmarkType = "5">
          </BreakpointContent>
@@ -218,12 +202,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/IconCollectionItem.m"
-            timestampString = "450577538.472001"
+            timestampString = "450689271.668575"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "-control:textView:doCommandBySelector:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "File Catalyst/BrowserClasses/IconCollectionItem.m"
+            timestampString = "450689564.360304"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "51"
+            endingLineNumber = "51"
+            landmarkName = "-filenameDidChange:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

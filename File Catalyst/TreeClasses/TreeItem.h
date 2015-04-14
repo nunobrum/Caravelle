@@ -98,6 +98,9 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) canContainURL:(NSURL*)url;
 -(BOOL) containedInURL:(NSURL*) url;
 
-
+/*
+ * Coding Compliant methods
+ */
+-(void) setValue:(id)value forUndefinedKey:(NSString *)key;
 
 @end

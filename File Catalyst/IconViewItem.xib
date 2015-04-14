@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IconCollectionItem">
             <connections>
+                <outlet property="iconView" destination="i5P-4j-Ljj" id="RkO-v1-mfz"/>
                 <outlet property="view" destination="i5P-4j-Ljj" id="xWV-Vu-B2f"/>
             </connections>
         </customObject>

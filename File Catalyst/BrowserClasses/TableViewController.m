@@ -364,7 +364,7 @@
                               operation, kDFOOperationKey,
                               [sender stringValue], kDFORenameFileKey,
                               self.currentNode, kDFODestinationKey,
-                              self, kFromObjectKey,
+                              //self, kFromObjectKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 

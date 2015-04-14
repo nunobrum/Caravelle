@@ -263,9 +263,8 @@ TreeManager *appTreeManager;
             if (scanSubdirs) {
                 //NSLog(@"TreeManager.fileSystemChangePath: - System is asking a full rescan of the tree:\n%@", changedPath);
 
-                if ([itemToRefresh respondsToSelector:@selector(refreshBranchOnQueue:)]) {
-                    [itemToRefresh setTag:tagTreeItemDirty];
-                    [itemToRefresh refreshBranchOnQueue:operationsQueue];
+                if ([itemToRefresh respondsToSelector:@selector(forceRefreshOnBranch)]) {
+                    [itemToRefresh forceRefreshOnBranch];
                 }
                 else {
                         NSLog(@"TreeManager:fileSystemChangePath: Not implemented ! Not expected to receive non branches.\nReceived ""%@""", changedPath);

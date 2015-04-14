@@ -227,8 +227,9 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 -(BOOL) startEditItemName:(TreeItem*)item  {
     IconViewBox *icon = [[self collectionView] iconWithItem:item];
     // Obtain the NSTextField from the view
+    [(IconCollectionItem*)[icon delegate] prepareForEdit];
     NSTextField *textField = [icon name];
-    assert(textField!=nil);
+    NSAssert(textField!=nil, @"IconViewController.startEditItemName: textField not found!");
     [[icon window] makeFirstResponder:textField];
     // Recuperate the old filename
     NSString *oldFilename = [textField stringValue];
@@ -262,10 +263,13 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
     }
     [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
 */
-     }
+}
 
 // This selector is invoked when the file was renamed or a New File was created
-- (IBAction)filenameDidChange:(id)sender {
+/************************************************************ 
+ * This was replaced by the setName Directly on the TreeItem.
+ ************************************************************
+ - (IBAction)filenameDidChange:(id)sender {
     TreeItem *item = [sender representedObject];
     NSString *newName = [[(IconViewBox*)[(IconCollectionItem*)sender view] name] stringValue];
     if (item != nil) {
@@ -293,5 +297,5 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 
     }
 }
-
+*/
 @end

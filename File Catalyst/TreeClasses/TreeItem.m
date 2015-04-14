@@ -132,6 +132,31 @@
     return nameStr;
 }
 
+-(void) setName:(NSString*)newName {
+    NSString *operation=nil;
+    if ([self hasTags:tagTreeItemNew]) {
+        operation = opNewFolder;
+    }
+    else {
+        // If the name didn't change. Do Nothing
+        if ([newName isEqualToString:[self name]]) {
+            return;
+        }
+        operation = opRename;
+    }
+    NSArray *items = [NSArray arrayWithObject:self];
+
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          items, kDFOFilesKey,
+                          operation, kDFOOperationKey,
+                          newName, kDFORenameFileKey,
+                          self.parent, kDFODestinationKey,
+                          //self, kFromObjectKey,
+                          nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
+}
+
 -(NSDate*) date_modified {
     NSDate *date=nil;
     NSError *errorCode;
@@ -367,7 +392,14 @@
     }
 }
 
-#pragma mark -
+#pragma mark - Coding Compliant
 
+/*
+ * Coding Compliant methods
+ */
+-(void) setValue:(id)value forUndefinedKey:(NSString *)key {
+
+    NSLog(@"Trying to set value for Key %@", key);
+}
 
 @end

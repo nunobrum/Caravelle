@@ -7,11 +7,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "IconViewBox.h"
 
-@interface IconCollectionItem : NSCollectionViewItem <NSControlTextEditingDelegate>
+@interface IconCollectionItem : NSCollectionViewItem
+
+@property (strong) IBOutlet IconViewBox *iconView;
+
 
 - (IBAction)doubleClick:(id)sender;
 - (IBAction)rightClick:(id)sender;
 - (IBAction)filenameDidChange:(id)sender;
+
+-(void) prepareForEdit;
+-(void) exitEditMode;
 
 @end

@@ -21,6 +21,19 @@
     // Do view setup here.
 }
 
+-(void) prepareForEdit {
+    // Revert Colors Back to Normal
+    [[self.iconView name] setTextColor:[NSColor controlTextColor]];
+
+}
+
+-(void) exitEditMode {
+    // Revert Colors Back to Normal
+    [[self.iconView name] setTextColor:[NSColor alternateSelectedControlTextColor]];
+
+    // Change the Focus
+    [(id<MYViewProtocol>)[[self collectionView] delegate] focusOnFirstView];
+}
 
 - (IBAction) doubleClick:(id)sender {
     //NSLog(@"double click in the collectionItem");
@@ -35,16 +48,15 @@
     }
 }
 - (IBAction)filenameDidChange:(id)sender {
-    NSLog(@"Filename Did Change");
-    if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(filenameDidChange:)]) {
+    /*if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(filenameDidChange:)]) {
         [[[self collectionView] delegate] performSelector:@selector(filenameDidChange:) withObject:self];
-    }
+    }*/
 }
 
 // NSControlTextEditingDelegate
 - (BOOL)control:(NSControl *)control textView:(NSTextView *)fieldEditor doCommandBySelector:(SEL)commandSelector
 {
-    NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
+    //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
     if (commandSelector == @selector(cancelOperation:)) {
         // In cancel will check if it was a new File and if so, remove it
         id item = [self representedObject];
@@ -55,23 +67,14 @@
             }
         }
         // Remove Field from First Responder
-        [(id<MYViewProtocol>)[[self collectionView] delegate] focusOnFirstView];
+        [self exitEditMode];
     }
     else if (commandSelector == @selector(insertNewline:)) {
         // Remove Field from firstResponder
-        [(id<MYViewProtocol>)[[self collectionView] delegate] focusOnFirstView];
+        [self exitEditMode];
     }
     return NO;
 }
-/*
-- (BOOL)control:(NSControl *)control
-textShouldBeginEditing:(NSText *)fieldEditor {
-    return YES;
-}
 
-- (BOOL)control:(NSControl *)control
-textShouldEndEditing:(NSText *)fieldEditor {
-    return YES;
-}*/
 
 @end
