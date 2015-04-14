@@ -1228,7 +1228,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             else if (theAction == @selector(paste:) ||
                      theAction == @selector(contextualPaste:)
                 ) {
-                if ([item itemType] == ItemTypeBranch==NO) {
+                if ([item itemType] != ItemTypeBranch) {
                     allow = NO;
                 }
                 else if ([item hasTags:tagTreeItemReadOnly]) {
@@ -1238,7 +1238,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             // actions that require one folder with Right access
             else if (theAction == @selector(toolbarNewFolder:) ||
                      theAction == @selector(contextualNewFolder:)) {
-                if ([item itemType] == ItemTypeBranch==NO) {
+                if ([item itemType] != ItemTypeBranch) {
                     allow = NO;
                 }
                 else if ([item hasTags:tagTreeItemReadOnly]) {

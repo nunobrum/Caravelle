@@ -528,7 +528,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeLeaf==YES) {
+                if ([item itemType] == ItemTypeLeaf) {
                     total+=[item filesize];
                 }
             }
@@ -590,7 +590,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeLeaf==YES) {
+                if ([item itemType] == ItemTypeLeaf) {
                     total++;
                 }
             }
@@ -604,7 +604,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeBranch==YES) {
+                if ([item itemType] == ItemTypeBranch) {
                     total++;
                 }
             }
@@ -628,7 +628,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     NSInteger total=0;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 total += [(TreeBranch*)item numberOfLeafsInBranch];
             }
             else
@@ -653,10 +653,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //-(NSInteger) numberOfFileDuplicatesInBranch {
 //    NSInteger total = 0;
 //    for (TreeItem *item in _children) {
-//        if ([item itemType] == ItemTypeBranch==YES) {
+//        if ([item itemType] == ItemTypeBranch) {
 //            total += [(TreeBranch*)item numberOfFileDuplicatesInBranch];
 //        }
-//        else if ([item itemType] == ItemTypeLeaf==YES) {
+//        else if ([item itemType] == ItemTypeLeaf) {
 //            if ([[(TreeLeaf*)item getFileInformation] duplicateCount]!=0)
 //                total++;
 //        }
@@ -671,7 +671,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     NSInteger i=0;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 if (i==index)
                     return (TreeBranch*)item;
                 i++;
@@ -686,7 +686,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         NSUInteger index = 0;
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [answer addIndex:index];
             }
             index++;
@@ -699,7 +699,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     NSInteger i=0;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeLeaf==YES) {
+            if ([item itemType] == ItemTypeLeaf) {
                 if (i==index)
                     return (TreeLeaf*)item;
                 i++;
@@ -719,7 +719,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         FileCollection *answer = [[FileCollection new] init];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeLeaf==YES) {
+            if ([item itemType] == ItemTypeLeaf) {
                 FileInformation *finfo;
                 finfo = [FileInformation createWithURL:[(TreeLeaf*)item url]];
                 [answer AddFileInformation:finfo];
@@ -745,7 +745,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         [collector addObjectsFromArray: self->_children];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [(TreeBranch*)item _harvestItemsInBranch: collector];
             }
         }
@@ -764,7 +764,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeLeaf==YES) {
+            if ([item itemType] == ItemTypeLeaf) {
                 [answer addObject:item];
             }
         }
@@ -776,10 +776,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(void) _harvestLeafsInBranch:(NSMutableArray*)collector {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [(TreeBranch*)item _harvestLeafsInBranch: collector];
             }
-            else if ([item itemType] == ItemTypeLeaf==YES) {
+            else if ([item itemType] == ItemTypeLeaf) {
                 [collector addObject:item];
             }
         }
@@ -798,7 +798,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [answer addObject:item];
             }
         }
@@ -824,7 +824,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
             [item setTag:tags];
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [(TreeBranch*)item setTagsInBranch:tags];
             }
         }
@@ -841,7 +841,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
             [item setTag:tags];
-            if ([item itemType] == ItemTypeBranch==YES) {
+            if ([item itemType] == ItemTypeBranch) {
                 [(TreeBranch*)item resetTagsInBranch:tags];
             }
         }
@@ -870,7 +870,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
 //                [item performSelector:selector];
 //            }
-//            if ([item itemType] == ItemTypeBranch==YES) {
+//            if ([item itemType] == ItemTypeBranch) {
 //                [(TreeBranch*)item performSelector:selector inTreeItemsWithTag:tags];
 //            }
 //        }
@@ -882,7 +882,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //            if ([item hasTags:tags] && [item respondsToSelector:selector]) {
 //                [item performSelector:selector withObject:param];
 //            }
-//            if ([item itemType] == ItemTypeBranch==YES) {
+//            if ([item itemType] == ItemTypeBranch) {
 //                [(TreeBranch*)item performSelector:selector withObject:param inTreeItemsWithTag:tags];
 //            }
 //        }
@@ -897,7 +897,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //            if ([item hasTags:tagTreeItemDirty]) {
 //                [indexesToDelete addIndex:index];
 //            }
-//            else if ([item itemType] == ItemTypeBranch==YES) {
+//            else if ([item itemType] == ItemTypeBranch) {
 //                [(TreeBranch*)item purgeDirtyItems];
 //            }
 //            index++;
@@ -916,7 +916,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //-(FileCollection*) duplicatesInNode {
 //    FileCollection *answer = [[FileCollection new] init];
 //    for (TreeItem *item in _children) {
-//        if ([item itemType] == ItemTypeLeaf==YES) {
+//        if ([item itemType] == ItemTypeLeaf) {
 //            [answer addFiles: [[(TreeLeaf*)item getFileInformation] duplicateList] ];
 //        }
 //    }
@@ -926,10 +926,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //-(FileCollection*) duplicatesInBranch {
 //    FileCollection *answer = [[FileCollection new] init];
 //    for (TreeItem *item in _children) {
-//        if ([item itemType] == ItemTypeBranch==YES) {
+//        if ([item itemType] == ItemTypeBranch) {
 //            [answer concatenateFileCollection:[(TreeBranch*)item duplicatesInBranch]];
 //        }
-//        else if ([item itemType] == ItemTypeLeaf==YES) {
+//        else if ([item itemType] == ItemTypeLeaf) {
 //            [answer addFiles: [[(TreeLeaf*)item getFileInformation] duplicateList] ];
 //        }
 //    }
