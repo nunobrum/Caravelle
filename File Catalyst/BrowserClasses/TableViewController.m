@@ -128,15 +128,7 @@
             [cellView setObjectValue:objectValue];
 
             // If it's a new file, then assume a default ICON
-            if ([theFile hasTags:tagTreeItemNew]) {
-                cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
-                if ([theFile itemType] == ItemTypeBranch)
-                    cellView.imageView.objectValue = [NSImage imageNamed:@"GenericFolderIcon"];
-                else
-                    cellView.imageView.objectValue = [NSImage imageNamed:@"GenericDocumentIcon"];
-            }
 
-            else  {
                 NSString *path = [[theFile url] path];
                 if (path) {
                     // Then setup properties on the cellView based on the column
@@ -157,7 +149,6 @@
                     // This is not supposed to happen, just setting an error
                     [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
                 }
-            }
         }
 
         else { // All other cases are handled here
@@ -716,25 +707,21 @@
 }
 
 -(void) insertItem:(id)item  {
-    NSInteger row = [tableData count];
+    NSInteger row;
     NSIndexSet *selection = [_myTableView selectedRowIndexes];
     if ([selection count]>0) {
         // Will insert a row on the bottom of the selection.
         row = [selection lastIndex] + 1;
-    }
-    else {
-        row = [tableData count];
-    }
-    // Making the new inserted line as selected
-    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-
-    if (row < [tableData count]) {
         [tableData insertObject:item atIndex:row];
     }
     else {
+        row = [tableData count];
         [tableData addObject:item];
     }
     [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
+
+    // Making the new inserted line as selected
+    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 }
 
 

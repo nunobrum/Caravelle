@@ -1446,6 +1446,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (self.focusedView == _myOutlineView) {
         // TODO:!!!! Will change to the table view and make the edit there.
     }
+    else if (_focusedView==self.detailedViewController) {
+            [self.detailedViewController insertItem:item];
+    }
 }
 
 #pragma mark - MRU Routines

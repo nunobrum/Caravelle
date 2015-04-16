@@ -117,7 +117,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     if ([op isEqualToString:opNewFolder]) {
                         NSURL *parentURL;
                         id destObj = [_taskInfo objectForKey:kDFODestinationKey];
-                        if (destObj!=nil) {
+                        if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
                             if ([destObj itemType] == ItemTypeBranch)
                                 parentURL = [(TreeBranch*)destObj url];
                             else if ([destObj isKindOfClass:[NSURL class]])
@@ -157,7 +157,8 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
             else {
                 id destObj = [_taskInfo objectForKey:kDFODestinationKey];
 
-                if (destObj!=nil && [destObj itemType] == ItemTypeBranch) {
+                if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
+                    if ([destObj itemType] == ItemTypeBranch) {
                     TreeBranch *dest = destObj;
                     // Sees if there is a rename associated with the copy
                     NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
@@ -213,7 +214,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             if ([self isCancelled] || OK==NO) break;
                         }
                     }
-                }
+                }}
                 else if (destObj!=nil && [destObj isKindOfClass:[NSURL class]]) {
                     NSURL *dest = destObj;
                     if ([op isEqualToString:opCopyOperation]) {

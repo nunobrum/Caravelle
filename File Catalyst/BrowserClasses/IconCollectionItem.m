@@ -62,7 +62,7 @@
         id item = [self representedObject];
         if ([item isKindOfClass:[TreeItem class]]) {
             if ([(TreeItem*)item hasTags:tagTreeItemNew]) {
-                // TODO: !!!! Delete the Created Icon
+                [(TreeItem*)item removeItem];
 
             }
         }

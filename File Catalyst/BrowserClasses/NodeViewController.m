@@ -259,11 +259,15 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
     return NO;
 }
 
+-(void) insertItem:(id)item {
+    NSAssert(NO, @"NodeViewController.insertItem: This method should be overriden");
+}
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
  {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               orderedItems, kDFOFilesKey,
                               operation, kDFOOperationKey,
+                              self.currentNode, kDFODestinationKey,
                               nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:userInfo];
 }

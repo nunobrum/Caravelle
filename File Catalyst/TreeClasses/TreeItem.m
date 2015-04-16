@@ -90,8 +90,12 @@
 
 -(void) setUrl:(NSURL*)url {
     // The tags shoud be set here accordingly to the information got from URL
+    //[self willChangeValueForKey:@"url"];
+    [self willChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change
     self->_url = url;
     [self updateFileTags];
+    //[self didChangeValueForKey:@"url"];
+    [self didChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change.
 }
 
 -(NSURL*) url {
@@ -205,7 +209,16 @@
 }
 
 -(NSImage*) image {
-    return[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
+    if ([self hasTags:tagTreeItemNew]) {
+        if ([self itemType] == ItemTypeBranch)
+            return [NSImage imageNamed:@"GenericFolderIcon"];
+        else
+            return [NSImage imageNamed:@"GenericDocumentIcon"];
+    }
+
+    else  {
+        return[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
+    }
 }
 
 -(long long) filesize {
@@ -341,7 +354,7 @@
     }
     else
 #endif
-        answer = [self.url pasteboardPropertyListForType:type];
+    answer = [self.url pasteboardPropertyListForType:type];
     return answer;
 }
 

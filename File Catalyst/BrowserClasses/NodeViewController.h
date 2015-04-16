@@ -53,6 +53,7 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 - (void) refreshKeepingSelections;
 
 - (BOOL) startEditItemName:(TreeItem*)item;
+- (void) insertItem:(id)item;
 - (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
 
 - (void) registerDraggedTypes;

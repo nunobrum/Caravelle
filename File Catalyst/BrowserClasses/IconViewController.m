@@ -100,9 +100,15 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(void) reloadItem:(id)object {
-    NSView *view = [[self collectionView] iconWithItem:object];
-    [view setNeedsDisplay:YES];
+    if (object == self.currentNode) {
+        // This is a total refresh
+        [self refresh];
+    }
+    else {
+        NSView *view = [[self collectionView] iconWithItem:object];
+        [view setNeedsDisplay:YES];
     //[self refreshKeepingSelections];
+    }
 }
 
 -(NSArray*) getSelectedItems {
@@ -241,28 +247,18 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 }
 
 -(void) insertItem:(id)item  {
-    /*
-     
-     NSInteger row = [tableData count];
-    NSIndexSet *selection = [_myTableView selectedRowIndexes];
+    NSIndexSet *selection = [self.iconArrayController selectionIndexes];
+
+    [self.iconArrayController setSelectsInsertedObjects:YES];
+
     if ([selection count]>0) {
         // Will insert a row on the bottom of the selection.
-        row = [selection lastIndex] + 1;
+        NSInteger index = [selection lastIndex] + 1;
+        [self.iconArrayController insertObject:item atArrangedObjectIndex:index];
     }
     else {
-        row = [tableData count];
+        [self.iconArrayController addObject:item];
     }
-    // Making the new inserted line as selected
-    [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-
-    if (row < [tableData count]) {
-        [tableData insertObject:item atIndex:row];
-    }
-    else {
-        [tableData addObject:item];
-    }
-    [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
-*/
 }
 
 // This selector is invoked when the file was renamed or a New File was created
