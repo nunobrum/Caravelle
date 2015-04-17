@@ -23,6 +23,7 @@
 #import "TableViewController.h"
 #import "IconViewController.h"
 #import "FileAttributesController.h"
+#import "PasteboardUtils.h"
 
 #define COL_FILENAME @"COL_NAME"
 
@@ -367,12 +368,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSInteger SelectedCount = [rowsSelected count];
         _focusedView = _myOutlineView;
         if (!_didRegisterDraggedTypes) {
-            [_myOutlineView registerForDraggedTypes:[NSArray arrayWithObjects:
-                                                     //OwnUTITypes
-                                                     //(id)kUTTypeFolder,
-                                                     NSFilenamesPboardType,
-                                                     NSURLPboardType,
-                                                     nil]];
+            [_myOutlineView registerForDraggedTypes: supportedPasteboardTypes()];
             // TODO: !!! Maybe is because of this that the drag to recycle bin doesn't work
             _didRegisterDraggedTypes = YES;
         }
@@ -432,25 +428,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
-    NSArray *typesDeclared;
-
-    if ([types containsObject:NSFilenamesPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
-        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
-        NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
-        return [pboard writeObjects:selectedPaths];
-    }
-    else if ([types containsObject:NSURLPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
-        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
-        return [pboard writeObjects:selectedURLs];
-    }
-
-    return NO;
+    NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
+    return writeItemsToPasteboard(selectedFiles, pboard, types);
 }
 
 //- (void)menuWillOpen:(NSMenu *)menu {
@@ -715,11 +694,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (BOOL)outlineView:(NSOutlineView *)outlineView
          writeItems:(NSArray *)items
        toPasteboard:(NSPasteboard *)pboard {
-    [pboard declareTypes:[NSArray arrayWithObjects:
-                          NSURLPboardType,
-                          NSFilenamesPboardType,
-                          // NSFileContentsPboardType, not passing file contents
-                          NSStringPboardType, nil]
+    [pboard declareTypes:supportedPasteboardTypes()
                    owner:nil];
 
 

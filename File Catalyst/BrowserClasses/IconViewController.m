@@ -8,6 +8,7 @@
 
 #import "IconViewController.h"
 #import "IconCollectionItem.h"
+#import "PasteboardUtils.h"
 
 // key values for the icon view dictionary
 NSString *KEY_NAME = @"name";
@@ -129,26 +130,84 @@ NSString *KEY_ICON = @"icon";
     return nil;
 }
 
-#pragma - Drag & Drop
+#pragma - Drag & Drop Support
 
 - (BOOL)collectionView:(NSCollectionView *)collectionView
  canDragItemsAtIndexes:(NSIndexSet *)indexes
              withEvent:(NSEvent *)event {
-    return NO;
+    NSArray *items = [self.icons objectsAtIndexes:indexes];
+
+    // Block if there is a read-only file
+    for (TreeItem *item in items) {
+        if ([item hasTags:tagTreeItemReadOnly])
+            return NO;
+    }
+    return YES;
 }
 
 - (NSDragOperation)collectionView:(NSCollectionView *)collectionView
                      validateDrop:(id<NSDraggingInfo>)draggingInfo
                     proposedIndex:(NSInteger *)proposedDropIndex
                     dropOperation:(NSCollectionViewDropOperation *)proposedDropOperation {
-    return NSDragOperationNone;
+
+    self->_validatedDropDestination = nil;
+    if (*proposedDropOperation == NSCollectionViewDropBefore) { // This is on the folder being displayed
+        self->_validatedDropDestination = self.currentNode;
+    }
+    else if (*proposedDropOperation == NSCollectionViewDropOn) {
+
+        @try { // If the row is not valid, it will assume the tree node being displayed.
+            self->_validatedDropDestination = [self.icons objectAtIndex:*proposedDropIndex];
+        }
+        @catch (NSException *exception) {
+            self->_validatedDropDestination = self.currentNode;
+        }
+        @finally {
+            // Go away... nothing to see here
+        }
+    }
+
+    /* Limit the Operations depending on the Destination Item Class*/
+    if ([self->_validatedDropDestination itemType] == ItemTypeBranch) {
+        // TODO:!!! Put here a timer for opening the Folder
+        // Recording time and first time
+        // if not first time and recorded time > 3 seconds => open folder
+    }
+    self->_validatedDropOperation = validateDrop(draggingInfo, self->_validatedDropDestination);
+    return self->_validatedDropOperation;
+
 }
 
 - (BOOL)collectionView:(NSCollectionView *)collectionView
             acceptDrop:(id<NSDraggingInfo>)draggingInfo
                  index:(NSInteger)index
          dropOperation:(NSCollectionViewDropOperation)dropOperation {
-    return NO;
+
+    BOOL opDone = acceptDrop(draggingInfo, self->_validatedDropDestination, self->_validatedDropOperation, self);
+
+    if (self->_validatedDropDestination == self.currentNode && opDone==YES) {
+        //Inserts the rows using the specified animation.
+        if (self->_validatedDropOperation & (NSDragOperationCopy | NSDragOperationMove)) {
+            NSPasteboard *pboard = [draggingInfo draggingPasteboard];
+            NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+
+            int i= 0;
+            for (id pastedItem in files) {
+                TreeItem *newItem=nil;
+                if ([pastedItem isKindOfClass:[NSURL class]]) {
+                    //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
+                    newItem = [TreeItem treeItemForURL: pastedItem parent:self.currentNode];
+                    [newItem setTag:tagTreeItemDropped];
+                }
+                if (newItem) {
+                    //[self.icons insertObject:newItem atIndex:index+i];
+                    [self.iconArrayController insertObject:newItem atArrangedObjectIndex:index+i];
+                    i++;
+                }
+            }
+        }
+    }
+    return opDone;
 }
 
 // Not implemented for the time being
@@ -168,7 +227,9 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 - (BOOL)collectionView:(NSCollectionView *)collectionView
    writeItemsAtIndexes:(NSIndexSet *)indexes
           toPasteboard:(NSPasteboard *)pasteboard {
-    return NO;
+
+    NSArray *items = [self.icons objectsAtIndexes:indexes];
+    return writeItemsToPasteboard(items, pasteboard, supportedPasteboardTypes());
 }
 
 #pragma - NS Menu Delegate

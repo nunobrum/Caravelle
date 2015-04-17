@@ -21,6 +21,7 @@
 #import "DuplicateFindSettingsViewController.h"
 #import "UserPreferencesDialog.h"
 #import "RenameFileDialog.h"
+#import "PasteboardUtils.h"
 
 
 // TODO:! Virtual Folders
@@ -518,25 +519,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
-    NSArray *typesDeclared;
-
-    if ([types containsObject:NSFilenamesPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [[self selectedView] getSelectedItems];
-        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
-        NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
-        return [pboard writeObjects:selectedPaths];
-    }
-    else if ([types containsObject:NSURLPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedFiles = [[self selectedView] getSelectedItems];
-        NSArray *selectedURLs = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
-        return [pboard writeObjects:selectedURLs];
-    }
-
-    return NO;
+    NSArray *selectedFiles = [[self selectedView] getSelectedItems];
+    return writeItemsToPasteboard(selectedFiles, pboard, types);
 }
 
 #pragma mark - Notifications
@@ -634,7 +618,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
         [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
 
-        NSMutableArray *fileList = [NSMutableArray new];
+        NSMutableArray *fileList = [NSMutableArray new]; // TODO: This can be replaced with union.url
 
         //Add as many as file's path in the fileList array
         for(TreeItem *item in selectedFiles) {

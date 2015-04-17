@@ -11,10 +11,6 @@
 #import "TreeBranch.h"
 
 
-
-extern NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem);
-extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation operation, id fromObject);
-
 @protocol NodeViewProtocol <NSObject, MYViewProtocol>
 
 -(void) reloadItem:(id) object;
@@ -32,7 +28,11 @@ extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOpe
 @end
 
 
-@interface NodeViewController : NSViewController <MYViewProtocol>
+@interface NodeViewController : NSViewController <MYViewProtocol> {
+    TreeItem   *_validatedDropDestination;
+    NSDragOperation _validatedDropOperation;
+    NSMutableIndexSet *extendedSelection;
+}
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
 @property (readwrite) NSString *filterText;

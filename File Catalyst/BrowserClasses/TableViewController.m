@@ -12,6 +12,7 @@
 #import "TreeItem.h"
 #import "TreeBranch.h"
 #import "TreeLeaf.h"
+#import "PasteboardUtils.h"
 
 #define COL_FILENAME @"COL_NAME"
 #define COL_TEXT_ONLY @"COL_TEXT"
@@ -29,10 +30,9 @@
 @interface TableViewController ( ) {
     NSMutableArray *tableData;
     NSSortDescriptor *TableSortDesc;
+#ifdef UPDATE_TREE
     NSIndexSet *_draggedItemsIndexSet;
-    TreeItem   *_validatedDropDestination;
-    NSDragOperation _validatedDropOperation;
-    NSMutableIndexSet *extendedSelection;
+#endif
 }
 @end
 
@@ -51,7 +51,9 @@
 - (void) initController {
     [super initController];
     self->TableSortDesc = nil;
+#ifdef UPDATE_TREE
     self->_draggedItemsIndexSet = nil;
+#endif
     self->extendedSelection = nil;
 
     //To Get Notifications from the Table Header
@@ -497,23 +499,15 @@
 #else
 
 - (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard {
-    [pboard declareTypes:[NSArray arrayWithObjects:
-                          NSURLPboardType,
-                          NSFilenamesPboardType,
-                          // NSFileContentsPboardType, not passing file contents
-                          NSStringPboardType, nil]
-                   owner:nil];
-
-
-    NSArray *items = [tableData objectsAtIndexes:rowIndexes];
-    NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
-    return[ pboard writeObjects:urls];
+    return writeItemsToPasteBoard(items, pboard, supportedPasteboardTypes());
 }
 #endif
 
 
 - (void)tableView:(NSTableView *)tableView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forRowIndexes:(NSIndexSet *)rowIndexes {
+#ifdef UPDATE_TREE
     _draggedItemsIndexSet = rowIndexes; // Save the Indexes for later deleting or moving
+#endif
 }
 
 

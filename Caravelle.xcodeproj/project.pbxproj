@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
 		3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
 		3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463418F9B86A002B633C /* TreeBranch.m */; };
@@ -81,6 +82,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C0238E81AE02A310023CE42 /* PasteboardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PasteboardUtils.m; path = BrowserClasses/PasteboardUtils.m; sourceTree = "<group>"; };
+		3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PasteboardUtils.h; path = BrowserClasses/PasteboardUtils.h; sourceTree = "<group>"; };
 		3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myValueTransformers.h; sourceTree = "<group>"; };
 		3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myValueTransformers.m; sourceTree = "<group>"; };
 		3C20FCC719CB7FAE00826246 /* Automator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Automator.framework; path = System/Library/Frameworks/Automator.framework; sourceTree = SDKROOT; };
@@ -455,6 +458,8 @@
 				3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */,
 				3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */,
 				3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */,
+				3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */,
+				3C0238E81AE02A310023CE42 /* PasteboardUtils.m */,
 				3CEB61F11AD293C300E09A85 /* Icon View */,
 				3CEB61F01ACFD53C00E09A85 /* TableView */,
 				3CEB61F21AD293F500E09A85 /* AttributesPanel */,
@@ -619,6 +624,7 @@
 				3C29464918F9B87C002B633C /* FileCollection.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
+				3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */,
 				3CF5DA8D1A65D09800786D64 /* RenameFileDialog.m in Sources */,
 				3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */,
 				3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */,

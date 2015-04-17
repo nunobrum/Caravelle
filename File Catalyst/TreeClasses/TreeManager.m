@@ -109,6 +109,9 @@ TreeManager *appTreeManager;
                         [self->iArray removeObjectAtIndex:index];
                     }
                 }
+                else {
+                    return nil; // Failed to create the parent
+                }
             }
         }
         else {

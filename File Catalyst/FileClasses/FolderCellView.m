@@ -24,9 +24,6 @@
 
 -(void) setURL:(NSURL *)folderURL {
     self->url = folderURL;
-    /* Sign for receiving drops of files */
-    //NSLog(@"Registering the Drag capability %@", self.textField);
-    //[self registerForDraggedTypes:[NSArray arrayWithObjects: NSFilenamesPboardType, nil]];
 }
 
 //- (void)drawRect:(NSRect)dirtyRect
