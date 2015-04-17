@@ -18,6 +18,9 @@
 @property (strong) IBOutlet BrowserIconView *collectionView;
 @property (strong) IBOutlet NSArrayController *iconArrayController;
 
+@property (weak) IBOutlet NSProgressIndicator *myProgressIndicator;
+
+
 - (IBAction) rightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;
 	

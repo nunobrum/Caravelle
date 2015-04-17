@@ -434,13 +434,13 @@
 }
 
 -(void) startBusyAnimations {
-    [_myProgressIndicator setHidden:NO];
-    [_myProgressIndicator startAnimation:self];
+    [self.myProgressIndicator setHidden:NO];
+    [self.myProgressIndicator startAnimation:self];
 
 }
 -(void) stopBusyAnimations {
-    [_myProgressIndicator setHidden:YES];
-    [_myProgressIndicator stopAnimation:self];
+    [self.myProgressIndicator setHidden:YES];
+    [self.myProgressIndicator stopAnimation:self];
 }
 
 -(void) refresh {

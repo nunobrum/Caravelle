@@ -86,6 +86,15 @@ NSString *KEY_ICON = @"icon";
     [self.view.window makeFirstResponder:self.containerView];
 }
 
+-(void) startBusyAnimations {
+    [self.myProgressIndicator setHidden:NO];
+    [self.myProgressIndicator startAnimation:self];
+
+}
+-(void) stopBusyAnimations {
+    [self.myProgressIndicator setHidden:YES];
+    [self.myProgressIndicator stopAnimation:self];
+}
 
 -(void) refresh {
     self.icons = [self itemsToDisplay];

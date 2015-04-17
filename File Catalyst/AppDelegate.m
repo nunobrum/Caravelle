@@ -1663,7 +1663,13 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 // Erase the file ... and copy again.
                 //sendToRecycleBin();
 
-                // TODO: !!!! Put this in the operations
+                // TODO: !!!!! Put this in the operations Use:
+             /*   - (BOOL)replaceItemAtURL:(NSURL *)originalItemURL
+            withItemAtURL:(NSURL *)newItemURL
+            backupItemName:(NSString *)backupItemName
+            options:(NSFileManagerItemReplacementOptions)options
+            resultingItemURL:(NSURL **)resultingURL
+            error:(NSError **)error */
                 [[NSWorkspace sharedWorkspace] recycleURLs:[NSArray arrayWithObject:destinationURL] completionHandler:^(NSDictionary *newURLs, NSError *error) {
                     if (error==nil) {
                         copyURLToURL(sourceURL, destinationURL);
