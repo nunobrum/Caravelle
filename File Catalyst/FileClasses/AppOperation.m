@@ -42,4 +42,8 @@ static NSUInteger appOperationCounter = 0;
     return [NSString stringWithFormat:@"%lu Files", statusCount];
 }
 
+-(NSDictionary*) info {
+    return _taskInfo;
+}
+
 @end

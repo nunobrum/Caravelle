@@ -28,5 +28,6 @@ extern NSString *kRootPathKey;
 
 - (id)initWithInfo:(NSDictionary*)info;
 -(NSString*) statusText;
+-(NSDictionary*) info;
 
 @end

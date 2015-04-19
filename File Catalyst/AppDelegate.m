@@ -44,6 +44,8 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
+NSString *kDFOOkCountKey = @"OkCountKey";
+NSString *kDFOStatusCountKey = @"StatusCountKey";
 //NSString *kFromObjectKey = @"FromObjectKey";
 
 #ifdef USE_UTI
@@ -53,6 +55,7 @@ const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
 NSString *opOpenOperation=@"OpenOperation";
 NSString *opCopyOperation=@"CopyOperation";
 NSString *opMoveOperation =@"MoveOperation";
+NSString *opReplaceOperation = @"ReplaceOperation";
 NSString *opEraseOperation =@"EraseOperation";
 NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 NSString *opNewFolder = @"NewFolderOperation";
@@ -94,11 +97,14 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     RenameFileDialog *renameFilePanel;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
+    NSMutableArray *pendingStatusMessages;
     FileCollection *duplicates;
     BOOL isCutPending;
     BOOL isApplicationTerminating;
     BOOL isWindowClosing;
     NSInteger generalPasteBoardChangeCount;
+    NSInteger statusTimeoutCounter;
+    NSInteger statusFilesMoved,statusFilesCopied,statusFilesDeleted;
 }
 
 // -------------------------------------------------------------------------------
@@ -684,7 +690,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                                       fileName, kDFORenameFileKey,
                                       [[self selectedView] treeNodeSelected], kDFODestinationKey,
                                       nil];
-                putInQueue(taskinfo);
+                [self startOperation: taskinfo];
             }
         }
     }
@@ -702,21 +708,49 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
 }
 
+-(BOOL) startOperation:(NSDictionary *) operationInfo {
+    [self _startOperationBusyIndication];
+    putInQueue(operationInfo);
+    return YES;
+}
+
+-(void) copyItems:(NSArray*)files toBranch:(TreeBranch*)target {
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opCopyOperation, kDFOOperationKey,
+                              files, kDFOFilesKey,
+                              target, kDFODestinationKey,
+                              nil];
+    [self startOperation:taskinfo];
+}
+
+-(void) moveItems:(NSArray*)files toBranch:(TreeBranch*)target {
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opCopyOperation, kDFOOperationKey,
+                              files, kDFOFilesKey,
+                              target, kDFODestinationKey,
+                              nil];
+    [self startOperation:taskinfo];
+}
+
+-(void) openItems:(NSArray*)files  {
+    // TODO:!!!!!
+}
+
 -(void) executeCopyTo:(NSArray*) selectedFiles {
     if ([self selectedView] == myLeftView) {
-        copyItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+        [self copyItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
     }
     else if ([self selectedView] == myRightView) {
-        copyItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+        [self copyItems:selectedFiles toBranch: [myLeftView treeNodeSelected]];
     }
 }
 
 -(void) executeMoveTo:(NSArray*) selectedFiles {
     if ([self selectedView] == myLeftView) {
-        moveItemsToBranch(selectedFiles, [myRightView treeNodeSelected]);
+        [self moveItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
     }
     else if ([self selectedView] == myRightView) {
-        moveItemsToBranch(selectedFiles, [myLeftView treeNodeSelected]);
+        [self moveItems:selectedFiles toBranch: [myLeftView treeNodeSelected]];
     }
 }
 
@@ -818,7 +852,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         if (isCutPending) {
             if (generalPasteBoardChangeCount == [clipboard changeCount]) {
                 // Make the move
-                moveItemsToBranch(files, destinationBranch);
+                [self moveItems:files toBranch: destinationBranch];
                 // Update the Status bar with the information of a move
                 NSString *statusText = [NSString stringWithFormat:@"Moving %ld files to %@",
                                         [files count],
@@ -838,7 +872,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             }
         }
         else { // Make a regular copy
-            copyItemsToBranch(files, destinationBranch);
+            [self copyItems:files toBranch: destinationBranch];
             // Update the Status bar with the information of a copy
             NSString *statusText = [NSString stringWithFormat:@"Copying %ld files to %@",
                                     [files count],
@@ -853,7 +887,11 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 
 -(void) executeDelete:(NSArray*) selectedFiles {
-    sendItemsToRecycleBin(selectedFiles);
+    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opSendRecycleBinOperation, kDFOOperationKey,
+                              selectedFiles, kDFOFilesKey,
+                              nil];
+    [self startOperation:taskinfo];
 }
 
 
@@ -1318,10 +1356,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         ([operation isEqualToString:opNewFolder])||
         ([operation isEqualToString:opRename])) {
         // Redirects all to file operation
-        putInQueue([note userInfo]);
-
-        // Presently this only starts the Busy indications on the statusBar.
-        [self _startOperationBusyIndication];
+        [self startOperation:[note userInfo]];
     }
 }
 
@@ -1332,24 +1367,116 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [self.statusProgressLabel setHidden:NO];
     [self.statusProgressLabel setStringValue:@"..."];
     [self.statusCancelButton setHidden:NO];
+    statusTimeoutCounter = 0;
+    statusFilesCopied = 0;
+    statusFilesDeleted = 0;
+    statusFilesMoved = 0;
 
 }
 
 - (void)_operationsInfoFired:(NSTimer *)timer {
     if ([operationsQueue operationCount]==0) {
-    //[operationInfoTimer release];
-        [timer invalidate];
-        [self _stopOperationBusyIndication];
-        //NSLog(@"operation Status Updating after a stop");
+
+        if ([pendingStatusMessages count]>=1) { // This was called from the notifications finished, and there is only one message pending
+            // Make Status Update here
+            NSString *statusText=nil;
+
+            NSDictionary *info = [pendingStatusMessages firstObject];
+            [pendingStatusMessages removeObjectAtIndex:0];
+            //NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
+            NSString *operation = [info objectForKey:kDFOOperationKey];
+            BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
+
+            if ([operation isEqualToString:opCopyOperation]) {
+                if (OK)
+                    statusText  = [NSString stringWithFormat:@"%lu Files copied",
+                                   statusFilesCopied];
+                else
+                    statusText = @"Copy Failed";
+
+            }
+            else if ([operation isEqualToString:opMoveOperation]) {
+                if (OK)
+                    statusText  = [NSString stringWithFormat:@"%lu Files moved",
+                                   statusFilesMoved];
+                else
+                    statusText = @"Move Failed";
+            }
+            else if ([operation isEqualToString:opSendRecycleBinOperation]) {
+                if (OK)
+                    statusText  = [NSString stringWithFormat:@"%@ Files Trashed",
+                                   [info objectForKey:kDFOOkCountKey]];
+                else
+                    statusText = @"Trash Failed";
+
+            }
+            else if ([operation isEqualToString:opEraseOperation]) {
+                if (OK)
+                    statusText  = [NSString stringWithFormat:@"%lu Files Trashed",
+                                   statusFilesDeleted];
+                else
+                    statusText = @"Trash Failed";
+
+            }
+            else if ([operation isEqualToString:opRename]) {
+                if (!OK) {
+                    statusText = @"Rename Failed";
+                }
+            }
+            else if ([operation isEqualToString:opNewFolder]) {
+                if (!OK) {
+                    statusText = @"New Folder creation failed";
+                }
+            }
+            else {
+                NSLog(@"Unkown operation"); // Unknown operation
+            }
+
+            if (!OK) {
+                [self.statusProgressLabel setTextColor:[NSColor redColor]];
+            }
+            else {
+                [self.statusProgressLabel setTextColor:[NSColor textColor]];
+            }
+            
+            if (statusText!=nil) // If nothing was set, don't update status
+                [self.statusProgressLabel setStringValue: statusText];
+        }
+        else {
+            // Update nothing, so that the previous message does not stand for less time than expected
+        }
+        if (statusTimeoutCounter==0) { // first stops the indications
+            [self.statusProgressIndicator stopAnimation:self];
+        }
+        else if (statusTimeoutCounter>=3) { // at 3 seconds it will make the indicators disappear
+            [self _stopOperationBusyIndication];
+            [timer invalidate];
+        }
+        if (timer) statusTimeoutCounter++;
     }
     else {
         // Get from Operation the status Text
+        NSString *status = @"Internal Error";
         NSArray *operations = [operationsQueue operations];
         NSOperation *currOperation = operations[0];
-        if ([currOperation isKindOfClass:[AppOperation class]]) {
-            NSString *status = [(AppOperation*)currOperation statusText];
-            [self.statusProgressLabel setStringValue:status];
+        if ([currOperation isKindOfClass:[FileOperation class]]) {
+            NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
+            
+            if ([op isEqualToString:opCopyOperation]) {
+                status = [NSString stringWithFormat:@"Copying...%ld", statusFilesCopied];
+            }
+            else if ([op isEqualToString:opMoveOperation]) {
+                status = [NSString stringWithFormat:@"Moving...%ld", statusFilesMoved];
+            }
+            else if ([op isEqualToString:opSendRecycleBinOperation]) {
+                status = [NSString stringWithFormat:@"Trashing...%ld", statusFilesDeleted];
+            }
         }
+        else if ([currOperation isKindOfClass:[AppOperation class]]) {
+            status = [(AppOperation*)currOperation statusText];
+        }
+        [self.statusProgressLabel setTextColor:[NSColor blueColor]];
+        [self.statusProgressLabel setStringValue:status];
     }
 
 }
@@ -1368,8 +1495,49 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 }
 
 - (void) mainThread_operationFinished:(NSNotification*)theNotification {
+    NSDictionary *info = [theNotification userInfo];
+
+    // check if alerts or immediate display refreshes are needed
+    BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
+    if (!OK) {
+        NSString *operation = [info objectForKey:kDFOOperationKey];
+        if ([operation isEqualToString:opRename]) {
+
+            // Since the rename actually didn't activate the FSEvents, have to update the view
+            // Reload the items in the Selected View
+            for (id item in [info objectForKey:kDFOFilesKey]) {
+                [(BrowserController*)_selectedView reloadItem:item];
+            }
+        }
+        else if ([operation isEqualToString:opNewFolder]) {
+            // Removing the inserted item
+            for (TreeItem* item in [info objectForKey:kDFOFilesKey]) {
+                [item removeItem];
+            }
+            // Inform User
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error creating Folder"
+                                             defaultButton:@"OK"
+                                           alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Possible Causes:\nFile already exists or write is restricted"];
+            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        }
+        else {
+            TreeBranch *dest = [info objectForKey:kDFODestinationKey];
+            [dest setTag:tagTreeItemDirty];
+            [dest refreshContentsOnQueue:operationsQueue];
+        }
+    }
+
+    if (pendingStatusMessages==nil)
+        pendingStatusMessages = [NSMutableArray arrayWithObject:info];
+    else
+        [pendingStatusMessages addObject:info];
+
+    [self _operationsInfoFired:nil];
+
     if ([operationsQueue operationCount] == 0) {
-        [self _stopOperationBusyIndication];
+        //[self _stopOperationBusyIndication];
 
         if (isApplicationTerminating == YES) {
             if ([pendingOperationErrors count]==0) {
@@ -1384,86 +1552,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 }
             }
         }
-
-        // Make Status Update here
-        NSString *statusText=nil;
-
-        NSDictionary *info = [theNotification userInfo];
-        NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
-        NSString *operation = [info objectForKey:kDFOOperationKey];
-        BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
-
-        if ([operation isEqualToString:opCopyOperation]) {
-            if (OK)
-                statusText  = [NSString stringWithFormat:@"%lu Files copied",
-                           num_files];
-            else
-                statusText = @"Copy Failed";
-
-        }
-        else if ([operation isEqualToString:opMoveOperation]) {
-            if (OK)
-                statusText  = [NSString stringWithFormat:@"%lu Files moved",
-                           num_files];
-            else
-                statusText = @"Move Failed";
-        }
-        else if ([operation isEqualToString:opSendRecycleBinOperation] ||
-                 [operation isEqualToString:opEraseOperation]) {
-            if (OK)
-                statusText  = [NSString stringWithFormat:@"%lu Files deleted",
-                               num_files];
-            else
-                statusText = @"Delete Failed";
-
-        }
-        else if ([operation isEqualToString:opRename]) {
-            if (!OK) {
-                statusText = @"Rename Failed";
-
-                // Since the rename actually didn't activate the FSEvents, have to update the view
-                // Reload the items in the Selected View
-                for (id item in [info objectForKey:kDFOFilesKey]) {
-                    [(BrowserController*)_selectedView reloadItem:item];
-                 }
-            }
-        }
-        else if ([operation isEqualToString:opNewFolder]) {
-            if (!OK) {
-                statusText = @"New Folder creation failed";
-
-                // Removing the inserted item
-                for (TreeItem* item in [info objectForKey:kDFOFilesKey]) {
-                    [item removeItem];
-                }
-
-                // Inform User
-                NSAlert *alert = [NSAlert alertWithMessageText:@"Error creating Folder"
-                                                 defaultButton:@"OK"
-                                               alternateButton:nil
-                                                   otherButton:nil
-                                     informativeTextWithFormat:@"Possible Causes:\nFile already exists or write is restricted"];
-                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-            }
-        }
-        else {
-            assert(NO); // Unknown operation
-        }
-
-        if (!OK) {
-            // refreshes the view to clear any errors, such as in the new Folder or failed drop
-            TreeBranch *dest = [info objectForKey:kDFODestinationKey];
-            [dest setTag:tagTreeItemDirty];
-            [dest refreshContentsOnQueue:operationsQueue];
-        }
-        else {
-            // TODO:!! MRU Option that only includes directories where operations have hapened.
-            // Register the folder in a list of last *used* locations
-
-        }
-
-        if (statusText!=nil) // If nothing was set, don't update status
-            [_StatusBar setTitle: statusText];
 
     }
 }
@@ -1643,43 +1731,43 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         NSString *new_name = [info objectForKey:kFileExistsNewFilenameKey];
         // Lauch the new Operation based on the user choice
         fileExistsQuestionResult answer = [[info objectForKey:kFileExistsAnswerKey] integerValue];
-        switch (answer) {
-            case FileExistsRename:
-                // Creating the renamed URL
-                destinationURL = urlWithRename(destinationURL, new_name) ;
-                if ([operation isEqualToString:@"Copy"]) {
-                    copyURLToURL(sourceURL, destinationURL);
-                }
-                else if ([operation isEqualToString:@"Move"]) {
-                    moveURLToURL(sourceURL, destinationURL);
+        if  (answer== FileExistsRename) {
+            NSString *op;
+            if ([operation isEqualToString:@"Copy"]) {
+                op = opCopyOperation;
+            }
+            else if ([operation isEqualToString:@"Move"]) {
+                op = opMoveOperation;
+            }
+            else {
+                NSAssert(NO, @"Invalid Operation");
+            }
+            NSArray *items = [NSArray arrayWithObject:sourceURL];
+            NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      opMoveOperation, kDFOOperationKey,
+                                      items, kDFOFilesKey,
+                                      destinationURL, kDFODestinationKey,
+                                      new_name, kDFORenameFileKey,
+                                      nil];
 
-                }
-                // The file system notifications will make sure that the views are updated
-                break;
-            case FileExistsSkip:
-                /* Basically we don't do nothing */
-                break;
-            case FileExistsReplace: {
-                // Erase the file ... and copy again.
-                //sendToRecycleBin();
+            [self startOperation:taskinfo];
+            // The file system notifications will make sure that the views are updated
+        }
+        else if (answer == FileExistsSkip) {
 
-                // TODO: !!!!! Put this in the operations Use:
-             /*   - (BOOL)replaceItemAtURL:(NSURL *)originalItemURL
-            withItemAtURL:(NSURL *)newItemURL
-            backupItemName:(NSString *)backupItemName
-            options:(NSFileManagerItemReplacementOptions)options
-            resultingItemURL:(NSURL **)resultingURL
-            error:(NSError **)error */
-                [[NSWorkspace sharedWorkspace] recycleURLs:[NSArray arrayWithObject:destinationURL] completionHandler:^(NSDictionary *newURLs, NSError *error) {
-                    if (error==nil) {
-                        copyURLToURL(sourceURL, destinationURL);
-                    }
-                }];
-                }
-                break;
+            /* Basically we don't do nothing */
+        }
+        else if (answer ==  FileExistsReplace) {
+            NSArray *items = [NSArray arrayWithObject:sourceURL];
+            NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      opReplaceOperation, kDFOOperationKey,
+                                      items, kDFOFilesKey,
+                                      destinationURL, kDFODestinationKey,
+                                      //new_name, kDFORenameFileKey, // No renaming, just replaces the file
+                                      nil];
 
-            default:
-                break;
+            [self startOperation:taskinfo];
+
         }
         [pendingOperationErrors removeObjectAtIndex:0];
     }
@@ -1723,6 +1811,13 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             }
         }
         else {
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Error not handled"
+                                             defaultButton:@"OK"
+                                           alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"Error number %ld\%@", (long)error.code, error.description];
+            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+
             NSLog(@"AppDelegate.processNext:Error: Error not processed %@", error); // Don't comment this, before all tests are completed.
         }
 
@@ -1757,7 +1852,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
     [pendingOperationErrors addObject:note];
     if ([pendingOperationErrors count] == 1) { // Call it if there aren't more pending
-        [self processNextError:nil];
+        [self processNextError:nil]; // Nil is passed on purpose to trigger the reading of the error queue
     }
     else if ([pendingOperationErrors count] > 1) {
         // Focus on the Window
@@ -1765,36 +1860,75 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
 }
 
+#pragma - NSFileManagerDelegate
+
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
     [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
+    statusFilesCopied--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
     [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
+    statusFilesMoved--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:copyingItemAtPath:toPath");
+    statusFilesCopied--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:movingItemAtPath:toPath");
+    statusFilesMoved--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtPath:toPath");
+    statusFilesDeleted--;
     return NO;
 }
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtURL:(NSURL *)URL {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtURL:toPath");
+    statusFilesDeleted--;
     return NO;
 }
 
+- (BOOL)fileManager:(NSFileManager *)fileManager
+shouldCopyItemAtURL:(NSURL *)srcURL
+              toURL:(NSURL *)dstURL {
+
+    if (url_relation(srcURL, dstURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NO;
+    }
+    NSLog(@"should copy item\n%@ to\n%@", srcURL, dstURL);
+    statusFilesCopied++;
+    return YES;
+}
+
+- (BOOL)fileManager:(NSFileManager *)fileManager
+shouldMoveItemAtURL:(NSURL *)srcURL
+              toURL:(NSURL *)dstURL {
+    if (url_relation(srcURL, dstURL)!=pathsHaveNoRelation) {
+        //TODO:! create an error subclass
+        return NO;
+    }
+    NSLog(@"should move item\n%@ to\n%@", srcURL, dstURL);
+    statusFilesMoved++;
+    return YES;
+}
+
+-(BOOL) fileManager:(NSFileManager *)fileManager
+shouldRemoveItemAtURL:(NSURL *)URL {
+    NSLog(@"should remove item\n%@", URL);
+    statusFilesDeleted++;
+    return YES;
+}
 
 @end

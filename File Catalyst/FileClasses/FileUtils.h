@@ -31,17 +31,20 @@ enumPathCompare path_relation(NSString *aPath, NSString* otherPath);
 enumPathCompare url_relation(NSURL *aURL, NSURL* otherURL);
 
 // Support Routines
-NSString *pathWithRename(NSString *original, NSString *new_name);
-NSURL *urlWithRename(NSURL* original, NSString *new_name);
+//NSString *pathWithRename(NSString *original, NSString *new_name);
+//NSURL *urlWithRename(NSURL* original, NSString *new_name);
 
 // File Operations
 extern void sendToRecycleBin(NSArray *urls);
 extern BOOL eraseFile(NSURL*url, NSError *error);
 extern NSURL *copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error);
 extern NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error);
-BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error);
-BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error);
-BOOL renameFile(NSURL*url, NSString *newName, NSError *error);
+extern NSURL *replaceFileWithFile(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error);
+extern NSURL *renameFile(NSURL*url, NSString *newName, NSError *error);
+
+//BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error);
+//BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error);
+//BOOL renameFile(NSURL*url, NSString *newName, NSError *error);
 extern BOOL openFile(NSURL*url);
 
 BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error);

@@ -206,7 +206,21 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     return destFileURL;
 }
 
-BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
+NSURL * replaceFileWithFile(NSURL*srcURL, NSURL *destURL, NSString *newName, NSError *error) {
+    NSURL *newURL;
+    NSURL *destFileURL;
+    if (newName) {
+        destFileURL = [destURL URLByAppendingPathComponent:newName];
+    }
+    else {
+        destFileURL = [destURL URLByAppendingPathComponent:[srcURL lastPathComponent]];
+    }
+    [appFileManager replaceItemAtURL:destFileURL withItemAtURL:srcURL backupItemName:nil options:NSFileManagerItemReplacementUsingNewMetadataOnly resultingItemURL:&newURL error:&error];
+    //other options:  NSFileManagerItemReplacementWithoutDeletingBackupItem
+    return newURL;
+}
+
+/*BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
     // if one file is contained in another, or the same, abort operation
     if (url_relation(srcURL, destURL)!=pathsHaveNoRelation) {
         //TODO:! create an error subclass
@@ -230,17 +244,21 @@ BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
         return NO;
     }
     return YES;
-}
+}*/
 
 BOOL openFile(NSURL*url) {
     [[NSWorkspace sharedWorkspace] openFile:[url path]];
     return YES;
 }
 
-BOOL renameFile(NSURL*url, NSString *newName, NSError *error) {
+NSURL *renameFile(NSURL*url, NSString *newName, NSError *error) {
     BOOL isDirectory = isFolder(url);
     NSURL *newURL = [[url URLByDeletingLastPathComponent] URLByAppendingPathComponent:newName isDirectory:isDirectory];
-    return moveFileTo(url, newURL, error);
+    BOOL OK = [appFileManager moveItemAtURL:url toURL:newURL error:&error];
+    if (OK==NO || error!=nil) { // In the case of error
+        return nil;
+    }
+    return newURL;
 }
 //
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory) {

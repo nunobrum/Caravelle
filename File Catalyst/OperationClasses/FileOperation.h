@@ -16,7 +16,7 @@
 extern NSString *notificationFinishedFileOperation;
 
 extern BOOL putInQueue(NSDictionary *taskInfo);
-
+/*
 extern BOOL copyItemsToBranch(NSArray *items, TreeBranch *folder);
 extern BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder);
 extern BOOL sendItemsToRecycleBin(NSArray *items);
@@ -32,3 +32,4 @@ extern BOOL moveURLToBranch(NSURL* item, TreeBranch *folder);
 
 extern BOOL copyURLToURL(NSURL *source, NSURL *dest);
 extern BOOL moveURLToURL(NSURL *source, NSURL *dest);
+*/

@@ -20,12 +20,16 @@ extern NSString *kDFOFilesKey;
 
 extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
+extern NSString *kDFOOkCountKey;
+extern NSString *kDFOStatusCountKey;
+
 //extern NSString *kFromObjectKey;
 
 extern NSString *opOpenOperation;
 extern NSString *opCopyOperation;
 extern NSString *opMoveOperation;
 extern NSString *opEraseOperation;
+extern NSString *opReplaceOperation;
 extern NSString *opNewFolder;
 extern NSString *opRename;
 extern NSString *opSendRecycleBinOperation;
