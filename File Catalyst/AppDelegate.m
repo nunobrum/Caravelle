@@ -732,10 +732,6 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     [self startOperation:taskinfo];
 }
 
--(void) openItems:(NSArray*)files  {
-    // TODO:!!!!!
-}
-
 -(void) executeCopyTo:(NSArray*) selectedFiles {
     if ([self selectedView] == myLeftView) {
         [self copyItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
@@ -1386,7 +1382,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             //NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
             NSString *operation = [info objectForKey:kDFOOperationKey];
             BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
-
+            // TODO:!! The FileOperations should generate their own messages to display here.
+            // Its more correct in an object oriented perspective. File Operations should also be subclassed.
+            // the main on the File Operations is becomming a big mess
+            // Also, make sure that the URL vs TreeItem recovery is done in the FileUtils.
             if ([operation isEqualToString:opCopyOperation]) {
                 if (OK)
                     statusText  = [NSString stringWithFormat:@"%lu Files copied",

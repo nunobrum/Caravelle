@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1066" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" promptedForUpgradeToXcode5="NO">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <development version="5000" identifier="xcode"/>
@@ -15,7 +15,7 @@
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
-        <customObject id="-3" userLabel="Application"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <collectionViewItem nibName="IconViewItem" id="9" customClass="IconCollectionItem"/>
         <arrayController avoidsEmptySelection="NO" id="16" userLabel="Icon Array Controller">
             <declaredKeys>
@@ -100,17 +100,17 @@
             </connections>
             <point key="canvasLocation" x="418" y="200.5"/>
         </menu>
-        <customView id="106">
-            <rect key="frame" x="0.0" y="5" width="250" height="160"/>
+        <customView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" id="106">
+            <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <scrollView horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
-                    <rect key="frame" x="0.0" y="0.0" width="250" height="160"/>
-                    <clipView key="contentView" id="0CJ-Gt-kCE">
+                <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
+                    <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
+                    <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" id="0CJ-Gt-kCE">
                         <rect key="frame" x="1" y="1" width="248" height="158"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <collectionView selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
+                            <collectionView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
                                 <rect key="frame" x="0.0" y="0.0" width="248" height="158"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="primaryBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -124,6 +124,10 @@
                             </collectionView>
                         </subviews>
                     </clipView>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" priority="500" constant="300" id="I18-on-5Fs"/>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="500" constant="300" id="cDO-ml-dG2"/>
+                    </constraints>
                     <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="7">
                         <rect key="frame" x="1" y="143" width="248" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -134,7 +138,7 @@
                     </scroller>
                 </scrollView>
                 <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="105">
-                    <rect key="frame" x="109" y="64" width="32" height="32"/>
+                    <rect key="frame" x="201" y="251" width="32" height="32"/>
                 </progressIndicator>
             </subviews>
             <constraints>
@@ -145,7 +149,7 @@
                 <constraint firstAttribute="centerX" secondItem="105" secondAttribute="centerX" id="SbQ-hS-LvP"/>
                 <constraint firstAttribute="centerY" secondItem="105" secondAttribute="centerY" id="fWA-4O-zKv"/>
             </constraints>
-            <point key="canvasLocation" x="430" y="223"/>
+            <point key="canvasLocation" x="430" y="-180"/>
         </customView>
     </objects>
 </document>

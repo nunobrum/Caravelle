@@ -293,7 +293,6 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
                 [self->extendedSelection addIndex:index];
         }];
 
-        // TODO:!!!! Check what is the preferred method
         [self refreshKeepingSelections];
 
     }

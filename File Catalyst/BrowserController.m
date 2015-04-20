@@ -1419,10 +1419,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 -(void) insertItem:(id)item  {
     if (self.focusedView == _myOutlineView) {
-        // TODO:!!!! Will change to the table view and make the edit there.
+        // Will change to the table view and make the edit there.
+        [self focusOnLastView]; // Change to the Detailed View
+        [self.detailedViewController insertItem:item];
     }
     else if (_focusedView==self.detailedViewController) {
-            [self.detailedViewController insertItem:item];
+        [self.detailedViewController insertItem:item];
     }
 }
 
