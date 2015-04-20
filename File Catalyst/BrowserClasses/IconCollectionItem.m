@@ -68,6 +68,7 @@
         }
         // Remove Field from First Responder
         [self exitEditMode];
+        return YES; // avoids that the cancelOperation from controller is called.
     }
     else if (commandSelector == @selector(insertNewline:)) {
         // Remove Field from firstResponder
@@ -75,6 +76,7 @@
     }
     return NO;
 }
+
 
 
 @end

@@ -21,7 +21,7 @@
 //
 //- (void)flagsChanged:(NSEvent *)theEvent;
 //
-//- (void)cancelOperation:(id)sender;
+- (void)cancelOperation:(id)sender;
 //- (void)insertNewline:(id)sender;
 //- (void)moveLeft:(id)sender;
 

@@ -12,6 +12,7 @@
     //NSInteger _rightMouseLocation;
 }
 
+- (void)cancelOperation:(id)sender;
 //@property NSInteger rightMouseLocation;
 
 @end

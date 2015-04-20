@@ -672,14 +672,14 @@
                 }
             }
         }
+        [self focusOnLastView];
+        return YES;  // avoids that the cancelOperation from controller is called.
     }
 
     return NO;
 }
 
-- (void)cancelOperation:(id)sender {
-    //TODO:!!!! Forward to parent
-}
+
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
     NSUInteger row = [tableData indexOfObject:item];

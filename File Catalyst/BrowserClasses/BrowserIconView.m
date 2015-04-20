@@ -53,5 +53,11 @@
     return nil;
 }
 
+- (void)cancelOperation:(id)sender {
+    // clean the filter
+    [[self delegate] performSelector:@selector(cancelOperation:) withObject:self];
+    // and pass the cancel operation upwards anyway
+    //[super cancelOperation:sender];
+}
 
 @end

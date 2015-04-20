@@ -48,6 +48,7 @@
 
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;
+- (void)cancelOperation:(id)sender;
 
 - (void) refresh;
 - (void) refreshKeepingSelections;

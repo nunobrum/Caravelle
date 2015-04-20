@@ -12,5 +12,5 @@
 @interface BrowserIconView : NSCollectionView
 
 -(IconViewBox*) iconWithItem:(id) item;
-
+- (void)cancelOperation:(id)sender;
 @end

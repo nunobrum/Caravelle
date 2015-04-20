@@ -54,6 +54,13 @@
     }
 }
 
+- (void)cancelOperation:(id)sender {
+    // clean the filter
+    [[self delegate] performSelector:@selector(cancelOperation:) withObject:self];
+    // and pass the cancel operation upwards anyway
+    //[super cancelOperation:sender];
+}
+
 
 /* The menu handling is forwarded to the Delegate. 
    For the contextual Menus the selection is different, than for the application */

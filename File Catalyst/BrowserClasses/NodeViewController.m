@@ -164,6 +164,11 @@
 
 }
 
+- (void)cancelOperation:(id)sender {
+    // clean the filter
+    [[self parentController] performSelector:@selector(cancelOperation:) withObject:self];
+    // and pass the cancel operation upwards anyway
+}
 
 - (void) focusOnFirstView {
     NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
