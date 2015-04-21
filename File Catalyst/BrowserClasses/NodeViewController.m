@@ -40,7 +40,6 @@
 - (void) initController {
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
-    self->_filterText = nil;
     self->_currentNode = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
     [self startBusyAnimations];
@@ -209,7 +208,7 @@
         }
 
         /* if the filter is empty, doesn't filter anything */
-        if (self.filterText!=nil || [self.filterText length]!=0) {
+        if (_filterText!=nil && [_filterText length]!=0) {
             /* Create the array of indexes to remove/hide/disable*/
             NSInteger i = 0;
             for (TreeItem *item in tableData){

@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserController.m"
-            timestampString = "450908450.818528"
+            timestampString = "451241950.877869"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1412"
-            endingLineNumber = "1412"
+            startingLineNumber = "1411"
+            endingLineNumber = "1411"
             landmarkName = "-startEditItemName:"
             landmarkType = "5">
          </BreakpointContent>
@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/NodeViewController.m"
-            timestampString = "450908450.818528"
+            timestampString = "451346028.114922"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
+            startingLineNumber = "83"
+            endingLineNumber = "83"
             landmarkName = "-observeValueForKeyPath:ofObject:change:context:"
             landmarkType = "5">
          </BreakpointContent>
@@ -522,11 +522,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "File Catalyst/BrowserClasses/NodeViewController.m"
-            timestampString = "451240219.280666"
+            timestampString = "451346028.114922"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
+            startingLineNumber = "168"
+            endingLineNumber = "168"
             landmarkName = "-cancelOperation:"
             landmarkType = "5">
          </BreakpointContent>

@@ -35,7 +35,7 @@
 }
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
-@property (readwrite) NSString *filterText;
+@property (readwrite, strong) NSString *filterText;
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;

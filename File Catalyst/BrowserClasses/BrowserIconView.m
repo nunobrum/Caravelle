@@ -60,4 +60,19 @@
     //[super cancelOperation:sender];
 }
 
+- (BOOL)becomeFirstResponder {
+    // Highlight the selections
+    for (IconViewBox *icon in [self subviews]) {
+        [icon setFillColor:[NSColor alternateSelectedControlColor]];
+    }
+    return [super becomeFirstResponder];
+}
+
+- (BOOL)resignFirstResponder {
+    // Set selected fill color to grey
+    for (IconViewBox *icon in [self subviews]) {
+        [icon setFillColor:[NSColor secondarySelectedControlColor]];
+    }
+    return[super resignFirstResponder];
+}
 @end
