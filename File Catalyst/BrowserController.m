@@ -63,7 +63,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_focusedView = nil;
     self->_viewMode = BViewModeVoid; // This is an invalid view mode. This forces the App to change it.
     self->_viewType = BViewTypeInvalid; // This is an invalid view type. This forces the App to change it.
-    self->_filterText = @"";
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
 
@@ -676,7 +675,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 - (IBAction)FilterChange:(id)sender {
-    _filterText = [sender stringValue];
+    self.detailedViewController.filterText = [sender stringValue];
     [self.detailedViewController refreshKeepingSelections];
 }
 
@@ -933,7 +932,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)cancelOperation:(id)sender {
     [_myFilterText setStringValue:@""];
-    _filterText = @"";
+    self.detailedViewController.filterText = @"";
     [self.detailedViewController refreshKeepingSelections];
 }
 
@@ -1124,7 +1123,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) set_filterText:(NSString *) filterText {
-    self->_filterText = filterText;
+    self.detailedViewController.filterText = filterText;
 }
 
 

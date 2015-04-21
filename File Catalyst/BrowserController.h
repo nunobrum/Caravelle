@@ -22,7 +22,7 @@ extern NSString *notificationCatalystRootUpdate;
 
 @interface BrowserController : NSViewController <ParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate> {
     NSSize iconSize;
-    NSString *_filterText;
+    //NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
     BViewMode _viewMode;
     BViewType _viewType;
