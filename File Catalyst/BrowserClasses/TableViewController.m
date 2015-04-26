@@ -87,12 +87,12 @@
     return [self->_displayedItems count];
 }
 
-- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
-    NSTableRowView *rowView = [[NSTableRowView alloc] init];
-    id objectValue = [self->_displayedItems objectAtIndex:row];
-    // TODO: !!!! create a row view with a object
-    return rowView;
-}
+//- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
+//    NSTableRowView *rowView = [[NSTableRowView alloc] init];
+//    id objectValue = [self->_displayedItems objectAtIndex:row];
+//    // TODO: !!!! create a row view with a object
+//    return rowView;
+//}
 
 
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
@@ -451,7 +451,7 @@
     if (urls!=nil && [urls count]>0) {
         NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-            if ([urls indexOfObject:[item url]]!=NSNotFound)
+            if ([item isKindOfClass:[TreeItem class]] && [urls indexOfObject:[item url]]!=NSNotFound)
                 return YES;
             else
                 return NO;
@@ -744,18 +744,33 @@
     [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 }
 
-
+// First Selectable row
+-(NSInteger) firstSelectableRow {
+    NSInteger row=0;
+    while (row < [self->_displayedItems count]) {
+        if ([[self->_displayedItems objectAtIndex:row] isKindOfClass:[TreeItem class]])
+            return row;
+        row++;
+    }
+    return -1;
+}
 
 -(void) focusOnFirstView {
     if ([[_myTableView selectedRowIndexes] count]==0) {
-        [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+        NSInteger first = [self firstSelectableRow];
+        if (first != -1) {
+            [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:first] byExtendingSelection:NO];
+        }
     }
     [self.myTableView.window makeFirstResponder:self.myTableView];
 
 }
 -(void) focusOnLastView {
     if ([[_myTableView selectedRowIndexes] count]==0) {
-        [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+        NSInteger first = [self firstSelectableRow];
+        if (first != -1) {
+            [_myTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:first] byExtendingSelection:NO];
+        }
     }
     [self.myTableView.window makeFirstResponder:self.myTableView];
 }

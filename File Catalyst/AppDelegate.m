@@ -1099,6 +1099,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             [self.buttonCopyTo setEnabled:NO];
             [self.buttonMoveTo setEnabled:NO];
             //myRightView.view = nil;
+            applicationMode = ApplicationMode1View;
         }
     }
     else if (mode == ApplicationMode2Views) {
@@ -1109,6 +1110,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
                 [myRightView setName:@"Right" TwinName:@"Left"];
                 [_ContentSplitView addSubview:myRightView.view];
                 [self goHome:myRightView];
+                applicationMode = ApplicationMode2Views;
             }
             else if (myRightView.view==nil) {
                 NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
@@ -1117,6 +1119,7 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
             else {
                 [_ContentSplitView addSubview:myRightView.view];
                 [myRightView refresh]; // Just Refreshes
+                applicationMode = ApplicationMode2Views;
             }
             [self.buttonCopyTo setEnabled:YES];
             [self.buttonMoveTo setEnabled:YES];
