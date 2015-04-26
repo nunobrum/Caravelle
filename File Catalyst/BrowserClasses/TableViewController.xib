@@ -290,23 +290,6 @@
             </items>
             <point key="canvasLocation" x="815" y="568.5"/>
         </menu>
-        <menu id="Swv-VM-VB3" userLabel="groupContextMenu">
-            <items>
-                <menuItem title="Sort Ascending" id="eE5-u2-T8l">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Sort Descending" id="5Um-vK-puY">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Remove Grouping" id="q2m-5h-8Mr">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-            </items>
-            <connections>
-                <outlet property="delegate" destination="-2" id="Fdp-R4-7El"/>
-            </connections>
-            <point key="canvasLocation" x="1005" y="473.5"/>
-        </menu>
     </objects>
     <resources>
         <image name="GenericDocumentIcon" width="512" height="512"/>

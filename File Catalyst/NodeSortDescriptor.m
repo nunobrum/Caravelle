@@ -14,13 +14,22 @@
  * Grouping of elements
  */
 
+@implementation GroupItem
+
+-(instancetype) initWithTitle:(NSString*)title {
+    self.title = title;
+    return self;
+}
+
+@end
+
 @implementation BaseGroupingObject
 -(instancetype) initWithAscending:(BOOL)ascending {
     self->_ascending = ascending;
     self->_lastObject = nil;
     return self;
 }
--(NSString*) groupTitleFor:(id) newObject {
+-(GroupItem*) groupItemFor:(id) newObject {
     return nil; // No groups are created for the base class
 }
 -(void) restart {
@@ -33,7 +42,7 @@
 }
 
 // Distribute : < 1k < 10k < 100k < 1Meg < 10Meg < 100Meg < 1G < 10G < 100G< More
--(NSString*) groupTitleFor:(id) newObject {
+-(GroupItem*) groupItemFor:(id) newObject {
     NSAssert([newObject isKindOfClass:[NSNumber class]], @"Expected NSNumber");
     NSString *title=nil;
     if (self->_ascending){
@@ -75,7 +84,7 @@
         return nil;
     }
     self->_lastObject = newObject;
-    return title;
+    return [[GroupItem alloc] initWithTitle:title];
 }
 
 
@@ -89,13 +98,13 @@
 
 @implementation StringGrouping
 
--(NSString*) groupTitleFor:(id) newObject {
+-(GroupItem*) groupItemFor:(id) newObject {
     NSAssert([newObject isKindOfClass:[NSString class]], @"Expected NSString");
     if ([self->_lastObject isEqualToString: newObject]) {
         return nil;
     }
     self->_lastObject = newObject;
-    return newObject;
+    return [[GroupItem alloc] initWithTitle:newObject];
 }
 
 @end
@@ -134,11 +143,13 @@ BaseGroupingObject* groupingFor(id objTemplate, BOOL ascending) {
     [self->_groupObject restart];
 }
 
--(NSString*) groupTitleForObject:(id)object {
+-(GroupItem*) groupItemForObject:(id)object {
     if (self->_groupObject==nil) {
         self->_groupObject = groupingFor([object valueForKey:self.key], self.ascending);
     }
-    return [self->_groupObject groupTitleFor:[object valueForKey:self.key]];
+    GroupItem *answer = [self->_groupObject groupItemFor:[object valueForKey:self.key]];
+    [answer setDescriptor:self];
+    return answer;
 }
 
 @end

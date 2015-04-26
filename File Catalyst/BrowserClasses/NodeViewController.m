@@ -234,7 +234,7 @@
                 // it sufices to test the first element to know if a grouping is needed
                 NSUInteger i = 0;
                 while (i < [tableData count]) {
-                    NSString *title = nil;
+                    GroupItem *title = nil;
                     for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
                         if (sortDesc.isGrouping) {
                             if (title!=nil) {
@@ -242,7 +242,7 @@
                                 // in this case it must reset all the remaining descriptors
                                 [sortDesc restart];
                             }
-                            title = [sortDesc groupTitleForObject: tableData[i]];
+                            title = [sortDesc groupItemForObject: tableData[i]];
                         }
                         else
                             break; // No more groups after here

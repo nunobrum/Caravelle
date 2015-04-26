@@ -9,7 +9,9 @@
 #import "BrowserTableView.h"
 #import "BrowserController.h"
 
-@implementation BrowserTableView
+@implementation BrowserTableView {
+    BOOL blockServices;
+}
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
@@ -18,11 +20,51 @@
     // Drawing code here.
 }
 
+-(IBAction)groupContextSelect:(id)sender {
+    [[self delegate] performSelector:@selector(groupContextSelect:) withObject:sender];
+}
+
 -(void) rightMouseDown:(NSEvent *)theEvent {
     // Before this was done to ensure that the right click got the correct view.
     [(id<ParentProtocol>)[self delegate] contextualFocus:self];
+
+    /* This function creates a menu depending on the actual column selection */
+    // Will store the clicked position, so that it is used to insert the new column (always to the right)
+    NSPoint event_location = [theEvent locationInWindow];
+    NSPoint local_point = [self convertPoint:event_location fromView:nil];
+    _rightClickedRow = [self rowAtPoint:local_point];
+    if (_rightClickedRow != -1) {
+        NSString *identifier = [[self viewAtColumn:0 row:_rightClickedRow makeIfNecessary:YES] identifier];
+        NSLog(@"Identifier %@", identifier);
+        if ([identifier isEqualToString:ROW_GROUP]) {
+            
+            // Load the menu
+            NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Contextual Menu"];
+            [theMenu addItemWithTitle:@"Sort Ascending" action:@selector(groupContextSelect:) keyEquivalent:@""];
+            [theMenu addItemWithTitle:@"Sort Descending" action:@selector(groupContextSelect:) keyEquivalent:@""];
+            [theMenu addItemWithTitle:@"Remove Grouping" action:@selector(groupContextSelect:) keyEquivalent:@""];
+
+            // Number the items for later processing
+            // The number is consisten with the defines in the header file.
+            // GROUP_SORT_ASCENDING  0
+            // GROUP_SORT_DESCENDING 1
+            // GROUP_SORT_REMOVE     2
+            NSInteger i = 0;
+            for (NSMenuItem *item in [theMenu itemArray])
+                [item setTag:i++];
+
+            // Make sure that no services menu is added to the menu
+            blockServices = YES;
+
+            // et voila' : add the menu to the view
+            [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
+            return; // Block the other menu
+        }
+    }
+    blockServices = NO;
     [super rightMouseDown:theEvent];
 }
+
 
 
 - (void)keyDown:(NSEvent *)theEvent {
@@ -52,6 +94,9 @@
         [super keyDown:theEvent];
     }
 }
+
+
+
 
 //- (void)interpretKeyEvents:(NSArray *)eventArray {
 //    NSLog(@"intrepret");
@@ -101,12 +146,18 @@
 //}
 
 
+// TODO:!!!! Handle here the menus, in order to have an uniform Menu Generation. 
+
+
 /* The menu handling is forwarded to the Delegate.
  For the contextual Menus the selection is different, than for the application */
 - (id)validRequestorForSendType:(NSString *)sendType
                      returnType:(NSString *)returnType
 {
-    return [(id<MYViewProtocol>)[self delegate] validRequestorForSendType:sendType returnType:returnType];
+    if (blockServices)
+        return nil;
+    else
+        return [(id<MYViewProtocol>)[self delegate] validRequestorForSendType:sendType returnType:returnType];
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard

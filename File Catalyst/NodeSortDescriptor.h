@@ -14,6 +14,14 @@
  * Grouping of elements
  */
 
+@interface GroupItem : NSObject
+@property NSString * title;
+@property NSSortDescriptor *descriptor;
+
+-(instancetype) initWithTitle:(NSString*)title;
+
+@end
+
 @interface BaseGroupingObject : NSObject {
     BOOL _ascending;
     id _lastObject;
@@ -22,7 +30,7 @@
 
 
 -(instancetype) initWithAscending:(BOOL)ascending;
--(NSString*) groupTitleFor:(id) newObject;
+-(GroupItem*) groupItemFor:(id) newObject;
 -(void) restart;
 
 @end
@@ -48,7 +56,7 @@
 
 -(void) setGrouping:(BOOL)grouping;
 -(BOOL) isGrouping;
--(NSString*) groupTitleForObject:(id)object;
+-(GroupItem*) groupItemForObject:(id)object;
 -(void) restart;
 
 @end

@@ -13,9 +13,7 @@
 #import "TreeBranch.h"
 #import "TreeLeaf.h"
 #import "PasteboardUtils.h"
-
-#define COL_FILENAME @"COL_NAME"
-#define COL_TEXT_ONLY @"COL_TEXT"
+#import "NodeSortDescriptor.h"
 
 //#define COL_DATE_MOD @"COL_DATE_MODIFIED"
 //#define COL_SIZE     @"COL_SIZE"
@@ -211,10 +209,10 @@
         }
         // other cases are not considered here. returning Nil
     }
-    else if ([objectValue isKindOfClass:[NSString class]]) {
+    else if ([objectValue isKindOfClass:[GroupItem class]]) {
         // this is a group Row
-        cellView = [aTableView makeViewWithIdentifier:@"GROUP" owner:self];
-        [cellView.textField setStringValue:objectValue];
+        cellView = [aTableView makeViewWithIdentifier:ROW_GROUP owner:self];
+        [cellView.textField setStringValue:[objectValue title]];
         [cellView setObjectValue:objectValue];
 
     }
@@ -238,7 +236,14 @@
     }
 }
 
-
+// This function makes sure that the group headers are not selected
+- (BOOL)tableView:(NSTableView *)aTableView
+  shouldSelectRow:(NSInteger)rowIndex {
+    if ([[self->_displayedItems objectAtIndex:rowIndex] isKindOfClass:[GroupItem class]])
+        return NO;
+    else
+        return YES;
+}
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     [self.parentController updateFocus:self];
@@ -322,6 +327,32 @@
 }
 
 #endif
+
+// This action is called from the BrowserTableView when the contextual menu for groupings is called.
+-(IBAction)groupContextSelect:(id)sender {
+    NSInteger tag = [(NSMenuItem *)sender tag];
+    NSInteger row = [[self myTableView] rightClickedRow];
+    GroupItem *group = _displayedItems[row];
+    if (tag == GROUP_SORT_ASCENDING || tag == GROUP_SORT_DESCENDING ) {
+        // Changing the ascending key. Since that property is read-only, the descriptor needs to be initialized
+        // Retrieving position of descriptor
+        NSInteger i = [self.sortAndGroupDescriptors indexOfObject:group.descriptor];
+        // Creating a new Descriptor
+        NodeSortDescriptor *updateDesc = [[NodeSortDescriptor alloc] initWithKey:group.descriptor.key ascending:(tag==GROUP_SORT_ASCENDING)];
+        // Needs to be a Grouping Descriptor
+        [updateDesc setGrouping:YES];
+        // Updates the sort Array
+        [self.sortAndGroupDescriptors setObject:updateDesc atIndexedSubscript:i];
+    }
+    else if (tag == GROUP_SORT_REMOVE ) {
+        // removes the descriptor
+        [self.sortAndGroupDescriptors removeObject:group.descriptor];
+    }
+    else {
+        NSAssert(NO, @"Invalid tag received from group contextual Menu");
+    }
+    [self refreshKeepingSelections];
+}
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)TableDoubleClickEvent:(id)sender {
