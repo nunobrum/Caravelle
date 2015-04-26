@@ -20,6 +20,7 @@
 
 @property (weak) IBOutlet NSProgressIndicator *myProgressIndicator;
 
+@property (strong) IBOutlet NSLayoutConstraint *viewWidthConstraint;
 
 - (IBAction) rightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;

@@ -98,6 +98,7 @@ NSString *KEY_ICON = @"icon";
 
 -(void) refresh {
     self.icons = [self itemsToDisplay];
+    //[self.iconArrayController setContent:[self itemsToDisplay]];
     // Refreshing the collection
     [self.collectionView setNeedsDisplay:YES];
 }

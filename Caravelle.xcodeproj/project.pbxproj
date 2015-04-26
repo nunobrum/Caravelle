@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
+		3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */; };
 		3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
 		3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463418F9B86A002B633C /* TreeBranch.m */; };
@@ -84,6 +85,8 @@
 /* Begin PBXFileReference section */
 		3C0238E81AE02A310023CE42 /* PasteboardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PasteboardUtils.m; path = BrowserClasses/PasteboardUtils.m; sourceTree = "<group>"; };
 		3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PasteboardUtils.h; path = BrowserClasses/PasteboardUtils.h; sourceTree = "<group>"; };
+		3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSortDescriptor.h; sourceTree = "<group>"; };
+		3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NodeSortDescriptor.m; sourceTree = "<group>"; };
 		3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myValueTransformers.h; sourceTree = "<group>"; };
 		3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myValueTransformers.m; sourceTree = "<group>"; };
 		3C20FCC719CB7FAE00826246 /* Automator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Automator.framework; path = System/Library/Frameworks/Automator.framework; sourceTree = SDKROOT; };
@@ -460,6 +463,8 @@
 				3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */,
 				3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */,
 				3C0238E81AE02A310023CE42 /* PasteboardUtils.m */,
+				3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */,
+				3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */,
 				3CEB61F11AD293C300E09A85 /* Icon View */,
 				3CEB61F01ACFD53C00E09A85 /* TableView */,
 				3CEB61F21AD293F500E09A85 /* AttributesPanel */,
@@ -611,6 +616,7 @@
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
+				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,

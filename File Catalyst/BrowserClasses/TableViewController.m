@@ -28,8 +28,6 @@
 
 
 @interface TableViewController ( ) {
-    NSMutableArray *tableData;
-    NSSortDescriptor *TableSortDesc;
 #ifdef UPDATE_TREE
     NSIndexSet *_draggedItemsIndexSet;
 #endif
@@ -50,7 +48,6 @@
 }
 - (void) initController {
     [super initController];
-    self->TableSortDesc = nil;
 #ifdef UPDATE_TREE
     self->_draggedItemsIndexSet = nil;
 #endif
@@ -89,26 +86,19 @@
  * Table Data Source Protocol
  */
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView {
-    return [tableData count];
+    return [self->_displayedItems count];
 }
 
-//- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
-//    NSTableRowView *rowView = [[NSTableRowView alloc] init];
-//    id objectValue = [tableData objectAtIndex:row];
-//    if ([objectValue isKindOfClass:[TreeItem class]]) {
-//        TreeItem *theFile = objectValue;
-//        if ([theFile hasTags:tagTreeItemMarked]) {
-//            [rowView setBackgroundColor:[NSColor selectedTextBackgroundColor]];
-//        }
-//        else {
-//            [rowView setBackgroundColor:[NSColor textBackgroundColor]];
-//        }
-//    }
-//    return rowView;
-//}
+- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
+    NSTableRowView *rowView = [[NSTableRowView alloc] init];
+    id objectValue = [self->_displayedItems objectAtIndex:row];
+    // TODO: !!!! create a row view with a object
+    return rowView;
+}
+
 
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    id objectValue = [tableData objectAtIndex:rowIndex];
+    id objectValue = [self->_displayedItems objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
     NSString *identifier = [aTableColumn identifier];
 
@@ -221,20 +211,14 @@
         }
         // other cases are not considered here. returning Nil
     }
-    return cellView;
-}
+    else if ([objectValue isKindOfClass:[NSString class]]) {
+        // this is a group Row
+        cellView = [aTableView makeViewWithIdentifier:@"GROUP" owner:self];
+        [cellView.textField setStringValue:objectValue];
+        [cellView setObjectValue:objectValue];
 
-// -------------------------------------------------------------------------------
-//	sortWithDescriptor:descriptor
-// -------------------------------------------------------------------------------
-- (void)sortWithDescriptor {
-    if (TableSortDesc!=nil) {
-        NSMutableArray *sorted = [[NSMutableArray alloc] initWithCapacity:1];
-        [sorted addObjectsFromArray:[tableData sortedArrayUsingDescriptors:[NSArray arrayWithObject:TableSortDesc]]];
-        [tableData removeAllObjects];
-        [tableData addObjectsFromArray:sorted];
-        [_myTableView reloadData];
     }
+    return cellView;
 }
 
 
@@ -243,6 +227,17 @@
 /*
  * Table Data View Delegate Protocol
  */
+
+// We want to make "group rows" for the folders
+- (BOOL)tableView:(NSTableView *)tableView isGroupRow:(NSInteger)row {
+    id objectValue = [self->_displayedItems objectAtIndex:row];
+    if ([objectValue isKindOfClass:[TreeItem class]]) {
+        return NO;
+    } else {
+        return YES; // Any other object will be a group
+    }
+}
+
 
 
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
@@ -273,6 +268,7 @@
     }
     [inTableView setHighlightedTableColumn:tableColumn];
     NSString *key;
+    BOOL ascending;
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME])
         key = @"name";
     else // Else uses the identifier that is linked to the treeItem KVO property
@@ -281,15 +277,15 @@
     if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
     {
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSAscendingSortIndicator"] inTableColumn:tableColumn];
-        TableSortDesc = [[NSSortDescriptor alloc] initWithKey:key ascending:YES];
-        [self sortWithDescriptor];
+        ascending = YES;
     }
     else
     {
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
-        TableSortDesc = [[NSSortDescriptor alloc] initWithKey:key ascending:NO];
-        [self sortWithDescriptor];
+        ascending = NO;
     }
+    [self assignSortKey:key ascending:ascending grouping:NO];
+    [self refreshKeepingSelections];
 }
 
 #ifdef COLUMN_NOTIFICATION
@@ -330,7 +326,7 @@
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)TableDoubleClickEvent:(id)sender {
     NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
-    NSArray *itemsSelected = [tableData objectsAtIndexes:rowsSelected];
+    NSArray *itemsSelected = [self->_displayedItems objectsAtIndexes:rowsSelected];
     [self orderOperation:opOpenOperation onItems:itemsSelected];
 }
 
@@ -338,7 +334,7 @@
 - (IBAction)filenameDidChange:(id)sender {
     NSInteger row = [_myTableView rowForView:sender];
     if (row != -1) {
-        TreeItem *item = [tableData objectAtIndex:row];
+        TreeItem *item = [self->_displayedItems objectAtIndex:row];
         NSString *operation=nil;
         if ([item hasTags:tagTreeItemNew]) {
             operation = opNewFolder;
@@ -367,7 +363,7 @@
 -(NSArray*) getSelectedItems {
     NSArray* answer = nil;
     NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
-    answer = [tableData objectsAtIndexes:rowsSelected];
+    answer = [self->_displayedItems objectsAtIndexes:rowsSelected];
     return answer;
 }
 
@@ -385,7 +381,7 @@
         if(![selectedIndexes containsIndex:[_myTableView clickedRow]]) {
             selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView clickedRow]];
         }
-        answer = [tableData objectsAtIndexes:selectedIndexes];
+        answer = [self->_displayedItems objectsAtIndexes:selectedIndexes];
     }
 
     return answer;
@@ -393,9 +389,9 @@
 
 -(TreeItem*) getLastClickedItem {
     NSInteger row = [_myTableView clickedRow];
-    if (row >=0 && row < [tableData count]) {
+    if (row >=0 && row < [self->_displayedItems count]) {
         // Returns the current selected item
-        return [tableData objectAtIndex:row];
+        return [self->_displayedItems objectAtIndex:row];
     }
     else {
         // Returns the displayed folder
@@ -410,7 +406,7 @@
         return nil;
     else {
         // using collection operator to get the array of the URLs from the selected Items
-        NSArray *selectedItems = [tableData objectsAtIndexes:rowsSelected];
+        NSArray *selectedItems = [self->_displayedItems objectsAtIndexes:rowsSelected];
         if (selectedItems!=nil && [selectedItems count]>0) {
             return [selectedItems valueForKeyPath:@"@unionOfObjects.url"];
         }
@@ -422,7 +418,7 @@
 
 -(void) setTableViewSelectedURLs:(NSArray*) urls {
     if (urls!=nil && [urls count]>0) {
-        NSIndexSet *select = [tableData indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+        NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
             if ([urls indexOfObject:[item url]]!=NSNotFound)
                 return YES;
@@ -445,8 +441,7 @@
 
 -(void) refresh {
     //[self startBusyAnimations];
-    tableData = [self itemsToDisplay];
-    [self sortWithDescriptor];
+    self->_displayedItems = [self itemsToDisplay];
     [self stopBusyAnimations];
     [_myTableView reloadData];
 }
@@ -467,7 +462,7 @@
         [self refresh];
     }
     else { // if its not the node, then it could be a table element
-        NSInteger rowToReload = [tableData indexOfObject:object];
+        NSInteger rowToReload = [self->_displayedItems indexOfObject:object];
         if (rowToReload >=0  && rowToReload!=NSNotFound) {
             NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
             NSRange columnsRange = {0, [[_myTableView tableColumns] count] };
@@ -481,7 +476,7 @@
     [super setCurrentNode:branch];
     if (branch==nil) {
         // Removing everything
-        tableData = nil;
+        self->_displayedItems = nil;
     }
     else {
     }
@@ -493,7 +488,7 @@
 
 #ifdef USE_TREEITEM_PASTEBOARD_WRITING
 - (id < NSPasteboardWriting >)tableView:(NSTableView *)tableView pasteboardWriterForRow:(NSInteger)row {
-    return (id <NSPasteboardWriting>) [tableData objectAtIndex:row];
+    return (id <NSPasteboardWriting>) [self->_displayedItems objectAtIndex:row];
 }
 
 #else
@@ -536,7 +531,7 @@
     else if (operation == NSTableViewDropOn) {
 
         @try { // If the row is not valid, it will assume the tree node being displayed.
-            self->_validatedDropDestination = [tableData objectAtIndex:row];
+            self->_validatedDropDestination = [self->_displayedItems objectAtIndex:row];
         }
         @catch (NSException *exception) {
             self->_validatedDropDestination = self.currentNode;
@@ -575,7 +570,7 @@
                     [newItem setTag:tagTreeItemDropped];
                 }
                 if (newItem) {
-                    [tableData insertObject:newItem atIndex:row+i];
+                    [self->_displayedItems insertObject:newItem atIndex:row+i];
                     [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
                     i++;
                 }
@@ -615,7 +610,7 @@
             }
             NSIndexSet *indexset = [_myTableView selectedRowIndexes];
             [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
-                id item = [self->tableData objectAtIndex:index];
+                id item = [self->_displayedItems objectAtIndex:index];
                 if ([item isKindOfClass:[TreeItem class]]) {
                     [(TreeItem*)item toggleTag:tagTreeItemMarked];
                 }
@@ -644,7 +639,7 @@
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor {
     NSInteger row = [_myTableView rowForView:fieldEditor];
     if (row!=-1) {
-        id item = [tableData objectAtIndex:row];
+        id item = [self->_displayedItems objectAtIndex:row];
 
         // In order to allow the creation of new files
         if ([item hasTags:tagTreeItemNew])
@@ -663,7 +658,7 @@
         // In cancel will check if it was a new File and if so, remove it
         NSInteger row =[_myTableView rowForView:fieldEditor];
         if (row!=-1) {
-            id item = [tableData objectAtIndex:row];
+            id item = [self->_displayedItems objectAtIndex:row];
             if ([item isKindOfClass:[TreeItem class]]) {
                 if ([(TreeItem*)item hasTags:tagTreeItemNew]) {
                     NSIndexSet *rows2delete = [NSIndexSet indexSetWithIndex:row];
@@ -682,7 +677,7 @@
 
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
-    NSUInteger row = [tableData indexOfObject:item];
+    NSUInteger row = [self->_displayedItems indexOfObject:item];
     if (row!=NSNotFound) {
         NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME];
         [_myTableView editColumn:column row:row withEvent:nil select:YES];
@@ -706,11 +701,11 @@
     if ([selection count]>0) {
         // Will insert a row on the bottom of the selection.
         row = [selection lastIndex] + 1;
-        [tableData insertObject:item atIndex:row];
+        [self->_displayedItems insertObject:item atIndex:row];
     }
     else {
-        row = [tableData count];
-        [tableData addObject:item];
+        row = [self->_displayedItems count];
+        [self->_displayedItems addObject:item];
     }
     [_myTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row] withAnimation: NSTableViewAnimationEffectNone]; //NSTableViewAnimationSlideDown, NSTableViewAnimationEffectGap
 

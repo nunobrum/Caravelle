@@ -173,22 +173,25 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (index == 0)
     {
         constrainedCoordinate = proposedCoordinate + kMinContrainValue;
-        //NSLog(@"Index: %ld MinCoordinate: %f",(long)index, proposedCoordinate);
     }
+    //NSLog(@"View: %@ Index: %ld MinCoordinate: %f",_viewName, (long)index, proposedCoordinate);
     return constrainedCoordinate;
 }
 
 // -------------------------------------------------------------------------------
 //	constrainMaxCoordinate:proposedCoordinate:proposedCoordinate:index
 // -------------------------------------------------------------------------------
+#define ICON_WIDTH 130
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
 {
     CGFloat constrainedCoordinate = proposedCoordinate;
-    //if (index == ([[splitView subviews] count] - 2))
-    //{
-    //    constrainedCoordinate = proposedCoordinate - kMinContrainValue;
-    //}
-    //NSLog(@"MaxCoordinate: %f",proposedCoordinate);
+    if (index == 0 && [self.detailedViewController isKindOfClass:[IconViewController class]]) {
+        CGFloat detailedWidth = [[[splitView subviews] objectAtIndex:1] frame].size.width;
+        detailedWidth = floorf(detailedWidth / ICON_WIDTH + 0.4999) * ICON_WIDTH;
+        NSLayoutConstraint *constraint =[(IconViewController*)self.detailedViewController viewWidthConstraint];
+        [constraint setConstant:detailedWidth];
+        //NSLog(@"View: %@ Index: %ld MaxCoordinate: %f Constraint: %f",_viewName, (long) index, proposedCoordinate, detailedWidth);
+    }
     return constrainedCoordinate;
 }
 
@@ -198,6 +201,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
     BOOL collapsed = [self->_mySplitView isSubviewCollapsed:firstView];
     [self->_treeEnableSwitch setSelected:!collapsed forSegment:0];
+    //NSLog(@"View:%@ splitViewDidResizeSubiews",_viewName);
 }
 
 #pragma mark - Tree Outline DataSource Protocol

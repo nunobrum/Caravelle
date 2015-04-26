@@ -2,12 +2,13 @@
 //  NodeViewController.m
 //  Caravelle
 //
-//  Created by Viktoryia Labunets on 04/04/15.
+//  Created by Nuno Brum on 04/04/15.
 //  Copyright (c) 2015 Nuno Brum. All rights reserved.
 //
 
 #import "NodeViewController.h"
 #import "PasteboardUtils.h"
+#import "NodeSortDescriptor.h"
 
 
 @interface NodeViewController () {
@@ -42,6 +43,7 @@
     self->_foldersInTable = YES;
     self->_currentNode = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
+    self.sortAndGroupDescriptors = nil;
     [self startBusyAnimations];
 }
 
@@ -190,7 +192,7 @@
 }
 
 -(NSMutableArray*) itemsToDisplay {
-    NSMutableArray *tableData;
+    NSMutableArray *tableData = nil;
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([self.currentNode itemType] == ItemTypeBranch){
@@ -220,9 +222,76 @@
         }
         [tableData removeObjectsAtIndexes: tohide];
 
+
+        // Sort Data
+        if (self.sortAndGroupDescriptors!=nil) {
+            NSArray *sortedArray = [tableData sortedArrayUsingDescriptors:self.sortAndGroupDescriptors];
+            tableData = [NSMutableArray arrayWithArray:sortedArray];
+
+            // Insert Groupings if needed
+            if ([(NodeSortDescriptor*)[self.sortAndGroupDescriptors firstObject] isGrouping]) {
+                // Since the sort groupings are always the first elements on the table
+                // it sufices to test the first element to know if a grouping is needed
+                NSUInteger i = 0;
+                while (i < [tableData count]) {
+                    NSString *title = nil;
+                    for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
+                        if (sortDesc.isGrouping) {
+                            if (title!=nil) {
+                                // There was a title already set in a previous descriptor
+                                // in this case it must reset all the remaining descriptors
+                                [sortDesc restart];
+                            }
+                            title = [sortDesc groupTitleForObject: tableData[i]];
+                        }
+                        else
+                            break; // No more groups after here
+                    }
+                    if (title != nil) {
+                        // insert the title into the table
+                        [tableData insertObject:title atIndex:i];
+                        i++; // need to increment one more time since a group was introduced
+                    }
+                    i++;
+                }
+            }
+        }
     }
     return tableData;
 }
+
+- (void) removeSortKey:(NSString*)key {
+    for (NodeSortDescriptor *i in self.sortAndGroupDescriptors) {
+        if ([i.key isEqualToString:key] ) {
+            [self.sortAndGroupDescriptors removeObject:i];
+            return;
+        }
+    }
+}
+
+- (void) assignSortKey:(NSString*)key ascending:(BOOL)ascending grouping:(BOOL)grouping {
+    if (self.sortAndGroupDescriptors==nil) {
+        self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
+    }
+    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
+    [sortDesc setGrouping:grouping];
+
+    // Removes the key if it was already existing in the remaining of the array
+    [self removeSortKey:key];
+
+    NSInteger i=0;
+    if (grouping==NO) {
+        // Will insert after the first non grouping descriptor
+        while (i < [self.sortAndGroupDescriptors count]) {
+            if (![(NodeSortDescriptor*)self.sortAndGroupDescriptors[i] isGrouping])
+                break;
+            i++;
+        }
+    }
+    // else : i = 0 => will insert on the first element of the array
+    [self.sortAndGroupDescriptors insertObject:sortDesc atIndex:i];
+}
+
 
 -(NSArray*) getTableViewSelectedURLs {
    NSLog(@"NodeViewController.getTableViewSelectedURLs: should be overriden");

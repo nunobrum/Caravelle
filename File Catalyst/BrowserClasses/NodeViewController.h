@@ -2,7 +2,7 @@
 //  NodeViewController.h
 //  Caravelle
 //
-//  Created by Viktoryia Labunets on 04/04/15.
+//  Created by Nuno Brum on 04/04/15.
 //  Copyright (c) 2015 Nuno Brum. All rights reserved.
 //
 
@@ -32,6 +32,8 @@
     TreeItem   *_validatedDropDestination;
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
+    NSMutableArray *_displayedItems;
+
 }
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
@@ -39,6 +41,8 @@
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
+
+@property (readwrite, strong) NSMutableArray *sortAndGroupDescriptors;
 
 
 - (void) initController;
@@ -62,6 +66,8 @@
 - (NSView*) containerView;
 
 - (NSMutableArray*) itemsToDisplay;
+- (void) assignSortKey:(NSString*)key ascending:(BOOL)ascending grouping:(BOOL)grouping;
+- (void) removeSortKey:(NSString*)key;
 
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;

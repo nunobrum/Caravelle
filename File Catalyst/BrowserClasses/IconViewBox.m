@@ -2,7 +2,7 @@
 //  IconViewBox.m
 //  Caravelle
 //
-//  Created by Viktoryia Labunets on 09/04/15.
+//  Created by Nuno Brum on 09/04/15.
 //  Copyright (c) 2015 Nuno Brum. All rights reserved.
 //
 
@@ -46,9 +46,10 @@
 }
 
 -(void) rightMouseDown:(NSEvent *)theEvent {
-    // TODO: ! Draw rectangle around the Box
+    // TODO: !!! Draw rectangle around the Box
     //[self setBorderColor:[NSColor blueColor]];
     //[self setBorderWidth:1];
+    //[self setBorderType:NSLineBorder];
     [self setFillColor:[NSColor windowBackgroundColor]];
     [self setTransparent:NO];
     [self setNeedsDisplay:YES];

@@ -2,7 +2,7 @@
 //  PasteboardUtils.m
 //  Caravelle
 //
-//  Created by Viktoryia Labunets on 16/04/15.
+//  Created by Nuno Brum on 16/04/15.
 //  Copyright (c) 2015 Nuno Brum. All rights reserved.
 //
 

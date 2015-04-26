@@ -12,6 +12,7 @@
                 <outlet property="iconArrayController" destination="16" id="50"/>
                 <outlet property="myProgressIndicator" destination="105" id="JbG-Ag-T3z"/>
                 <outlet property="view" destination="5" id="15"/>
+                <outlet property="viewWidthConstraint" destination="j15-94-kuo" id="5Ye-Jh-Ni0"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -98,7 +99,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="104"/>
             </connections>
-            <point key="canvasLocation" x="418" y="200.5"/>
+            <point key="canvasLocation" x="770" y="-39.5"/>
         </menu>
         <customView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" id="106">
             <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
@@ -125,7 +126,7 @@
                         </subviews>
                     </clipView>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" priority="500" constant="260" id="cDO-ml-dG2"/>
+                        <constraint firstAttribute="width" priority="100" constant="433" id="j15-94-kuo"/>
                     </constraints>
                     <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="7">
                         <rect key="frame" x="1" y="143" width="248" height="16"/>
