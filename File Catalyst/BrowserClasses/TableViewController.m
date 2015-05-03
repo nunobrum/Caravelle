@@ -116,6 +116,7 @@
             // We pass us as the owner so we can setup target/actions into this main controller object
             cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
             [cellView setObjectValue:objectValue];
+            //[cellView setToolTip:[theFile hint]]; TODO:! Add tool tips lazyly by using view: stringForToolTip: point: userData:
 
             // If it's a new file, then assume a default ICON
 
@@ -298,31 +299,44 @@
 -(void) selectColumnTitles:(NSNotification *) note {
     // first checks the object sender is ours
     if ([note object]==_myTableViewHeader) {
-
-        // Get the needed informtion from the notification
-        NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
-        assert(changedColumnID); // Ooops! Problem in getting information from notification. Abort.
         NSInteger colHeaderClicked = [[[note userInfo] objectForKey:kReferenceViewKey] integerValue];
-        NSDictionary *colInfo = [columnInfo() objectForKey:changedColumnID];
+        NSString *changedColumnID = [[note userInfo] objectForKey:kColumnChanged];
 
-        assert (colInfo); // Checking Problem in getting
-        // Checks whether to add or to delete a column
-        if ([[self myTableView] columnWithIdentifier:changedColumnID]==-1) { // column not existing
-            // It was added
-            NSTableColumn *columnToAdd= [NSTableColumn alloc];
-            columnToAdd = [columnToAdd initWithIdentifier:changedColumnID];
-            [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
-            [[self myTableView] addTableColumn:columnToAdd];
-            NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
-            if (colHeaderClicked>=0 && colHeaderClicked<lastColumn-1) { // -1 so to avoid calling a move to the same position
-                [[self myTableView] moveColumn:lastColumn toColumn:colHeaderClicked+1]; // Inserts to the right
+        // column select procedure
+        if (changedColumnID!=nil) {
+            // Get the needed informtion from the notification
+            NSDictionary *colInfo = [columnInfo() objectForKey:changedColumnID];
+
+            assert (colInfo); // Checking Problem in getting
+            // Checks whether to add or to delete a column
+            if ([[self myTableView] columnWithIdentifier:changedColumnID]==-1) { // column not existing
+                // It was added
+                NSTableColumn *columnToAdd= [NSTableColumn alloc];
+                columnToAdd = [columnToAdd initWithIdentifier:changedColumnID];
+                [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
+                [[self myTableView] addTableColumn:columnToAdd];
+                NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
+                if (colHeaderClicked>=0 && colHeaderClicked<lastColumn-1) { // -1 so to avoid calling a move to the same position
+                    [[self myTableView] moveColumn:lastColumn toColumn:colHeaderClicked+1]; // Inserts to the right
+                }
+            }
+            else {
+                // It was removed
+                NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:changedColumnID];
+                [[self myTableView] removeTableColumn:colToDelete];
             }
         }
         else {
-            // It was removed
-            NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:changedColumnID];
-            [[self myTableView] removeTableColumn:colToDelete];
+            // Get the column
+            NSTableColumn *colToGroup = [[[self myTableView] tableColumns] objectAtIndex:colHeaderClicked];
+            // Remove it from Columns : [[self myTableView] removeTableColumn:colToGroup];
+            NSDictionary *colInfo = [columnInfo() objectForKey:[colToGroup identifier]];
+            NSString *sortKey = [colInfo objectForKey:COL_ACCESSOR_KEY];
+            [self assignSortKey:sortKey ascending:YES grouping:YES];
+            
+            
         }
+        [self refreshKeepingSelections];
     }
 }
 

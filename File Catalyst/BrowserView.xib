@@ -107,13 +107,13 @@
                             <rect key="frame" x="0.0" y="0.0" width="428" height="534"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
-                                <scrollView horizontalHuggingPriority="200" verticalHuggingPriority="200" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
+                                <scrollView horizontalHuggingPriority="200" verticalHuggingPriority="200" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
                                     <rect key="frame" x="1" y="0.0" width="426" height="534"/>
                                     <clipView key="contentView" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" id="Y6z-1n-4Bv">
                                         <rect key="frame" x="1" y="17" width="157" height="545"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
-                                            <outlineView horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
+                                            <outlineView horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -305,6 +305,18 @@
                         <action selector="treeViewEnable:" target="-2" id="BoX-yJ-yQ5"/>
                     </connections>
                 </segmentedControl>
+                <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iNv-TN-mPC">
+                    <rect key="frame" x="186" y="567" width="38" height="24"/>
+                    <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="q0v-Rv-1ub">
+                        <font key="font" metaFont="system"/>
+                        <segments>
+                            <segment image="UnderConstruction20" width="32"/>
+                        </segments>
+                    </segmentedCell>
+                    <connections>
+                        <action selector="testGroupAction:" target="-2" id="914-4v-C6x"/>
+                    </connections>
+                </segmentedControl>
             </subviews>
             <constraints>
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="1" id="1ga-yE-BZv"/>
@@ -417,5 +429,6 @@
         <image name="NSListViewTemplate" width="11" height="10"/>
         <image name="NSPathTemplate" width="13" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="UnderConstruction20" width="20" height="18"/>
     </resources>
 </document>

@@ -8,60 +8,26 @@
 
 #import <Foundation/Foundation.h>
 
+#import "BaseGrouping.h"
 
 
-/*
- * Grouping of elements
- */
-
-@interface GroupItem : NSObject
-@property NSString * title;
-@property NSSortDescriptor *descriptor;
-
--(instancetype) initWithTitle:(NSString*)title;
-
-@end
-
-@interface BaseGroupingObject : NSObject {
-    BOOL _ascending;
-    id _lastObject;
-    NSString* _currentTitle;
-}
-
-
--(instancetype) initWithAscending:(BOOL)ascending;
--(GroupItem*) groupItemFor:(id) newObject;
--(void) restart;
-
-@end
-
-
-@interface NumberGrouping : BaseGroupingObject
-@end
-
-@interface DateGrouping : BaseGroupingObject
-@end
-
-@interface StringGrouping : BaseGroupingObject
-@end
-
-@interface AlphabetGroupping : BaseGroupingObject
+@interface AlphabetGroupping : BaseGrouping
 @end
 
 
 @interface NodeSortDescriptor : NSSortDescriptor {
     BOOL _grouping;
-    BaseGroupingObject *_groupObject;
+    BaseGrouping *_groupObject;
 }
 
 -(void) setGrouping:(BOOL)grouping;
 -(BOOL) isGrouping;
--(GroupItem*) groupItemForObject:(id)object;
--(void) restart;
+-(NSArray*) groupItemsForObject:(id)object;
+-(NSArray*) flushGroups;
 
 @end
 
 
-BaseGroupingObject* groupingFor(id objTemplate, BOOL ascending);
+BaseGrouping* groupingFor(id objTemplate, BOOL ascending);
 
 

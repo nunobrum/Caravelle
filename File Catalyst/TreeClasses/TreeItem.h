@@ -68,6 +68,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(long long) filesize ;
 -(NSNumber*) fileSize;
 -(NSString*) fileKind;
+-(NSString*) hint;
 
 
 -(void) setUrl:(NSURL*)url;

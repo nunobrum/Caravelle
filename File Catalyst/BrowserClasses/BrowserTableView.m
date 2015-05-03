@@ -10,7 +10,7 @@
 #import "BrowserController.h"
 
 @implementation BrowserTableView {
-    BOOL blockServices;
+    //BOOL blockServices;
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -54,14 +54,15 @@
                 [item setTag:i++];
 
             // Make sure that no services menu is added to the menu
-            blockServices = YES;
+            //blockServices = YES;
 
             // et voila' : add the menu to the view
+            [theMenu setAllowsContextMenuPlugIns:NO];
             [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
             return; // Block the other menu
         }
     }
-    blockServices = NO;
+    //blockServices = NO;
     [super rightMouseDown:theEvent];
 }
 
@@ -154,9 +155,9 @@
 - (id)validRequestorForSendType:(NSString *)sendType
                      returnType:(NSString *)returnType
 {
-    if (blockServices)
+    /*if (blockServices)
         return nil;
-    else
+    else*/
         return [(id<MYViewProtocol>)[self delegate] validRequestorForSendType:sendType returnType:returnType];
 }
 

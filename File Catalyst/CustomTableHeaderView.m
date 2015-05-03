@@ -8,6 +8,7 @@
 
 #import "Definitions.h"
 #import "CustomTableHeaderView.h"
+#import "TableViewController.h"
 
 #ifdef COLUMN_NOTIFICATION
 NSString *notificationColumnSelect = @"ColumnSelectNotification";
@@ -46,26 +47,24 @@ NSDictionary *columnInfo () {
 
 
 -(void)columnSelect:(id)obj {
-    NSString *menuTitle = [(NSMenuItem*)obj title];
-
-    // Look up the column control structure to match by the title
-    for (NSString *colID in columnInfo()) {
-
-        NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-        NSString *colTitle = [colInfo objectForKey:COL_TITLE_KEY];
-
-        if ([colTitle isEqualToString:menuTitle]) { // If matches
-            NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
-            NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      colID, kColumnChanged,
-                                      colClicked, kReferenceViewKey,
-                                      nil];
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationColumnSelect object:self userInfo:userinfo];
-            break; // No need to continue
-        }
-    }
+    NSString *colID = [(NSMenuItem*)obj representedObject];
+    NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
+    NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              colID, kColumnChanged,
+                              colClicked, kReferenceViewKey,
+                              nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationColumnSelect object:self userInfo:userinfo];
 }
 
+-(void) groupSelect:(id) object {
+    NSLog(@"Send notification for start group");
+    NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
+    NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                              colClicked, kReferenceViewKey,
+                              nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationColumnSelect object:self userInfo:userinfo];
+
+}
 
 - (void)rightMouseDown:(NSEvent *)theEvent {
     /* This function creates a menu depending on the actual column selection */
@@ -76,22 +75,41 @@ NSDictionary *columnInfo () {
     self->columnClicked = [self columnAtPoint: local_point];
     // Create the menu
     NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Contextual Menu"];
-    int index=0;
 
-    // Creates the menu
+    // Adding grouping action
+    NSArray *columns = [[self tableView] tableColumns];
+    if (self->columnClicked < [columns count]) {
+        NSTableColumn *column = [columns objectAtIndex:self->columnClicked];
+        NSString *clickedColumnText = [[column headerCell] stringValue];
+
+        // Column Names cannot be groupped
+        if (NO == [[column identifier] isEqualToString:COL_FILENAME]) {
+            NSString *itemTitle = [NSString stringWithFormat:@"Group using %@", clickedColumnText];
+            [theMenu addItemWithTitle:itemTitle action:@selector(groupSelect:) keyEquivalent:@""];
+
+            // Adding a menu divider
+            NSMenuItem *sep = [NSMenuItem separatorItem];
+            [sep setTitle:@"Columns"];
+            [theMenu addItem:sep];
+        }
+    }
+    // Creates the Columns Mmenu
     for (NSString *colID in [self sortedNames]) {
         NSDictionary *colInfo = [columnInfo() objectForKey:colID];
         NSString *desc = [colInfo objectForKey:COL_TITLE_KEY];
-        [theMenu insertItemWithTitle:desc action:@selector(columnSelect:) keyEquivalent:@"" atIndex:index];
+        NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:desc action:@selector(columnSelect:) keyEquivalent:@""];
         if ([[self tableView] columnWithIdentifier:colID]!=-1) { // is present in tableColumns
-            [[theMenu itemAtIndex:index] setState:NSOnState];
+            [menuItem setState:NSOnState];
         }
         else {
-            [[theMenu itemAtIndex:index] setState:NSOffState];
+            [menuItem setState:NSOffState];
         }
-        index++;
+        [menuItem setRepresentedObject:colID];
+        [theMenu addItem:menuItem];
     }
 
+    // Blocks the Services Menu
+    [theMenu setAllowsContextMenuPlugIns:NO];
     // et voila' : add the menu to the view
     [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
 }

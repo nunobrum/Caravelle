@@ -240,6 +240,9 @@
     return kind;
 }
 
+-(NSString*) hint {
+    return [self name];
+}
 
 -(TreeItem*) root {
     TreeItem *cursor = self;

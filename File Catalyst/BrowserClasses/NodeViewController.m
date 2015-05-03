@@ -191,6 +191,43 @@
     return lastFocus;
 }
 
+-(NSInteger) insertGroups:(NSMutableArray*)items start:(NSUInteger)start stop:(NSUInteger)stop descriptorIndex:(NSUInteger)descIndex {
+    // Verify in no more descriptors to process
+    NSInteger inserted = 0;
+    if (descIndex < [self.sortAndGroupDescriptors count]) {
+        NodeSortDescriptor *sortDesc = [self.sortAndGroupDescriptors objectAtIndex:descIndex];
+
+        if (sortDesc.isGrouping) { // Grouping is needed for this descriptor
+            NSUInteger i = start;
+            NSArray *groups = nil;
+            while (i < (stop+inserted)) {
+                groups = [sortDesc groupItemsForObject: items[i]];
+                if (groups!=nil) {
+                    for (GroupItem *GI in groups) {
+                        NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
+                        [items insertObject:GI atIndex:i - GI.nElements - nInserted];
+                        NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
+                        inserted += nInserted +1;
+                        i = i + nInserted + 1;
+                    }
+                }
+                i++;
+            }
+            groups = [sortDesc flushGroups];
+            if (groups!=nil) {
+                i--; // Needs to be in the last position
+                for (GroupItem *GI in groups) {
+                    NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
+                    inserted += nInserted;
+                    [items insertObject:GI atIndex:i - GI.nElements - nInserted];
+                    i = i + nInserted + 1;
+                }
+            }
+        }
+    }
+    return inserted;
+}
+
 -(NSMutableArray*) itemsToDisplay {
     NSMutableArray *tableData = nil;
     NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
@@ -232,28 +269,12 @@
             if ([(NodeSortDescriptor*)[self.sortAndGroupDescriptors firstObject] isGrouping]) {
                 // Since the sort groupings are always the first elements on the table
                 // it sufices to test the first element to know if a grouping is needed
-                NSUInteger i = 0;
-                while (i < [tableData count]) {
-                    GroupItem *title = nil;
-                    for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
-                        if (sortDesc.isGrouping) {
-                            if (title!=nil) {
-                                // There was a title already set in a previous descriptor
-                                // in this case it must reset all the remaining descriptors
-                                [sortDesc restart];
-                            }
-                            title = [sortDesc groupItemForObject: tableData[i]];
-                        }
-                        else
-                            break; // No more groups after here
-                    }
-                    if (title != nil) {
-                        // insert the title into the table
-                        [tableData insertObject:title atIndex:i];
-                        i++; // need to increment one more time since a group was introduced
-                    }
-                    i++;
+
+                // Need to restart all the descriptors
+                for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
+                    [sortDesc flushGroups];
                 }
+                [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
             }
         }
     }

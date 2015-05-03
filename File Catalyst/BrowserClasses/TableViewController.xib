@@ -245,7 +245,9 @@
                         <action selector="contextualDelete:" target="-1" id="GMO-3w-ymS"/>
                     </connections>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="Lnh-UD-rau"/>
+                <menuItem isSeparatorItem="YES" id="Lnh-UD-rau">
+                    <attributedString key="attributedTitle"/>
+                </menuItem>
                 <menuItem title="Copy Right" tag="6" keyEquivalent="" id="Ehd-zP-VWp">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>

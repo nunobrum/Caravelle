@@ -50,7 +50,8 @@
             <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
             <color key="fillColor" name="alternateSelectedControlColor" catalog="System" colorSpace="catalog"/>
             <connections>
-                <binding destination="-2" name="transparent" keyPath="selected" id="X50-GK-2qO">
+                <binding destination="-2" name="toolTip" keyPath="representedObject.hint" id="kQt-Ms-jz7"/>
+                <binding destination="-2" name="transparent" keyPath="selected" previousBinding="kQt-Ms-jz7" id="mBB-W3-cEr">
                     <dictionary key="options">
                         <string key="NSValueTransformerName">NSNegateBoolean</string>
                     </dictionary>
