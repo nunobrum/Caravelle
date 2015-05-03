@@ -34,13 +34,12 @@
             self->firstSize  = [NSByteCountFormatter stringFromByteCount:n countStyle:NSByteCountFormatterCountStyleFile];
         }
         else {
-            self->firstSize = @"Unknown Size";
+            self->firstSize = @"--";
             self->current_base.decx3=0;
             self->current_base.dec = -1;
         }
         self->lastSize = nil;
         self.lastObject = [[GroupItem alloc] initWithTitle:nil];
-
     }
     else {
         ((GroupItem*)self.lastObject).nElements++;
@@ -77,14 +76,6 @@
                 self->lastSize = [NSByteCountFormatter stringFromByteCount:n countStyle:NSByteCountFormatterCountStyleFile];
             }
 
-        }
-        else {
-            // Create the Unknown Size Group
-            // Sizes with nill are a problem because they cannot be stored as Values. Instead
-            // and immediate header is created and returned. Then, elements are added to the object
-            if (self.lastObject == nil || [[self.lastObject title] isEqualToString:@"Unknown Size"] ==NO) { // Creates the header
-                self.lastObject = [[GroupItem alloc] initWithTitle:@"Unknown Size"]; // Creates a ne
-            }
         }
     }
     return nil;

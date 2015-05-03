@@ -23,24 +23,35 @@
 
 @end
 
-BaseGrouping* groupingFor(id objTemplate, BOOL ascending) {
-    if ([objTemplate isKindOfClass:[NSDate class]]) {
-        return [[DateGrouping alloc] initWithAscending:ascending];
-    }
-    else if ([objTemplate isKindOfClass:[NSNumber class]]) {
-        return [[SizeGrouping alloc] initWithAscending:ascending];
-    }
-    else if ([objTemplate isKindOfClass:[NSString class]]) {
-        return [[StringGrouping alloc] initWithAscending:ascending];
-    }
-    return nil;
-}
 
 @implementation NodeSortDescriptor
 
--(void) setGrouping:(BOOL)grouping {
+-(void) setGrouping:(BOOL)grouping using:(NSString*)groupID {
     self->_grouping = grouping;
+    if (grouping) {
+        if ([groupID isEqualToString:@"size"])
+            self->_groupObject = [[SizeGrouping alloc] initWithAscending:self.ascending];
+        else if ([groupID isEqualToString:@"date"])
+            self->_groupObject = [[DateGrouping alloc] initWithAscending:self.ascending];
+        else if ([groupID isEqualToString:@"string"])
+            self->_groupObject = [[StringGrouping alloc] initWithAscending:self.ascending];
+        else {
+            NSLog(@"NodeSortDescriptor.setGrouping:using:  Not supported");
+            self->_grouping = NO;
+        }
+    }
 }
+
+
+-(void) copyGroupObject:(NodeSortDescriptor *)other {
+    self->_grouping = other->_grouping;
+    self->_groupObject = other->_groupObject;
+}
+
+-(BaseGrouping*) groupOpject {
+    return self->_groupObject;
+}
+
 -(BOOL) isGrouping {
     return self->_grouping;
 }
@@ -54,9 +65,6 @@ BaseGrouping* groupingFor(id objTemplate, BOOL ascending) {
 }
 
 -(NSArray*) groupItemsForObject:(id)object {
-    if (self->_groupObject==nil) {
-        self->_groupObject = groupingFor([object valueForKey:self.key], self.ascending);
-    }
     NSArray *answer = [self->_groupObject groupItemsFor:[object valueForKey:self.key]];
     for (GroupItem *item in answer)
         [item setDescriptor:self];

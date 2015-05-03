@@ -32,6 +32,8 @@
 		<string>fileKind</string>
 		<key>selected</key>
 		<false/>
+		<key>grouping</key>
+		<string>string</string>
 	</dict>
 	<key>COL_DATE_CREATED</key>
 	<dict>

@@ -25,7 +25,6 @@
 #import "FileAttributesController.h"
 #import "PasteboardUtils.h"
 
-#define COL_FILENAME @"COL_NAME"
 
 const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;

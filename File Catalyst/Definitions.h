@@ -56,11 +56,15 @@ extern const CFStringRef kTreeItemDropUTI;
 
 #define USE_TREEITEM_PASTEBOARD_WRITING // Controls how paste to board is done
 
+// Table Column Identifier for File Name
+#define COL_FILENAME @"COL_NAME"
+
 
 //#define COL_ID_KEY @"ID"
 #define COL_ACCESSOR_KEY @"accessor"
 #define COL_TITLE_KEY @"title"
 #define COL_TRANS_KEY @"transformer" 
+#define COL_GROUPING_KEY @"grouping"
 
 
 // User Definitions

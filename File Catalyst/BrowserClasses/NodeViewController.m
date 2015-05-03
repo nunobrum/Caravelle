@@ -9,6 +9,7 @@
 #import "NodeViewController.h"
 #import "PasteboardUtils.h"
 #import "NodeSortDescriptor.h"
+#import "CustomTableHeaderView.h"
 
 
 @interface NodeViewController () {
@@ -206,7 +207,7 @@
                     for (GroupItem *GI in groups) {
                         NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
                         [items insertObject:GI atIndex:i - GI.nElements - nInserted];
-                        NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
+                        //NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
                         inserted += nInserted +1;
                         i = i + nInserted + 1;
                     }
@@ -290,13 +291,28 @@
     }
 }
 
-- (void) assignSortKey:(NSString*)key ascending:(BOOL)ascending grouping:(BOOL)grouping {
+- (void) makeSortOnInfo:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping {
     if (self.sortAndGroupDescriptors==nil) {
         self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
-    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
-    [sortDesc setGrouping:grouping];
+    NSString *key;
+    if ([info isEqualToString:COL_FILENAME])
+        key = @"name";
+    else // Else uses the identifier that is linked to the treeItem KVO property
+        key = [[columnInfo() objectForKey:info] objectForKey:COL_ACCESSOR_KEY];
 
+
+    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
+    if (grouping==YES) {
+        NSString *groupingSelector =[[columnInfo() objectForKey:info] objectForKey:COL_GROUPING_KEY];
+        if (groupingSelector==nil) {
+            // Try to get a selector from the transformer
+            groupingSelector =[[columnInfo() objectForKey:info] objectForKey:COL_TRANS_KEY];
+        }
+        if (groupingSelector!=nil) {
+            [sortDesc setGrouping:grouping using:groupingSelector];
+        }
+    }
     // Removes the key if it was already existing in the remaining of the array
     [self removeSortKey:key];
 

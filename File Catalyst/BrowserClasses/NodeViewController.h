@@ -66,7 +66,7 @@
 - (NSView*) containerView;
 
 - (NSMutableArray*) itemsToDisplay;
-- (void) assignSortKey:(NSString*)key ascending:(BOOL)ascending grouping:(BOOL)grouping;
+- (void) makeSortOnInfo:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
 - (void) removeSortKey:(NSString*)key;
 
 -(NSArray*) getTableViewSelectedURLs;

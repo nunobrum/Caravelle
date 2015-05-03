@@ -273,13 +273,7 @@
         }
     }
     [inTableView setHighlightedTableColumn:tableColumn];
-    NSString *key;
     BOOL ascending;
-    if ([[tableColumn identifier] isEqualToString:COL_FILENAME])
-        key = @"name";
-    else // Else uses the identifier that is linked to the treeItem KVO property
-        key = [[columnInfo() objectForKey:[tableColumn identifier]] objectForKey:COL_ACCESSOR_KEY];
-
     if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
     {
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSAscendingSortIndicator"] inTableColumn:tableColumn];
@@ -290,7 +284,7 @@
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
         ascending = NO;
     }
-    [self assignSortKey:key ascending:ascending grouping:NO];
+    [self makeSortOnInfo:[tableColumn identifier] ascending:ascending grouping:NO];
     [self refreshKeepingSelections];
 }
 
@@ -330,11 +324,7 @@
             // Get the column
             NSTableColumn *colToGroup = [[[self myTableView] tableColumns] objectAtIndex:colHeaderClicked];
             // Remove it from Columns : [[self myTableView] removeTableColumn:colToGroup];
-            NSDictionary *colInfo = [columnInfo() objectForKey:[colToGroup identifier]];
-            NSString *sortKey = [colInfo objectForKey:COL_ACCESSOR_KEY];
-            [self assignSortKey:sortKey ascending:YES grouping:YES];
-            
-            
+            [self makeSortOnInfo:[colToGroup identifier] ascending:YES grouping:YES];
         }
         [self refreshKeepingSelections];
     }
@@ -351,10 +341,11 @@
         // Changing the ascending key. Since that property is read-only, the descriptor needs to be initialized
         // Retrieving position of descriptor
         NSInteger i = [self.sortAndGroupDescriptors indexOfObject:group.descriptor];
-        // Creating a new Descriptor
-        NodeSortDescriptor *updateDesc = [[NodeSortDescriptor alloc] initWithKey:group.descriptor.key ascending:(tag==GROUP_SORT_ASCENDING)];
+        // Creating a new Descriptor from the old one
+        NSSortDescriptor *oldDesc = group.descriptor;
+        NodeSortDescriptor *updateDesc = [[NodeSortDescriptor alloc] initWithKey:oldDesc.key ascending:(tag==GROUP_SORT_ASCENDING)];
         // Needs to be a Grouping Descriptor
-        [updateDesc setGrouping:YES];
+        [updateDesc copyGroupObject: oldDesc];
         // Updates the sort Array
         [self.sortAndGroupDescriptors setObject:updateDesc atIndexedSubscript:i];
     }

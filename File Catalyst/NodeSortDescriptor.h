@@ -20,14 +20,13 @@
     BaseGrouping *_groupObject;
 }
 
--(void) setGrouping:(BOOL)grouping;
+-(void) setGrouping:(BOOL)grouping using:(NSString*)groupID ;
+-(void) copyGroupObject:(NSSortDescriptor*) other;
+-(BaseGrouping*) groupOpject;
 -(BOOL) isGrouping;
 -(NSArray*) groupItemsForObject:(id)object;
 -(NSArray*) flushGroups;
-
 @end
 
-
-BaseGrouping* groupingFor(id objTemplate, BOOL ascending);
 
 
