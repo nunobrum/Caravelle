@@ -27,6 +27,7 @@
 -(instancetype) initWithAscending:(BOOL)ascending;
 -(NSArray*) groupItemsFor:(id) newObject;
 -(NSArray*) flushGroups;
+-(void) reset;
 
 @end
 

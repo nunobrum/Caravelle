@@ -8,8 +8,38 @@
 
 #import "DateGrouping.h"
 
+#define MAX_GROUPS 20
+#define SECONDS_IN_DAY (24*60*60)
+
+NSString *titleForDates(NSDate *first, NSDate *last) {
+    NSString *answer = nil;
+    static NSDateFormatter *dateFormater = nil;
+    if (dateFormater== nil) {
+        dateFormater = [[NSDateFormatter alloc] init];
+        [dateFormater setDateStyle:NSDateFormatterMediumStyle];
+    }
+    NSString *prevTitle = [dateFormater stringFromDate: first ];
+    NSString *currTitle = [dateFormater stringFromDate: last];
+
+    if ( [prevTitle isEqualToString:currTitle]) { // Less than one day
+        answer = currTitle;
+    }
+    else {
+        if (first < last)
+            answer = [NSString stringWithFormat:@"Since %@ To %@",prevTitle, currTitle];
+        else
+            answer = [NSString stringWithFormat:@"Between %@ and %@",prevTitle, currTitle];
+    }
+    return answer;
+}
+
 @implementation DateGrouping {
     NSMutableArray *values;
+}
+
+-(void) reset {
+    [super reset];
+    [self->values removeAllObjects];
 }
 
 
@@ -19,7 +49,7 @@
         values = [[NSMutableArray alloc] initWithCapacity:100];
     }
     if (newObject!=nil) {
-        NSAssert([newObject isKindOfClass:[NSNumber class]], @"Expected NSNumber");
+        NSAssert([newObject isKindOfClass:[NSDate class]], @"Expected NSDate");
         [values addObject:newObject];
         self.lastObject = newObject;
     }
@@ -37,60 +67,74 @@
 }
 
 -(NSArray*) flushGroups {
+    if (values==nil || [values count]==0)
+        return nil;
     // Calculates the differential
-    NSInteger *differential = malloc([values count] * sizeof(NSInteger));
-    long long sum = 0;
+    NSTimeInterval *differential = malloc(([values count]-1) * sizeof(NSTimeInterval));
+    NSTimeInterval sum = 0;
     //NSInteger min;
     NSInteger max = 0;
-    sum = differential[0] = [values[0] longValue];
-    for (int i=1 ; i < [values count] ; i++) {
-        differential[i] = [values[i] longLongValue] - differential[i-1];
+    sum  = 0;
+    for (int i=0 ; i < [values count]-1 ; i++) {
+        differential[i] = abs([values[i+1] timeIntervalSinceDate:values[i]]);
         if (differential[i] > differential[max]) max = i;
         //if (differential[i]< min) max = differential[i];
         sum += differential[i];
+        //NSLog(@"From %@ to %@ (%f)",values[i], values[i+1], differential[i]);
     }
     NSInteger average = sum / [values count];
     NSInteger groupCount = 0;
-    NSMutableArray * groupItems = [NSMutableArray arrayWithCapacity:20];
+    NSMutableArray * groupIndexes = [NSMutableArray arrayWithCapacity:MAX_GROUPS-1];
 
-    while (groupCount++ < 20) {
-        GroupItem *item = [GroupItem alloc];
-        [item setNElements:max];
-        [groupItems addObject:item];
+    if (average < SECONDS_IN_DAY)
+        average = SECONDS_IN_DAY;
+
+    NSInteger max_count;
+    max_count = MAX_GROUPS - 1;
+    if (max_count > [values count]-1)
+        max_count = [values count]-1;
+    while (groupCount < max_count) {
+        groupCount++;
+        [groupIndexes addObject:[NSNumber numberWithInteger:max]];
 
         differential[max]=0; // Kills the current max
         // searches for a new max
-        for (int i=0 ; i < [values count] ; i++) {
+        for (int i=0 ; i < [values count]-1 ; i++) {
             if (differential[i] > differential[max]) max = i;
         }
-
         // stops if the differential is too small
         if (differential[max] < average && groupCount > 10) break;
     }
     free(differential);
 
-    // groups need to placed in correct Order. // TODO:!!!!! This needs to be consistent with the ascending rule in the descriptor
-    [groupItems sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [(GroupItem*)obj1 nElements] > [(GroupItem*)obj1 nElements];
+    // indexes need to placed in ascending order for the next step
+    [groupIndexes sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        return [obj1 compare: obj2];
     }];
 
-    NSString *prevTitle = [NSByteCountFormatter stringFromByteCount:[values[0] longLongValue] countStyle:NSByteCountFormatterCountStyleFile];
-    GroupItem *next = groupItems[0];
-    for (NSInteger i=0; i < [groupItems count]-1; i++) {
-        GroupItem *item = next;
-        next= groupItems[i+1];
-        NSString *currTitle = [NSByteCountFormatter stringFromByteCount:[values[next.nElements] longLongValue] countStyle:NSByteCountFormatterCountStyleFile];
-        [item setTitle:  [NSString stringWithFormat:@"From %@ To %@",prevTitle, currTitle]];
-        item.nElements = [next nElements] - item.nElements;
-        prevTitle = currTitle;
+    NSMutableArray * groupItems = [NSMutableArray arrayWithCapacity:MAX_GROUPS];
+    NSInteger aux = [[groupIndexes firstObject] integerValue];
+    GroupItem *item = [[GroupItem alloc] initWithTitle:titleForDates([values firstObject], values[aux])];
+    item.nElements = [values count] - 1;
+    [groupItems addObject:item];
 
+    max_count = [groupIndexes count];
+    max_count -= 2;
+    for (NSInteger i=0; i < max_count; i++) {
+        NSInteger first = [groupIndexes[i] integerValue]+1;
+        NSInteger last = [groupIndexes[i+1] integerValue];
+
+        GroupItem *item = [[GroupItem alloc] initWithTitle:titleForDates([values objectAtIndex:first], [values objectAtIndex:last])];
+        item.nElements = [values count] - 1 - first;
+        [groupItems addObject:item];
     }
-    next = [values lastObject];
-    NSString *lastTitle = [NSByteCountFormatter stringFromByteCount:[values[next.nElements] longLongValue] countStyle:NSByteCountFormatterCountStyleFile];
-    GroupItem *lastItem = [[GroupItem alloc] initWithTitle:[NSString stringWithFormat:@"From %@ To %@", prevTitle, lastTitle]];
-    [groupItems addObject:lastItem];
+    if ([groupIndexes count] > 0) {
+        aux = [[groupIndexes lastObject] integerValue] + 1;
+        item = [[GroupItem alloc] initWithTitle:titleForDates([values objectAtIndex:aux], [values lastObject])];
+        item.nElements = [values count] - 1 - aux;
+        [groupItems addObject:item];
+    }
     return groupItems;
-    
 }
 
 

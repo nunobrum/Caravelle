@@ -19,12 +19,15 @@
 @end
 
 
-
 @implementation BaseGrouping
 -(instancetype) initWithAscending:(BOOL)ascending {
     self->_ascending = ascending;
     self->_lastObject = nil;
     return self;
+}
+
+-(void) reset {
+    self->_lastObject = nil;
 }
 
 -(NSArray*) groupItemsFor:(id) newObject {

@@ -26,6 +26,7 @@
 -(BOOL) isGrouping;
 -(NSArray*) groupItemsForObject:(id)object;
 -(NSArray*) flushGroups;
+-(void) reset;
 @end
 
 

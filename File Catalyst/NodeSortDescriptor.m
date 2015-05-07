@@ -71,6 +71,10 @@
     return answer;
 }
 
+-(void) reset {
+    [self->_groupObject reset];
+}
+
 @end
 
 

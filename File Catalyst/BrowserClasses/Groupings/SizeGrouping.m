@@ -17,9 +17,14 @@
 
 -(instancetype) initWithAscending:(BOOL)ascending {
     self = [super initWithAscending:ascending];
+    [self reset];
+    return self;
+}
+
+-(void) reset {
+    [super reset];
     self->firstSize = nil;
     self->lastSize = nil;
-    return self;
 }
 
 -(NSArray*) groupItemsFor:(id) newObject {

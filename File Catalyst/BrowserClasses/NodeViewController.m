@@ -206,7 +206,7 @@
                 if (groups!=nil) {
                     for (GroupItem *GI in groups) {
                         NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
-                        [items insertObject:GI atIndex:i - GI.nElements - nInserted];
+                        [items insertObject:GI atIndex:i - GI.nElements + nInserted];
                         //NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
                         inserted += nInserted +1;
                         i = i + nInserted + 1;
@@ -219,8 +219,8 @@
                 i--; // Needs to be in the last position
                 for (GroupItem *GI in groups) {
                     NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
+                    [items insertObject:GI atIndex:i - GI.nElements + nInserted];
                     inserted += nInserted;
-                    [items insertObject:GI atIndex:i - GI.nElements - nInserted];
                     i = i + nInserted + 1;
                 }
             }
@@ -273,7 +273,7 @@
 
                 // Need to restart all the descriptors
                 for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
-                    [sortDesc flushGroups];
+                    [sortDesc reset];
                 }
                 [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
             }
