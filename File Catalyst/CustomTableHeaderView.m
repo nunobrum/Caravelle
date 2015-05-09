@@ -26,6 +26,13 @@ NSDictionary *columnInfo () {
     return columnInfo;
 }
 
+NSString* keyForColID(NSString* colID) {
+    if ([colID isEqualToString:COL_FILENAME])
+        return @"name";
+    else // Else uses the identifier that is linked to the treeItem KVO property
+        return  [[columnInfo() objectForKey:colID] objectForKey:COL_ACCESSOR_KEY];
+}
+
 @implementation CustomTableHeaderView
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -84,6 +91,7 @@ NSDictionary *columnInfo () {
 
         // Column Names cannot be groupped
         if (NO == [[column identifier] isEqualToString:COL_FILENAME]) {
+            // TODO: !!! Make the ungroup when the field is already being groupped.
             NSString *itemTitle = [NSString stringWithFormat:@"Group using %@", clickedColumnText];
             [theMenu addItemWithTitle:itemTitle action:@selector(groupSelect:) keyEquivalent:@""];
 

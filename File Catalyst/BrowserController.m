@@ -639,11 +639,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
-- (IBAction)testGroupAction:(id)sender {
-    BOOL grp = [(NSSegmentedControl*)sender isSelectedForSegment:0];
-    [self.detailedViewController assignSortKey:@"fileKind" ascending:YES grouping:grp];
-    [self.detailedViewController refreshKeepingSelections];
-}
 
 - (IBAction)PathSelect:(id)sender {
     NSURL *newURL;

@@ -22,6 +22,7 @@ extern NSString *kColumnChanged;
 // and it is shared between Browsers
 
 extern NSDictionary *columnInfo();
+extern NSString* keyForColID(NSString* colID);
 
 @interface CustomTableHeaderView : NSTableHeaderView {
     NSInteger columnClicked;

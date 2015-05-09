@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "Definitions.h"
 #import "TreeBranch.h"
+#import "NodeSortDescriptor.h"
+
 
 
 @protocol NodeViewProtocol <NSObject, MYViewProtocol>
@@ -66,7 +68,8 @@
 - (NSView*) containerView;
 
 - (NSMutableArray*) itemsToDisplay;
-- (void) makeSortOnInfo:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
+- (NodeSortDescriptor*) sortDescriptorForColID:(NSString*)colID;
+- (void) makeSortOnColID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
 - (void) removeSortKey:(NSString*)key;
 
 -(NSArray*) getTableViewSelectedURLs;

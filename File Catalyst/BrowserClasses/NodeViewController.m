@@ -8,7 +8,6 @@
 
 #import "NodeViewController.h"
 #import "PasteboardUtils.h"
-#import "NodeSortDescriptor.h"
 #import "CustomTableHeaderView.h"
 
 
@@ -205,11 +204,12 @@
                 groups = [sortDesc groupItemsForObject: items[i]];
                 if (groups!=nil) {
                     for (GroupItem *GI in groups) {
-                        NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
-                        [items insertObject:GI atIndex:i - GI.nElements + nInserted];
+                        [items insertObject:GI atIndex:i - GI.nElements];
+                        i++;
+                        //NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
                         //NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
-                        inserted += nInserted +1;
-                        i = i + nInserted + 1;
+                        inserted += 1; // + nInserted;
+                        //i += nInserted;
                     }
                 }
                 i++;
@@ -218,10 +218,11 @@
             if (groups!=nil) {
                 i--; // Needs to be in the last position
                 for (GroupItem *GI in groups) {
-                    NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
-                    [items insertObject:GI atIndex:i - GI.nElements + nInserted];
-                    inserted += nInserted;
-                    i = i + nInserted + 1;
+                    [items insertObject:GI atIndex:i - GI.nElements];
+                    i++;
+                    //NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
+                    inserted += 1 ;// + nInserted;
+                    //i += nInserted;
                 }
             }
         }
@@ -231,7 +232,6 @@
 
 -(NSMutableArray*) itemsToDisplay {
     NSMutableArray *tableData = nil;
-    NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
     /* Always uses the _treeNodeSelected property to manage the Table View */
     if ([self.currentNode itemType] == ItemTypeBranch){
         if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
@@ -250,6 +250,8 @@
         /* if the filter is empty, doesn't filter anything */
         if (_filterText!=nil && [_filterText length]!=0) {
             /* Create the array of indexes to remove/hide/disable*/
+            NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
+
             NSInteger i = 0;
             for (TreeItem *item in tableData){
                 NSRange result = [[item name] rangeOfString:_filterText];
@@ -257,9 +259,8 @@
                     [tohide addIndex:i];
                 i++;
             }
+            [tableData removeObjectsAtIndexes: tohide];
         }
-        [tableData removeObjectsAtIndexes: tohide];
-
 
         // Sort Data
         if (self.sortAndGroupDescriptors!=nil) {
@@ -273,7 +274,10 @@
 
                 // Need to restart all the descriptors
                 for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
-                    [sortDesc reset];
+                    if ([sortDesc isGrouping])
+                        [sortDesc reset];
+                    else
+                        break;
                 }
                 [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
             }
@@ -291,23 +295,29 @@
     }
 }
 
-- (void) makeSortOnInfo:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping {
+-(NodeSortDescriptor*) sortDescriptorForColID:(NSString*)colID {
+    NSString * key = keyForColID(colID);
+    for (NodeSortDescriptor* desc in self.sortAndGroupDescriptors) {
+        if ([desc.key isEqualToString:key]) {
+            return desc;
+        }
+    }
+    return nil;
+}
+
+- (void) makeSortOnColID:(NSString*)colID ascending:(BOOL)ascending grouping:(BOOL)grouping {
     if (self.sortAndGroupDescriptors==nil) {
         self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
-    NSString *key;
-    if ([info isEqualToString:COL_FILENAME])
-        key = @"name";
-    else // Else uses the identifier that is linked to the treeItem KVO property
-        key = [[columnInfo() objectForKey:info] objectForKey:COL_ACCESSOR_KEY];
 
+    NSString * key = keyForColID(colID);
 
     NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
     if (grouping==YES) {
-        NSString *groupingSelector =[[columnInfo() objectForKey:info] objectForKey:COL_GROUPING_KEY];
+        NSString *groupingSelector =[[columnInfo() objectForKey:colID] objectForKey:COL_GROUPING_KEY];
         if (groupingSelector==nil) {
             // Try to get a selector from the transformer
-            groupingSelector =[[columnInfo() objectForKey:info] objectForKey:COL_TRANS_KEY];
+            groupingSelector =[[columnInfo() objectForKey:colID] objectForKey:COL_TRANS_KEY];
         }
         if (groupingSelector!=nil) {
             [sortDesc setGrouping:grouping using:groupingSelector];
@@ -325,7 +335,16 @@
             i++;
         }
     }
-    // else : i = 0 => will insert on the first element of the array
+    else {
+        // First Remove all  groupings
+        while ([self.sortAndGroupDescriptors count]!=0) {
+            if ([(NodeSortDescriptor*)self.sortAndGroupDescriptors[i] isGrouping])
+                [self.sortAndGroupDescriptors removeObjectAtIndex:0];
+            else
+                break;
+        }
+        // i = 0 => will insert on the first element of the array
+    }
     [self.sortAndGroupDescriptors insertObject:sortDesc atIndex:i];
 }
 

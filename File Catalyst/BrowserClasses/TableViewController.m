@@ -262,19 +262,20 @@
     // NSUInteger modifierKeys = [NSEvent modifierFlags];
     // test NSControlKeyMask and NSAlternateKeyMask
 
-    NSArray *allColumns=[inTableView tableColumns];
-    NSInteger i;
-    for (i=0; i<[inTableView numberOfColumns]; i++)
+
+    for (NSTableColumn *col in [inTableView tableColumns])
     {
         /* Will delete all indicators from the remaining columns */
-        if ([allColumns objectAtIndex:i]!=tableColumn)
+        if (col!=tableColumn)
         {
-            [inTableView setIndicatorImage:nil inTableColumn:[allColumns objectAtIndex:i]];
+            [inTableView setIndicatorImage:nil inTableColumn:col];
         }
     }
     [inTableView setHighlightedTableColumn:tableColumn];
+    NodeSortDescriptor *currentDesc = [self sortDescriptorForColID:[tableColumn identifier]];
+
     BOOL ascending;
-    if ([inTableView indicatorImageInTableColumn:tableColumn] != [NSImage imageNamed:@"NSAscendingSortIndicator"])
+    if (currentDesc==nil || [currentDesc ascending]==NO)
     {
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSAscendingSortIndicator"] inTableColumn:tableColumn];
         ascending = YES;
@@ -284,7 +285,7 @@
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
         ascending = NO;
     }
-    [self makeSortOnInfo:[tableColumn identifier] ascending:ascending grouping:NO];
+    [self makeSortOnColID:[tableColumn identifier] ascending:ascending grouping:[currentDesc isGrouping]];
     [self refreshKeepingSelections];
 }
 
@@ -324,7 +325,7 @@
             // Get the column
             NSTableColumn *colToGroup = [[[self myTableView] tableColumns] objectAtIndex:colHeaderClicked];
             // Remove it from Columns : [[self myTableView] removeTableColumn:colToGroup];
-            [self makeSortOnInfo:[colToGroup identifier] ascending:YES grouping:YES];
+            [self makeSortOnColID:[colToGroup identifier] ascending:YES grouping:YES];
         }
         [self refreshKeepingSelections];
     }
