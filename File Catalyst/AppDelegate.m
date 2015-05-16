@@ -529,6 +529,49 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     return writeItemsToPasteboard(selectedFiles, pboard, types);
 }
 
+#pragma mark - NSMenuDelegate
+
+- (BOOL)menuHasKeyEquivalent:(NSMenu *)menu
+                    forEvent:(NSEvent *)event
+                      target:(id *)target
+                      action:(SEL *)action {
+    if ([event modifierFlags] & NSFunctionKeyMask) {
+        NSString *theArrow = [event charactersIgnoringModifiers];
+        unichar keyChar = 0;
+        if ( [theArrow length] == 1 ) {
+            keyChar = [theArrow characterAtIndex:0];
+            if ( keyChar == NSF1FunctionKey )
+                *action = @selector(toolbarInformation:);
+            else if ( keyChar == NSF2FunctionKey )
+                *action = @selector(toolbarRename:);
+            //else if ( keyChar == NSF3FunctionKey )
+            //    *action = @selector(toolbarRename:);
+            else if ( keyChar == NSF4FunctionKey )
+                *action = @selector(toolbarOpen:);
+            else if ( keyChar == NSF5FunctionKey )
+                *action = @selector(toolbarCopyTo:);
+            else if ( keyChar == NSF6FunctionKey )
+                *action = @selector(toolbarMoveTo:);
+            else if ( keyChar == NSF7FunctionKey )
+                *action = @selector(toolbarNewFolder:);
+            else if ( keyChar == NSF8FunctionKey )
+                *action = @selector(toolbarDelete:);
+            //else if ( keyChar == NSF9FunctionKey )
+            //    *action = @selector(toolbarD:);
+            //else if ( keyChar == NSF10FunctionKey )
+            //    *action = @selector(toolbarInformation:);
+            else
+                *action = NULL;
+        }
+    }
+    if (*action!=NULL) {
+        *target = self;
+        return YES;
+    }
+    else
+        return NO;
+}
+
 #pragma mark - Notifications
 
 /* Received when a complete refresh of views is needed */
@@ -1006,6 +1049,21 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         [(BrowserController*)[self selectedView] selectFirstRoot];
         [(BrowserController*)[self selectedView] refresh];
     }
+}
+
+- (IBAction)toolbarToggleFunctionKeys:(id)sender {
+    CGFloat constant;
+    if ([sender isSelectedForSegment:0]) {
+        NSRect newFrame = [self.FunctionBar frame];
+        constant = NSHeight(newFrame); // Creates space for the view
+        [self.FunctionBar setHidden:NO];
+    }
+    else {
+        constant = 0;
+        [self.FunctionBar setHidden:YES];
+    }
+    [[self SplitViewBottomLineConstraint] setConstant:constant];
+    [[self ContentSplitView] setNeedsDisplay:YES];
 }
 
 

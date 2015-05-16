@@ -11,7 +11,7 @@
 #import "FileCollection.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate, ParentProtocol> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate, ParentProtocol, NSMenuDelegate> {
     //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
@@ -20,6 +20,9 @@
     //__weak LeftDataSource *_RightDataSrc;
 }
 @property (unsafe_unretained) IBOutlet NSWindow *myWindow;
+
+@property (weak) IBOutlet NSView *myWindowView;
+
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
 @property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
@@ -28,6 +31,10 @@
 @property (weak) IBOutlet NSButton *buttonMoveTo;
 
 @property (weak) IBOutlet NSButton *statusCancelButton;
+
+@property (weak) IBOutlet NSBox *BottomLine;
+@property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
+@property (weak) IBOutlet NSView *FunctionBar;
 
 - (IBAction)FindDuplicates:(id)sender;
 
@@ -60,6 +67,7 @@
 - (IBAction)toolbarRefresh:(id)sender;
 - (IBAction)toolbarHome:(id)sender;
 
+- (IBAction)toolbarToggleFunctionKeys:(id)sender;
 
 - (IBAction)operationCancel:(id)sender;
 
