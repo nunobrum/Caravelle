@@ -4,6 +4,8 @@
 <dict>
 	<key>ApplicationBehaviour</key>
 	<integer>0</integer>
+	<key>ApplicationViewMode</key>
+	<integer>0</integer>
 	<key>KeyMappings</key>
 	<dict>
 		<key>cmdOpenInRight</key>
@@ -29,17 +31,17 @@
 	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
-	<key>BrowserLeftDisplayFoldersInTable</key>
-	<true/>
-	<key>BrowserRightDisplayFoldersInTable</key>
-	<true/>
 	<key>StoreAllowedURLs</key>
 	<true/>
+	<key>BrowserLeftHomeDir</key>
+	<string></string>
 	<key>LeftPreferences</key>
 	<dict>
 		<key>ViewType</key>
 		<integer>1</integer>
 	</dict>
+	<key>BrowserRightHomeDir</key>
+	<string></string>
 	<key>RightPreferences</key>
 	<dict>
 		<key>ViewType</key>

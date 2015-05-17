@@ -41,6 +41,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeBranch *_rootNodeSelected;
     TreeItem *_validatedDestinationItem;
     BOOL _didRegisterDraggedTypes;
+    BOOL _searchCellFixed;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
@@ -64,7 +65,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_viewType = BViewTypeInvalid; // This is an invalid view type. This forces the App to change it.
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
-
+    self->_searchCellFixed = NO;
     self->_detailedViewController = nil;
     self->tableViewController = nil;
     self->iconViewController = nil;
@@ -80,6 +81,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // Use the myPathPopDownMenu outlet to get the maximum tag number
     // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
     return self;
+}
+
+-(void) awakeFromNib {
+    if (_searchCellFixed==NO) {
+        NSButtonCell *searchCell = [self.myFilterText.selectedCell searchButtonCell];
+        if (searchCell!=nil) {
+            NSImage *filterImage = [NSImage imageNamed:@"FilterIcon16"];
+            [searchCell setImage:filterImage];
+            _searchCellFixed = YES;
+        }
+    }
 }
 
 
