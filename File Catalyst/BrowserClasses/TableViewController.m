@@ -32,7 +32,9 @@
 }
 @end
 
-@implementation TableViewController
+@implementation TableViewController {
+    BOOL _awakeFromNibConfigDone;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,14 +44,23 @@
 
 - (void)awakeFromNib
 {
-    
+    if (self->_awakeFromNibConfigDone==NO) {
+        [[self myTableView] setAutosaveName:[self.viewName stringByAppendingString:@"Table"]];
+        [[self myTableView] setAutosaveTableColumns:YES];
+        // Change the contextual Menu name
+        [self.contextualMenuCopyTo setTitle:[@"Copy to " stringByAppendingString: self->_twinName]];
+        [self.contextualMenuMoveTo setTitle:[@"Move to " stringByAppendingString: self->_twinName]];
+        self->_awakeFromNibConfigDone = YES;
+    }
 }
+
 - (void) initController {
     [super initController];
 #ifdef UPDATE_TREE
     self->_draggedItemsIndexSet = nil;
 #endif
     self->extendedSelection = nil;
+    self->_awakeFromNibConfigDone = NO;
 
     //To Get Notifications from the Table Header
 #ifdef COLUMN_NOTIFICATION
@@ -65,12 +76,6 @@
     return self->_myTableView;
 }
 
-- (void) setSaveName:(NSString *)saveName {
-    if (saveName) {
-        [[self myTableView] setAutosaveName:saveName];
-        [[self myTableView] setAutosaveTableColumns:YES];
-    }
-}
 
 /*
  -(id) getFileAtIndex:(NSUInteger)index {

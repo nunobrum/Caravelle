@@ -28,7 +28,15 @@ NSString *KEY_ICON = @"icon";
 @end
 
 
-@implementation IconViewController
+@implementation IconViewController {
+    BOOL _awakeFromNibConfigDone;
+}
+
+- (void) initController {
+    [super initController];
+    self->_awakeFromNibConfigDone = NO;
+}
+
 
 // -------------------------------------------------------------------------------
 //	awakeFromNib
@@ -37,6 +45,13 @@ NSString *KEY_ICON = @"icon";
 {
     //  Set observer for the selection of iconArrayController
     [self.iconArrayController addObserver:self forKeyPath:@"selectedObjects" options:NSKeyValueObservingOptionNew context:@"Selection Changed"];
+
+    if (self->_awakeFromNibConfigDone==NO) {
+        // Change the contextual Menu name
+        [self.contextualMenuCopyTo setTitle:[@"Copy to " stringByAppendingString: self->_twinName]];
+        [self.contextualMenuMoveTo setTitle:[@"Move to " stringByAppendingString: self->_twinName]];
+        self->_awakeFromNibConfigDone = YES;
+    }
 }
 
 

@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="contextualMenu" destination="q8e-qr-VOA" id="5Gn-F0-kWw"/>
                 <outlet property="myFilterText" destination="Lo2-4t-2Jl" id="ijU-KQ-eWf"/>
+                <outlet property="myGroupingPopDpwnButton" destination="H1P-9o-Im5" id="wbY-Ka-PDC"/>
                 <outlet property="myOutlineProgressIndicator" destination="6Ay-z1-oxB" id="Mxj-3o-FRc"/>
                 <outlet property="myOutlineView" destination="wsk-IH-oFI" id="lFn-8S-m0w"/>
                 <outlet property="myPathBarCell" destination="VZQ-Zq-Xa7" id="YTe-cZ-0Ww"/>
@@ -280,8 +281,8 @@
                         <action selector="mruBackForwardAction:" target="-2" id="3M5-dJ-RoV"/>
                     </connections>
                 </segmentedControl>
-                <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
-                    <rect key="frame" x="111" y="567" width="71" height="24"/>
+                <segmentedControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lBL-vj-lCz">
+                    <rect key="frame" x="144" y="567" width="71" height="24"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="1uP-Mj-FoI">
                         <font key="font" metaFont="system"/>
                         <segments>
@@ -293,42 +294,61 @@
                         <action selector="viewTypeSelection:" target="-2" id="DHC-Zf-uCu"/>
                     </connections>
                 </segmentedControl>
-                <segmentedControl toolTip="Turn ON or OFF the tree view" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
-                    <rect key="frame" x="69" y="567" width="38" height="24"/>
+                <segmentedControl toolTip="Turn ON or OFF the tree view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
+                    <rect key="frame" x="69" y="567" width="71" height="24"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="5mA-10-BVS">
                         <font key="font" metaFont="system"/>
                         <segments>
-                            <segment toolTip="Turn the Tree View On and Off" image="IconTreeView20" width="32" selected="YES"/>
+                            <segment toolTip="Tree View Visibility" image="IconTreeView20" width="32" selected="YES"/>
+                            <segment toolTip="Show Subdirectory Files" image="Tornado16" width="32">
+                                <nil key="label"/>
+                            </segment>
                         </segments>
                     </segmentedCell>
                     <connections>
                         <action selector="treeViewEnable:" target="-2" id="BoX-yJ-yQ5"/>
                     </connections>
                 </segmentedControl>
+                <popUpButton hidden="YES" toolTip="Grouping" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
+                    <rect key="frame" x="218" y="566" width="51" height="26"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" selectedItem="bjr-ZP-631" id="cCu-Xv-3GO">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="b4D-Sz-aUO">
+                            <items>
+                                <menuItem state="on" image="GrouppingOSX" hidden="YES" id="bjr-ZP-631"/>
+                                <menuItem title="Item 2" id="4iD-a3-XCy"/>
+                                <menuItem title="Item 3" id="yGs-8D-pjR"/>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                </popUpButton>
             </subviews>
             <constraints>
+                <constraint firstItem="Lo2-4t-2Jl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="H1P-9o-Im5" secondAttribute="trailing" constant="12" id="19N-mw-SGL"/>
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="1" id="1ga-yE-BZv"/>
                 <constraint firstItem="olD-ez-fNy" firstAttribute="leading" secondItem="Wu7-Ak-lRK" secondAttribute="trailing" constant="8" id="2Dh-eW-haS"/>
-                <constraint firstItem="Lo2-4t-2Jl" firstAttribute="baseline" secondItem="lBL-vj-lCz" secondAttribute="baseline" id="5eY-iw-02f"/>
-                <constraint firstItem="Wu7-Ak-lRK" firstAttribute="baseline" secondItem="Lo2-4t-2Jl" secondAttribute="baseline" id="7Gp-yT-X4A"/>
+                <constraint firstItem="H1P-9o-Im5" firstAttribute="leading" secondItem="lBL-vj-lCz" secondAttribute="trailing" constant="8" id="C6z-Vp-Vqs"/>
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="5Fc-gb-5JC" secondAttribute="bottom" constant="6" id="CrY-vp-fN5"/>
                 <constraint firstAttribute="trailing" secondItem="BA4-h9-PGe" secondAttribute="trailing" constant="1" id="Db9-BV-be0"/>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="top" secondItem="VMb-R6-UcF" secondAttribute="top" constant="10" id="GvC-9a-P9h"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="top" secondItem="Wu7-Ak-lRK" secondAttribute="bottom" constant="8" id="KSl-dA-qma"/>
-                <constraint firstItem="olD-ez-fNy" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" constant="-0.5" id="MTY-Xf-mzC"/>
+                <constraint firstItem="olD-ez-fNy" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" id="MTY-Xf-mzC"/>
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="tKW-QN-AmC" secondAttribute="bottom" constant="8" id="Saq-V9-NkH"/>
                 <constraint firstItem="Wu7-Ak-lRK" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="Wyv-PX-EZG"/>
-                <constraint firstItem="Lo2-4t-2Jl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="lBL-vj-lCz" secondAttribute="trailing" constant="12" id="Xih-Bn-3cc"/>
+                <constraint firstItem="Lo2-4t-2Jl" firstAttribute="centerY" secondItem="lBL-vj-lCz" secondAttribute="centerY" id="epa-o8-Qlo"/>
                 <constraint firstAttribute="trailing" secondItem="Lo2-4t-2Jl" secondAttribute="trailing" constant="12" id="h4m-2Z-PXg"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="hzk-jj-vBn"/>
                 <constraint firstAttribute="bottom" secondItem="BA4-h9-PGe" secondAttribute="bottom" constant="1" id="iS4-PA-gdW"/>
                 <constraint firstItem="5Fc-gb-5JC" firstAttribute="top" secondItem="Lo2-4t-2Jl" secondAttribute="bottom" constant="7" id="kk1-E4-YUf"/>
                 <constraint firstItem="5Fc-gb-5JC" firstAttribute="leading" secondItem="tKW-QN-AmC" secondAttribute="trailing" constant="8" id="mPY-Iu-fbN"/>
+                <constraint firstItem="Lo2-4t-2Jl" firstAttribute="centerY" secondItem="Wu7-Ak-lRK" secondAttribute="centerY" id="mb8-ET-djf"/>
+                <constraint firstItem="H1P-9o-Im5" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" id="oOn-CT-Pwj"/>
                 <constraint firstAttribute="trailing" secondItem="5Fc-gb-5JC" secondAttribute="trailing" constant="12" id="sVa-ZO-XHS"/>
                 <constraint firstItem="lBL-vj-lCz" firstAttribute="leading" secondItem="olD-ez-fNy" secondAttribute="trailing" constant="8" id="ymZ-Hc-sk4"/>
             </constraints>
         </customView>
-        <menu id="q8e-qr-VOA" userLabel="fileContextMenu">
+        <menu showsStateColumn="NO" id="q8e-qr-VOA" userLabel="fileContextMenu">
             <items>
                 <menuItem title="Get Info" tag="1" keyEquivalent="" id="3VP-FH-tZh">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -404,12 +424,13 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="KxG-bb-Ocm"/>
             </connections>
-            <point key="canvasLocation" x="139" y="133.5"/>
+            <point key="canvasLocation" x="480" y="123.5"/>
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
     </objects>
     <resources>
         <image name="GenericFolderIcon" width="512" height="512"/>
+        <image name="GrouppingOSX" width="15" height="16"/>
         <image name="IconTreeView20" width="20" height="20"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSIconViewTemplate" width="11" height="10"/>
@@ -417,5 +438,6 @@
         <image name="NSListViewTemplate" width="11" height="10"/>
         <image name="NSPathTemplate" width="13" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="Tornado16" width="16" height="16"/>
     </resources>
 </document>

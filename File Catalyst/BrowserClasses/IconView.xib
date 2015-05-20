@@ -9,6 +9,8 @@
         <customObject id="-2" userLabel="File's Owner" customClass="IconViewController">
             <connections>
                 <outlet property="collectionView" destination="8" id="42"/>
+                <outlet property="contextualMenuCopyTo" destination="86" id="2Bb-0k-5Pr"/>
+                <outlet property="contextualMenuMoveTo" destination="85" id="jH7-Gu-XuM"/>
                 <outlet property="iconArrayController" destination="16" id="50"/>
                 <outlet property="myProgressIndicator" destination="105" id="JbG-Ag-T3z"/>
                 <outlet property="view" destination="5" id="15"/>

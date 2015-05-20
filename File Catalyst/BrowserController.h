@@ -36,6 +36,7 @@ extern NSString *notificationCatalystRootUpdate;
 //@property (weak) (setter = setPathBar:) NSPathCell *PathBar;
 @property (strong) IBOutlet NSPopUpButton *myPathPopDownButton;
 @property (strong) IBOutlet NSMenu *myPathPopDownMenu;
+@property (strong) IBOutlet NSPopUpButton *myGroupingPopDpwnButton;
 
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 

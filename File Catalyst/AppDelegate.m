@@ -79,6 +79,16 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     
 }
 
+BOOL toggleMenuState(NSMenuItem *menui) {
+    NSInteger st = [menui state];
+    if (st == NSOnState)
+        st = NSOffState;
+    else
+        st = NSOnState;
+    [menui setState:st];
+    return st == NSOnState;
+}
+
 @interface AppDelegate (Privates)
 
 - (void)  refreshAllViews:(NSNotification*)theNotification;
@@ -268,6 +278,19 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
     applicationMode = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_APP_VIEW_MODE];
 
+    // Configuring the FunctionBar according to User Defaults
+    BOOL displayFunctionBar = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
+    [self.toolbarFunctionBarSelect setSelected:displayFunctionBar forSegment:0];
+    [self toolbarToggleFunctionKeys:self.toolbarFunctionBarSelect];
+    
+    // Setting the Menu with the correct state
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
+        [self.showHiddenFilesMenu setState:NSOnState];
+
+    // Setting the Menu with the correct state
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS])
+        [self.browseApplicationsMenu setState:NSOnState];
+
     if (applicationMode == ApplicationMode2Views) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
         [myRightView setParentController:self];
@@ -381,8 +404,10 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
         // Force a store of the User Defaults
         NSString *homepath = [[myLeftView treeNodeSelected] path];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
-        homepath = [[myRightView treeNodeSelected] path];
-        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        if (myRightView) {
+            homepath = [[myRightView treeNodeSelected] path];
+            [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        }
         BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
         if (!OK)
             NSLog(@"AppDelegate.shouldTerminate: Failed to store User Defaults");
@@ -571,6 +596,31 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     else
         return NO;
 }
+/*
+-(void) setValue:(id)value forKey:(NSString *)key {
+    if ([key isEqualToString:USER_DEF_SEE_HIDDEN_FILES]) {
+        if ([value isKindOfClass:[NSNumber class]])
+        [[NSUserDefaults standardUserDefaults] setBool:[value integerValue]==1 forKey:USER_DEF_SEE_HIDDEN_FILES];
+    }
+    else
+        [super setValue:value forKey:key];
+}
+
+- (id) valueForKey:(NSString *)key {
+    if ([key isEqualToString:USER_DEF_SEE_HIDDEN_FILES]) {
+        BOOL b=[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES];
+        NSInteger i;
+        if (b)
+            i = 1;
+        else
+            i = 0;
+        return [NSNumber numberWithInteger:i];
+    }
+    return [super valueForKey:key];
+}
+*/
+
+
 
 #pragma mark - Notifications
 
@@ -938,8 +988,9 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 
 - (void) updateFocus:(id)sender {
-    if (sender == myLeftView || sender == myRightView)
+    if (sender == myLeftView || sender == myRightView) {
         _selectedView = sender;
+    }
     else {
         NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
         assert(false);
@@ -1053,7 +1104,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
 - (IBAction)toolbarToggleFunctionKeys:(id)sender {
     CGFloat constant;
-    if ([sender isSelectedForSegment:0]) {
+    BOOL setting = [sender isSelectedForSegment:0];
+    if (setting) {
         NSRect newFrame = [self.FunctionBar frame];
         constant = NSHeight(newFrame); // Creates space for the view
         [self.FunctionBar setHidden:NO];
@@ -1064,6 +1116,8 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
     [[self SplitViewBottomLineConstraint] setConstant:constant];
     [[self ContentSplitView] setNeedsDisplay:YES];
+    // Reposition the value in the user defaults
+    [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
 }
 
 
@@ -1186,6 +1240,26 @@ NSArray *get_clipboard_files(NSPasteboard *clipboard) {
     }
     [self.ContentSplitView adjustSubviews];
     [self.ContentSplitView displayIfNeeded];
+}
+
+
+
+- (IBAction)orderBrowseApps:(id)sender {
+    BOOL state = toggleMenuState(sender);
+
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_BROWSE_APPS];
+    [self->myLeftView refresh];
+    if (self->myRightView!=nil)
+        [self->myRightView refresh];
+}
+
+- (IBAction)orderShowHiddenFiles:(id)sender {
+    BOOL state = toggleMenuState(sender);
+
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_SEE_HIDDEN_FILES];
+    [self->myLeftView refresh];
+    if (self->myRightView!=nil)
+        [self->myRightView refresh];
 }
 
 

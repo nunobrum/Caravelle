@@ -4,6 +4,8 @@
 <dict>
 	<key>ApplicationBehaviour</key>
 	<integer>0</integer>
+	<key>DisplayFunctionBar</key>
+	<true/>
 	<key>ApplicationViewMode</key>
 	<integer>0</integer>
 	<key>KeyMappings</key>

@@ -36,6 +36,14 @@
 @property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
 @property (weak) IBOutlet NSView *FunctionBar;
 
+// Menus
+@property (weak) IBOutlet NSMenuItem *showHiddenFilesMenu;
+@property (weak) IBOutlet NSMenuItem *browseApplicationsMenu;
+@property (weak) IBOutlet NSSegmentedControl *toolbarFunctionBarSelect;
+
+
+- (id) selectedView;
+
 - (IBAction)FindDuplicates:(id)sender;
 
 /* Toolbar Actions */
@@ -67,11 +75,14 @@
 - (IBAction)toolbarRefresh:(id)sender;
 - (IBAction)toolbarHome:(id)sender;
 
+
 - (IBAction)toolbarToggleFunctionKeys:(id)sender;
 
 - (IBAction)operationCancel:(id)sender;
 
 - (IBAction)orderPreferencePanel:(id)sender;
+- (IBAction)orderBrowseApps:(id)sender;
+- (IBAction)orderShowHiddenFiles:(id)sender;
 
 - (IBAction)cut:(id)sender;
 - (IBAction)copy:(id)sender;

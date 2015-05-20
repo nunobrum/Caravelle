@@ -35,7 +35,7 @@
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
     NSMutableArray *_displayedItems;
-
+    NSString * _twinName;
 }
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
@@ -45,12 +45,13 @@
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
 @property (readwrite, strong) NSMutableArray *sortAndGroupDescriptors;
-
+@property NSString *viewName;
 
 - (void) initController;
-- (void) setSaveName:(NSString*)saveName;
 - (void) setCurrentNode:(TreeBranch*)branch;
 - (TreeBranch*) currentNode;
+- (void) setName:(NSString*)viewName twinName:(NSString*)twinName;
+
 
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;

@@ -34,8 +34,9 @@
     
 }
 
--(void) setSaveName:(NSString *)saveName {
-
+-(void) setName:(NSString*)viewName twinName:(NSString*)twinName {
+    [self setViewName:viewName];
+    self->_twinName = twinName;
 }
 
 - (void) initController {

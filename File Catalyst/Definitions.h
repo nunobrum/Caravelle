@@ -69,9 +69,7 @@ extern const CFStringRef kTreeItemDropUTI;
 
 // User Definitions
 #define USER_DEF_LEFT_HOME @"BrowserLeftHomeDir"
-#define USER_DEF_LEFT_FOLDERS_ON_TABLE @"BrowserLeftDisplayFoldersInTable"
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
-#define USER_DEF_RIGHT_FOLDERS_ON_TABLE @"BrowserRightDisplayFoldersInTable"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
 #define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
@@ -79,9 +77,13 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used. Why ?
 #define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
+#define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
 
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
 
+#define SHOW_OPTION_HIDDEN_FILES_NO  0
+#define SHOW_OPTION_BROWSE_APP_NO   1
+#define SHOW_OPTION_FLAT_TREE_NO    2
 
 // These following definitions should be set accordingly to the Radio Buttons
 // on the behaviour panel on the User Preferences dialog.

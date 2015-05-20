@@ -41,7 +41,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeBranch *_rootNodeSelected;
     TreeItem *_validatedDestinationItem;
     BOOL _didRegisterDraggedTypes;
-    BOOL _searchCellFixed;
+    BOOL _awakeFromNibConfigDone;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
@@ -65,7 +65,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_viewType = BViewTypeInvalid; // This is an invalid view type. This forces the App to change it.
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
-    self->_searchCellFixed = NO;
+    self->_awakeFromNibConfigDone = NO;
     self->_detailedViewController = nil;
     self->tableViewController = nil;
     self->iconViewController = nil;
@@ -84,13 +84,19 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) awakeFromNib {
-    if (_searchCellFixed==NO) {
+    if (_awakeFromNibConfigDone==NO) {
+        if (self.myOutlineView==nil) return;
+        if (self.myFilterText.selectedCell==nil) return;
+
+        [[self myOutlineView] setAutosaveName:[self->_viewName stringByAppendingString:@"Outline"]];
+        // The Outline view has no customizable settings
+        [[self myOutlineView] setAutosaveTableColumns:YES];
+
         NSButtonCell *searchCell = [self.myFilterText.selectedCell searchButtonCell];
-        if (searchCell!=nil) {
-            NSImage *filterImage = [NSImage imageNamed:@"FilterIcon16"];
-            [searchCell setImage:filterImage];
-            _searchCellFixed = YES;
-        }
+        NSImage *filterImage = [NSImage imageNamed:@"FilterIcon16"];
+        [searchCell setImage:filterImage];
+
+        self->_awakeFromNibConfigDone = YES;
     }
 }
 
@@ -1007,15 +1013,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
     [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
 
-
-    [[self myOutlineView] setAutosaveName:[twinName stringByAppendingString:@"Outline"]];
-    // The Outline view has no customizable settings
-    [[self myOutlineView] setAutosaveTableColumns:YES];
-
     if (twinName==nil) { // there is no twin view
         self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
-        self.titleCopyTo = @"Copy to ...";
-        self.titleMoveTo = @"Move to ...";
+        self.titleCopyTo = @"Copy to...";
+        self.titleMoveTo = @"Move to...";
         // TODO:!!! Make the copy To Dialog such like in Total Commander
     }
     else {
@@ -1075,9 +1076,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 tableViewController = [[TableViewController alloc] initWithNibName:@"TableViewController" bundle:nil];
                 [tableViewController initController];
                 [tableViewController setParentController:self];
-                [tableViewController setSaveName:[self.viewName stringByAppendingString:@"Table"]];
+                [tableViewController setName:self.viewName twinName:self->_twinName];
             }
             newController = tableViewController;
+            [self.myGroupingPopDpwnButton setHidden:NO];
             break;
         case BViewTypeBrowser:
             break;
@@ -1086,9 +1088,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 iconViewController = [[IconViewController alloc] initWithNibName:@"IconView" bundle:nil];
                 [iconViewController initController];
                 [iconViewController setParentController:self];
-                [iconViewController setSaveName:[self.viewName stringByAppendingString:@"Icons"]];
+                [iconViewController setName:self.viewName twinName:self->_twinName];
             }
             newController = iconViewController;
+            [self.myGroupingPopDpwnButton setHidden:YES];
             break;
         default:
             break;

@@ -7,6 +7,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TableViewController">
             <connections>
+                <outlet property="contextualMenuCopyTo" destination="Ehd-zP-VWp" id="NOK-ns-mu0"/>
+                <outlet property="contextualMenuMoveTo" destination="5E0-UX-dgt" id="rKE-XG-Wba"/>
                 <outlet property="myProgressIndicator" destination="K8r-c9-Kil" id="qYt-eL-7qu"/>
                 <outlet property="myTableView" destination="A5N-yz-IZF" id="DfU-QL-1qJ"/>
                 <outlet property="myTableViewHeader" destination="FSa-Dd-nNg" id="Y0h-98-sVl"/>
