@@ -47,9 +47,7 @@ NSString *KEY_ICON = @"icon";
     [self.iconArrayController addObserver:self forKeyPath:@"selectedObjects" options:NSKeyValueObservingOptionNew context:@"Selection Changed"];
 
     if (self->_awakeFromNibConfigDone==NO) {
-        // Change the contextual Menu name
-        [self.contextualMenuCopyTo setTitle:[@"Copy to " stringByAppendingString: self->_twinName]];
-        [self.contextualMenuMoveTo setTitle:[@"Move to " stringByAppendingString: self->_twinName]];
+        // TODO: !! Test if this is executed more
         self->_awakeFromNibConfigDone = YES;
     }
 }

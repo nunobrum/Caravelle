@@ -47,10 +47,6 @@
     if (self->_awakeFromNibConfigDone==NO) {
         [[self myTableView] setAutosaveName:[self.viewName stringByAppendingString:@"Table"]];
         [[self myTableView] setAutosaveTableColumns:YES];
-        // Change the contextual Menu name
-        [self.contextualMenuCopyTo setTitle:[@"Copy to " stringByAppendingString: self->_twinName]];
-        [self.contextualMenuMoveTo setTitle:[@"Move to " stringByAppendingString: self->_twinName]];
-        self->_awakeFromNibConfigDone = YES;
     }
 }
 

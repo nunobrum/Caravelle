@@ -22,9 +22,6 @@
 
 @property (strong) IBOutlet NSLayoutConstraint *viewWidthConstraint;
 
-@property (strong) IBOutlet NSMenuItem *contextualMenuCopyTo;
-@property (strong) IBOutlet NSMenuItem *contextualMenuMoveTo;
-
 
 - (IBAction) rightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;

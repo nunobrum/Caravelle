@@ -254,12 +254,16 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="aSn-Kl-hLq"/>
+                        <binding destination="-2" name="enabled" keyPath="self.parentController.contextualToMenusEnabled" id="Oli-yZ-ciu"/>
+                        <binding destination="-2" name="title" keyPath="self.parentController.titleCopyTo" id="qGT-O1-IAG"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="5E0-UX-dgt">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="Z2D-s6-CdA"/>
+                        <binding destination="-2" name="enabled" keyPath="self.parentController.contextualToMenusEnabled" id="ZV7-pW-WXt"/>
+                        <binding destination="-2" name="title" keyPath="self.parentController.titleMoveTo" id="lxv-2o-qgI"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="NqW-U4-RPm"/>
@@ -294,6 +298,7 @@
             </items>
             <point key="canvasLocation" x="815" y="568.5"/>
         </menu>
+        <userDefaultsController representsSharedInstance="YES" id="V48-0t-DmB"/>
     </objects>
     <resources>
         <image name="GenericDocumentIcon" width="512" height="512"/>

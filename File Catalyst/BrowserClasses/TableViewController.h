@@ -17,9 +17,6 @@
 
 @property (strong) IBOutlet CustomTableHeaderView *myTableViewHeader;
 @property (strong) IBOutlet NSProgressIndicator *myProgressIndicator;
-@property (strong) IBOutlet NSMenuItem *contextualMenuCopyTo;
-@property (strong) IBOutlet NSMenuItem *contextualMenuMoveTo;
-
 
 /*
  * Table Data Source Protocol

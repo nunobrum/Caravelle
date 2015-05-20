@@ -60,12 +60,16 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="94"/>
+                        <binding destination="-2" name="enabled" keyPath="self.parentController.contextualToMenusEnabled" id="7OG-ml-tSP"/>
+                        <binding destination="-2" name="title" keyPath="self.parentController.titleCopyTo" id="QVD-ex-Fjm"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="85">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="95"/>
+                        <binding destination="-2" name="enabled" keyPath="self.parentController.contextualToMenusEnabled" id="t5L-Ns-GQw"/>
+                        <binding destination="-2" name="title" keyPath="self.parentController.titleMoveTo" id="71u-op-eSm"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="84"/>
