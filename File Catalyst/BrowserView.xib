@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
     </dependencies>
     <objects>
@@ -18,8 +17,8 @@
                 <outlet property="myPathPopDownMenu" destination="jSM-vN-xDZ" id="z2I-H3-ZG1"/>
                 <outlet property="mySplitView" destination="BA4-h9-PGe" id="p3p-5Y-TsP"/>
                 <outlet property="myViewSelectorButton" destination="lBL-vj-lCz" id="WME-0Z-T0r"/>
-                <outlet property="treeEnableSwitch" destination="olD-ez-fNy" id="3bb-hz-caP"/>
                 <outlet property="view" destination="VMb-R6-UcF" id="lVN-fP-2bR"/>
+                <outlet property="viewOptionsSwitches" destination="olD-ez-fNy" id="hfc-iY-sUk"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
@@ -306,7 +305,7 @@
                         </segments>
                     </segmentedCell>
                     <connections>
-                        <action selector="treeViewEnable:" target="-2" id="BoX-yJ-yQ5"/>
+                        <action selector="optionsSwitchSelect:" target="-2" id="2X9-ep-gXl"/>
                     </connections>
                 </segmentedControl>
                 <popUpButton hidden="YES" toolTip="Grouping" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">

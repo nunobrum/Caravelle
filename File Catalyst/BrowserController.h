@@ -43,7 +43,7 @@ extern NSString *notificationCatalystRootUpdate;
 @property (strong) IBOutlet NSSegmentedControl *myViewSelectorButton;
 
 @property (strong) IBOutlet NSSplitView *mySplitView;
-@property (strong) IBOutlet NSSegmentedControl *treeEnableSwitch;
+@property (strong) IBOutlet NSSegmentedControl *viewOptionsSwitches;
 
 @property (strong) IBOutlet NSMenu *contextualMenu;
 
@@ -87,7 +87,7 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
 //- (IBAction) filenameDidChange:(id)sender;
-- (IBAction) treeViewEnable:(id)sender;
+- (IBAction) optionsSwitchSelect:(id)sender;
 - (IBAction) viewTypeSelection:(id)sender;
 - (IBAction) mruBackForwardAction:(id)sender;
 

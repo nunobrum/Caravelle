@@ -43,10 +43,15 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(FileCollection*) filesInNode;
 -(FileCollection*) filesInBranch;
 -(NSMutableArray*) itemsInNode;
--(NSMutableArray*) itemsInBranch;
+-(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) leafsInNode;
--(NSMutableArray*) leafsInBranch;
+-(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) branchesInNode;
+
+-(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate*)filter;
+-(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate*)filter;
+-(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
+-(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 
 -(BOOL) isExpandable;
 

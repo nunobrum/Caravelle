@@ -10,8 +10,8 @@
 
 @interface TreeBranch( PrivateMethods )
 
--(void) _harvestItemsInBranch:(NSMutableArray*)collector;
--(void) _harvestLeafsInBranch:(NSMutableArray*)collector;
+-(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
+-(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;;
 -(TreeItem*) _addURLnoRecurr:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
 -(void) _setChildren:(NSMutableArray*) children;

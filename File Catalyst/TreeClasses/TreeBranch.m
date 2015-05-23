@@ -741,20 +741,48 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NULL;
 }
 
--(void) _harvestItemsInBranch:(NSMutableArray*)collector {
+-(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate *)filter {
     @synchronized(self) {
-        [collector addObjectsFromArray: self->_children];
-        for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch) {
-                [(TreeBranch*)item _harvestItemsInBranch: collector];
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        if (filter==nil)
+            [answer addObjectsFromArray:self->_children];
+        else
+            [answer addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];
+        return answer;
+    }
+    return NULL;
+}
+
+-(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
+    @synchronized(self) {
+        if (filter!=nil) {
+            [collector addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];
+        }
+        else {
+            [collector addObjectsFromArray: self->_children];
+        }
+        if (depth > 1) {
+            for (TreeItem *item in self->_children) {
+                if ([item itemType] == ItemTypeBranch) {
+                    [(TreeBranch*)item _harvestItemsInBranch: collector depth:depth-1 filter:filter];
+                }
             }
         }
     }
 }
--(NSMutableArray*) itemsInBranch {
+-(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestItemsInBranch:answer];
+        [self _harvestItemsInBranch:answer depth:depth filter:nil];
+        return answer; // Pending Implementation
+    }
+    return nil;
+}
+
+-(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+    @synchronized(self) {
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        [self _harvestItemsInBranch:answer depth:depth  filter:filter];
         return answer; // Pending Implementation
     }
     return nil;
@@ -773,22 +801,45 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
--(void) _harvestLeafsInBranch:(NSMutableArray*)collector {
+-(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate *)filter {
+    @synchronized(self) {
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        for (TreeItem *item in self->_children) {
+            if ([item itemType] == ItemTypeLeaf && (filter==nil || [filter evaluateWithObject:item])) {
+                [answer addObject:item];
+            }
+        }
+        return answer;
+    }
+    return nil;
+}
+
+-(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
+    if (depth ==0) return;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
             if ([item itemType] == ItemTypeBranch) {
-                [(TreeBranch*)item _harvestLeafsInBranch: collector];
+                [(TreeBranch*)item _harvestLeafsInBranch: collector depth:depth-1 filter:filter];
             }
-            else if ([item itemType] == ItemTypeLeaf) {
+            else if ([item itemType] == ItemTypeLeaf && (filter==nil || [filter evaluateWithObject:item])) {
                 [collector addObject:item];
             }
         }
     }
 }
--(NSMutableArray*) leafsInBranch {
+-(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestLeafsInBranch: answer];
+        [self _harvestLeafsInBranch: answer depth:depth filter:nil];
+        return answer; // Pending Implementation
+    }
+    return nil;
+}
+
+-(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+    @synchronized(self) {
+        NSMutableArray *answer = [[NSMutableArray new] init];
+        [self _harvestLeafsInBranch: answer depth:depth filter:filter];
         return answer; // Pending Implementation
     }
     return nil;

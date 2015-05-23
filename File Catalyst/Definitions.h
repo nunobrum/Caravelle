@@ -99,6 +99,9 @@ extern const CFStringRef kTreeItemDropUTI;
 #define BROWSER_TABLE_VIEW_INVALIDATED_ROW -2
 
 
+#define BROWSER_VIEW_OPTION_TREE_ENABLE  0
+#define BROWSER_VIEW_OPTION_FLAT_SUBDIRS 1
+
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
 extern id appTreeManager;

@@ -233,34 +233,57 @@
 
 -(NSMutableArray*) itemsToDisplay {
     NSMutableArray *tableData = nil;
-    /* Always uses the _treeNodeSelected property to manage the Table View */
-    if ([self.currentNode itemType] == ItemTypeBranch){
-        if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-            tableData = [self.currentNode itemsInBranch];
-        }
-        else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
-            tableData = [self.currentNode leafsInBranch];
-        }
-        else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-            tableData = [self.currentNode itemsInNode];
-        }
-        else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-            tableData = [self.currentNode leafsInNode];
-        }
+    /* Always uses the self.currentNode property to manage the Table View */
+    // Get the depth configuration
+    NSInteger iDepth = NSIntegerMax;
 
+    if ([self.currentNode itemType] == ItemTypeBranch){
         /* if the filter is empty, doesn't filter anything */
         if (_filterText!=nil && [_filterText length]!=0) {
-            /* Create the array of indexes to remove/hide/disable*/
-            NSMutableIndexSet *tohide = [[NSMutableIndexSet new] init];
-
-            NSInteger i = 0;
-            for (TreeItem *item in tableData){
-                NSRange result = [[item name] rangeOfString:_filterText];
-                if (NSNotFound==result.location)
-                    [tohide addIndex:i];
-                i++;
+            NSPredicate *predicate;
+            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"*=~|&<>"];
+            if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
+                // TODO:!!! Tokenize the filter field to make inteligent searches
+                @try {
+                    predicate = [NSPredicate predicateWithFormat:self.filterText];
+                }
+                @catch (NSException *exception) {
+                    predicate = nil;
+                }
+                /*@finally {}*/
             }
-            [tableData removeObjectsAtIndexes: tohide];
+            else {
+                NSString *attributeName  = @"name";
+                NSString *attributeValue = [NSString stringWithFormat:@"*%@*", self.filterText];
+                predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
+                               attributeName, attributeValue];
+            }
+            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
+            }
+            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
+            }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
+            }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
+            }
+        }
+        else {
+            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
+            }
+            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
+            }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInNode];
+            }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInNode];
+            }
         }
 
         // Sort Data

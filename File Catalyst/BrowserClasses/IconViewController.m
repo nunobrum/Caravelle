@@ -28,13 +28,10 @@ NSString *KEY_ICON = @"icon";
 @end
 
 
-@implementation IconViewController {
-    BOOL _awakeFromNibConfigDone;
-}
+@implementation IconViewController
 
 - (void) initController {
     [super initController];
-    self->_awakeFromNibConfigDone = NO;
 }
 
 
@@ -45,11 +42,6 @@ NSString *KEY_ICON = @"icon";
 {
     //  Set observer for the selection of iconArrayController
     [self.iconArrayController addObserver:self forKeyPath:@"selectedObjects" options:NSKeyValueObservingOptionNew context:@"Selection Changed"];
-
-    if (self->_awakeFromNibConfigDone==NO) {
-        // TODO: !! Test if this is executed more
-        self->_awakeFromNibConfigDone = YES;
-    }
 }
 
 

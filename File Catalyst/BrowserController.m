@@ -217,7 +217,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // Use this notfication to set the select state of the button
     NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
     BOOL collapsed = [self->_mySplitView isSubviewCollapsed:firstView];
-    [self->_treeEnableSwitch setSelected:!collapsed forSegment:0];
+    [self.viewOptionsSwitches setSelected:!collapsed forSegment:0];
     //NSLog(@"View:%@ splitViewDidResizeSubiews",_viewName);
 }
 
@@ -604,7 +604,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
              that was called prior to this method will update _treeNodeSelected. */
             _treeNodeSelected = nil;
             [self selectFolderByItem:node];
-            [[self detailedViewController] refresh];
+            [self.detailedViewController refresh];
         }
         else // TODO:! When other types are allowed in the tree view this needs to be completed
             NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
@@ -621,26 +621,38 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 }
 
-- (IBAction)treeViewEnable:(id)sender {
-    BOOL treeEnable = [self->_treeEnableSwitch isSelectedForSegment:0];
-    // TODO:! Animate collapsing and showing of the treeView
-    if (treeEnable) {
-        // Adding the tree view
-        [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
-        //[self->_myTreeViewEnableButton setSelected:NO forSegment:0];
+- (IBAction)optionsSwitchSelect:(id)sender {
+    NSInteger selectedSegment = [sender selectedSegment];
+    BOOL isSelected = [self.viewOptionsSwitches isSelectedForSegment:selectedSegment];
+    if (selectedSegment==BROWSER_VIEW_OPTION_TREE_ENABLE) {
+        // TODO:! Animate collapsing and showing of the treeView
+        if (isSelected) {
+            // Adding the tree view
+            [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
+            //[self->_myTreeViewEnableButton setSelected:NO forSegment:0];
+        }
+        else {
+            // Collapsing the tree view
+            [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
+            //[self->_myTreeViewEnableButton setSelected:YES forSegment:0];
+        }
     }
-    else {
-        // Collapsing the tree view
-        [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
-        //[self->_myTreeViewEnableButton setSelected:YES forSegment:0];
+    else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
+        [self.detailedViewController setDisplayFilesInSubdirs:isSelected];
+        [self.detailedViewController refreshKeepingSelections];
     }
+    else
+        NSAssert(NO, @"Invalid Segment Number");
 }
 
 - (IBAction)viewTypeSelection:(id)sender {
     NSInteger newType = [(NSSegmentedControl*)sender selectedSegment ];
     [self setViewType:newType];
-    [[self detailedViewController] setCurrentNode:_treeNodeSelected];
-    [[self detailedViewController] refresh];
+    [self.detailedViewController setDisplayFilesInSubdirs:
+     [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS]
+     ];
+    [self.detailedViewController setCurrentNode:_treeNodeSelected];
+    [self.detailedViewController refresh];
 }
 
 - (IBAction)mruBackForwardAction:(id)sender {
@@ -858,7 +870,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         _rootNodeSelected = nil;
                         // The path bar and pop menu should be updated accordingly.
                         [self setPathBarToItem:nil];
-                        [[self detailedViewController] refresh];
+                        [self.detailedViewController refresh];
                         [self.myOutlineView reloadData];
 
                     }
@@ -942,7 +954,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
         else if ([key isEqualToString:@"\x19"]) {
-            if ((self.focusedView == [self.detailedViewController containerView]) && ([self.treeEnableSwitch isSelectedForSegment:0])) {
+            if ((self.focusedView == [self.detailedViewController containerView]) && ([self.viewOptionsSwitches isSelectedForSegment:0])) {
                 [self focusOnFirstView];
             }
             else {
@@ -970,7 +982,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* This routine is serving as after load initialization */
 
 -(void) focusOnFirstView {
-    if ([_treeEnableSwitch isSelectedForSegment:0]) {
+    if ([self.viewOptionsSwitches isSelectedForSegment:0]) {
         // The Tree Outline View is selected
         if ([[_myOutlineView selectedRowIndexes] count]==0) {
             [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
@@ -996,7 +1008,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) focusOnPreviousView:(id)sender {
-    if (sender == _myOutlineView || [_treeEnableSwitch isSelectedForSegment:0]==NO) {
+    if (sender == _myOutlineView || [self.viewOptionsSwitches isSelectedForSegment:0]==NO) {
         [self.parentController focusOnPreviousView:self];
     }
     else {
@@ -1331,7 +1343,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         _rootNodeSelected = root;
         [self setPathBarToItem:root];
         [self outlineSelectExpandNode:root];
-        [[self detailedViewController] refresh];
+        [self.detailedViewController refresh];
         return root;
     }
     return NULL;
