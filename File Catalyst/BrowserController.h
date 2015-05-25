@@ -50,6 +50,7 @@ extern NSString *notificationCatalystRootUpdate;
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
 @property (strong) NodeViewController *detailedViewController;
+@property (strong) NSOperationQueue *browserOperationQueue;
 
 
 @property NSString *titleCopyTo;

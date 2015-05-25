@@ -85,6 +85,9 @@
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
         [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
     }
+    else if ([keyPath isEqualToString:kvoTreeBranchPropertySize]) {
+        [self performSelectorOnMainThread:@selector(reloadSize:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+    }
 }
 
 -(void) observeItem:(TreeItem*)item {
@@ -112,6 +115,10 @@
 
 -(void) reloadItem:(id)object {
     NSAssert(NO, @"NodeViewController.reloadItem: This method needs to be overriden");
+}
+
+-(void) reloadSize:(id)object {
+    NSAssert(NO, @"NodeViewController.reloadSize: This method needs to be overriden");
 }
 
 -(BOOL) startEditItemName:(TreeItem*)item {

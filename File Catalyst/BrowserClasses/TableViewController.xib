@@ -62,6 +62,7 @@
                                                         </textFieldCell>
                                                         <connections>
                                                             <action selector="filenameDidChange:" target="-2" id="M2j-1j-iZL"/>
+                                                            <binding destination="dIu-fx-2y5" name="toolTip" keyPath="objectValue.name" id="yXq-SJ-Y8X"/>
                                                             <outlet property="delegate" destination="-2" id="xOw-qC-tzk"/>
                                                         </connections>
                                                     </textField>
@@ -123,7 +124,7 @@
                                         </textFieldCell>
                                         <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
                                         <prototypeCellViews>
-                                            <tableCellView identifier="COL_SIZE" id="aCh-bG-JZO">
+                                            <tableCellView identifier="COL_SIZE" id="aCh-bG-JZO" customClass="SizeTableCellView">
                                                 <rect key="frame" x="160" y="1" width="100" height="17"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
@@ -135,12 +136,18 @@
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                         </textFieldCell>
                                                     </textField>
+                                                    <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" displayedWhenStopped="NO" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="x72-n7-00j">
+                                                        <rect key="frame" x="84" y="0.0" width="16" height="16"/>
+                                                    </progressIndicator>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstItem="2On-Fv-VKg" firstAttribute="leading" secondItem="aCh-bG-JZO" secondAttribute="leading" constant="3" id="TI3-5b-ahs"/>
                                                     <constraint firstItem="2On-Fv-VKg" firstAttribute="centerY" secondItem="aCh-bG-JZO" secondAttribute="centerY" id="diA-HA-cnz"/>
+                                                    <constraint firstAttribute="centerY" secondItem="x72-n7-00j" secondAttribute="centerY" id="s4v-hE-vXB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="x72-n7-00j" secondAttribute="trailing" id="xi4-cM-RLB"/>
                                                 </constraints>
                                                 <connections>
+                                                    <outlet property="ongoing" destination="x72-n7-00j" id="mZu-Yo-QmG"/>
                                                     <outlet property="textField" destination="2On-Fv-VKg" id="5LG-3n-w3q"/>
                                                 </connections>
                                             </tableCellView>

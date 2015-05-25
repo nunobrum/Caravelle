@@ -31,6 +31,8 @@
 	<false/>
 	<key>BrowseHiddenFiles</key>
 	<false/>
+	<key>CalculateFolderSizes</key>
+	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
 	<key>StoreAllowedURLs</key>

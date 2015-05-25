@@ -53,6 +53,7 @@
 		3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */; };
 		3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E91ACFCE7400E09A85 /* TableViewController.m */; };
 		3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */; };
+		3CEF0AAE1B11A3FA00FB4F7A /* SizeTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */; };
 		3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */; };
 		3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */; };
 		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
@@ -173,6 +174,8 @@
 		3CEB61EA1ACFCE7400E09A85 /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewController.h; path = BrowserClasses/TableViewController.h; sourceTree = "<group>"; };
 		3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeViewController.h; path = BrowserClasses/NodeViewController.h; sourceTree = "<group>"; };
 		3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeViewController.m; path = BrowserClasses/NodeViewController.m; sourceTree = "<group>"; };
+		3CEF0AAC1B11A3FA00FB4F7A /* SizeTableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SizeTableCellView.h; sourceTree = "<group>"; };
+		3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SizeTableCellView.m; sourceTree = "<group>"; };
 		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
 		3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesDialog.m; sourceTree = "<group>"; };
 		3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserPreferencesDialog.xib; sourceTree = "<group>"; };
@@ -427,6 +430,8 @@
 				3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */,
 				3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */,
 				3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */,
+				3CEF0AAC1B11A3FA00FB4F7A /* SizeTableCellView.h */,
+				3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */,
 			);
 			name = TableView;
 			sourceTree = "<group>";
@@ -637,6 +642,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3CEF0AAE1B11A3FA00FB4F7A /* SizeTableCellView.m in Sources */,
 				3C29464D18F9B87C002B633C /* MD5.c in Sources */,
 				3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */,
 				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,

@@ -64,7 +64,7 @@ NSString* keyForColID(NSString* colID) {
 }
 
 -(void) groupSelect:(id) object {
-    NSLog(@"Send notification for start group");
+    //NSLog(@"Send notification for start group");
     NSNumber *colClicked = [NSNumber numberWithInteger:self->columnClicked];
     NSDictionary *userinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               colClicked, kReferenceViewKey,

@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "NodeViewController.h"
 #import "CustomTableHeaderView.h"
+#import "SizeTableCellView.h"
 #import "BrowserTableView.h"
 
 @interface TableViewController : NodeViewController <NodeViewProtocol, NSTableViewDataSource, NSTableViewDelegate>

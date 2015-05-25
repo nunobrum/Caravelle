@@ -285,11 +285,15 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     
     // Setting the Menu with the correct state
     if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
-        [self.showHiddenFilesMenu setState:NSOnState];
+        [self.menuShowHiddenFilesMenu setState:NSOnState];
 
     // Setting the Menu with the correct state
     if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS])
-        [self.browseApplicationsMenu setState:NSOnState];
+        [self.menuBrowseApplicationsMenu setState:NSOnState];
+
+    // Setting the Menu with the correct state
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES])
+        [self.menuCalculateFolderSizes setState:NSOnState];
 
     if (applicationMode == ApplicationMode2Views) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -1261,6 +1265,17 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     if (self->myRightView!=nil)
         [self->myRightView refresh];
 }
+
+- (IBAction)orderCalculateFolderSizes:(id)sender {
+    BOOL state = toggleMenuState(sender);
+
+    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_CALCULATE_SIZES];
+    [self->myLeftView refresh];
+    if (self->myRightView!=nil)
+        [self->myRightView refresh];
+}
+
+
 
 
 #pragma mark Menu Validation

@@ -34,7 +34,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     id _focusedView; // Contains the currently selected view
     id _contextualFocus; // Contains the element used for contextual menus
     NSMutableArray *_observedVisibleItems;
-    NSOperationQueue *_browserOperationQueue;
     /* Internal Storage for Drag and Drop Operations */
     NSDragOperation _validatedOperation; // Passed from Validate Drop to Accept Drop Method
     TreeBranch *_treeNodeSelected;

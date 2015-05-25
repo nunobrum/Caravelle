@@ -78,6 +78,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
+#define USER_DEF_CALCULATE_SIZES @"CalculateFolderSizes"
 
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
 

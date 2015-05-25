@@ -11,6 +11,7 @@
 #import "FileCollection.h"
 
 extern NSString *const kvoTreeBranchPropertyChildren;
+extern NSString *const kvoTreeBranchPropertySize;
 //extern NSString *const kvoTreeBranchReleased;
 
 extern NSString* commonPathFromItems(NSArray* itemArray);
@@ -19,6 +20,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 @protected
     NSMutableArray *_children;
+    long long allocated_size;
 }
 
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
@@ -75,6 +77,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(BOOL) needsRefresh;
 -(void) refreshContentsOnQueue: (NSOperationQueue *) queue;
 -(void) forceRefreshOnBranch;
+-(void) calculateSizeOnQueue:(NSOperationQueue*) queue;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

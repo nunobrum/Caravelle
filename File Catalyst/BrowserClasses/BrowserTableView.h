@@ -10,6 +10,7 @@
 
 #define COL_FILENAME @"COL_NAME"
 #define COL_TEXT_ONLY @"COL_TEXT"
+#define COL_SIZE      @"COL_SIZE"
 #define ROW_GROUP @"GROUP"
 
 #define GROUP_SORT_ASCENDING  0

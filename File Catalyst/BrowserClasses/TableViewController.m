@@ -14,6 +14,7 @@
 #import "TreeLeaf.h"
 #import "PasteboardUtils.h"
 #import "NodeSortDescriptor.h"
+#import "BrowserController.h"
 
 //#define COL_DATE_MOD @"COL_DATE_MODIFIED"
 //#define COL_SIZE     @"COL_SIZE"
@@ -144,9 +145,14 @@
         }
 
         else { // All other cases are handled here
+            if ([identifier isEqualToString:COL_SIZE]) {
+                cellView = [aTableView makeViewWithIdentifier:COL_SIZE owner:self];
+                [((SizeTableCellView*)cellView)  stopAnimation];
 
+            }
+            else
             // We pass us as the owner so we can setup target/actions into this main controller object
-            cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
+                cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
 
             NSDictionary *colControl = [columnInfo() objectForKey:identifier];
             if (colControl!=nil) { // The column exists
@@ -180,8 +186,17 @@
                             cellView.textField.objectValue = @"no transformer found";
                     }
                 }
-                else
-                    cellView.textField.objectValue = @"--";
+                else {
+                    // If its the filesize and it wasn't found, ask for
+                    if ([theFile itemType]==ItemTypeBranch && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                        [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
+                        [((SizeTableCellView*)cellView)  startAnimation];
+                        [(TreeBranch*)theFile calculateSizeOnQueue:[(BrowserController*)[self parentController] browserOperationQueue]];
+                    }
+                    else
+                        cellView.textField.objectValue = @"--";
+
+                }
             }
             else {
                 cellView.textField.objectValue = @"Invalid Column";
@@ -508,6 +523,21 @@
             [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
         }
     }
+}
+
+-(void) reloadSize:(id) object {
+    if (object != self.currentNode) { // if its not the node, then it could be a table element
+        NSInteger rowToReload = [self->_displayedItems indexOfObject:object];
+        if (rowToReload >=0  && rowToReload!=NSNotFound) {
+            NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
+            NSInteger colSize = [self.myTableView columnWithIdentifier:@"COL_SIZE"];
+            NSRange columnsRange = {colSize, 1 };
+            NSIndexSet *columnIndexes = [NSIndexSet indexSetWithIndexesInRange:columnsRange];
+            [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
+        }
+    }
+    // Now the observe can be removed
+    [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
 }
 
 - (void) setCurrentNode:(TreeBranch*)branch {

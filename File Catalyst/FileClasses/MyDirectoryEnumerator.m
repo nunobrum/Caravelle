@@ -9,7 +9,7 @@
 #import "MyDirectoryEnumerator.h"
 
 NSArray *urlKeyFieldsToStore() {
-    NSArray * URL_KEY_FIELDS = nil;
+    static NSArray * URL_KEY_FIELDS = nil;
     if (URL_KEY_FIELDS==nil)
         URL_KEY_FIELDS = [NSArray arrayWithObjects:
                           NSURLNameKey,
@@ -45,12 +45,9 @@ NSArray *urlKeyFieldsToStore() {
         dirEnumOptions |= NSDirectoryEnumerationSkipsHiddenFiles;
     }
 
-    if (dirEnumOptions==0)  {
-        NSLog(@"MyDirectoryEnumerator.initWithMode: - No options set in the Enumerator");
-    }
-    NSFileManager *localFileManager=[[NSFileManager alloc] init];
 
-
+    //NSFileManager *localFileManager=[[NSFileManager alloc] init];
+    NSFileManager *localFileManager = [NSFileManager defaultManager];
 
 
     self = (MyDirectoryEnumerator*)[localFileManager enumeratorAtURL:directoryToScan

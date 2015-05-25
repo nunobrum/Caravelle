@@ -37,8 +37,10 @@
 @property (weak) IBOutlet NSView *FunctionBar;
 
 // Menus
-@property (weak) IBOutlet NSMenuItem *showHiddenFilesMenu;
-@property (weak) IBOutlet NSMenuItem *browseApplicationsMenu;
+@property (weak) IBOutlet NSMenuItem *menuShowHiddenFilesMenu;
+@property (weak) IBOutlet NSMenuItem *menuBrowseApplicationsMenu;
+@property (weak) IBOutlet NSMenuItem *menuCalculateFolderSizes;
+
 @property (weak) IBOutlet NSSegmentedControl *toolbarFunctionBarSelect;
 
 
@@ -83,6 +85,8 @@
 - (IBAction)orderPreferencePanel:(id)sender;
 - (IBAction)orderBrowseApps:(id)sender;
 - (IBAction)orderShowHiddenFiles:(id)sender;
+- (IBAction)orderCalculateFolderSizes:(id)sender;
+
 
 - (IBAction)cut:(id)sender;
 - (IBAction)copy:(id)sender;
