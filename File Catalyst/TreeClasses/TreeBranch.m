@@ -375,7 +375,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) _computeAllocatedSize {
-    NSLog(@"Computing size in %@", self.name);
     NSFileManager *localFileManager = [NSFileManager defaultManager];
     NSArray *fieldsToGet = [NSArray arrayWithObjects:NSURLFileSizeKey, NSURLIsRegularFileKey, nil];
     NSDirectoryEnumerator *treeEnum = [localFileManager enumeratorAtURL:self.url
@@ -402,16 +401,21 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) calculateSizeOnQueue:(NSOperationQueue*) queue {
-    [queue addOperationWithBlock:^(void) {
+    // Adds this operation with low priority on queue
+    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
         [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
     }];
+    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
+    [queue addOperation:op];
 }
 
 -(void) developAllSubfoldersOnQueue:(NSOperationQueue*) queue {
-    [queue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
+    // Adds this operation with low priority on queue
+    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
         [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
     }];
-
+    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
+    [queue addOperation:op];
 }
 
 #pragma mark -

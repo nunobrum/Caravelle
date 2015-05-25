@@ -125,7 +125,9 @@
                 NSString *path = [[theFile url] path];
                 if (path) {
                     // Then setup properties on the cellView based on the column
-                    cellView.textField.stringValue = [theFile name];  // Display simply the name of the file;
+                    NSString *fileName = [theFile name];  // Display simply the name of the file;
+                    cellView.textField.stringValue = fileName;
+                    [cellView setToolTip:fileName];
                     cellView.imageView.objectValue = [theFile image];
 
                     // Setting the color
@@ -190,6 +192,7 @@
                     // If its the filesize and it wasn't found, ask for
                     if ([theFile itemType]==ItemTypeBranch && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                         [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
+                        cellView.textField.objectValue = @"";
                         [((SizeTableCellView*)cellView)  startAnimation];
                         [(TreeBranch*)theFile calculateSizeOnQueue:[(BrowserController*)[self parentController] browserOperationQueue]];
                     }
@@ -526,18 +529,17 @@
 }
 
 -(void) reloadSize:(id) object {
-    if (object != self.currentNode) { // if its not the node, then it could be a table element
-        NSInteger rowToReload = [self->_displayedItems indexOfObject:object];
-        if (rowToReload >=0  && rowToReload!=NSNotFound) {
-            NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
-            NSInteger colSize = [self.myTableView columnWithIdentifier:@"COL_SIZE"];
-            NSRange columnsRange = {colSize, 1 };
-            NSIndexSet *columnIndexes = [NSIndexSet indexSetWithIndexesInRange:columnsRange];
-            [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
-        }
+    NSInteger rowToReload = [self->_displayedItems indexOfObject:object];
+    if (rowToReload >=0  && rowToReload!=NSNotFound) {
+        NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
+        NSInteger colSize = [self.myTableView columnWithIdentifier:@"COL_SIZE"];
+        NSRange columnsRange = {colSize, 1 };
+        NSIndexSet *columnIndexes = [NSIndexSet indexSetWithIndexesInRange:columnsRange];
+        [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
+
+        // Now the observe can be removed
+        [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
     }
-    // Now the observe can be removed
-    [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
 }
 
 - (void) setCurrentNode:(TreeBranch*)branch {

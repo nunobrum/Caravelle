@@ -62,7 +62,6 @@
                                                         </textFieldCell>
                                                         <connections>
                                                             <action selector="filenameDidChange:" target="-2" id="M2j-1j-iZL"/>
-                                                            <binding destination="dIu-fx-2y5" name="toolTip" keyPath="objectValue.name" id="yXq-SJ-Y8X"/>
                                                             <outlet property="delegate" destination="-2" id="xOw-qC-tzk"/>
                                                         </connections>
                                                     </textField>
@@ -117,7 +116,7 @@
                                             <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                         </tableHeaderCell>
-                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="LqN-dL-AE1">
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="right" title="Text Cell" id="LqN-dL-AE1">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -130,7 +129,7 @@
                                                 <subviews>
                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="2On-Fv-VKg">
                                                         <rect key="frame" x="1" y="0.0" width="99" height="17"/>
-                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="M54-GE-FeP">
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Table View Cell" id="M54-GE-FeP">
                                                             <font key="font" metaFont="system"/>
                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -141,9 +140,9 @@
                                                     </progressIndicator>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="2On-Fv-VKg" firstAttribute="leading" secondItem="aCh-bG-JZO" secondAttribute="leading" constant="3" id="TI3-5b-ahs"/>
                                                     <constraint firstItem="2On-Fv-VKg" firstAttribute="centerY" secondItem="aCh-bG-JZO" secondAttribute="centerY" id="diA-HA-cnz"/>
                                                     <constraint firstAttribute="centerY" secondItem="x72-n7-00j" secondAttribute="centerY" id="s4v-hE-vXB"/>
+                                                    <constraint firstAttribute="trailing" secondItem="2On-Fv-VKg" secondAttribute="trailing" constant="2" id="x1c-MB-pBw"/>
                                                     <constraint firstAttribute="trailing" secondItem="x72-n7-00j" secondAttribute="trailing" id="xi4-cM-RLB"/>
                                                 </constraints>
                                                 <connections>
