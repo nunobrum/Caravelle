@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface GroupingButton : NSPopUpButton
+@interface GroupingButton : NSPopUpButton <NSMenuDelegate> {
+
+}
+
+@property NSMenu *groupingMenu;
 
 @end
