@@ -48,6 +48,7 @@
     }
 }
 - (IBAction)filenameDidChange:(id)sender {
+    // This is actually not needed. The rename is handled by the Binding
     /*if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(filenameDidChange:)]) {
         [[[self collectionView] delegate] performSelector:@selector(filenameDidChange:) withObject:self];
     }*/

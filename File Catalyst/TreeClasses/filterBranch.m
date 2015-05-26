@@ -12,6 +12,10 @@
 
 #pragma mark Initializers
 
+-(ItemType) itemType {
+    return ItemTypeFilter;
+}
+
 -(filterBranch*) initWithFilter:(NSPredicate*)filt  name:(NSString*)name  parent:(TreeBranch*)parent {
     // self = [super initWithURL:nil parent:parent]; Now a nil can't be passed to the initWithURL
     self->_children = nil;
@@ -94,7 +98,7 @@
                 if ([[item url] isEqual:theURL]) {
                     return YES; // if matches, no need to add just return YES
                 }
-                else if ([item isKindOfClass:[filterBranch class]]) {
+                else if ([item itemType ] == ItemTypeFilter) {
                     if ([(filterBranch*)item addTreeItem:treeItem]) {
                          return YES;
                     }
@@ -140,7 +144,7 @@
     if ([self canContainTreeItem:testObj]) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                if ([item isKindOfClass:[filterBranch class]]) {
+                if ([item itemType ] == ItemTypeFilter) {
                     if ([(filterBranch*)item canContainTreeItem:testObj])
                         return item;
                 }

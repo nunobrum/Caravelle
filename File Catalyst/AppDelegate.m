@@ -63,6 +63,8 @@ NSString *opRename = @"RenameOperation";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
+NSOperationQueue *browserQueue;    // Queue for directory viewing (High Priority)
+NSOperationQueue *lowPriorityQueue; // Queue for size calculation (Low Priority)
 
 NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
@@ -125,7 +127,19 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     self = [super init];
 	if (self)
     {
-        operationsQueue = [[NSOperationQueue alloc] init];
+        operationsQueue   = [[NSOperationQueue alloc] init];
+        browserQueue      = [[NSOperationQueue alloc] init];
+        lowPriorityQueue  = [[NSOperationQueue alloc] init];
+
+        // Browser Queue
+        // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
+        [browserQueue setMaxConcurrentOperationCount:2];
+        // Use the myPathPopDownMenu outlet to get the maximum tag number
+        // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
+        
+        [lowPriorityQueue setMaxConcurrentOperationCount:1];
+
+
         appFileManager = [[NSFileManager alloc] init];
         appTreeManager = [[TreeManager alloc] init];
         [appFileManager setDelegate:self];
@@ -1270,9 +1284,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     BOOL state = toggleMenuState(sender);
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_CALCULATE_SIZES];
-    [self->myLeftView refresh];
-    if (self->myRightView!=nil)
-        [self->myRightView refresh];
+    if (state==YES) {
+        [self->myLeftView refresh];
+        if (self->myRightView!=nil)
+            [self->myRightView refresh];
+    }
 }
 
 
@@ -1483,10 +1499,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         BOOL oneFolder=YES;
         for (TreeItem *node in receivedItems) {
             /* Do something here */
-            if ([node isKindOfClass: [TreeLeaf class]]) { // It is a file : Open the File
+            if ([node itemType] == ItemTypeLeaf) { // It is a file : Open the File
                 [node openFile]; // TODO:!!! Register this folder as one of the MRU
             }
-            else if ([node isKindOfClass: [TreeBranch class]] && oneFolder==YES) { // It is a directory
+            else if ([node itemType] == ItemTypeBranch && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View
                 /* This also sets the node for Table Display and path bar */
                 [(BrowserController*)self.selectedView selectFolderByItem:node];

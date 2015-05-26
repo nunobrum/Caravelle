@@ -105,6 +105,9 @@ extern const CFStringRef kTreeItemDropUTI;
 
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
+extern NSOperationQueue *browserQueue;
+extern NSOperationQueue *lowPriorityQueue;
+
 extern id appTreeManager;
 
 typedef NS_ENUM(NSInteger, BViewType) { // Needs to be synchronized with the BrowserView segmentedButton

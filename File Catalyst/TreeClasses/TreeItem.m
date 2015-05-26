@@ -9,6 +9,7 @@
 #import "TreeItem.h"
 //#import "MyDirectoryEnumerator.h"
 #import "TreeBranch.h"
+#import "TreePackage.h"
 #import "FileUtils.h"
 
 @implementation TreeItem
@@ -45,13 +46,7 @@
                 if (//[typeIdentifier isEqualToString:(NSString*)kUTTypeApplication] ||
                     //[typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationFile] ||
                     [typeIdentifier isEqualToString:(NSString*)kUTTypeApplicationBundle]) {
-                    BOOL appsAsFolders =[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS];
-                    if (appsAsFolders) {
-                        return [[TreeBranch alloc] initWithURL:url parent:parent];
-                    }
-                    else {
-                        return [[TreeLeaf alloc] initWithURL:url parent:parent];
-                    }
+                    return [[TreePackage alloc] initWithURL:url parent:parent];
                 }
                 /* Debug Code */
                 /*else if ([typeIdentifier isEqualToString:@"com.apple.xcode.project"] ||

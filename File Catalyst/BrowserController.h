@@ -47,10 +47,11 @@ extern NSString *notificationCatalystRootUpdate;
 
 @property (strong) IBOutlet NSMenu *contextualMenu;
 
+// This controller is used to select groupings
+
 
 @property (readwrite, weak) id<ParentProtocol> parentController;
 @property (strong) NodeViewController *detailedViewController;
-@property (strong) NSOperationQueue *browserOperationQueue;
 
 
 @property NSString *titleCopyTo;

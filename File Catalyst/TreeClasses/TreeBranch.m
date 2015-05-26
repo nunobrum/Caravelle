@@ -98,12 +98,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return self;
 }
 
-// TODO:??? Maybe this method is not really needed, since ARC handles this
+// TODO:!!!!!!??? Maybe this method is not really needed, since ARC handles this.
+// Think this is even causing problems
 -(void) releaseChildren {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self ) {
         for (TreeItem *item in _children) {
-            if ([item itemType] == ItemTypeBranch) {
+            // NOTE: isKindOfClass is preferred over itemType.
+            if ([item isKindOfClass:[TreeBranch class]]) {
                 [(TreeBranch*)item releaseChildren];
             }
         }
@@ -203,7 +205,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         while (index < [_children count]) {
             TreeItem *item = [_children objectAtIndex:index];
             if ([item hasTags:tagTreeItemRelease]) {
-                if ([item itemType] == ItemTypeBranch) {
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]]) {
                     [(TreeBranch*)item releaseChildren];
                 }
                 //NSLog(@"Removing %@", [item path]);
@@ -299,6 +302,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 for (TreeItem *item in _children) {
                     [item setTag:tagTreeItemRelease];
                 }
+                self->allocated_size = -1; // Invalidates the previous calculated size
 
                 for (NSURL *theURL in dirEnumerator) {
                     bool found=NO;
@@ -315,13 +319,20 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                     }
                     if (!found) { /* If not found creates a new one */
                         TreeItem *item = [TreeItem treeItemForURL:theURL parent:self];
-                        if ([item itemType] == ItemTypeBranch) {
-                            [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
+                        if  (item != nil) {
+                            // NOTE: isKindOfClass is preferred over itemType.
+                            if ([item isKindOfClass:[TreeBranch class]]) {
+                                [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
+                                ((TreeBranch*)item)->allocated_size = -1;
+                            }
+                            if (self->_children==nil)
+                                self->_children = [[NSMutableArray alloc] init];
+                            [self->_children addObject:item];
+                            [item setParent:self];
                         }
-                        if (self->_children==nil)
-                            self->_children = [[NSMutableArray alloc] init];
-                        [self->_children addObject:item];
-                        [item setParent:self];
+                        else {
+                            NSLog(@"Failed to create item for URL %@", theURL);
+                        }
                     }
                 } // for
 
@@ -339,7 +350,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if (self->_children!= nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType]==ItemTypeBranch) {
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]]) {
                     [(TreeBranch*)item _performSelectorInUndeveloppedBranches:selector];
                 }
             }
@@ -357,7 +369,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if (self->_children!=nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType]==ItemTypeBranch &&
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]] &&
                      ((TreeBranch*)item)->allocated_size == -1) {
                     all_sizes_available = NO;
                     break;
@@ -406,6 +419,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
     }];
     [op setQueuePriority:NSOperationQueuePriorityVeryLow];
+    [op setThreadPriority:0.1];
     [queue addOperation:op];
 }
 
@@ -614,7 +628,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeLeaf) {
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]]) {
                     total+=[item filesize];
                 }
             }
@@ -930,7 +945,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch) {
+            if ([item itemType]==ItemTypeBranch) {
                 [answer addObject:item];
             }
         }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3C01F4561B1414C400A68D7A /* GroupingButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C01F4551B1414C400A68D7A /* GroupingButton.m */; };
 		3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
 		3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */; };
 		3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */; };
@@ -31,6 +32,7 @@
 		3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
 		3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
 		3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
+		3C87646E1B13764E001B79BD /* TreePackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C87646D1B13764E001B79BD /* TreePackage.m */; };
 		3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */; };
 		3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
 		3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
@@ -89,6 +91,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3C01F4541B1414C400A68D7A /* GroupingButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupingButton.h; path = BrowserClasses/Groupings/GroupingButton.h; sourceTree = "<group>"; };
+		3C01F4551B1414C400A68D7A /* GroupingButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupingButton.m; path = BrowserClasses/Groupings/GroupingButton.m; sourceTree = "<group>"; };
 		3C0238E81AE02A310023CE42 /* PasteboardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PasteboardUtils.m; path = BrowserClasses/PasteboardUtils.m; sourceTree = "<group>"; };
 		3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PasteboardUtils.h; path = BrowserClasses/PasteboardUtils.h; sourceTree = "<group>"; };
 		3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseGrouping.h; path = BrowserClasses/Groupings/BaseGrouping.h; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
 		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
 		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
+		3C87646C1B13764E001B79BD /* TreePackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreePackage.h; sourceTree = "<group>"; };
+		3C87646D1B13764E001B79BD /* TreePackage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreePackage.m; sourceTree = "<group>"; };
 		3C8960221A9A9AB700458013 /* Caravelle.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Caravelle.entitlements; sourceTree = "<group>"; };
 		3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemMonitoring.h; path = "File Catalyst/OperationClasses/FileSystemMonitoring.h"; sourceTree = SOURCE_ROOT; };
 		3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileSystemMonitoring.m; path = "File Catalyst/OperationClasses/FileSystemMonitoring.m"; sourceTree = SOURCE_ROOT; };
@@ -240,6 +246,8 @@
 		3C15E9351AF3CFA5006DF095 /* Groupings */ = {
 			isa = PBXGroup;
 			children = (
+				3C01F4541B1414C400A68D7A /* GroupingButton.h */,
+				3C01F4551B1414C400A68D7A /* GroupingButton.m */,
 				3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */,
 				3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */,
 				3C15E9391AF3D0A6006DF095 /* StringGrouping.h */,
@@ -471,6 +479,8 @@
 				3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */,
 				3C29463718F9B86A002B633C /* TreeRoot.h */,
 				3C29463818F9B86A002B633C /* TreeRoot.m */,
+				3C87646C1B13764E001B79BD /* TreePackage.h */,
+				3C87646D1B13764E001B79BD /* TreePackage.m */,
 			);
 			name = Branches;
 			sourceTree = "<group>";
@@ -652,6 +662,7 @@
 				3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */,
 				3C29464A18F9B87C002B633C /* FileInformation.m in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
+				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
@@ -659,6 +670,7 @@
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
+				3C01F4561B1414C400A68D7A /* GroupingButton.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,

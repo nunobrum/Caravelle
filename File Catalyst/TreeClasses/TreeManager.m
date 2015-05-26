@@ -64,10 +64,12 @@ TreeManager *appTreeManager;
         else if (comparison == pathIsChild) {
             TreeItem *aux = [item addURL:url];
             if (aux) {
-                if ([aux itemType] == ItemTypeBranch)
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([aux isKindOfClass:[TreeBranch class]])
                     return (TreeBranch*)aux;
                 else if ([aux parent]) {
-                    if ([[aux parent] itemType] == ItemTypeBranch)
+                    // NOTE: isKindOfClass is preferred over itemType.
+                    if ([[aux parent] isKindOfClass:[TreeBranch class]])
                     return (TreeBranch*)[aux parent];
                 }
                 else {

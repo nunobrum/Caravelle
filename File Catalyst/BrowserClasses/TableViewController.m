@@ -190,11 +190,12 @@
                 }
                 else {
                     // If its the filesize and it wasn't found, ask for
-                    if ([theFile itemType]==ItemTypeBranch && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                    // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
+                    if ([theFile isKindOfClass:[TreeBranch class]] && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                         [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
                         cellView.textField.objectValue = @"";
                         [((SizeTableCellView*)cellView)  startAnimation];
-                        [(TreeBranch*)theFile calculateSizeOnQueue:[(BrowserController*)[self parentController] browserOperationQueue]];
+                        [(TreeBranch*)theFile calculateSizeOnQueue:lowPriorityQueue];
                     }
                     else
                         cellView.textField.objectValue = @"--";

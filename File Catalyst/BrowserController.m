@@ -70,15 +70,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->iconViewController = nil;
     _treeNodeSelected = nil;
     _rootNodeSelected = nil;
-    _browserOperationQueue = [[NSOperationQueue alloc] init];
     _mruLocation = [[NSMutableArray alloc] init];
     self.preferences = [[NSMutableDictionary alloc] initWithCapacity:50];
     _mruPointer = 0;
-    
-    // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
-    [_browserOperationQueue setMaxConcurrentOperationCount:2];
-    // Use the myPathPopDownMenu outlet to get the maximum tag number
-    // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
     return self;
 }
 
@@ -249,7 +243,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self observeItem:ret];
         if (_viewMode==BViewBrowserMode) {
             if ([(TreeBranch*)ret needsRefresh]) {
-                [(TreeBranch*)ret refreshContentsOnQueue:_browserOperationQueue];
+                [(TreeBranch*)ret refreshContentsOnQueue:browserQueue];
             }
         }
 //        else {
@@ -404,7 +398,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 if (_viewMode==BViewBrowserMode) {
                     if ([_treeNodeSelected needsRefresh]) {
                         [self.detailedViewController startBusyAnimations];
-                        [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:_browserOperationQueue];
+                        [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:browserQueue];
                         // This will automatically call for a refresh
                     }
                     else {
@@ -594,7 +588,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSUInteger index = [rowsSelected firstIndex];
     if (index!=NSNotFound) {
         id node = [_myOutlineView itemAtRow:index];
-        if ([node isKindOfClass: [TreeBranch class]]) { // It is a Folder : Will make it a root
+        if ([node itemType] == ItemTypeBranch) { // It is a Folder : Will make it a root
             index = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
             BaseDirectoriesArray[index] = node;
 
@@ -1171,7 +1165,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
             else { // Refreshes all the others
                 [tree setTag:tagTreeItemDirty];
-                [tree refreshContentsOnQueue:_browserOperationQueue];
+                [tree refreshContentsOnQueue:browserQueue];
                 idx++;
             }
         }
@@ -1180,7 +1174,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // But avoiding repeating the refreshes already done
             if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
                 [tree setTag:tagTreeItemDirty];
-                [tree refreshContentsOnQueue:_browserOperationQueue];
+                [tree refreshContentsOnQueue:browserQueue];
             }
         }
     }
@@ -1357,8 +1351,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 TreeBranch *lastBranch = nil;
                 NSArray *treeComps= [treeNode treeComponentsToParent:root];
                 for (TreeItem *node in treeComps) {
-                    if ([node itemType] == ItemTypeBranch ||
-                        [node isKindOfClass:[TreeRoot   class]])
+                    if ([node itemType] == ItemTypeBranch)
                     {
                         [_myOutlineView expandItem:node];
                         [_myOutlineView reloadData];
