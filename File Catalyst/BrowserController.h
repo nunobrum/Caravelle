@@ -20,7 +20,7 @@
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <ParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate> {
+@interface BrowserController : NSViewController <ParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
     NSSize iconSize;
     //NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
@@ -102,6 +102,8 @@ extern NSString *notificationCatalystRootUpdate;
 
 
 -(IBAction) tableSelected:(id)sender;
+
+
 /*
  * Parent access routines
  */

@@ -146,6 +146,8 @@ typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
 };
 extern NSString *kOptionsKey;
 
+BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
+
 @protocol MYViewProtocol <NSObject>
 
 -(NSString*) title;

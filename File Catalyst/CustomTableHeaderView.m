@@ -26,6 +26,18 @@ NSDictionary *columnInfo () {
     return columnInfo;
 }
 
+// Create an array of names sorted by alphabetic order
+NSArray* sortedColumnNames() {
+    static NSArray *sortedNames=nil;
+    if (sortedNames==nil) {
+        sortedNames = [columnInfo() keysSortedByValueUsingComparator: ^(NSDictionary *obj1, NSDictionary *obj2) {
+            return [[obj1 objectForKey:COL_TITLE_KEY ] localizedCompare:[obj2 objectForKey:COL_TITLE_KEY ]];
+        }];
+    }
+    return sortedNames;
+}
+
+
 NSString* keyForColID(NSString* colID) {
     if ([colID isEqualToString:COL_FILENAME])
         return @"name";
@@ -40,16 +52,6 @@ NSString* keyForColID(NSString* colID) {
     // Blocks the system menu
     [NSApp registerServicesMenuSendTypes:nil
                              returnTypes:nil];
-}
-// Create an array of names sorted by alphabetic order
--(NSArray*) sortedNames {
-    static NSArray *sortedNames=nil;
-    if (sortedNames==nil) {
-    sortedNames = [columnInfo() keysSortedByValueUsingComparator: ^(NSDictionary *obj1, NSDictionary *obj2) {
-        return [[obj1 objectForKey:COL_TITLE_KEY ] localizedCompare:[obj2 objectForKey:COL_TITLE_KEY ]];
-    }];
-    }
-    return sortedNames;
 }
 
 
@@ -102,7 +104,7 @@ NSString* keyForColID(NSString* colID) {
         }
     }
     // Creates the Columns Mmenu
-    for (NSString *colID in [self sortedNames]) {
+    for (NSString *colID in sortedColumnNames() ) {
         NSDictionary *colInfo = [columnInfo() objectForKey:colID];
         NSString *desc = [colInfo objectForKey:COL_TITLE_KEY];
         NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:desc action:@selector(columnSelect:) keyEquivalent:@""];

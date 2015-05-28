@@ -449,6 +449,78 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //    This is not needed. Keeping it for memory
 //}
 
+#pragma mark - NSMenuDelegate
+/*
+ These two functions can be used in alternative to the selector below
+- (NSInteger)numberOfItemsInMenu:(NSMenu *)menu {
+    return [sortedColumnNames() count] + 1; // Adding one for the header
+}
+
+- (BOOL) menu:(NSMenu *)menu updateItem:(NSMenuItem *)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel {
+
+}*/
+-(void) menuNeedsUpdate:(NSMenu *)menu {
+    //menu = [[NSMenu alloc] initWithTitle:@"Groupings Menu"];
+    // Check if menu was updated
+    if ([[menu itemArray] count]==1) {
+//        NSMenuItem *groupingTitle = [[NSMenuItem alloc] init];
+//        [groupingTitle setImage:[NSImage imageNamed:@"GrouppingOSX"]];
+//        [groupingTitle setTitle:@""];
+//        [menu addItem:groupingTitle];
+        int tagCount = 0;
+        for (NSString *colID in sortedColumnNames() ) {
+            NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+            NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
+            NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
+            [menuItem setEnabled:YES];
+            [menuItem setState:NSOffState];
+            [menuItem setTag:tagCount++];
+            [menuItem setAction:@selector(menuGroupingSelector:)];
+            [menuItem setTarget:self.detailedViewController];
+            [menu addItem:menuItem];
+        }
+    }
+    // If the menu was already created, then it will just update the groupings
+
+    int i = 1; // Starts with the first visible Menu Item
+    for (NSString *colID in sortedColumnNames() ) {
+        NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+        NSString *key = colInfo[COL_ACCESSOR_KEY];
+        NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
+                           ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                               BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj key] isEqualToString:key];
+                               *stop = OK;
+                               return OK;
+                           }];
+        if (idx!=nil && [idx count]!=0) {
+            [[menu itemAtIndex:i] setState:NSOnState];
+        }
+        else {
+            [[menu itemAtIndex:i] setState:NSOffState];
+        }
+        i+=1;
+    }
+}
+
+// TODO: ! Use this selector for making key bindings.
+/*
+- (BOOL)menuHasKeyEquivalent:(NSMenu *)menu
+                    forEvent:(NSEvent *)event
+                      target:(id *)target
+                      action:(SEL *)action {
+    return NO;
+}
+ */
+
+// TODO: ! Use this selector to validate the grouping menus
+/*
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
+    SEL theAction = [anItem action];
+    if (theAction == @selector(menuGroupingSelector:))
+        return YES;
+    return NO;
+}
+ */
 
 #pragma mark - Path Bar Handling
 -(TreeBranch*) treeNodeSelected {

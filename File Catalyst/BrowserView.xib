@@ -309,10 +309,10 @@
                         <action selector="optionsSwitchSelect:" target="-2" id="2X9-ep-gXl"/>
                     </connections>
                 </segmentedControl>
-                <popUpButton hidden="YES" toolTip="Grouping" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
+                <popUpButton hidden="YES" toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
                     <rect key="frame" x="218" y="566" width="51" height="26"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" selectedItem="bjr-ZP-631" id="cCu-Xv-3GO">
-                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" selectedItem="bjr-ZP-631" id="cCu-Xv-3GO">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="b4D-Sz-aUO">
                             <items>
@@ -322,6 +322,9 @@
                             </items>
                         </menu>
                     </popUpButtonCell>
+                    <connections>
+                        <outlet property="menu" destination="Ija-pi-NHC" id="g1k-gf-Hjl"/>
+                    </connections>
                 </popUpButton>
             </subviews>
             <constraints>
@@ -427,6 +430,18 @@
             <point key="canvasLocation" x="480" y="123.5"/>
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
+        <menu title="GroupingMenu" id="Ija-pi-NHC">
+            <items>
+                <menuItem image="GrouppingOSX" id="sES-CD-5kh">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                </menuItem>
+            </items>
+            <connections>
+                <outlet property="delegate" destination="-2" id="WXA-aE-r7m"/>
+            </connections>
+            <point key="canvasLocation" x="195.5" y="-236.5"/>
+        </menu>
     </objects>
     <resources>
         <image name="GenericFolderIcon" width="512" height="512"/>

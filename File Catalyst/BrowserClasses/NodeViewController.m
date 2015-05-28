@@ -238,6 +238,36 @@
     return inserted;
 }
 
+-(IBAction) menuGroupingSelector:(id) sender {
+    NSLog(@"menuGroupingSelector %@",[sender title]);
+    BOOL activate_grouping = toggleMenuState((NSMenuItem *)sender);
+
+    // Find the identifier
+    NSDictionary *colDict = nil;
+    NSString *identifier;
+    for (NSString *ident in [columnInfo() keyEnumerator]) {
+        colDict = [columnInfo() objectForKey:ident];
+        if ([[sender title] isEqualToString:colDict[COL_TITLE_KEY]]) {
+            identifier = ident;
+            break;
+        }
+    }
+    BOOL ascending = NO; // Just initialize with something
+    if (activate_grouping) {
+        NodeSortDescriptor *currentDesc = [self sortDescriptorForColID: identifier];
+        if (currentDesc==nil || [currentDesc ascending]==NO)
+        {
+            ascending = YES;
+        }
+        else
+        {
+            ascending = NO;
+        }
+    }
+    [self makeSortOnColID:identifier ascending:ascending grouping:activate_grouping];
+    [self refreshKeepingSelections];
+}
+
 -(NSMutableArray*) itemsToDisplay {
     NSMutableArray *tableData = nil;
     /* Always uses the self.currentNode property to manage the Table View */

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3C01F4561B1414C400A68D7A /* GroupingButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C01F4551B1414C400A68D7A /* GroupingButton.m */; };
 		3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
 		3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */; };
 		3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */; };
@@ -91,8 +90,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		3C01F4541B1414C400A68D7A /* GroupingButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupingButton.h; path = BrowserClasses/Groupings/GroupingButton.h; sourceTree = "<group>"; };
-		3C01F4551B1414C400A68D7A /* GroupingButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GroupingButton.m; path = BrowserClasses/Groupings/GroupingButton.m; sourceTree = "<group>"; };
 		3C0238E81AE02A310023CE42 /* PasteboardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PasteboardUtils.m; path = BrowserClasses/PasteboardUtils.m; sourceTree = "<group>"; };
 		3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PasteboardUtils.h; path = BrowserClasses/PasteboardUtils.h; sourceTree = "<group>"; };
 		3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseGrouping.h; path = BrowserClasses/Groupings/BaseGrouping.h; sourceTree = "<group>"; };
@@ -246,8 +243,6 @@
 		3C15E9351AF3CFA5006DF095 /* Groupings */ = {
 			isa = PBXGroup;
 			children = (
-				3C01F4541B1414C400A68D7A /* GroupingButton.h */,
-				3C01F4551B1414C400A68D7A /* GroupingButton.m */,
 				3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */,
 				3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */,
 				3C15E9391AF3D0A6006DF095 /* StringGrouping.h */,
@@ -670,7 +665,6 @@
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
-				3C01F4561B1414C400A68D7A /* GroupingButton.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,

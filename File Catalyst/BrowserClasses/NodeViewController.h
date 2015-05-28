@@ -82,4 +82,6 @@
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
 
+-(IBAction) menuGroupingSelector:(id) sender;
+
 @end
