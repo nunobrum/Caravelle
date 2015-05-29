@@ -287,11 +287,11 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return answer;
 }
 
-- (void) refreshContentsOnQueue: (NSOperationQueue *) queue {
+- (void) refreshContents {
     //NSLog(@"TreeBranch.refreshContentsOnQueue:(%@)", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
-        [queue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
+        [browserQueue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewBrowserMode];
@@ -388,48 +388,110 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) _computeAllocatedSize {
-    NSFileManager *localFileManager = [NSFileManager defaultManager];
-    NSArray *fieldsToGet = [NSArray arrayWithObjects:NSURLFileSizeKey, NSURLIsRegularFileKey, nil];
-    NSDirectoryEnumerator *treeEnum = [localFileManager enumeratorAtURL:self.url
-                                          includingPropertiesForKeys:fieldsToGet
-                                                             options:0
-                                                        errorHandler:nil];
-    long long total = 0;
-    for (NSURL *theURL in treeEnum) {
-        NSError *error;
-        NSDictionary *fields = [theURL resourceValuesForKeys:fieldsToGet error:&error];
-        if ([fields[NSURLIsRegularFileKey] boolValue]) {
-            total += [fields[NSURLFileSizeKey] longLongValue];
-        }
-    }
-
-    [self willChangeValueForKey:kvoTreeBranchPropertySize];
-    self->allocated_size = total;
-    [self didChangeValueForKey:kvoTreeBranchPropertySize];
-    if (self->_parent) {
-        [(TreeBranch*)self->_parent _propagateSize];
-        // This will trigger a kvoTreeBranchPropertySize from the parent in case of
-        // completion of the directory size computation
-    }
-}
-
--(void) calculateSizeOnQueue:(NSOperationQueue*) queue {
-    // Adds this operation with low priority on queue
     NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
-        [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
+
+        NSFileManager *localFileManager = [NSFileManager defaultManager];
+        NSArray *fieldsToGet = [NSArray arrayWithObjects:NSURLFileSizeKey, NSURLIsRegularFileKey, nil];
+        NSDirectoryEnumerator *treeEnum = [localFileManager enumeratorAtURL:self.url
+                                                 includingPropertiesForKeys:fieldsToGet
+                                                                    options:0
+                                                               errorHandler:nil];
+        long long total = 0;
+        for (NSURL *theURL in treeEnum) {
+            NSError *error;
+            NSDictionary *fields = [theURL resourceValuesForKeys:fieldsToGet error:&error];
+            if ([fields[NSURLIsRegularFileKey] boolValue]) {
+                total += [fields[NSURLFileSizeKey] longLongValue];
+            }
+        }
+
+        [self willChangeValueForKey:kvoTreeBranchPropertySize];
+        self->allocated_size = total;
+        [self didChangeValueForKey:kvoTreeBranchPropertySize];
+        if (self->_parent) {
+            [(TreeBranch*)self->_parent _propagateSize];
+            // This will trigger a kvoTreeBranchPropertySize from the parent in case of
+            // completion of the directory size computation
+        }
     }];
     [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [op setThreadPriority:0.1];
-    [queue addOperation:op];
+    [op setThreadPriority:0.3];
+    [lowPriorityQueue addOperation:op];
 }
 
--(void) developAllSubfoldersOnQueue:(NSOperationQueue*) queue {
-    // Adds this operation with low priority on queue
-    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
-        [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
+-(void) calculateSize {
+    [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
+}
+
+-(void) _growTree {
+    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
+        MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewCatalystMode];
+
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        @synchronized(self) {
+            self->_children = [[NSMutableArray alloc] init];
+            TreeBranch *cursor = self;
+            NSMutableArray *cursorComponents = [NSMutableArray arrayWithArray:[[self url] pathComponents]];
+            unsigned long current_level = [cursorComponents count]-1;
+
+
+            for (NSURL *theURL in dirEnumerator) {
+                NSArray *newURLComponents = [theURL pathComponents];
+                unsigned long target_level = [newURLComponents count]-2;
+                while (target_level < current_level) { // Needs to go back if the new URL is at a lower branch
+                    cursor = (TreeBranch*) cursor->_parent;
+                    current_level--;
+                }
+                while (target_level != current_level &&
+                       [cursorComponents[current_level] isEqualToString:newURLComponents[current_level]]) {
+                    // Must navigate into the right folder
+                    if (target_level <= current_level) { // The equality is considered because it means that the components at this level are different
+                        // steps down in the tree
+                        cursor = (TreeBranch*) cursor->_parent;
+                        current_level--;
+                    }
+                    else { // Needs to grow the tree
+                        current_level++;
+                        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:newURLComponents[current_level] isDirectory:YES];
+                        cursorComponents[current_level] = newURLComponents[current_level];
+                        TreeItem *child = [TreeItem treeItemForURL:pathURL parent:cursor];
+                        if (child!=nil) {
+                            [cursor->_children addObject:child];
+                            if ([child itemType] == ItemTypeBranch)
+                            {
+                                cursor = (TreeBranch*)child;
+                                cursor->_children = [[NSMutableArray alloc] init];
+                            }
+                            else {
+                                // Will ignore this child and just addd the size to the current node
+                                // TODO:!! Once the size is again on the class, update the size here
+                                NSAssert(NO, @"TreeBranch.growTree: Error:%@ can't be added to %@", theURL, pathURL);
+                            }
+                        }
+                        else {
+                            NSAssert(NO, @"TreeBranch.TreeBranch.growTree: Couldn't create path %@ \nwhile creating %@",pathURL, theURL);
+                        }
+                    }
+
+                }
+                TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
+                if (newObj!=nil) {
+                    [cursor->_children addObject:newObj];
+                }
+                else {
+                    NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
+                }
+            }
+        }
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     }];
     [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [queue addOperation:op];
+    [op setThreadPriority:0.3];
+    [lowPriorityQueue addOperation:op];
+}
+
+-(void) expandAllBranches {
+    [self _performSelectorInUndeveloppedBranches:@selector(_growTree)];
 }
 
 #pragma mark -

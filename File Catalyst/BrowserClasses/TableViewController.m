@@ -195,7 +195,7 @@
                         [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
                         cellView.textField.objectValue = @"";
                         [((SizeTableCellView*)cellView)  startAnimation];
-                        [(TreeBranch*)theFile calculateSizeOnQueue:lowPriorityQueue];
+                        [(TreeBranch*)theFile calculateSize];
                     }
                     else
                         cellView.textField.objectValue = @"--";

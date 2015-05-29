@@ -1690,7 +1690,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         else {
             TreeBranch *dest = [info objectForKey:kDFODestinationKey];
             [dest setTag:tagTreeItemDirty];
-            [dest refreshContentsOnQueue:operationsQueue];
+            [dest refreshContents];
         }
     }
 

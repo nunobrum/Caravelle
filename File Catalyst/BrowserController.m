@@ -243,7 +243,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self observeItem:ret];
         if (_viewMode==BViewBrowserMode) {
             if ([(TreeBranch*)ret needsRefresh]) {
-                [(TreeBranch*)ret refreshContentsOnQueue:browserQueue];
+                [(TreeBranch*)ret refreshContents];
             }
         }
 //        else {
@@ -398,7 +398,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 if (_viewMode==BViewBrowserMode) {
                     if ([_treeNodeSelected needsRefresh]) {
                         [self.detailedViewController startBusyAnimations];
-                        [(TreeBranch*)_treeNodeSelected refreshContentsOnQueue:browserQueue];
+                        [(TreeBranch*)_treeNodeSelected refreshContents];
                         // This will automatically call for a refresh
                     }
                     else {
@@ -703,6 +703,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
     }
     else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
+        [self.detailedViewController.currentNode expandAllBranches];
         [self.detailedViewController setDisplayFilesInSubdirs:isSelected];
         [self.detailedViewController refreshKeepingSelections];
     }
@@ -1237,7 +1238,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
             else { // Refreshes all the others
                 [tree setTag:tagTreeItemDirty];
-                [tree refreshContentsOnQueue:browserQueue];
+                [tree refreshContents];
                 idx++;
             }
         }
@@ -1246,7 +1247,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // But avoiding repeating the refreshes already done
             if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
                 [tree setTag:tagTreeItemDirty];
-                [tree refreshContentsOnQueue:browserQueue];
+                [tree refreshContents];
             }
         }
     }

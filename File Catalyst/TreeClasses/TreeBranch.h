@@ -75,9 +75,10 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 
 -(BOOL) needsRefresh;
--(void) refreshContentsOnQueue: (NSOperationQueue *) queue;
+-(void) refreshContents;
 -(void) forceRefreshOnBranch;
--(void) calculateSizeOnQueue:(NSOperationQueue*) queue;
+-(void) calculateSize;
+-(void) expandAllBranches;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;
