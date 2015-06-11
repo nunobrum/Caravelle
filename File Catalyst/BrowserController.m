@@ -120,12 +120,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // if its the first just adds it
     if (mruCount==0) {
         [_mruLocation addObject:url];
+        // Enable the back Button
+        [self.mruBackForwardControl setEnabled:YES forSegment:0];
     }
     // Then checking if its changing
     else if (![url isEqual:_mruLocation[_mruPointer]]) { // Don't want two URLS repeated in a sequence
         _mruPointer++;
         if (_mruPointer < mruCount) { // There where back movements before
-            if (![url isEqual:_mruLocation[_mruPointer]]) { // not just moving forward
+            if (pathIsSame != url_relation(url, _mruLocation[_mruPointer]) ) { // not just moving forward
                 NSRange follwingMRUs;
                 follwingMRUs.location = _mruPointer+1;
                 follwingMRUs.length = mruCount - _mruPointer - 1;
@@ -133,11 +135,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 if (follwingMRUs.length!=0) {
                     [_mruLocation removeObjectsInRange:follwingMRUs];
                 }
+                // Disable the forward button
+                [self.mruBackForwardControl setEnabled:NO forSegment:1];
             }
             // There is no else : on else We are just moving forward
         }
-        else
+        else {
             [_mruLocation addObject:url]; // Adding to the last position
+            // Enable the back Button
+            [self.mruBackForwardControl setEnabled:YES forSegment:0];
+        }
     }
 }
 
@@ -765,10 +772,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-    // TODO:!!!! Disable Back at the beginning Disable Forward
-    // Create isABackFlag for the forward highlight and to test the Back
-    // isAForward will make sure that the Forward is highlighted
-    // otherwise Forward is disabled and Back Enabled
     if (backOrForward==0) { // Backward
         [self backSelectedFolder];
     }
@@ -1610,6 +1613,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         _mruPointer--;
         NSURL *url = _mruLocation[_mruPointer];
         [self selectFolderByURL:url];
+        // Enable the forward Button
+        [self.mruBackForwardControl setEnabled:YES forSegment:1];
+    }
+    if (self->_mruPointer==0) {
+        // Disable the BackButton
+        [self.mruBackForwardControl setEnabled:NO forSegment:0];
     }
 }
 
@@ -1618,6 +1627,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         _mruPointer++;
         NSURL *url = _mruLocation[_mruPointer];
         [self selectFolderByURL:url];
+        // Enable the Back Button
+        [self.mruBackForwardControl setEnabled:YES forSegment:0];
+    }
+    if (self->_mruPointer == [_mruLocation count]-1) {
+        // Disable the forward button
+        [self.mruBackForwardControl setEnabled:NO forSegment:1];
     }
 }
 

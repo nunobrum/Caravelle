@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "FileCollection.h"
 #import "TreeLeaf.h"
+#import "TreePackage.h"
 #import "TreeManager.h"
 #import "TreeScanOperation.h"
 #import "searchTree.h"
@@ -1186,7 +1187,19 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (IBAction)contextualPaste:(id)sender {
     // the validateMenuItems insures that node is Branch
-    [self executePaste:(TreeBranch*)[[self selectedView] getLastClickedItem]];
+    NSArray *items = [[self contextualFocus] getSelectedItemsForContextMenu];
+    if ([items count]==1) { // Can only paste on one item
+        TreeItem *item = [items firstObject];
+        // TODO:!! need to test if its an application,
+        //if ([item isKindOfClass:[TreePackage class]]) {
+            // and if it is will simply use it to open the items on the clipboard.
+
+        //}
+        if ([item itemType]==ItemTypeLeaf) { // If its a leaf, will use the parent instead
+            item = [item parent];
+        }
+        [self executePaste:(TreeBranch*)item];
+    }
 }
 
 -(IBAction)delete:(id)sender {
@@ -2065,8 +2078,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (BOOL)fileManager:(NSFileManager *)fileManager
 shouldCopyItemAtURL:(NSURL *)srcURL
               toURL:(NSURL *)dstURL {
-
-    if (url_relation(srcURL, dstURL)!=pathsHaveNoRelation) {
+    enumPathCompare comp = url_relation(srcURL, dstURL);
+    if (comp==pathIsParent || comp == pathIsChild) {
+        // If the path is contained or contains the operation cannot be completed
         //TODO:! create an error subclass
         return NO;
     }
@@ -2078,7 +2092,9 @@ shouldCopyItemAtURL:(NSURL *)srcURL
 - (BOOL)fileManager:(NSFileManager *)fileManager
 shouldMoveItemAtURL:(NSURL *)srcURL
               toURL:(NSURL *)dstURL {
-    if (url_relation(srcURL, dstURL)!=pathsHaveNoRelation) {
+    enumPathCompare comp = url_relation(srcURL, dstURL);
+    if (comp==pathIsParent || comp == pathIsChild) {
+        // If the path is contained or contains the operation cannot be completed
         //TODO:! create an error subclass
         return NO;
     }

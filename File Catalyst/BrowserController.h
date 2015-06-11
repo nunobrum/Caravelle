@@ -44,6 +44,8 @@ extern NSString *notificationCatalystRootUpdate;
 
 @property (strong) IBOutlet NSSplitView *mySplitView;
 @property (strong) IBOutlet NSSegmentedControl *viewOptionsSwitches;
+@property (strong) IBOutlet NSSegmentedControl *mruBackForwardControl;
+
 
 @property (strong) IBOutlet NSMenu *contextualMenu;
 

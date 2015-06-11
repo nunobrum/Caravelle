@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
             <connections>
                 <outlet property="contextualMenu" destination="q8e-qr-VOA" id="5Gn-F0-kWw"/>
+                <outlet property="mruBackForwardControl" destination="Wu7-Ak-lRK" id="IXM-1P-Zra"/>
                 <outlet property="myFilterText" destination="Lo2-4t-2Jl" id="ijU-KQ-eWf"/>
                 <outlet property="myGroupingPopDpwnButton" destination="H1P-9o-Im5" id="wbY-Ka-PDC"/>
                 <outlet property="myOutlineProgressIndicator" destination="6Ay-z1-oxB" id="Mxj-3o-FRc"/>
@@ -276,8 +277,8 @@
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="0uI-fg-vdj">
                         <font key="font" metaFont="system"/>
                         <segments>
-                            <segment image="NSLeftFacingTriangleTemplate" width="26"/>
-                            <segment toolTip="Resume next Folder" image="NSRightFacingTriangleTemplate" width="26" tag="1"/>
+                            <segment image="NSLeftFacingTriangleTemplate" width="26" enabled="NO"/>
+                            <segment toolTip="Resume next Folder" image="NSRightFacingTriangleTemplate" width="26" enabled="NO" tag="1"/>
                         </segments>
                     </segmentedCell>
                     <connections>
