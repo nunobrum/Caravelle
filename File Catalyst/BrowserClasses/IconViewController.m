@@ -113,19 +113,22 @@ NSString *KEY_ICON = @"icon";
 
 
 -(void) startBusyAnimations {
+    [super startBusyAnimations];
     [self.myProgressIndicator setHidden:NO];
     [self.myProgressIndicator startAnimation:self];
 
 }
 -(void) stopBusyAnimations {
+    [super stopBusyAnimations];
     [self.myProgressIndicator setHidden:YES];
     [self.myProgressIndicator stopAnimation:self];
 }
 
 -(void) refresh {
-    self.icons = [self itemsToDisplay];
-    //[self.iconArrayController setContent:[self itemsToDisplay]];
+    [self startBusyAnimationsDelayed];
     // Refreshing the collection
+    self.icons = [self itemsToDisplay];
+    [self stopBusyAnimations];
     [self.collectionView setNeedsDisplay:YES];
 }
 

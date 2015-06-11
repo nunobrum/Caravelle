@@ -404,7 +404,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 // Use KVO to observe for changes of its children Array
                 if (_viewMode==BViewBrowserMode) {
                     if ([_treeNodeSelected needsRefresh]) {
-                        [self.detailedViewController startBusyAnimations];
+                        [self.detailedViewController startBusyAnimationsDelayed];
                         [(TreeBranch*)_treeNodeSelected refreshContents];
                         // This will automatically call for a refresh
                     }
@@ -746,7 +746,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         if (isSelected) { // If it is activated, it suffices the order the expansion.
                           // The refresh will be triggered by the KVO reload
             [self.detailedViewController setFoldersDisplayed:NO];
-            [self.detailedViewController startBusyAnimations];
+            [self.detailedViewController startBusyAnimationsDelayed];
             [self.detailedViewController.currentNode expandAllBranches];
         }
         else {

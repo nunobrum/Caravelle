@@ -486,18 +486,20 @@
 }
 
 -(void) startBusyAnimations {
+    [super startBusyAnimations];
     [self.myProgressIndicator setHidden:NO];
     [self.myProgressIndicator startAnimation:self];
 
 }
 -(void) stopBusyAnimations {
+    [super stopBusyAnimations];
     [self.myProgressIndicator setHidden:YES];
     [self.myProgressIndicator stopAnimation:self];
 }
 
 -(void) refresh {
-    //[self startBusyAnimations];
-    self->_displayedItems = [self itemsToDisplay];
+    [self startBusyAnimationsDelayed];
+    [self itemsToDisplay];
     [self stopBusyAnimations];
     [_myTableView reloadData];
 }

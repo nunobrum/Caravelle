@@ -18,7 +18,9 @@
 
 @end
 
-@implementation NodeViewController
+@implementation NodeViewController {
+    BOOL animation_needed;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -344,6 +346,7 @@
             }
         }
     }
+    self->_displayedItems = tableData;
     return tableData;
 }
 
@@ -434,12 +437,28 @@
     return nil;
 }
 
--(void) startBusyAnimations {
-    // TODO:!!!! Put a timer of 500ms to delay the animations
-    // If animations are stopped before 500ms the animations aren't done.
-    NSLog(@"NodeViewController.startBusyAnimations: should be overriden");
+-(void) _startBusyAnimations {
+    if (self->animation_needed == YES) {
+        [self startBusyAnimations];
+        self->animation_needed = NO;
+    }
 }
+
+-(void) startBusyAnimationsDelayed {
+    // Put a timer of 500ms to delay the animations
+    // If animations are stopped before 500ms the animations aren't done.
+    [self performSelector:@selector(_startBusyAnimations) withObject:nil afterDelay:ANIMATION_DELAY];
+    self->animation_needed = YES;
+}
+
+-(void) startBusyAnimations {
+    //  should be overriden
+    self->animation_needed = NO;
+
+}
+
 -(void) stopBusyAnimations {
-    NSLog(@"NodeViewController.stopBusyAnimations: should be overriden");
+    //  should be overriden
+    self->animation_needed = NO;
 }
 @end

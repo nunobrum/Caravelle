@@ -79,6 +79,7 @@
 -(NSArray*) getSelectedItemsForContextMenu;
 -(TreeItem*) getLastClickedItem;
 
+-(void) startBusyAnimationsDelayed;
 -(void) startBusyAnimations;
 -(void) stopBusyAnimations;
 
