@@ -169,7 +169,7 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
     int i;
     CFArrayRef paths = eventPaths;
 
-    // TODO: !!! Bundle all in one single notification
+    // TODO: ! Bundle all in one single notification
     //NSMutableArray *events = [NSMutableArray arrayWithCapacity:numEvents];
 
     // printf("Callback called\n");

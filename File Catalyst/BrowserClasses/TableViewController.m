@@ -92,7 +92,6 @@
 //- (NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)row {
 //    NSTableRowView *rowView = [[NSTableRowView alloc] init];
 //    id objectValue = [self->_displayedItems objectAtIndex:row];
-//    // TODO: !!!! create a row view with a object
 //    return rowView;
 //}
 
@@ -118,32 +117,32 @@
             // We pass us as the owner so we can setup target/actions into this main controller object
             cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
             [cellView setObjectValue:objectValue];
-            //[cellView setToolTip:[theFile hint]]; TODO:! Add tool tips lazyly by using view: stringForToolTip: point: userData:
 
             // If it's a new file, then assume a default ICON
 
-                NSString *path = [[theFile url] path];
-                if (path) {
-                    // Then setup properties on the cellView based on the column
-                    NSString *fileName = [theFile name];  // Display simply the name of the file;
-                    cellView.textField.stringValue = fileName;
-                    [cellView setToolTip:fileName];
-                    cellView.imageView.objectValue = [theFile image];
+            NSString *path = [[theFile url] path];
+            if (path) {
+                // Then setup properties on the cellView based on the column
+                NSString *fileName = [theFile name];  // Display simply the name of the file;
+                cellView.textField.stringValue = fileName;
+                [cellView setToolTip:[theFile hint]]; //TODO:!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
 
-                    // Setting the color
-                    if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty+tagTreeItemToMove]) {
-                        [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
-                    }
-                    else {
-                        // Set color back to normal
-                        [cellView.textField setTextColor:foreground];
+                cellView.imageView.objectValue = [theFile image];
 
-                    }
+                // Setting the color
+                if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty+tagTreeItemToMove]) {
+                    [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
                 }
                 else {
-                    // This is not supposed to happen, just setting an error
-                    [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
+                    // Set color back to normal
+                    [cellView.textField setTextColor:foreground];
+
                 }
+            }
+            else {
+                // This is not supposed to happen, just setting an error
+                [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
+            }
         }
 
         else { // All other cases are handled here
@@ -269,7 +268,7 @@
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification {
     [self.parentController updateFocus:self];
     if([[aNotification name] isEqual:NSTableViewSelectionDidChangeNotification ]){
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[aNotification userInfo]];
+        [self.parentController selectionDidChangeOn:self]; // Will Trigger the notification to the status bar
     }
 }
 
@@ -430,7 +429,7 @@
     // if the click was outside the items displayed
     if ([_myTableView clickedRow] == -1 ) {
         // it returns nothing
-        answer = [NSArray array]; // It will return an empty selection
+        answer = [NSArray arrayWithObject:self.currentNode]; // It will return the current node.
     }
     else {
         NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
@@ -477,7 +476,7 @@
     if (urls!=nil && [urls count]>0) {
         NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-            if ([item isKindOfClass:[TreeItem class]] && [urls indexOfObject:[item url]]!=NSNotFound)
+            if ([item isKindOfClass:[TreeItem class]] && [urls containsObject:[item url]])
                 return YES;
             else
                 return NO;
@@ -691,7 +690,7 @@
                     [self->extendedSelection addIndex:index];
             }];
 
-            // TODO:!!!! Check what is the preferred method
+            // Check what is the preferred method
 #ifdef REFRESH_ONLY_FILENAME
             // Only update the FileName Column
             NSIndexSet *colIndex = [NSIndexSet indexSetWithIndex:

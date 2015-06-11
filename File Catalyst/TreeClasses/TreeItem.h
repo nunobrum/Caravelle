@@ -64,6 +64,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSDate*)   date_accessed;
 -(NSDate*)   date_created;
 -(NSString*) path ;
+-(NSString*) location;
 -(NSImage*) image;
 -(long long) filesize ;
 -(NSNumber*) fileSize;

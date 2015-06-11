@@ -74,7 +74,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
 #define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
 #define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
-#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used. Why ?
+#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used.
 #define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
@@ -176,6 +176,7 @@ BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;
 - (void) updateStatus:(NSDictionary*)status;
+- (void) selectionDidChangeOn:(id)object;
 
 @end
 

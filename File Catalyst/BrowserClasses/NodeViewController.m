@@ -280,7 +280,7 @@
             NSPredicate *predicate;
             NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"*=~|&<>"];
             if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
-                // TODO:!!! Tokenize the filter field to make inteligent searches
+                // TODO:!! Tokenize the filter field to make inteligent searches
                 @try {
                     predicate = [NSPredicate predicateWithFormat:self.filterText];
                 }

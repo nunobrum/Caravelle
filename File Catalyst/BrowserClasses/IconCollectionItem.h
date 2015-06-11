@@ -13,9 +13,6 @@
 
 @property (strong) IBOutlet IconViewBox *iconView;
 
-
-- (IBAction)doubleClick:(id)sender;
-- (IBAction)rightClick:(id)sender;
 - (IBAction)filenameDidChange:(id)sender;
 
 -(void) prepareForEdit;

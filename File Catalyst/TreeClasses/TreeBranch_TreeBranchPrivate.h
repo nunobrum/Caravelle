@@ -11,12 +11,17 @@
 @interface TreeBranch( PrivateMethods )
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
--(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;;
+-(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
+
+-(void) _performSelectorInUndeveloppedBranches:(SEL)selector; // Used for branch expansion
+//-(void) _performSelector:(SEL)selector inItemsWithPredicate:(NSPredicate*)predicte; // Used for tree expansion
+
 -(TreeItem*) _addURLnoRecurr:(NSURL*)theURL;
 -(void) refreshTreeFromURLs;
 -(void) _setChildren:(NSMutableArray*) children;
+-(void) _computeAllocatedSize;
+-(void) _expandTree;
 
-// TODO:??? Maybe this method is not really needed, since ARC handles this
 -(void) _releaseReleasedChildren;
 -(void) releaseChildren;
 

@@ -35,18 +35,6 @@
     [(id<MYViewProtocol>)[[self collectionView] delegate] focusOnFirstView];
 }
 
-- (IBAction) doubleClick:(id)sender {
-    //NSLog(@"double click in the collectionItem");
-    if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(doubleClick:)]) {
-        [[[self collectionView] delegate] performSelector:@selector(doubleClick:) withObject:self];
-    }
-}
-
-- (IBAction)rightClick:(id)sender {
-    if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(rightClick:)]) {
-        [[[self collectionView] delegate] performSelector:@selector(rightClick:) withObject:self];
-    }
-}
 - (IBAction)filenameDidChange:(id)sender {
     // This is actually not needed. The rename is handled by the Binding
     /*if([self collectionView] && [[self collectionView] delegate] && [[[self collectionView] delegate] respondsToSelector:@selector(filenameDidChange:)]) {

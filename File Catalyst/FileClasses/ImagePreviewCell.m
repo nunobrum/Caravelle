@@ -47,6 +47,9 @@
   
  */
 
+//TODO:!? I don't know if this is really being used.
+// Maybe this can be reused to get a Dophin Like Select Button
+
 #import "ImagePreviewCell.h"
 
 // These defines should be on, and are simply for demo purposes

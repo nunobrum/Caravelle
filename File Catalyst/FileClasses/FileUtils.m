@@ -176,7 +176,7 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
 
     // if one folder is contained in another, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:! create an error subclass
+        //TODO:! create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
@@ -196,7 +196,7 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     }
     // if one file is contained in another, or the same, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:! create an error subclass
+        //TODO:! create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];

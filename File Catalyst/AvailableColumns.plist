@@ -12,6 +12,17 @@
 		<string>size</string>
 		<key>selected</key>
 		<false/>
+		<key>grouping</key>
+		<string>size</string>
+	</dict>
+	<key>COL_PATH</key>
+	<dict>
+		<key>title</key>
+		<string>Path</string>
+		<key>accessor</key>
+		<string>path</string>
+		<key>selected</key>
+		<false/>
 	</dict>
 	<key>COL_DATE_MODIFIED</key>
 	<dict>
@@ -23,6 +34,8 @@
 		<string>date</string>
 		<key>selected</key>
 		<false/>
+		<key>grouping</key>
+		<string>date</string>
 	</dict>
 	<key>COL_KIND</key>
 	<dict>
@@ -45,6 +58,8 @@
 		<false/>
 		<key>transformer</key>
 		<string>date</string>
+		<key>grouping</key>
+		<string>date</string>
 	</dict>
 	<key>COL_DATE_ACCESSED</key>
 	<dict>
@@ -56,6 +71,17 @@
 		<false/>
 		<key>transformer</key>
 		<string>date</string>
+		<key>grouping</key>
+		<string>date</string>
+	</dict>
+	<key>COL_LOCATION</key>
+	<dict>
+		<key>title</key>
+		<string>Location</string>
+		<key>accessor</key>
+		<string>location</string>
+		<key>grouping</key>
+		<string>string</string>
 	</dict>
 </dict>
 </plist>

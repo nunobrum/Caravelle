@@ -9,7 +9,16 @@
 #import <Cocoa/Cocoa.h>
 #import "IconViewBox.h"
 
-@interface BrowserIconView : NSCollectionView
+@interface BrowserIconView : NSCollectionView {
+    IconViewBox * _lastClick;
+}
+
+-(IconViewBox*) iconForEvent:(NSEvent*) theEvent;
+-(IconViewBox*) lastClick;
+
+- (void)keyDown:(NSEvent *)theEvent;
+- (IBAction)mouseDown:(NSEvent *)theEvent;
+- (IBAction)rightMouseDown:(NSEvent *)theEvent;
 
 -(IconViewBox*) iconWithItem:(id) item;
 - (void)cancelOperation:(id)sender;

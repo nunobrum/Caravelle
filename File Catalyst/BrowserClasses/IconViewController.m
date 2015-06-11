@@ -20,8 +20,8 @@ NSString *KEY_ICON = @"icon";
 
 
 @interface IconViewController () {
-    IconCollectionItem * lastRightClick;
     NSMutableIndexSet *extendedSelection;
+    IconViewBox* menuTarget;
 }
 
 @property (readwrite, strong) NSMutableArray *icons;
@@ -49,7 +49,7 @@ NSString *KEY_ICON = @"icon";
     if ([keyPath isEqualToString:@"selectedObjects"]) {
         [self updateFocus:self];
         // send a Status Notfication
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self.parentController userInfo:nil];
+        [self.parentController selectionDidChangeOn:self]; // Will Trigger the notification to the status bar
     }
     else {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -62,16 +62,13 @@ NSString *KEY_ICON = @"icon";
 }
 
 
--(IBAction) rightClick:(id)sender {
+
+-(IBAction) lastClick:(id)sender {
     [self.parentController contextualFocus:self];
-    lastRightClick = sender;
-    
 }
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)doubleClick:(id)sender {
-    //NSIndexSet *selectedIndexes = [self.iconArrayController selectionIndexes];
-    //NSArray *itemsSelected = [self.icons objectsAtIndexes:selectedIndexes];
     NSArray *itemsSelected = [self.iconArrayController selectedObjects];
     [self orderOperation:opOpenOperation onItems:itemsSelected];
 }
@@ -91,6 +88,30 @@ NSString *KEY_ICON = @"icon";
     [self.view.window makeFirstResponder:self.containerView];
 }
 
+-(NSArray*) getTableViewSelectedURLs {
+    NSArray *selectedObjects = [self.iconArrayController selectedObjects];
+    if ([selectedObjects count]==0)
+        return nil;
+    else {
+        // using collection operator to get the array of the URLs from the selected Items
+        return [selectedObjects valueForKeyPath:@"@unionOfObjects.url"];
+    }
+}
+
+-(void) setTableViewSelectedURLs:(NSArray*) urls {
+    if (urls!=nil && [urls count]>0) {
+        NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+            //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
+            if ([item isKindOfClass:[TreeItem class]] && [urls containsObject:[item url]])
+                return YES;
+            else
+                return NO;
+        }];
+        [self.iconArrayController  setSelectionIndexes:select];
+    }
+}
+
+
 -(void) startBusyAnimations {
     [self.myProgressIndicator setHidden:NO];
     [self.myProgressIndicator startAnimation:self];
@@ -109,11 +130,11 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(void) refreshKeepingSelections {
-    // TODO: !!!! Keep the selections
-    //Store selection
+    NSArray *selectedURLs = [self getTableViewSelectedURLs];
+    // Refreshing the View
     [self refresh];
-    // Reposition Selections
-}
+    // Reselect stored selections
+    [self setTableViewSelectedURLs:selectedURLs];}
 
 -(void) reloadItem:(id)object {
     if (object == self.currentNode) {
@@ -132,17 +153,26 @@ NSString *KEY_ICON = @"icon";
 }
 
 - (NSArray*)getSelectedItemsForContextMenu {
-    NSArray *selectedItems = [self getSelectedItems];
-    TreeItem *item = [lastRightClick representedObject];
-    if ([selectedItems containsObject:item])
-        return selectedItems;
-    else
-        return [NSArray arrayWithObject:item];
+    if ([self.collectionView lastClick] != nil) {
+        NSArray *selectedItems = [self getSelectedItems];
+        TreeItem *item = [[self.collectionView lastClick] representedObject];
+        if ([selectedItems containsObject:item])
+            return selectedItems;
+        else
+            return [NSArray arrayWithObject:item];
+    }
+    return [NSArray arrayWithObject: self.currentNode];
 }
 
 -(TreeItem*) getLastClickedItem {
-    // TODO: !!!!
-    return nil;
+    if ([self.collectionView lastClick] != nil) {
+        TreeItem *item = [[self.collectionView lastClick] representedObject];
+        if ([[self.iconArrayController arrangedObjects] containsObject:item]) {
+            // Returns the current selected item
+            return item;
+        }
+    }
+    return self.currentNode;
 }
 
 #pragma - Drag & Drop Support
@@ -249,13 +279,20 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 
 #pragma - NS Menu Delegate
 
+- (void)menuWillOpen:(NSMenu *)menu {
+    self->menuTarget = [self.collectionView lastClick];
+
+    [self->menuTarget setFillColor:[NSColor windowBackgroundColor]];
+    [self->menuTarget setTransparent:NO];
+    [self->menuTarget setNeedsDisplay:YES];
+}
+
 - (void)menuDidClose:(NSMenu *)menu {
     // Need to reload the item which highlight was changed
-    id itemBox = [lastRightClick view];
-    [itemBox setFillColor:[NSColor alternateSelectedControlColor]];
-    TreeItem *obj = [lastRightClick representedObject];
+    [self->menuTarget setFillColor:[NSColor alternateSelectedControlColor]];
+    TreeItem *obj = [self->menuTarget representedObject];
     if (NO==[[self getSelectedItems] containsObject:obj])
-        [itemBox setTransparent:YES];
+        [self->menuTarget setTransparent:YES];
     [self reloadItem:obj];
 }
 

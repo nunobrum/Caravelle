@@ -313,7 +313,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //
 //}
 
-// TODO: !! This doesn't seem to be used, but its needed.
+// TODO:!! This doesn't seem to be used, but its needed.
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
     NSLog(@"BrowserController.outlineView:setObjectValue:forTableColumn:byItem - Not implemented");
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
@@ -369,11 +369,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 /* Called before the outline is selected.
- Can be used later to block access to private directories */
+ Can be used later to block access to private directories
 - (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item {
-    // ??? Avoid selecting protected files
     return YES;
 }
+ */
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
     if ([[notification name] isEqual:NSOutlineViewSelectionDidChangeNotification ])  {
@@ -391,7 +391,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             /* Updates the _treeNodeSelected */
             TreeBranch *tb = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             if (tb != _treeNodeSelected) { // !!! WARNING This workaround might raise problems in the future depending on the implementation of the folder change notification. Best is to see why this function is being called twice.
-                [self setPathBarToItem:tb];
+                [self setCurrentNode:tb];
 
                 //[self refreshDataView];
                 // Use KVO to observe for changes of its children Array
@@ -416,8 +416,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             NSLog(@"BrowserController.outlineViewSelectionDidChange - More than one item Selected");
             return;
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:self userInfo:[notification userInfo]];
+        [self selectionDidChangeOn:self]; // Will Trigger the notification to the status bar
     }
+}
+
+-(void) selectionDidChangeOn:(id)object {
+    if (object==self.detailedViewController && self.detailedViewController.filesInSubdirsDisplayed) {
+        NSArray *itemsSelected = [object getSelectedItems];
+        if ([itemsSelected count]==1) {
+            // will change the path bar
+            [self setPathBarToItem:[(TreeItem*)itemsSelected[0] parent]];
+        }
+        else {
+            // set the PathBar back to the _treeNode
+            [self setPathBarToItem:_treeNodeSelected];
+        }
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:object userInfo:nil];
 }
 
 - (void) updateStatus:(NSDictionary *)status {
@@ -470,14 +485,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         int tagCount = 0;
         for (NSString *colID in sortedColumnNames() ) {
             NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-            NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
-            NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
-            [menuItem setEnabled:YES];
-            [menuItem setState:NSOffState];
-            [menuItem setTag:tagCount++];
-            [menuItem setAction:@selector(menuGroupingSelector:)];
-            [menuItem setTarget:self.detailedViewController];
-            [menu addItem:menuItem];
+            // Restrict to fields that have grouping setting
+            id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
+            if (grouping) {
+                NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
+                NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
+                [menuItem setEnabled:YES];
+                [menuItem setState:NSOffState];
+                [menuItem setTag:tagCount++];
+                [menuItem setAction:@selector(menuGroupingSelector:)];
+                [menuItem setTarget:self.detailedViewController];
+                [menu addItem:menuItem];
+            }
         }
     }
     // If the menu was already created, then it will just update the groupings
@@ -485,24 +504,28 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     int i = 1; // Starts with the first visible Menu Item
     for (NSString *colID in sortedColumnNames() ) {
         NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-        NSString *key = colInfo[COL_ACCESSOR_KEY];
-        NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
-                           ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                               BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj key] isEqualToString:key];
-                               *stop = OK;
-                               return OK;
-                           }];
-        if (idx!=nil && [idx count]!=0) {
-            [[menu itemAtIndex:i] setState:NSOnState];
+        id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
+        if (grouping) {
+            NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+            NSString *key = colInfo[COL_ACCESSOR_KEY];
+            NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
+                               ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                                   BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj key] isEqualToString:key];
+                                   *stop = OK;
+                                   return OK;
+                               }];
+            if (idx!=nil && [idx count]!=0) {
+                [[menu itemAtIndex:i] setState:NSOnState];
+            }
+            else {
+                [[menu itemAtIndex:i] setState:NSOffState];
+            }
+            i+=1;
         }
-        else {
-            [[menu itemAtIndex:i] setState:NSOffState];
-        }
-        i+=1;
     }
 }
 
-// TODO: ! Use this selector for making key bindings.
+// TODO:!! Use this selector for making key bindings.
 /*
 - (BOOL)menuHasKeyEquivalent:(NSMenu *)menu
                     forEvent:(NSEvent *)event
@@ -512,7 +535,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
  */
 
-// TODO: ! Use this selector to validate the grouping menus
+// TODO:!! Use this selector to validate the grouping menus
 /*
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
     SEL theAction = [anItem action];
@@ -527,113 +550,122 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return _treeNodeSelected;
 }
 
--(void) setPathBarToItem:(TreeItem*)item {
-    if (item != _treeNodeSelected) {
-        if (item==nil) {
-            // Going to hide Menus and path bar
-            [_myPathPopDownButton setHidden:YES];
-            [_myPathBarControl setHidden:YES];
+-(void) setCurrentNode:(TreeBranch*) branch {
+    if (branch != _treeNodeSelected) {
+        if (branch==nil) {
+            [self setPathBarToItem:nil];
             return;
         }
-        else {
-            // In case it was formerly hidden.
-            [_myPathPopDownButton setHidden:NO];
-            [_myPathBarControl setHidden:NO];
-        }
-        NSURL *url;
         TreeBranch *node;
-        if ([item itemType] == ItemTypeBranch) {
-            node = (TreeBranch*)item;
+        if ([branch itemType] == ItemTypeBranch) {
+            node = (TreeBranch*)branch;
         }
         else {
-            node = (TreeBranch*)[item parent];
+            node = (TreeBranch*)[branch parent];
         }
-        url = [node url];
+        [self setPathBarToItem:node];
 
-        NSMutableArray *pathComponentCells = [NSMutableArray arrayWithArray:
-                                              [self.myPathBarControl pathComponentCells]];
-        NSUInteger currSize = [pathComponentCells count];
-
-        NSArray *pathComponents = [url pathComponents];
-        NSPathComponentCell *cell;
-        NSRange rng;
-        NSUInteger rootLevel = [[[_rootNodeSelected path] pathComponents] count];
-        //piconSize.height =12;
-        //piconSize.width = 12;
-        rng.location=0;
-        rng.length = 0;
-
-        NSString *title;
-        NSInteger i = 0;
-        NSUInteger j;
-        NSArray *menuItems = [_myPathPopDownMenu itemArray];
-        NSInteger offset = rootLevel <= maxItemsInBrowserPopMenu ? 0 : (rootLevel-maxItemsInBrowserPopMenu);
-        // Going to hide not used Items
-        for (j=0; j < maxItemsInBrowserPopMenu ; j++) {
-            NSMenuItem *menu = [menuItems objectAtIndex:maxItemsInBrowserPopMenu-j+item0InBrowserPopMenu];
-            [menu setHidden:YES];
-            [menu setTag:-5]; //  tag < 0 is define as do nothing
-        }
-        for (NSString *dirname in pathComponents) {
-            rng.length++;
-            if (rng.length==1) {
-                NSURL *rootURL = [NSURL fileURLWithPath:pathComponents[0]];
-                NSDictionary *diskInfo = getDiskInformation(rootURL);
-                title = diskInfo[@"DAVolumeName"];
-            }
-            else {
-                title = dirname;
-            }
-            NSURL *newURL = [NSURL fileURLWithPathComponents: [pathComponents subarrayWithRange:rng]];
-            NSImage *icon =[[NSWorkspace sharedWorkspace] iconForFile:[newURL path]];
-
-            if (rng.length < rootLevel) {
-                // Use the myPathPopDownMenu outlet to get the maximum tag number
-                NSInteger n = (maxItemsInBrowserPopMenu-1) - (rng.length - 1) + offset;
-                if (n >=0 && n < maxItemsInBrowserPopMenu) {
-                    NSMenuItem *menu = [menuItems objectAtIndex:n+item0InBrowserPopMenu];
-                    NSSize piconSize = {16,16};
-                    [icon setSize:piconSize];
-                    [menu setImage:icon];
-                    [menu setTitle:title];
-                    [menu setHidden:NO];
-                    [menu setTag:rng.length-1];
-                }
-            }
-            else {
-                if (i < currSize) {
-                    cell = pathComponentCells[i];
-                    if ([newURL isEqual:[cell URL]]) {
-                        i++;
-                        continue; // Nothing to change in this case
-                    }
-                }
-                else {
-                    cell = [[NSPathComponentCell new] init];
-                    [pathComponentCells addObject:cell];
-                    currSize++;
-                }
-                NSSize piconSize = {12,12};
-                [icon setSize:piconSize];
-                [cell setURL:newURL];
-                [cell setImage:icon];
-                [cell setTitle:title];
-                i++;
-            }
-        }
-        //i++; // Increment one more so it is +1 over the last valid position
-        // Finally delete the extra cells if exist
-        if (i<currSize) {
-            rng.location = i;
-            rng.length = currSize-i;
-            [pathComponentCells removeObjectsInRange:rng];
-        }
-        [self.myPathBarControl setPathComponentCells:pathComponentCells];
-
-        [self mruSet:url];
-        _treeNodeSelected = node;
+        [self mruSet:[node url]];
         [self.detailedViewController setCurrentNode:node];
+        _treeNodeSelected = node;
     }
+}
+
+-(void) setPathBarToItem:(TreeItem*)item {
+    if (item==nil) {
+        // Going to hide Menus and path bar
+        [_myPathPopDownButton setHidden:YES];
+        [_myPathBarControl setHidden:YES];
+        return;
+    }
+    else {
+        // In case it was formerly hidden.
+        [_myPathPopDownButton setHidden:NO];
+        [_myPathBarControl setHidden:NO];
+    }
+
+    NSMutableArray *pathComponentCells = [NSMutableArray arrayWithArray:
+                                          [self.myPathBarControl pathComponentCells]];
+    NSUInteger currSize = [pathComponentCells count];
+
+    NSArray *pathComponents = [[item url] pathComponents];
+    NSPathComponentCell *cell;
+    NSRange rng;
+    NSUInteger rootLevel = [[[_rootNodeSelected path] pathComponents] count];
+    //piconSize.height =12;
+    //piconSize.width = 12;
+    rng.location=0;
+    rng.length = 0;
+
+    NSString *title;
+    NSInteger i = 0;
+    NSUInteger j;
+    NSArray *menuItems = [_myPathPopDownMenu itemArray];
+    NSInteger offset = rootLevel <= maxItemsInBrowserPopMenu ? 0 : (rootLevel-maxItemsInBrowserPopMenu);
+
+    // TODO:!! Move this to a menu delegation object with the menuNeedsUpdate: Selector
+    // Going to hide not used Items
+    for (j=0; j < maxItemsInBrowserPopMenu ; j++) {
+        NSMenuItem *menu = [menuItems objectAtIndex:maxItemsInBrowserPopMenu-j+item0InBrowserPopMenu];
+        [menu setHidden:YES];
+        [menu setTag:-5]; //  tag < 0 is define as do nothing
+    }
+    for (NSString *dirname in pathComponents) {
+        rng.length++;
+        if (rng.length==1) {
+            NSURL *rootURL = [NSURL fileURLWithPath:pathComponents[0]];
+            NSDictionary *diskInfo = getDiskInformation(rootURL);
+            title = diskInfo[@"DAVolumeName"];
+        }
+        else {
+            title = dirname;
+        }
+        NSURL *newURL = [NSURL fileURLWithPathComponents: [pathComponents subarrayWithRange:rng]];
+        NSImage *icon =[[NSWorkspace sharedWorkspace] iconForFile:[newURL path]];
+
+        if (rng.length < rootLevel) {
+            // Use the myPathPopDownMenu outlet to get the maximum tag number
+            NSInteger n = (maxItemsInBrowserPopMenu-1) - (rng.length - 1) + offset;
+            if (n >=0 && n < maxItemsInBrowserPopMenu) {
+                NSMenuItem *menu = [menuItems objectAtIndex:n+item0InBrowserPopMenu];
+                NSSize piconSize = {16,16};
+                [icon setSize:piconSize];
+                [menu setImage:icon];
+                [menu setTitle:title];
+                [menu setHidden:NO];
+                [menu setTag:rng.length-1];
+            }
+        }
+        else {
+            if (i < currSize) {
+                cell = pathComponentCells[i];
+                if ([newURL isEqual:[cell URL]]) {
+                    i++;
+                    continue; // Nothing to change in this case
+                }
+            }
+            else {
+                cell = [[NSPathComponentCell new] init];
+                [pathComponentCells addObject:cell];
+                currSize++;
+            }
+            NSSize piconSize = {12,12};
+            [icon setSize:piconSize];
+            [cell setURL:newURL];
+            [cell setImage:icon];
+            [cell setTitle:title];
+            i++;
+        }
+    }
+    //i++; // Increment one more so it is +1 over the last valid position
+    // Finally delete the extra cells if exist
+    if (i<currSize) {
+        rng.location = i;
+        rng.length = currSize-i;
+        [pathComponentCells removeObjectsInRange:rng];
+    }
+    [self.myPathBarControl setPathComponentCells:pathComponentCells];
+
 }
 
 
@@ -657,8 +689,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* This action is associated manually with the doubleClickTarget in Bindings */
 - (IBAction)OutlineDoubleClickEvent:(id)sender {
     NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
-    NSUInteger index = [rowsSelected firstIndex];
-    if (index!=NSNotFound) {
+    if (rowsSelected!=nil && [rowsSelected count]>0) {
+        NSUInteger index = [rowsSelected firstIndex];
         id node = [_myOutlineView itemAtRow:index];
         if ([node itemType] == ItemTypeBranch) { // It is a Folder : Will make it a root
             index = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
@@ -671,7 +703,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [self selectFolderByItem:node];
             [self.detailedViewController refresh];
         }
-        else // TODO:! When other types are allowed in the tree view this needs to be completed
+        else // When other types are allowed in the tree view this needs to be completed
             NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
     }
 }
@@ -703,9 +735,19 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
     }
     else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
-        [self.detailedViewController.currentNode expandAllBranches];
         [self.detailedViewController setDisplayFilesInSubdirs:isSelected];
-        [self.detailedViewController refreshKeepingSelections];
+        if (isSelected) { // If it is activated, it suffices the order the expansion.
+                          // The refresh will be triggered by the KVO reload
+            [self.detailedViewController setFoldersDisplayed:NO];
+            [self.detailedViewController startBusyAnimations];
+            [self.detailedViewController.currentNode expandAllBranches];
+        }
+        else {
+            // TODO:!! get the value from USER Defaults
+            [self.detailedViewController setFoldersDisplayed:YES];
+            // refreshes the view
+            [self.detailedViewController refreshKeepingSelections];
+        }
     }
     else
         NSAssert(NO, @"Invalid Segment Number");
@@ -723,7 +765,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-    // TODO:!!! Disable Back at the beginning Disable Forward
+    // TODO:!!!! Disable Back at the beginning Disable Forward
     // Create isABackFlag for the forward highlight and to test the Back
     // isAForward will make sure that the Forward is highlighted
     // otherwise Forward is disabled and Back Enabled
@@ -849,7 +891,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (void) reloadItem:(id)object {
     //NSLog(@"Reloading %@", [object path]);
     NSInteger row = [_myOutlineView rowForItem:object];
-    if (row >= 0 && row != NSNotFound) {
+    if (row >= 0 && row != -1) {
         // If it was deleted
         if ([object hasTags:tagTreeItemRelease]) {
             NSUInteger level = [_myOutlineView levelForRow:row];
@@ -935,7 +977,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         _treeNodeSelected = nil;
                         _rootNodeSelected = nil;
                         // The path bar and pop menu should be updated accordingly.
-                        [self setPathBarToItem:nil];
+                        [self setCurrentNode:nil];
                         [self.detailedViewController refresh];
                         [self.myOutlineView reloadData];
 
@@ -1042,8 +1084,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /*
  * Parent access routines
  */
-// TODO:! This routine should define the Column AutoSave
-// (See TableView setAutosaveTableColumns:) maybe this can be set on the NIB editor
 
 /* This routine is serving as after load initialization */
 
@@ -1095,7 +1135,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
         self.titleCopyTo = @"Copy to...";
         self.titleMoveTo = @"Move to...";
-        // TODO:!!! Make the copy To Dialog such like in Total Commander
+        // TODO:!!!! Make the copy To Dialog such like in Total Commander
     }
     else {
         self.contextualToMenusEnabled = [NSNumber numberWithBool:YES];
@@ -1190,7 +1230,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self.mySplitView displayIfNeeded];
         
         // Load Preferences
-        // TODO: !!!! make the bindings to UserDefaults
+        // TODO: !!! make the bindings to UserDefaults
         [newController setFoldersDisplayed:YES];
 
         [newController registerDraggedTypes];
@@ -1225,32 +1265,28 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 -(void) refresh {
-    if (_viewMode!=BViewBrowserMode) {
-        // TODO:! In catalyst Mode, there is no automatic Update
-    }
-    else {
-        // Refresh first the Roots, deletes the ones tagged for deletion
-        NSUInteger idx=0;
-        while (idx < [BaseDirectoriesArray count]) {
-            TreeBranch *tree = [BaseDirectoriesArray objectAtIndex:idx];
-            if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
-                [BaseDirectoriesArray removeObjectAtIndex:idx];
-            }
-            else { // Refreshes all the others
-                [tree setTag:tagTreeItemDirty];
-                [tree refreshContents];
-                idx++;
-            }
+    // Refresh first the Roots, deletes the ones tagged for deletion
+    NSUInteger idx=0;
+    while (idx < [BaseDirectoriesArray count]) {
+        TreeBranch *tree = [BaseDirectoriesArray objectAtIndex:idx];
+        if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
+            [BaseDirectoriesArray removeObjectAtIndex:idx];
         }
-        // Then the observed items
-        for (TreeBranch *tree in _observedVisibleItems) {
-            // But avoiding repeating the refreshes already done
-            if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
-                [tree setTag:tagTreeItemDirty];
-                [tree refreshContents];
-            }
+        else { // Refreshes all the others
+            [tree setTag:tagTreeItemDirty];
+            [tree refreshContents];
+            idx++;
         }
     }
+    // Then the observed items
+    for (TreeBranch *tree in _observedVisibleItems) {
+        // But avoiding repeating the refreshes already done
+        if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
+            [tree setTag:tagTreeItemDirty];
+            [tree refreshContents];
+        }
+    }
+
     if ([BaseDirectoriesArray count]==1) {
         // Expand the Root Node
         [_myOutlineView expandItem:BaseDirectoriesArray[0]];
@@ -1407,7 +1443,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
         TreeBranch *root = BaseDirectoriesArray[0];
         _rootNodeSelected = root;
-        [self setPathBarToItem:root];
+        [self setCurrentNode:root];
         [self outlineSelectExpandNode:root];
         [self.detailedViewController refresh];
         return root;
@@ -1434,7 +1470,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                         lastBranch = nil;
                 }
                 if (lastBranch) {
-                    [self setPathBarToItem:lastBranch];
+                    [self setCurrentNode:lastBranch];
                     [self outlineSelectExpandNode:lastBranch];
                     [self.detailedViewController refresh];
                     return YES;
@@ -1508,7 +1544,21 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         return [self.detailedViewController startEditItemName:item];
     }
     else {
-        // TODO: !!!! when the focused view is the treeOutline
+        NSInteger row = [self->_myOutlineView rowForItem:item];
+        NSInteger column = [self->_myOutlineView columnWithIdentifier:COL_FILENAME];
+        if (row >= 0) {
+            [self->_myOutlineView editColumn:column row:row withEvent:nil select:YES];
+            // Obtain the NSTextField from the view
+            NSTextField *textField = [[self->_myOutlineView viewAtColumn:column row:row makeIfNecessary:NO] textField];
+            assert(textField!=nil);
+            // Recuperate the old filename
+            NSString *oldFilename = [textField stringValue];
+            // Select the part up to the extension
+            NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
+            NSRange selectRange = {0, head_size};
+            [[textField currentEditor] setSelectedRange:selectRange];
+            return YES;
+        }
         return NO;
     }
 }
@@ -1522,6 +1572,36 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self.detailedViewController insertItem:item];
     }
 }
+
+// This selector is invoked when the file was renamed or a New File was created
+- (IBAction)filenameDidChange:(id)sender {
+    NSInteger row = [self->_myOutlineView rowForView:sender];
+    if (row != -1) {
+        TreeItem *item = [self->_myOutlineView itemAtRow:row];
+        NSString *operation=nil;
+        if ([item hasTags:tagTreeItemNew]) {
+            operation = opNewFolder;
+        }
+        else {
+            // If the name didn't change. Do Nothing
+            if ([[sender stringValue] isEqualToString:[item name]]) {
+                return;
+            }
+            operation = opRename;
+        }
+        NSArray *items = [NSArray arrayWithObject:item];
+
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              items, kDFOFilesKey,
+                              operation, kDFOOperationKey,
+                              [sender stringValue], kDFORenameFileKey,
+                              [item parent], kDFODestinationKey, // This has to be placed in last because it can be nil
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
+    }
+}
+
 
 #pragma mark - MRU Routines
 

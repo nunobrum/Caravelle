@@ -196,11 +196,14 @@
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
                                                                         <rect key="frame" x="25" y="0.0" width="175" height="17"/>
-                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
+                                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
                                                                             <font key="font" metaFont="system"/>
                                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                                                         </textFieldCell>
+                                                                        <connections>
+                                                                            <action selector="filenameDidChange:" target="-2" id="VGE-vv-dJ9"/>
+                                                                        </connections>
                                                                     </textField>
                                                                 </subviews>
                                                                 <constraints>

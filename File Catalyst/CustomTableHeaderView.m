@@ -45,6 +45,76 @@ NSString* keyForColID(NSString* colID) {
         return  [[columnInfo() objectForKey:colID] objectForKey:COL_ACCESSOR_KEY];
 }
 
+id fieldOnItem(id object, NSString *colID) {
+    NSString *prop_name = keyForColID(colID);
+    id prop = nil;
+    @try {
+        prop = [object valueForKey:prop_name];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Property '%@' not found", prop_name);
+    }
+    return prop;
+}
+
+NSString *transformerOnField(id field, NSString *colID) {
+    NSString *trans_name = [[columnInfo() objectForKey:colID] objectForKey:COL_TRANS_KEY];
+    if (trans_name) {
+        NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
+        if (trans) {
+            NSString *text = [trans transformedValue:field];
+            if (text)
+                return text;
+            else
+                NSLog(@"error transforming value");
+        }
+        else
+            NSLog(@"invalid transformer");
+    }
+    else
+        NSLog(@"no transformer found");
+    return nil;
+}
+
+NSString *fieldStringOnItem(id object, NSString* colID) {
+    id prop = fieldOnItem(object, colID);
+
+    if (prop){
+        if ([prop isKindOfClass:[NSString class]])
+            return prop;
+        else { // Need to use one of the NSValueTransformers
+            return transformerOnField(prop, colID);
+        }
+    }
+    return nil;
+}
+
+NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude_equals) {
+    id src_field, dst_field;
+
+    if ([colKey isEqualToString:@"COL_SIZE"]) { // Do not transform sizes
+        src_field = fieldOnItem(source, colKey);
+        dst_field = fieldOnItem(dest, colKey);
+        if (exclude_equals && [src_field isEqualToNumber:dst_field]) {
+            return nil;
+        }
+    }
+    else {
+        src_field = fieldStringOnItem(source, colKey);
+        dst_field = fieldStringOnItem(dest, colKey);
+        if (exclude_equals && [src_field isEqualToString:dst_field])
+            return nil;
+    }
+
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
+                         columnInfo()[colKey][COL_TITLE_KEY],@"name",
+                         src_field,@"source",
+                         dst_field,@"destination",
+                         nil];
+    return dic;
+    
+}
+
 @implementation CustomTableHeaderView
 
 - (void)drawRect:(NSRect)dirtyRect {
@@ -92,8 +162,9 @@ NSString* keyForColID(NSString* colID) {
         NSString *clickedColumnText = [[column headerCell] stringValue];
 
         // Column Names cannot be groupped
-        if (NO == [[column identifier] isEqualToString:COL_FILENAME]) {
-            // TODO: !!! Make the ungroup when the field is already being groupped.
+        if (NO == [[column identifier] isEqualToString:COL_FILENAME] && // it's not the file name
+            [[columnInfo() objectForKey:[column identifier]] objectForKey:COL_GROUPING_KEY]!=nil) { // and can be grouped
+            // TODO: !! Label the item ungroup when the field is already being groupped.
             NSString *itemTitle = [NSString stringWithFormat:@"Group using %@", clickedColumnText];
             [theMenu addItemWithTitle:itemTitle action:@selector(groupSelect:) keyEquivalent:@""];
 
@@ -103,7 +174,7 @@ NSString* keyForColID(NSString* colID) {
             [theMenu addItem:sep];
         }
     }
-    // Creates the Columns Mmenu
+    // Creates the Columns Menu
     for (NSString *colID in sortedColumnNames() ) {
         NSDictionary *colInfo = [columnInfo() objectForKey:colID];
         NSString *desc = [colInfo objectForKey:COL_TITLE_KEY];

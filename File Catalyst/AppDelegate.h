@@ -73,7 +73,6 @@
 - (IBAction)toolbarGotoFolder:(id)sender;
 
 - (IBAction)toolbarSearch:(id)sender;
-- (IBAction)toolbarGrouping:(id)sender;
 - (IBAction)toolbarRefresh:(id)sender;
 - (IBAction)toolbarHome:(id)sender;
 

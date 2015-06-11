@@ -76,7 +76,7 @@ extern NSString *notificationCatalystRootUpdate;
 /*
  * Tree Outline View Data Delegate Protocol
  */
-- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
+//- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item;
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 
 /* Binding is done manually in the initialization procedure */
@@ -92,7 +92,7 @@ extern NSString *notificationCatalystRootUpdate;
 - (IBAction) optionsSwitchSelect:(id)sender;
 - (IBAction) viewTypeSelection:(id)sender;
 - (IBAction) mruBackForwardAction:(id)sender;
-
+- (IBAction)filenameDidChange:(id)sender;
 /*
  * Notifications Received 
  */
@@ -116,6 +116,9 @@ extern NSString *notificationCatalystRootUpdate;
 -(BViewMode) viewMode;
 
 -(TreeBranch*) treeNodeSelected;
+-(void) setCurrentNode:(TreeBranch*) branch;
+-(void) setPathBarToItem:(TreeItem*)item;
+-(void) selectionDidChangeOn:(id)object;
 
 -(void) set_filterText:(NSString *) filterText;
 

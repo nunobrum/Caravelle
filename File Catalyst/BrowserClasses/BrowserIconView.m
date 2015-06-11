@@ -8,6 +8,7 @@
 
 #import "BrowserIconView.h"
 #import "Definitions.h"
+#import "IconViewController.h"
 
 @implementation BrowserIconView
 
@@ -15,6 +16,44 @@
     [super drawRect:dirtyRect];
     
     // Drawing code here.
+}
+
+-(IconViewBox*) iconForEvent:(NSEvent*) theEvent {
+    NSPoint xy =[theEvent locationInWindow];
+    NSPoint x1y1 = [self convertPoint:xy fromView:nil];
+    NSView *view = [self hitTest:x1y1];
+    if ([view isKindOfClass:[IconViewBox class]])
+        return (IconViewBox*)view;
+    else
+        return nil;
+}
+
+-(IconViewBox*) lastClick {
+    return self->_lastClick;
+}
+
+- (IBAction)mouseDown:(NSEvent *)theEvent {
+    self->_lastClick = [self iconForEvent:theEvent];
+    if([theEvent clickCount] > 1) {
+        if(self.delegate && [self.delegate respondsToSelector:@selector(doubleClick:)]) {
+            [(IconViewController*)self.delegate doubleClick:self->_lastClick];
+        }
+    }
+    else {
+        if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
+            [(IconViewController*)self.delegate lastClick:self->_lastClick];
+        }
+    }
+    [super mouseDown:theEvent];
+    
+}
+
+- (IBAction)rightMouseDown:(NSEvent *)theEvent {
+    self->_lastClick = [self iconForEvent:theEvent];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
+        [(IconViewController*)self.delegate lastClick:self->_lastClick];
+    }
+    [super rightMouseDown:theEvent];
 }
 
 - (void)keyDown:(NSEvent *)theEvent {

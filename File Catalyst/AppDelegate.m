@@ -233,6 +233,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     return self->_contextualFocus;
 }
 
+-(void) selectionDidChangeOn:(id)object {
+    // in the future this may substitute the status notification
+    NSAssert(NO, @"This shouldnt be called");
+}
+
 #pragma mark - Application Delegate
 
 // -------------------------------------------------------------------------------
@@ -578,6 +583,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     forEvent:(NSEvent *)event
                       target:(id *)target
                       action:(SEL *)action {
+    *action = (SEL)NULL;
     if ([event modifierFlags] & NSFunctionKeyMask) {
         NSString *theArrow = [event charactersIgnoringModifiers];
         unichar keyChar = 0;
@@ -604,10 +610,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             //else if ( keyChar == NSF10FunctionKey )
             //    *action = @selector(toolbarInformation:);
             else
-                *action = NULL;
+                *action = (SEL)NULL;
         }
     }
-    if (*action!=NULL) {
+    if (*action!=(SEL)NULL) {
         *target = self;
         return YES;
     }
@@ -651,7 +657,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 /* Receives the notification from the BrowserView to reload the Tree */
 
-//TODO:!! Revise this code. Only used in notificationCatalystRootUpdate
+//TODO:!! Marked for clean-up. Revise this code. Only used in notificationCatalystRootUpdate.
 - (void) rootUpdate:(NSNotification*)theNotification {
     NSMutableDictionary *notifInfo = [NSMutableDictionary dictionaryWithDictionary:[theNotification userInfo]];
     BrowserController *BrowserView = [theNotification object];
@@ -688,6 +694,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     {
         TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
         BrowserController *BView =[notifData valueForKey: kSenderKey];
+        id sender = [note object];
+        assert(BView!=sender); // check if the kSenderKey can't be deleted
         [BView addTreeRoot:receivedTree];
         [BView stopBusyAnimations];
         [BView selectFolderByItem: receivedTree];
@@ -886,7 +894,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     for (TreeItem *item in selectedFiles) {
         [item setTag:tagTreeItemToMove+tagTreeItemDirty];
     }
-    [[self selectedView] refresh]; // TODO:! replace this with KVO observed->reloadItem
+    [[self selectedView] refresh]; // Can be replaced with KVO observed->reloadItem
     [self executeCopy:selectedFiles onlyNames:NO];
     isCutPending = YES; // This instruction has to be always made after the executeCopy
 }
@@ -894,8 +902,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (void)executeCopy:(NSArray*) selectedFiles onlyNames:(BOOL)onlyNames {
 
-    // Get the urls from the view
-    NSArray* items = [[self selectedView] getSelectedItems];
 
     // Will create name list for text application paste
     // TODO:!! multi copy, where an additional copy will append items to the pasteboard
@@ -920,7 +926,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                       owner:nil];
 
     if (onlyNames==YES) {
-        NSArray* str_representation = [items valueForKeyPath:@"@unionOfObjects.name"];
+        NSArray* str_representation = [selectedFiles valueForKeyPath:@"@unionOfObjects.name"];
         // Join the paths, one name per line
         NSString* pathPerLine = [str_representation componentsJoinedByString:@"\n"];
         //Now add the pathsPerLine as a string
@@ -928,7 +934,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
     // if only names are copied, the urls are not
     else {
-        NSArray* urls  = [items valueForKeyPath:@"@unionOfObjects.url"];
+        NSArray* urls  = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
         [clipboard writeObjects:urls];
     }
 
@@ -936,7 +942,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     generalPasteBoardChangeCount = [clipboard changeCount];
     isCutPending = NO;
 
-    NSUInteger count = [items count];
+    NSUInteger count = [selectedFiles count];
     NSString *statusText;
     if (count==0) {
         statusText = [NSString stringWithFormat:@"No files selected"];
@@ -1080,7 +1086,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSArray *selectedItems = [[self selectedView] getSelectedItems];
     NSInteger selectionCount = [selectedItems count];
     if (selectionCount!=0) {
-        // TODO:!! Ask whether to move the files into the new created Folder
+        // TODO:! Ask whether to move the files into the new created Folder
     }
     [self executeNewFolder:[[self selectedView] treeNodeSelected]];
 }
@@ -1102,10 +1108,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (IBAction)toolbarSearch:(id)sender {
     // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
     //- (BOOL)showSearchResultsForQueryString:(NSString *)queryString
-}
-
-- (IBAction)toolbarGrouping:(id)sender {
-    // TODO:!!! Grouping pointer, select column to use for grouping
 }
 
 - (IBAction)toolbarRefresh:(id)sender {
@@ -1150,27 +1152,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSArray *operations = [operationsQueue operations];
     [(NSOperation*)[operations firstObject] cancel];
 }
-
-//- (IBAction)mruBackForwardAction:(id)sender {
-//    NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
-//    //To do: ! Disable Back at the beginning Disable Forward
-//    // Create isABackFlag for the forward highlight and to test the Back
-//    // isAForward will make sure that the Forward is highlighted
-//    // otherwise Forward is disabled and Back Enabled
-//    id focused_browser = [self selectedView];
-//    if ([focused_browser isKindOfClass:[BrowserController class]]) {
-//        if (backOrForward==0) { // Backward
-//            [focused_browser backSelectedFolder];
-//        }
-//        else {
-//            [focused_browser forwardSelectedFolder];
-//        }
-//    }
-//    else {
-//        // TODO:! When other View Constrollers are implemented
-//    }
-//}
-
 
 - (IBAction)cut:(id)sender {
     [self executeCut:[[self selectedView] getSelectedItems]];
@@ -1325,7 +1306,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     if (theAction == @selector(toolbarHome:) ||
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
-        theAction == @selector(toolbarGrouping:) ||
         theAction == @selector(toolbarGotoFolder:) ||
         theAction == @selector(orderPreferencePanel:)
         ) {
@@ -1425,9 +1405,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 if ([item itemType] != ItemTypeBranch) {
                     allow = NO;
                 }
-                else if ([item hasTags:tagTreeItemReadOnly]) {
-                    allow = NO;
-                }
+//                else if ([item hasTags:tagTreeItemReadOnly]) {
+//                    allow = NO;
+//                } Commented since the read only is applicable to the folder itself not its contents
                 else if ([itemsSelected count]!=1) {
                     allow = NO;
                 }
@@ -1689,6 +1669,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else {
             TreeBranch *dest = [info objectForKey:kDFODestinationKey];
+            // a URL arrived here in one of the tests. Placing here an assertion to trap it if it happens again
+            NSAssert([dest isKindOfClass:[TreeBranch class]], @"ERROR. Received an object that isn't a TreeBranch");
             [dest setTag:tagTreeItemDirty];
             [dest refreshContents];
         }
@@ -1769,16 +1751,25 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else if ([selectedFiles count] == 1) {
             TreeItem *item = [selectedFiles objectAtIndex:0];
+            long long size = [item filesize];
             NSString *sizeText;
-            NSString *type;
-            if ([item itemType] == ItemTypeLeaf) {
-                type = @"File";
-                sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
+            if (size != -1) {
+                sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]];
             }
             else {
-                // TODO:!! Check if Folder Size is valid, make change also in the condition below
-                type = @"Folder";
                 sizeText = @"";
+            }
+            NSString *type;
+            ItemType iType = [item itemType];
+            if (iType == ItemTypeLeaf) {
+                type = @"File";
+            }
+            else if (iType == ItemTypeBranch){
+                type = @"Folder";
+            }
+            else {
+                type = @"";
+                sizeText = @"Size Unknown";
             }
 
             statusText = [NSString stringWithFormat:@"%@ (%@%@)", [item name], type, sizeText];
@@ -1882,8 +1873,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 #pragma mark File Manager Delegate
 -(void) processNextError:(NSNotification*)theNotification {
 
-    if (pendingOperationErrors==nil || [pendingOperationErrors count]==0)
+    if (pendingOperationErrors==nil || [pendingOperationErrors count]==0) {
+        [fileExistsWindow closeWindow];
         return;
+    }
 
     if (theNotification!=nil) { // It cames from the window closing
         NSArray *note = pendingOperationErrors[0]; // Fifo Like structure
@@ -1894,6 +1887,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
         NSDictionary *info = [theNotification userInfo];
         NSString *new_name = [info objectForKey:kFileExistsNewFilenameKey];
+
+        NSAssert(error.code == NSFileWriteFileExistsError, @"To ensure that the processing is being done to the correct code");
         // Lauch the new Operation based on the user choice
         fileExistsQuestionResult answer = [[info objectForKey:kFileExistsAnswerKey] integerValue];
         if  (answer== FileExistsRename) {
@@ -1907,11 +1902,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             else {
                 NSAssert(NO, @"Invalid Operation");
             }
+            // Need to pass the parent folder for the file operations
+            NSURL *destURL = [destinationURL URLByDeletingLastPathComponent];
+
             NSArray *items = [NSArray arrayWithObject:sourceURL];
             NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      opMoveOperation, kDFOOperationKey,
+                                      op, kDFOOperationKey,
                                       items, kDFOFilesKey,
-                                      destinationURL, kDFODestinationKey,
+                                      destURL, kDFODestinationKey,
                                       new_name, kDFORenameFileKey,
                                       nil];
 
@@ -1943,7 +1941,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSError *error = note[2];
         //NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
 
-        if (error.code==516) { // File already exists
+        if (error.code==NSFileWriteFileExistsError) { // File already exists
             if (fileExistsWindow==nil) {
                 fileExistsWindow = [[FileExistsChoice alloc] initWithWindowNibName:@"FileExistsChoice"];
                 [fileExistsWindow loadWindow]; //This is needed to load the window

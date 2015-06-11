@@ -52,7 +52,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
                 // out there and let whoever might be interested receive it (in our case its MyWindowController).
                 //
                 [_taskInfo addEntriesFromDictionary:info];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationTreeConstructionFinished object:nil userInfo:_taskInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationTreeConstructionFinished object:self userInfo:_taskInfo];
             }
         }
     }

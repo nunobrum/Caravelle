@@ -27,7 +27,7 @@ NSArray *urlKeyFieldsToStore() {
 -(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode {
      NSDirectoryEnumerationOptions dirEnumOptions = 0;
     if (viewMode == BViewCatalystMode) {
-        dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles;
+        dirEnumOptions = 0;
     }
     else if (viewMode == BViewBrowserMode){
         dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants;

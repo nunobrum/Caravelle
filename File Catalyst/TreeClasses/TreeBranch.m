@@ -98,7 +98,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return self;
 }
 
-// TODO:!!!!!!??? Maybe this method is not really needed, since ARC handles this.
+// TODO:!??? Maybe this method is not really needed, since ARC handles this.
 // Think this is even causing problems
 -(void) releaseChildren {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
@@ -197,7 +197,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return YES;
 }
 
-// TODO:??? Maybe this method is not really needed, since ARC handles this
 -(void) _releaseReleasedChildren {
     //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     //@synchronized(self) {
@@ -277,7 +276,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(BOOL) needsRefresh {
     BOOL answer;
     TreeItemTagEnum tag;
-    // TODO:? Verify Atomicity and get rid of synchronized clause if OK
+    // TODO:!!!? Verify Atomicity and get rid of synchronized clause if OK
     @synchronized(self) {
          tag = [self tag];
     }
@@ -291,7 +290,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     //NSLog(@"TreeBranch.refreshContentsOnQueue:(%@)", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
-        [browserQueue addOperationWithBlock:^(void) {  // CONSIDER:?? Consider using localOperationsQueue as defined above
+        [browserQueue addOperationWithBlock:^(void) { 
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewBrowserMode];
@@ -350,8 +349,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if (self->_children!= nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                // NOTE: isKindOfClass is preferred over itemType.
-                if ([item isKindOfClass:[TreeBranch class]]) {
+                if ([item itemType] == ItemTypeBranch) {
                     [(TreeBranch*)item _performSelectorInUndeveloppedBranches:selector];
                 }
             }
@@ -420,78 +418,112 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) calculateSize {
-    [self _performSelectorInUndeveloppedBranches:@selector(_computeAllocatedSize)];
+    if (self->_children!= nil) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]]) {
+                    [(TreeBranch*)item calculateSize];
+                }
+            }
+        }
+    }
+    else {
+        [self performSelector:@selector(_computeAllocatedSize)];
+    }
 }
 
--(void) _growTree {
-    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
-        MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewCatalystMode];
+-(void) _expandTree {
+    //NSLog(@"Expanding path %@", self.path);
+    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewCatalystMode];
 
-        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        @synchronized(self) {
-            self->_children = [[NSMutableArray alloc] init];
-            TreeBranch *cursor = self;
-            NSMutableArray *cursorComponents = [NSMutableArray arrayWithArray:[[self url] pathComponents]];
-            unsigned long current_level = [cursorComponents count]-1;
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        self->_children = [[NSMutableArray alloc] init];
+        TreeBranch *cursor = self;
+        NSMutableArray *cursorComponents = [NSMutableArray arrayWithArray:[[self url] pathComponents]];
+        unsigned long current_level = [cursorComponents count]-1;
 
 
-            for (NSURL *theURL in dirEnumerator) {
-                NSArray *newURLComponents = [theURL pathComponents];
-                unsigned long target_level = [newURLComponents count]-2;
-                while (target_level < current_level) { // Needs to go back if the new URL is at a lower branch
+        for (NSURL *theURL in dirEnumerator) {
+            BOOL ignoreURL = NO;
+            NSArray *newURLComponents = [theURL pathComponents];
+            unsigned long target_level = [newURLComponents count]-2;
+            while (target_level < current_level) { // Needs to go back if the new URL is at a lower branch
+                cursor = (TreeBranch*) cursor->_parent;
+                current_level--;
+            }
+            while (target_level != current_level &&
+                   [cursorComponents[current_level] isEqualToString:newURLComponents[current_level]]) {
+                // Must navigate into the right folder
+                if (target_level <= current_level) { // The equality is considered because it means that the components at this level are different
+                    // steps down in the tree
                     cursor = (TreeBranch*) cursor->_parent;
                     current_level--;
                 }
-                while (target_level != current_level &&
-                       [cursorComponents[current_level] isEqualToString:newURLComponents[current_level]]) {
-                    // Must navigate into the right folder
-                    if (target_level <= current_level) { // The equality is considered because it means that the components at this level are different
-                        // steps down in the tree
-                        cursor = (TreeBranch*) cursor->_parent;
-                        current_level--;
-                    }
-                    else { // Needs to grow the tree
-                        current_level++;
-                        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:newURLComponents[current_level] isDirectory:YES];
-                        cursorComponents[current_level] = newURLComponents[current_level];
-                        TreeItem *child = [TreeItem treeItemForURL:pathURL parent:cursor];
-                        if (child!=nil) {
-                            [cursor->_children addObject:child];
-                            if ([child itemType] == ItemTypeBranch)
-                            {
-                                cursor = (TreeBranch*)child;
-                                cursor->_children = [[NSMutableArray alloc] init];
-                            }
-                            else {
-                                // Will ignore this child and just addd the size to the current node
-                                // TODO:!! Once the size is again on the class, update the size here
-                                NSAssert(NO, @"TreeBranch.growTree: Error:%@ can't be added to %@", theURL, pathURL);
-                            }
+                else { // Needs to grow the tree
+                    current_level++;
+                    NSURL *pathURL = [cursor.url URLByAppendingPathComponent:newURLComponents[current_level] isDirectory:YES];
+                    cursorComponents[current_level] = newURLComponents[current_level];
+                    TreeItem *child = [TreeItem treeItemForURL:pathURL parent:cursor];
+                    if (child!=nil) {
+                        if (cursor->_children==nil) {
+                            cursor->_children = [[NSMutableArray alloc] init];
+                        }
+                        [cursor->_children addObject:child];
+                        if ([child itemType] == ItemTypeBranch)
+                        {
+                            cursor = (TreeBranch*)child;
+                            cursor->_children = [[NSMutableArray alloc] init];
                         }
                         else {
-                            NSAssert(NO, @"TreeBranch.TreeBranch.growTree: Couldn't create path %@ \nwhile creating %@",pathURL, theURL);
+                            // Will ignore this child and just addd the size to the current node
+                            [dirEnumerator skipDescendents];
+                            // IGNORE URL
+                            ignoreURL = YES;
                         }
                     }
-
+                    else {
+                        NSAssert(NO, @"TreeBranch.TreeBranch._expandTree: Couldn't create path %@ \nwhile creating %@",pathURL, theURL);
+                    }
                 }
+
+            }
+            if (ignoreURL==NO)  {
                 TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
                 if (newObj!=nil) {
+                    if (cursor->_children==nil) {
+                        cursor->_children = [[NSMutableArray alloc] init];
+                    }
                     [cursor->_children addObject:newObj];
+                    // if it's a folder jump into it, so that the next URL can be directly inserted
+                    if ([newObj isKindOfClass:[TreeBranch class]]) {
+                        cursor = (TreeBranch*)newObj;
+                        cursor->_children = [[NSMutableArray alloc] init];
+                        current_level++;
+                        cursorComponents[current_level] = newURLComponents[current_level];
+
+                    }
                 }
                 else {
                     NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
                 }
             }
         }
-        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    }];
-    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [op setThreadPriority:0.3];
-    [lowPriorityQueue addOperation:op];
+    }
+    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
 }
 
 -(void) expandAllBranches {
-    [self _performSelectorInUndeveloppedBranches:@selector(_growTree)];
+    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
+        [self _performSelectorInUndeveloppedBranches:@selector(_expandTree)];
+        // Now sends a dummy change so that the tree is updated
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    }];
+    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
+    [op setThreadPriority:0.5];
+    [lowPriorityQueue addOperation:op];
 }
 
 #pragma mark -
@@ -530,41 +562,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
-
-// TODO: !!! Optimize code
-//-(TreeItem*) addURL:(NSURL*)theURL withPathComponents:(NSArray*) pcomps inLevel:(NSUInteger) level {
-//    id child = [self childContainingURL:theURL];
-//    if (child!=nil) {
-//        if ([child itemType] == ItemTypeBranch) {
-//            return [(TreeBranch*)child addURL:theURL];
-//        }
-//        else {
-//            NSLog(@"Something went wrong");
-//        }
-//    }
-//    @synchronized(self) {
-//        if (self->_children == nil)
-//            self->_children = [[NSMutableArray alloc] init];
-//        [self setTag:tagTreeItemDirty];
-//    }
-//    unsigned long leaf_level = [pcomps count]-1;
-//    if (level < leaf_level) {
-//        NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-//        child = [[TreeBranch new] initWithURL:pathURL parent:self];
-//        [self addItem:child];
-//        return [(TreeBranch*)child addURL:theURL withPathComponents:pcomps inLevel:level+1];
-//    }
-//    else if (level == leaf_level) {
-//        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:self];
-//        [self addItem:newObj];
-//        return newObj; /* Stops here Nothing More to Add */
-//    }
-//    else if ([[self url] isEqualTo:theURL]) {
-//        return self; // This condition is equal to level-1==leaf_level
-//    }
-//    NSLog(@"Ai Caramba! This Item can't contain this URL ");
-//    return nil;
-//}
 
 -(TreeItem*) addURL:(NSURL*)theURL {
     id child = [self childContainingURL:theURL];
@@ -653,8 +650,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             }
         }
         else {
-            // Will ignore this child and just addd the size to the current node
-            // TODO:!! Once the size is again on the class, update the size here
+            // Will ignore this child
             NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", theURL, pathURL);
             return nil;
         }
@@ -976,10 +972,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if (depth ==0) return;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch) {
+            if ([item itemType] == ItemTypeBranch && ((TreeBranch*)item)->_children !=nil) {
                 [(TreeBranch*)item _harvestLeafsInBranch: collector depth:depth-1 filter:filter];
             }
-            else if ([item itemType] == ItemTypeLeaf && (filter==nil || [filter evaluateWithObject:item])) {
+            else if (filter==nil || [filter evaluateWithObject:item]) {
                 [collector addObject:item];
             }
         }
@@ -1058,18 +1054,19 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 // trying to invalidate all existing tree and lauching a refresh on the views
-// TODO:!! Come up with a better way to do this
 -(void) forceRefreshOnBranch {
-    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    @synchronized(self) {
-        [self setTag:tagTreeItemDirty];
-        for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch) {
-                [(TreeBranch*)item forceRefreshOnBranch];
+    if (self->_children!=nil) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        @synchronized(self) {
+            [self setTag:tagTreeItemDirty];
+            for (TreeItem *item in self->_children) {
+                if ([item itemType] == ItemTypeBranch) {
+                    [(TreeBranch*)item forceRefreshOnBranch];
+                }
             }
         }
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
 }
 
 

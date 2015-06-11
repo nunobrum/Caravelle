@@ -60,7 +60,6 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                         else {
                             error = loop_error;
                             OK = NO; // Memorizes error
-                            // TODO:!!! In all the cases where OK is inside a loop, its better to make an error count instead of an OK
                         }
                         statusCount++;
                         if ([self isCancelled]) break;

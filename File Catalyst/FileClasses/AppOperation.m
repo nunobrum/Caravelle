@@ -15,7 +15,7 @@ NSString *kOperationCountKey = @"operationCount";
 NSString *kRootPathKey = @"RootPath";
 
 // Key for obtaining the sender of the notification
-// TODO:??? Test if this is really needed. notifications already include sender objects anyway. Maybe just for convinience of resending the Dictionary.
+// TODO:!!? Test if this is really needed. notifications already include sender objects anyway. Maybe just for convinience of resending the Dictionary. See assertion in line 692.
 NSString *kSenderKey = @"Sender";
 
 NSString *kModeKey = @"Mode";

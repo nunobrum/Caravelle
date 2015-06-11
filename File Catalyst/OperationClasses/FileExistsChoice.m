@@ -9,6 +9,8 @@
 #import "FileExistsChoice.h"
 #import "FileUtils.h"
 #import "myValueTransformers.h"
+#import "CustomTableHeaderView.h" // imported to have access to column utility functions
+#include "Definitions.h"
 
 NSString *notificationClosedFileExistsWindow = @"FileExistsWindowClosed";
 NSString *kFileExistsAnswerKey = @"FileExistsAnswer";
@@ -17,6 +19,8 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 #define COL_NAME @"name"
 #define COL_SOURCE @"source"
 #define COL_DEST @"destination"
+
+NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED" };
 
 @interface FileExistsChoice ()
 
@@ -42,6 +46,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 
 -(void) closeWindow {
     [[self window] setIsVisible:NO];
+    _pendingUserDecision = NO;
 }
 
 -(void) displayWindow:(id) sender {
@@ -86,7 +91,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 
 -(BOOL) makeTableWithSource:(TreeItem*)source andDestination:(TreeItem*) dest {
     NSString *name;
-    DateToStringTransformer *dateFormater = [[DateToStringTransformer alloc] initWithFormat:@"dd MMM YYYY hh:mm"];
+
     /* Remove all objects */
     if (attributesTable==nil)
         attributesTable = [[NSMutableArray alloc] init];
@@ -109,7 +114,7 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 
     // If the file names are the same, create a copy name
     if ([[source name] isEqualToString:[dest name]]) {
-        // TODO: !!! make rename proposal more inline with the MACOSX standard
+        // TODO: !!!! make rename proposal more inline with the MACOSX standard
         name = [NSString stringWithFormat:@"Copy of %@",[dest name]];
     }
     else {
@@ -118,50 +123,25 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     [[self tfFilename] setStringValue: [source path]];
     [[self tfNewFilename] setStringValue:name];
 
+    for (int i=0; i < sizeof(mandatoryFields)/sizeof(NSString*); i++) {
+        NSString *colKey = mandatoryFields[i];
+        NSDictionary *dic = compareForField(source, dest, colKey, NO);
+        [attributesTable addObject:dic];
+    }
 
-    // !!! TODO: Fill comparison Table based upon the Plist
-
-    // Path
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:
-                         @"Path",@"name",
-                         [source path],@"source",
-                         [dest path],@"destination",
-                         nil];
-    [attributesTable addObject:dic];
-
-    // Size
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:
-           @"Size",@"name",
-           [source fileSize],@"source",
-           [dest fileSize],@"destination",
-           nil];
-    [attributesTable addObject:dic];
-
-    // Date Created
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:
-           @"Date Created",@"name",
-           [dateFormater transformedValue: [source date_created]],@"source",
-           [dateFormater transformedValue:[dest date_created]],@"destination",
-           nil];
-    [attributesTable addObject:dic];
-    [_attributeTableView reloadData];
-
-    // Date Modified
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:
-           @"Date Modified",@"name",
-           [dateFormater transformedValue: [source date_modified]],@"source",
-           [dateFormater transformedValue:[dest date_modified]],@"destination",
-           nil];
-    [attributesTable addObject:dic];
-    [_attributeTableView reloadData];
-
-    // Date Accessed
-    dic = [NSDictionary dictionaryWithObjectsAndKeys:
-           @"Date Accessed",@"name",
-           [dateFormater transformedValue: [source date_accessed]],@"source",
-           [dateFormater transformedValue: [dest date_accessed]],@"destination",
-           nil];
-    [attributesTable addObject:dic];
+    for (NSString *colKey in sortedColumnNames()) {
+        int i;
+        for (i=0; i < sizeof(mandatoryFields)/sizeof(NSString*); i++) {
+            if ([colKey isEqualToString: mandatoryFields[i]])
+                break; // It was already displayed in the previous cycle
+        }
+        if (i == sizeof(mandatoryFields)/sizeof(NSString*)) { // if it wasnt found before
+            NSDictionary *dic = compareForField(source, dest, colKey, YES);
+            if (dic) {
+                [attributesTable addObject:dic];
+            }
+        }
+    }
 
 
     [_attributeTableView reloadData];
@@ -187,9 +167,11 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
     id obj = [[attributesTable objectAtIndex:rowIndex] objectForKey:identifier];
 
     // To avoid assertion faults when passing a nil to the selector setStringValue
-    // TODO:? use the same value transformers as the defined for the tableView on BrowserController.
     if (obj)
         [[cellView textField ] setStringValue: obj];
+    // TODO:!? use the same value transformers as the defined for the tableView on BrowserController.
+    // This in order to have the size displayed in kB,MB,GB
+
     return cellView;
 }
 

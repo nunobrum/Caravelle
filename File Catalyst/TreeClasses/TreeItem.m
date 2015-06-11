@@ -56,7 +56,7 @@
             }
             if (//[typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
                 [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
-                // TODO:!!! Create a dedicated class for a Volume
+                // TODO:!!! Create a dedicated class for a Volume or a mounting point
             }
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
@@ -201,6 +201,12 @@
     //NSString *path;
     //[_url getResourceValue:&path     forKey:NSURLPathKey error:NULL];
     return [_url path];
+}
+
+-(NSString*) location {
+    //NSString *path;
+    //[_url getResourceValue:&path     forKey:NSURLPathKey error:NULL];
+    return [[_url URLByDeletingLastPathComponent] path];
 }
 
 -(NSImage*) image {
@@ -360,7 +366,7 @@
     NSPasteboardWritingOptions answer;
 #ifdef USE_UTI
     if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
-        // TODO:! If a custom UTI is ever considered, write the Write to pasteboard
+        // If a custom UTI is ever considered, write the Write to pasteboard
         answer = 0;
     }
     else
@@ -391,8 +397,8 @@
     // We recreate the appropriate object
 #ifdef USE_UTI
     if (UTTypeEqual ((__bridge CFStringRef)(type),kTreeItemDropUTI)) {
-        // ! TODO: If a custom UTI is ever considered, write the Write to pasteboard
-        return propertyList; // TODO:! If ever the custom UTI is created. Check if this works
+        // If a custom UTI is ever considered, write the Write to pasteboard
+        return propertyList; // If ever the custom UTI is created. Check if this works
     }
     else 
 #endif
