@@ -114,8 +114,39 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
 
     // If the file names are the same, create a copy name
     if ([[source name] isEqualToString:[dest name]]) {
-        // TODO: !!!! make rename proposal more inline with the MACOSX standard
-        name = [NSString stringWithFormat:@"Copy of %@",[dest name]];
+        // Making the rename in consistency with Mac OSX
+        //Testing " copy" was already appended.
+        NSString *nameWithoutExtension = [[dest name] stringByDeletingPathExtension];
+        NSRange copyLocation = [nameWithoutExtension rangeOfString:@"copy" options: NSBackwardsSearch ]; // NSCaseInsensitiveSearch
+        if (copyLocation.location != NSNotFound)
+        {
+            // will just append "copy"
+            name = [nameWithoutExtension stringByAppendingString:@" copy"];
+        }
+        else {
+            // if copy was found must first check if there is a number in front.
+            NSRange numberRange;
+            numberRange.location = copyLocation.location + 4;
+            numberRange.length = [nameWithoutExtension length] - numberRange.location;
+            if (numberRange.length == 0) { // There is no number
+                // just add 2, for the second copy
+                name = [nameWithoutExtension stringByAppendingString:@" copy 2"];
+            }
+            else {
+                NSScanner *numberScanner  = [NSScanner scannerWithString:nameWithoutExtension];
+                [numberScanner setScanLocation:copyLocation.location + 4];
+                NSInteger number;
+                if ([numberScanner scanInteger:&number]) { // If the conversion was successful
+                    number++;
+                    name =  [NSString stringWithFormat:@"%@ copy %ld",
+                             [nameWithoutExtension substringToIndex:copyLocation.location],(long)number];
+                }
+                else {
+                    // Everything else failed
+                    name = [NSString stringWithFormat:@"Copy of %@",[dest name]];
+                }
+            }
+        }
     }
     else {
         name = [source name];

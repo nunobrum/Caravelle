@@ -540,6 +540,7 @@
         [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
 
         // Now the observe can be removed
+        //TODO:!!! This is giving problems. Solution : Make a list of observed like was done for the kvoTreeBranchPropertyChildren
         [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
     }
 }
