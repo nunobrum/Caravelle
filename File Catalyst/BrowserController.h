@@ -20,7 +20,7 @@
 extern NSString *notificationCatalystRootUpdate;
 
 
-@interface BrowserController : NSViewController <ParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
+@interface BrowserController : NSViewController <BrowserParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
     NSSize iconSize;
     //NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
@@ -143,7 +143,8 @@ extern NSString *notificationCatalystRootUpdate;
 
 -(id) focusedView;
 -(NSArray*) getSelectedItems;
--(NSArray*) getSelectedItemsForContextMenu;
+-(NSArray*) getSelectedItemsForContextualMenu1; // Can select the current Node
+-(NSArray*) getSelectedItemsForContextualMenu2;
 -(TreeItem*) getLastClickedItem;
 
 -(BOOL) startEditItemName:(id)item;

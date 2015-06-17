@@ -155,7 +155,8 @@ NSString *KEY_ICON = @"icon";
     return [self.iconArrayController selectedObjects];
 }
 
-- (NSArray*)getSelectedItemsForContextMenu {
+// Can select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu1 {
     if ([self.collectionView lastClick] != nil) {
         NSArray *selectedItems = [self getSelectedItems];
         TreeItem *item = [[self.collectionView lastClick] representedObject];
@@ -165,6 +166,19 @@ NSString *KEY_ICON = @"icon";
             return [NSArray arrayWithObject:item];
     }
     return [NSArray arrayWithObject: self.currentNode];
+}
+
+// Doesn't select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu2 {
+    if ([self.collectionView lastClick] != nil) {
+        NSArray *selectedItems = [self getSelectedItems];
+        TreeItem *item = [[self.collectionView lastClick] representedObject];
+        if ([selectedItems containsObject:item])
+            return selectedItems;
+        else
+            return [NSArray arrayWithObject:item];
+    }
+    return nil;
 }
 
 -(TreeItem*) getLastClickedItem {
@@ -304,11 +318,21 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 - (void)keyDown:(NSEvent *)theEvent {
     // Get the origin
     NSString *key = [theEvent characters];
+    unichar keyCode = [key characterAtIndex:0];
+    
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
 
     NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
-    if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
+    if ([theEvent modifierFlags] & NSCommandKeyMask) {
+        if (keyCode == KeyCodeDown) {    // will open the subject
+            [self doubleClick:theEvent];
+        }
+        else if (keyCode == KeyCodeUp) {  // the CMD Up will up one directory level
+            [[self parentController] upOneLevel];
+        }
+    }
+    else if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
         ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
     {
         // The Return key will open the file

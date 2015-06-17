@@ -260,6 +260,76 @@ NSURL *renameFile(NSURL*url, NSString *newName, NSError *error) {
     }
     return newURL;
 }
+
+BOOL fileExistsOnPath(NSString*path) {
+    return [[NSFileManager defaultManager] fileExistsAtPath:path];
+}
+
+// TODO:!!!! write here the function that proposes a filename for file copy
+NSString *duplicateFileNameProposal(NSString *path) {
+    // Making the rename in consistency with Mac OSX
+    
+    // TODO: !! Localization of the "copy" word
+    NSString *copyS = @"copy";
+    NSString *newFileName = nil;
+    NSString *newName;
+    NSString *folder = [path stringByDeletingLastPathComponent];
+    //Testing " copy" was already appended.
+    NSString *name = [path lastPathComponent];
+    NSString *nameWithoutExtension = [name stringByDeletingPathExtension];
+    NSRange copyLocation = [nameWithoutExtension rangeOfString:copyS options: NSBackwardsSearch ]; // NSCaseInsensitiveSearch
+    NSInteger copyNumber = 0;
+    do {
+        newName = nil;
+        // if copy was found must first check if there is a number in front.
+        if (copyNumber==0) { // If it is the first iteration will try to get from the file
+            if (copyLocation.location == NSNotFound)
+            {
+                // will just append "copy"
+                newName = [nameWithoutExtension stringByAppendingFormat:@" %@", copyS];
+                nameWithoutExtension = newName;
+                // Prepares for next cycle in case the file exists
+                copyLocation = [nameWithoutExtension rangeOfString:copyS options: NSBackwardsSearch ]; // NSCaseInsensitiveSearch
+                
+                copyNumber = 1;
+            }
+            else {
+                NSRange numberRange;
+                numberRange.location = copyLocation.location + copyLocation.length;
+                numberRange.length = [nameWithoutExtension length] - numberRange.location;
+                if (numberRange.length == 0) { // There is no number
+                    // just add 2, for the second copy
+                    newName = [nameWithoutExtension stringByAppendingString:@" 2"];
+                    copyNumber = 2;
+                }
+                else {
+                    NSScanner *numberScanner  = [NSScanner scannerWithString:nameWithoutExtension];
+                    [numberScanner setScanLocation:copyLocation.location + copyLocation.length];
+                    if ([numberScanner scanInteger:&copyNumber]) { // If the conversion was successful
+                        copyNumber++;
+                    }
+                    newName =  [NSString stringWithFormat:@"%@%@ %ld",
+                                [nameWithoutExtension substringToIndex:copyLocation.location],
+                                copyS,
+                                (long)copyNumber];
+                }
+            }
+        }
+        else {
+            // Only increment the copy Number
+            copyNumber++;
+            newName =  [NSString stringWithFormat:@"%@%@ %ld",
+                        [nameWithoutExtension substringToIndex:copyLocation.location],
+                        copyS,
+                        (long)copyNumber];
+        }
+        // Now testing if the file already exists
+        newName = [newName stringByAppendingPathExtension: [path pathExtension]];
+        newFileName = [folder stringByAppendingPathComponent:newName];
+    } while (fileExistsOnPath(newFileName) && (copyNumber < 5000)); // A high number where it will simply give up
+    return newName;
+}
+
 //
 //BOOL copyFilesThreaded(NSArray *files, id toDirectory) {
 //    NSString *toDir;

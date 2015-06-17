@@ -427,6 +427,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+#pragma mark - Browser Parent Protocol
 -(void) selectionDidChangeOn:(id)object {
     if (object==self.detailedViewController && self.detailedViewController.filesInSubdirsDisplayed) {
         NSArray *itemsSelected = [object getSelectedItems];
@@ -440,6 +441,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:object userInfo:nil];
+}
+
+-(void) upOneLevel {
+    // Up one level here
+    if (self.treeNodeSelected.parent != nil) {
+        if ([self selectFolderByItem:self.treeNodeSelected.parent])
+            return;
+    }
+    // TODO: ! Beep something
 }
 
 - (void) updateStatus:(NSDictionary *)status {
@@ -463,7 +473,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
-    NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
+    NSArray *selectedFiles = [self getSelectedItemsForContextualMenu1];
     return writeItemsToPasteboard(selectedFiles, pboard, types);
 }
 
@@ -1151,7 +1161,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(NSNumber*) validateContextualCopyTo {
     // I have to write this function because the binding actually overrides the automatic Menu Validation.
     BOOL allow;
-    NSArray *itemsSelected = [self getSelectedItemsForContextMenu];
+    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
     if ((itemsSelected==nil) || ([itemsSelected count]==0))  // no selection, go for the selected view
         allow = NO;
     else
@@ -1162,7 +1172,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(NSNumber*) validateContextualMoveTo {
     // I have to write this function because the binding actually overrides the automatic Menu Validation.
     BOOL allow = YES;
-    NSArray *itemsSelected = [self getSelectedItemsForContextMenu];
+    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
     if (itemsSelected==nil) {
         // If nothing was returned is selected then don't allow anything
         allow = NO;
@@ -1387,7 +1397,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return answer;
 }
 
-- (NSArray*)getSelectedItemsForContextMenu {
+// Can select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu1 {
     static NSArray* answer = nil; // This will send the last answer when further requests are done
     // The condition below is used to detect which table view is selected. 
     if (self->_contextualFocus == _myOutlineView) {
@@ -1399,7 +1410,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     }
     else
-        answer = [self.detailedViewController getSelectedItemsForContextMenu];
+        answer = [self.detailedViewController getSelectedItemsForContextualMenu1];
+    return answer;
+}
+
+// doesn't select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu2 {
+    static NSArray* answer = nil; // This will send the last answer when further requests are done
+    // The condition below is used to detect which table view is selected.
+    if (self->_contextualFocus == _myOutlineView) {
+        if ([_myOutlineView clickedRow]==-1)
+            answer = nil; // Not going to process this case
+        else{
+            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[_myOutlineView clickedRow]]];
+        }
+        
+    }
+    else
+        answer = [self.detailedViewController getSelectedItemsForContextualMenu2];
     return answer;
 }
 

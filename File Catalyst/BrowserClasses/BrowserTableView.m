@@ -71,24 +71,31 @@
 - (void)keyDown:(NSEvent *)theEvent {
     NSString *key = [theEvent characters];
 //    NSString *keyIM = [theEvent charactersIgnoringModifiers];
-//    NSLog(@"KD: code:%@ - %@",key, keyIM);
+    unichar keyCode = [key characterAtIndex:0];
+    //NSLog(@"KD: code:%@ - %hu",key, keyCode);
 
     NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
-    if (behave == APP_BEHAVIOUR_MULTIPLATFORM &&
+    if ((([theEvent modifierFlags] & NSCommandKeyMask) &&
+            (keyCode == KeyCodeUp  ||
+             keyCode == KeyCodeDown )) ||
+       (behave == APP_BEHAVIOUR_MULTIPLATFORM &&
         ([key isEqualToString:@"\r"] || // The Return key will open the file
          [key isEqualToString:@"\t"] || // the tab key will switch Panes
          [key isEqualToString:@"\x19"] || // Shift-Tab will also switch Panes
-         [key isEqualToString:@" "])) {  // The space will mark the file
-            [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
-        }
-    else if (behave == APP_BEHAVIOUR_NATIVE &&
+         [key isEqualToString:@" "])) ||   // The space will mark the file
+        (behave == APP_BEHAVIOUR_NATIVE &&
              ([key isEqualToString:@" "] || // The Space will open the file
               [key isEqualToString:@"\x19"] || // Shift-Tab will move to previous file
-              [key isEqualToString:@"\t"])) { // the tab key will move to next file
+              [key isEqualToString:@"\t"]))) { // the tab key will move to next file
                  [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
              }
-
+    /* if (([theEvent modifierFlags] & NSCommandKeyMask) &&
+     keyCode == KeyCodeLeft ||
+     keyCode == KeyCodeRight)
+     // TODO: !! In the future this will rather "transport" the selected items to the view on the right (if exists)
+     // The concept of transport mode needs to be further defined.
+     */
     // perform nextView
     else {
         // propagate to super

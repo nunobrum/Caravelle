@@ -170,7 +170,7 @@
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard
                              types:(NSArray *)types
 {
-    NSArray *selectedFiles = [self getSelectedItemsForContextMenu];
+    NSArray *selectedFiles = [self getSelectedItemsForContextualMenu2];
     return writeItemsToPasteboard(selectedFiles, pboard, types);
 
 }
@@ -427,8 +427,15 @@
     return nil;
 }
 
-- (NSArray*)getSelectedItemsForContextMenu {
-    NSLog(@"NodeViewController.getSelectedItemsForContextMenu: should be overriden");
+// Can select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu1 {
+    NSLog(@"NodeViewController.getSelectedItemsForContextualMenu1: should be overriden");
+    return nil;
+}
+
+// Doesn't select the current Node
+-(NSArray*) getSelectedItemsForContextualMenu2 {
+    NSLog(@"NodeViewController.getSelectedItemsForContextualMenu2: should be overriden");
     return nil;
 }
 

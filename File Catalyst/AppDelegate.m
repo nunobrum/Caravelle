@@ -234,10 +234,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     return self->_contextualFocus;
 }
 
--(void) selectionDidChangeOn:(id)object {
-    // in the future this may substitute the status notification
-    NSAssert(NO, @"This shouldnt be called");
-}
+
 
 #pragma mark - Application Delegate
 
@@ -845,7 +842,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 -(void) moveItems:(NSArray*)files toBranch:(TreeBranch*)target {
     NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              opCopyOperation, kDFOOperationKey,
+                              opMoveOperation, kDFOOperationKey,
                               files, kDFOFilesKey,
                               target, kDFODestinationKey,
                               nil];
@@ -1040,7 +1037,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualInformation:(id)sender {
-    [self executeInformation: [[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeInformation: [[self contextualFocus] getSelectedItemsForContextualMenu1]];
 }
 
 - (IBAction)toolbarRename:(id)sender {
@@ -1048,7 +1045,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualRename:(id)sender {
-    [self executeRename:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeRename:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)toolbarDelete:(id)sender {
@@ -1056,7 +1053,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualDelete:(id)sender {
-    [self executeDelete:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeDelete:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)toolbarCopyTo:(id)sender {
@@ -1064,7 +1061,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualCopyTo:(id)sender {
-    [self executeCopyTo:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeCopyTo:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)toolbarMoveTo:(id)sender {
@@ -1072,7 +1069,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualMoveTo:(id)sender {
-    [self executeMoveTo:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeMoveTo:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)toolbarOpen:(id)sender {
@@ -1080,7 +1077,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualOpen:(id)sender {
-    [self executeOpen:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeOpen:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)toolbarNewFolder:(id)sender {
@@ -1159,7 +1156,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualCut:(id)sender {
-    [self executeCut:[[self contextualFocus] getSelectedItemsForContextMenu]];
+    [self executeCut:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
 
 - (IBAction)copy:(id)sender {
@@ -1167,7 +1164,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualCopy:(id)sender {
-    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextMenu] onlyNames:NO];
+    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextualMenu2] onlyNames:NO];
 }
 
 - (IBAction)copyName:(id)sender {
@@ -1175,7 +1172,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)contextualCopyName:(id)sender {
-    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextMenu] onlyNames:YES];
+    [self executeCopy:[[self contextualFocus] getSelectedItemsForContextualMenu2] onlyNames:YES];
 }
 
 
@@ -1187,7 +1184,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (IBAction)contextualPaste:(id)sender {
     // the validateMenuItems insures that node is Branch
-    NSArray *items = [[self contextualFocus] getSelectedItemsForContextMenu];
+    NSArray *items = [[self contextualFocus] getSelectedItemsForContextualMenu1];
     if ([items count]==1) { // Can only paste on one item
         TreeItem *item = [items firstObject];
         // TODO:!! need to test if its an application,
@@ -1325,20 +1322,24 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         return YES;
     }
 
-    // Actions that require a contextual selection
-    if (theAction == @selector(contextualCopy:) ||
-        theAction == @selector(contextualCopyName:) ||
-        theAction == @selector(contextualCopyTo:) ||
-        theAction == @selector(contextualCut:) ||
-        theAction == @selector(contextualDelete:) ||
-        theAction == @selector(contextualInformation:) ||
-        theAction == @selector(contextualMoveTo:) ||
+    // Actions that require a contextual selection including the current Node
+    if (theAction == @selector(contextualInformation:) ||
         theAction == @selector(contextualNewFolder:) ||
-        theAction == @selector(contextualOpen:) ||
-        theAction == @selector(contextualRename:) ||
         theAction == @selector(contextualPaste:)
         ) {
-        itemsSelected = [(BrowserController*)[self contextualFocus] getSelectedItemsForContextMenu];
+        itemsSelected = [(BrowserController*)[self contextualFocus] getSelectedItemsForContextualMenu1];
+    }
+    // Actions that require a contextual selection excluding the current Node
+    else if (theAction == @selector(contextualCut:) ||
+             theAction == @selector(contextualDelete:) ||
+             theAction == @selector(contextualCopy:) ||
+             theAction == @selector(contextualCopyName:) ||
+             theAction == @selector(contextualCopyTo:) ||
+             theAction == @selector(contextualOpen:) ||
+             theAction == @selector(contextualRename:) ||
+             theAction == @selector(contextualMoveTo:)
+             ) {
+        itemsSelected = [(BrowserController*)[self contextualFocus] getSelectedItemsForContextualMenu2];
     }
     else {
         itemsSelected = [(BrowserController*)[self selectedView] getSelectedItems];
@@ -1360,16 +1361,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else if (theAction == @selector(paste:) ||
                  theAction == @selector(contextualPaste:)) {
-            if ([targetFolder hasTags:tagTreeItemReadOnly]) {
-                allow = NO;
-            }
             // Check if paste board has valid data
-            else {
-                NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
-                NSArray *files = get_clipboard_files(clipboard);
-                if ([files count]==0) {
-                    allow = NO;
-                }
+            NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+            NSArray *files = get_clipboard_files(clipboard);
+            if ([files count]==0) {
+                allow = NO;
             }
             // No other conditions. This is supposed to be a folder, no need to test this condition
         }
@@ -1408,7 +1404,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 if ([item itemType] != ItemTypeBranch) {
                     allow = NO;
                 }
-                else if ([item hasTags:tagTreeItemReadOnly]) {
+                // Check if paste board has valid data
+                NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
+                NSArray *files = get_clipboard_files(clipboard);
+                if ([files count]==0) {
                     allow = NO;
                 }
             }
@@ -1516,6 +1515,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(void) _startOperationBusyIndication {
+        // TODO: !!! get the dictionary so that the first message is displayed correctly. Now is displaying "..."
     _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
@@ -1599,6 +1599,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             
             if (statusText!=nil) // If nothing was set, don't update status
                 [self.statusProgressLabel setStringValue: statusText];
+            else
+                [self.statusProgressLabel setStringValue: @""];
         }
         else {
             // Update nothing, so that the previous message does not stand for less time than expected
@@ -1697,8 +1699,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self _operationsInfoFired:nil];
 
     if ([operationsQueue operationCount] == 0) {
-        //[self _stopOperationBusyIndication];
-
+        // Hiddes the cancel button
+        [self.statusCancelButton setHidden:YES];
+        
         if (isApplicationTerminating == YES) {
             if ([pendingOperationErrors count]==0) {
                 if (isWindowClosing) {

@@ -147,6 +147,13 @@ typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
     DupCompareContentsFull = 1 << 5,
     DupCompareContentsMD5  = 1 << 6
 };
+
+typedef NS_ENUM(unichar, CommandKeys) {
+    KeyCodeUp = 63232,
+    KeyCodeDown,
+    KeyCodeLeft,
+    KeyCodeRight
+};
 extern NSString *kOptionsKey;
 
 BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
@@ -179,7 +186,6 @@ BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;
 - (void) updateStatus:(NSDictionary*)status;
-- (void) selectionDidChangeOn:(id)object;
 
 @end
 

@@ -46,6 +46,8 @@ extern NSURL *renameFile(NSURL*url, NSString *newName, NSError *error);
 //BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error);
 //BOOL renameFile(NSURL*url, NSString *newName, NSError *error);
 extern BOOL openFile(NSURL*url);
+extern BOOL fileExistsOnPath(NSString*path);
+extern NSString* duplicateFileNameProposal(NSString *path);
 
 BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error);
 

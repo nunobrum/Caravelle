@@ -24,9 +24,15 @@
 - (TreeBranch*) currentNode;
 
 -(NSArray*) getSelectedItems;
--(NSArray*) getSelectedItemsForContextMenu;
+-(NSArray*) getSelectedItemsForContextualMenu1; // Can select the current Node
+-(NSArray*) getSelectedItemsForContextualMenu2; // Doesn't select the current Node
 -(TreeItem*) getLastClickedItem;
 
+@end
+
+@protocol BrowserParentProtocol <ParentProtocol>
+    - (void) selectionDidChangeOn:(id)object;
+    - (void) upOneLevel;
 @end
 
 
@@ -38,7 +44,7 @@
     NSString * _twinName;
 }
 
-@property (readwrite, weak) id<ParentProtocol> parentController;
+@property (readwrite, weak) id<BrowserParentProtocol> parentController;
 @property (readwrite, strong) NSString *filterText;
 
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
@@ -76,7 +82,8 @@
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;
 -(NSArray*) getSelectedItems;
--(NSArray*) getSelectedItemsForContextMenu;
+-(NSArray*) getSelectedItemsForContextualMenu1; // Can select the current Node
+-(NSArray*) getSelectedItemsForContextualMenu2; // Doesn't select the current Node
 -(TreeItem*) getLastClickedItem;
 
 -(void) startBusyAnimationsDelayed;

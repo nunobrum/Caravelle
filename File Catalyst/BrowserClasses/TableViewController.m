@@ -423,7 +423,8 @@
     return answer;
 }
 
-- (NSArray*)getSelectedItemsForContextMenu {
+// Can select the current Node
+- (NSArray*)getSelectedItemsForContextualMenu1 {
     static NSArray* answer = nil; // This will send the last answer when further requests are done
 
     // if the click was outside the items displayed
@@ -440,6 +441,23 @@
         answer = [self->_displayedItems objectsAtIndexes:selectedIndexes];
     }
 
+    return answer;
+}
+
+// Doesn't select the current Node
+-(NSArray*) getSelectedItemsForContextualMenu2 {
+    static NSArray* answer = nil; // This will send the last answer when further requests are done
+    
+    // if the click was in one of the items displayed
+    if ([_myTableView clickedRow] != -1 ) {
+        NSIndexSet *selectedIndexes = [_myTableView selectedRowIndexes];
+        // If the clicked row was in the selectedIndexes, then we process all selectedIndexes. Otherwise, we process just the clickedRow
+        if(![selectedIndexes containsIndex:[_myTableView clickedRow]]) {
+            selectedIndexes = [NSIndexSet indexSetWithIndex:[_myTableView clickedRow]];
+        }
+        answer = [self->_displayedItems objectsAtIndexes:selectedIndexes];
+    }
+    
     return answer;
 }
 
@@ -658,21 +676,29 @@
 - (void)keyDown:(NSEvent *)theEvent {
     // Get the origin
     NSString *key = [theEvent characters];
+    unichar keyCode = [key characterAtIndex:0];
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
-
+    NSLog(@"KD: code:%@ - %@, [%d,%d]",key, keyWM, keyCode, [keyWM characterAtIndex:0]);
     NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
-    if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
+    if ([theEvent modifierFlags] & NSCommandKeyMask) {
+        if (keyCode == KeyCodeDown) {    // will open the subject
+            [self TableDoubleClickEvent:theEvent];
+        }
+        else if (keyCode == KeyCodeUp) {  // the CMD Up will up one directory level
+            [[self parentController] upOneLevel];
+        }
+    }
+    else if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
         ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
     {
         // The Return key will open the file
         [self TableDoubleClickEvent:theEvent];
     }
-    else if ([keyWM isEqualToString:@"\t"]) {
-        // the tab key will switch Panes
+    else if ([keyWM isEqualToString:@"\t"]) { // the tab key will switch Panes
         [[self parentController] focusOnNextView:self];
     }
-    else if ([key isEqualToString:@"\x19"]) {
+    else if ([key isEqualToString:@"\x19"]) { // the Shift tab key will switch Panes
         [[self parentController] focusOnPreviousView:self];
     }
     else if ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_MULTIPLATFORM ) {
@@ -705,6 +731,9 @@
             [self->_myTableView reloadDataForRowIndexes:indexset
                                           columnIndexes: colIndex];
 
+    }
+    else {
+        [super keyDown:theEvent]; // Just passing it to the super class
     }
 }
 
