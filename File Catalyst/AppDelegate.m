@@ -366,7 +366,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
             treeUpdateOperationID = [Op operationID];
             [operationsQueue addOperation:Op];
-            [self _startOperationBusyIndication];
+            [self _startOperationBusyIndication:taskInfo];
         }*/
         /*if (0) { // TODO:! Testing filter and catalog Branches
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
@@ -654,7 +654,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 //TODO:!! Marked for clean-up. Revise this code. Only used in notificationCatalystRootUpdate.
 - (void) rootUpdate:(NSNotification*)theNotification {
-    NSMutableDictionary *notifInfo = [NSMutableDictionary dictionaryWithDictionary:[theNotification userInfo]];
+    NSDictionary *notifInfo = [theNotification userInfo];
     BrowserController *BrowserView = [theNotification object];
     /* In a normal mode the Browser only has one Root */
     [BrowserView removeRootWithIndex:0];
@@ -666,7 +666,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
     treeUpdateOperationID = [treeScanOp operationID];
 	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
-    [self _startOperationBusyIndication];
+    [self _startOperationBusyIndication: notifInfo];
 
 }
 
@@ -823,7 +823,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(BOOL) startOperation:(NSDictionary *) operationInfo {
-    [self _startOperationBusyIndication];
+    [self _startOperationBusyIndication: operationInfo];
     putInQueue(operationInfo);
     return YES;
 }
@@ -1514,19 +1514,53 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
 }
 
--(void) _startOperationBusyIndication {
-        // TODO: !!! get the dictionary so that the first message is displayed correctly. Now is displaying "..."
-    _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
+-(void) _startOperationBusyIndication:(NSDictionary*) operationInfo {
+    // Displays the first status message
+    NSString *operationStatus = @"...";
+    NSString *operation = [operationInfo objectForKey:kDFOOperationKey];
+    NSInteger count = [[operationInfo objectForKey:kDFOFilesKey] count];
+    // manage the singular vs plural
+    NSString *nItems;
+    if (count == 1) {
+        nItems = @"1 item";
+    }
+    else {
+        nItems = [NSString stringWithFormat:@"%ld items", (long)count];
+    }
+    
+    if ([operation isEqualToString:opCopyOperation]) {
+        operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
+    }
+    else if ([operation isEqualToString:opMoveOperation]) {
+        operationStatus = [NSString stringWithFormat:@"Moving %@",nItems];
+    }
+    else if ([operation isEqualToString:opSendRecycleBinOperation]) {
+        operationStatus = [NSString stringWithFormat:@"Trashing %@",nItems];
+    }
+    else if ([operation isEqualToString:opEraseOperation]) {
+        operationStatus = [NSString stringWithFormat:@"Erasing %@",nItems];
+    }
+    else if ([operation isEqualToString:opRename]) {
+        operationStatus = [NSString stringWithFormat:@"Renaming %@",nItems];
+    }
+    else if ([operation isEqualToString:opNewFolder]) {
+        operationStatus = @"Adding Folder";
+    }
+    else {
+        operationStatus = @"Unknown Operation";
+    }
+    NSLog(operationStatus);
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];
-    [self.statusProgressLabel setStringValue:@"..."];
+    [self.statusProgressLabel setStringValue: operationStatus];
     [self.statusCancelButton setHidden:NO];
     statusTimeoutCounter = 0;
     statusFilesCopied = 0;
     statusFilesDeleted = 0;
     statusFilesMoved = 0;
-
+    _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
+    
 }
 
 - (void)_operationsInfoFired:(NSTimer *)timer {
@@ -1580,11 +1614,17 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 if (!OK) {
                     statusText = @"Rename Failed";
                 }
+                else {
+                    NSInteger count = [[info objectForKey:kDFOOkCountKey] integerValue];
+                    statusText  = [NSString stringWithFormat:@"%lu Files copied", count];
+                }
             }
             else if ([operation isEqualToString:opNewFolder]) {
                 if (!OK) {
                     statusText = @"New Folder creation failed";
                 }
+                else
+                    statusText = @"Folder Created";
             }
             else {
                 NSLog(@"Unkown operation"); // Unknown operation
@@ -1867,12 +1907,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [myLeftView setViewType:BViewTypeTable];
     [myRightView setViewMode:BViewDuplicateMode];
     [myRightView setViewType:BViewTypeTable];
-    [self _startOperationBusyIndication];
     NSDictionary *notifInfo = [theNotification userInfo];
-	// start the GetPathsOperation with the root path to start the search
+    // start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
 	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
-    [self _startOperationBusyIndication];
+    [self _startOperationBusyIndication:notifInfo];
 
 
 }
@@ -2108,7 +2147,7 @@ shouldCopyItemAtURL:(NSURL *)srcURL
         //TODO:! create an error subclass
         return NO;
     }
-    NSLog(@"should copy item\n%@ to\n%@", srcURL, dstURL);
+    //NSLog(@"should copy item\n%@ to\n%@", srcURL, dstURL);
     statusFilesCopied++;
     return YES;
 }
@@ -2122,14 +2161,14 @@ shouldMoveItemAtURL:(NSURL *)srcURL
         //TODO:! create an error subclass
         return NO;
     }
-    NSLog(@"should move item\n%@ to\n%@", srcURL, dstURL);
+    //NSLog(@"should move item\n%@ to\n%@", srcURL, dstURL);
     statusFilesMoved++;
     return YES;
 }
 
 -(BOOL) fileManager:(NSFileManager *)fileManager
 shouldRemoveItemAtURL:(NSURL *)URL {
-    NSLog(@"should remove item\n%@", URL);
+    //NSLog(@"should remove item\n%@", URL);
     statusFilesDeleted++;
     return YES;
 }
