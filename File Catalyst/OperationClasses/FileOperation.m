@@ -129,13 +129,18 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     else { 
                         // Do a Rename
                         NSURL *newURL = renameFile(checkURL, newName, error);
-
-//#ifdef UPDATE_TREE  // Always update the tree, as otherwise it will have weird effect on the window
-                        // If OK it will Update the URL so that no funky updates are done in the window
-                        if (newURL && [item isKindOfClass:[TreeItem class]]) {
-                            [(TreeItem*)item setUrl:newURL];
+                        if (newURL) {
+                            OK = YES;
+                            //#ifdef UPDATE_TREE  // Always update the tree, as otherwise it will have weird effect on the window
+                            // If OK it will Update the URL so that no funky updates are done in the window
+                            if ([item isKindOfClass:[TreeItem class]]) {
+                                [(TreeItem*)item setUrl:newURL];
+                            }
+                            //#endif // UPDATE_TREE
                         }
-//#endif // UPDATE_TREE
+                        else {
+                            OK = NO;
+                        }
                         // Adjust to the correct Operation
                         [_taskInfo setObject:opRename forKey:kDFOOperationKey];
                     }

@@ -97,5 +97,6 @@
 
 - (IBAction)appModeChanged:(id)sender;
 
+- (void) adjustSideInformation:(id) sender;
 
 @end

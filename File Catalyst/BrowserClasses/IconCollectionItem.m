@@ -54,10 +54,14 @@
                 [(TreeItem*)item removeItem];
 
             }
+            else {
+                // Put old string name
+                [control setStringValue:[item name]];
+            }
         }
         // Remove Field from First Responder
         [self exitEditMode];
-        return YES; // avoids that the cancelOperation from controller is called.
+        //return YES; // avoids that the cancelOperation from controller is called.
     }
     else if (commandSelector == @selector(insertNewline:)) {
         // Remove Field from firstResponder

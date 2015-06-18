@@ -46,7 +46,10 @@ NSString *KEY_ICON = @"icon";
 
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"selectedObjects"]) {
+    // Monitors selection change
+    if (([keyPath isEqualToString:@"selectedObjects"]) &&
+        // And if the view must be Key
+        ([[self collectionView] isFirstResponder])) {
         [self updateFocus:self];
         // send a Status Notfication
         [self.parentController selectionDidChangeOn:self]; // Will Trigger the notification to the status bar

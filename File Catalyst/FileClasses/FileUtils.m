@@ -265,7 +265,7 @@ BOOL fileExistsOnPath(NSString*path) {
     return [[NSFileManager defaultManager] fileExistsAtPath:path];
 }
 
-// TODO:!!!! write here the function that proposes a filename for file copy
+// The function that proposes a filename for file copy
 NSString *duplicateFileNameProposal(NSString *path) {
     // Making the rename in consistency with Mac OSX
     

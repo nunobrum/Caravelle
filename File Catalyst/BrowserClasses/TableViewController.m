@@ -30,6 +30,7 @@
 #ifdef UPDATE_TREE
     NSIndexSet *_draggedItemsIndexSet;
 #endif
+    NSMutableArray *observedTreeItemsForSizeCalculation;
 }
 @end
 
@@ -53,6 +54,7 @@
 
 - (void) initController {
     [super initController];
+    observedTreeItemsForSizeCalculation = [[NSMutableArray alloc] init];
 #ifdef UPDATE_TREE
     self->_draggedItemsIndexSet = nil;
 #endif
@@ -192,6 +194,7 @@
                     // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
                     if ([theFile isKindOfClass:[TreeBranch class]] && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                         [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
+                        [self->observedTreeItemsForSizeCalculation addObject:theFile];
                         cellView.textField.objectValue = @"";
                         [((SizeTableCellView*)cellView)  startAnimation];
                         [(TreeBranch*)theFile calculateSize];
@@ -558,8 +561,10 @@
         [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
 
         // Now the observe can be removed
-        //TODO:!!! This is giving problems. Solution : Make a list of observed like was done for the kvoTreeBranchPropertyChildren
-        [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
+        if ([self->observedTreeItemsForSizeCalculation containsObject:object]) {
+            [object removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
+            [self->observedTreeItemsForSizeCalculation removeObject:object];
+        }
     }
 }
 
@@ -757,6 +762,7 @@
 {
     //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
     if (commandSelector == @selector(cancelOperation:)) {
+        
         // In cancel will check if it was a new File and if so, remove it
         NSInteger row =[_myTableView rowForView:fieldEditor];
         if (row!=-1) {
@@ -767,10 +773,15 @@
                     [_myTableView removeRowsAtIndexes:rows2delete
                                         withAnimation:NSTableViewAnimationEffectFade];
                 }
+                else {
+                    // Reposition the old text
+                    [control setStringValue:[item name]];
+                }
             }
         }
-        [self focusOnLastView];
-        return YES;  // avoids that the cancelOperation from controller is called.
+        //[fieldEditor resignFirstResponder];
+        //[self focusOnLastView];
+        //return YES;  // avoids that the cancelOperation from controller is called.
     }
 
     return NO;

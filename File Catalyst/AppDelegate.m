@@ -320,19 +320,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         [myRightView setName:@"Right" TwinName:@"Left"];
         [_ContentSplitView addSubview:myLeftView.view];
         [_ContentSplitView addSubview:myRightView.view];
-        [self.buttonCopyTo setEnabled:YES];
-        [self.buttonMoveTo setEnabled:YES];
     }
     else if (applicationMode == ApplicationMode1View) {
         myRightView = nil;
         [myLeftView setName:@"Single" TwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
         [_ContentSplitView addSubview:myLeftView.view];
-        [self.buttonCopyTo setEnabled:NO];
-        [self.buttonMoveTo setEnabled:NO];
-
     }
-
-
+    
     //NSDictionary *viewsDictionary = [NSDictionary dictionaryWithObject:myLeftView.view forKey:@"myLeftView"];
     //NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-0-[myLeftView]-0-|"
     //                                                               options:0 metrics:nil views:viewsDictionary];
@@ -349,6 +343,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     self->_selectedView = myLeftView;
     // Set the Left view as first responder
     [myLeftView focusOnFirstView];
+    [self adjustSideInformation:myLeftView];
+
+    
 
 }
 
@@ -783,7 +780,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     if (numberOfFiles == 1) {
         TreeItem *selectedFile = [selectedFiles firstObject];
         NSString *oldFilename = [[selectedFile path] lastPathComponent];
-        if (1) { // Rename done in place
+        if (1) { // Rename done in place // TODO: Put this is a USer Configuration
             [[self selectedView] startEditItemName:selectedFile];
         }
         // Using a dialog Box
@@ -1012,6 +1009,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (void) updateFocus:(id)sender {
     if (sender == myLeftView || sender == myRightView) {
         _selectedView = sender;
+        [self adjustSideInformation:sender];
     }
     else {
         NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
@@ -1217,8 +1215,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         if (myRightView!=nil && panelCount == 2) {
             [myLeftView setName:@"Single" TwinName:nil];
             [myRightView.view removeFromSuperview];
-            [self.buttonCopyTo setEnabled:NO];
-            [self.buttonMoveTo setEnabled:NO];
             //myRightView.view = nil;
             applicationMode = ApplicationMode1View;
         }
@@ -1242,11 +1238,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 [myRightView refresh]; // Just Refreshes
                 applicationMode = ApplicationMode2Views;
             }
-            [self.buttonCopyTo setEnabled:YES];
-            [self.buttonMoveTo setEnabled:YES];
-
         }
     }
+    [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView adjustSubviews];
     [self.ContentSplitView displayIfNeeded];
 }
@@ -1450,33 +1444,39 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 #pragma mark - Parent Protocol
 
 - (void)focusOnNextView:(id)sender {
+    id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
         if (applicationMode == ApplicationMode2Views) {
-            [myRightView focusOnFirstView];
+            focused_view = myRightView;
         }
         else {
-            [myLeftView focusOnFirstView];
+            focused_view = myLeftView;
         }
     }
     else if (sender == myRightView) {
-        [myLeftView focusOnFirstView];
+        focused_view = myLeftView;
     }
+    [focused_view focusOnFirstView];
+    [self adjustSideInformation:focused_view];
 }
+
 
 - (void) focusOnPreviousView:(id)sender {
+    id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
         if (applicationMode == ApplicationMode2Views) {
-            [myRightView focusOnLastView];
+            focused_view = myRightView;
         }
         else {
-            [myLeftView focusOnLastView];
+            focused_view = myLeftView;
         }
     }
     else if (sender == myRightView) {
-        [myLeftView  focusOnLastView];
+        focused_view = myLeftView;
     }
+    [focused_view focusOnLastView];
+    [self adjustSideInformation:focused_view];
 }
-
 
 
 #pragma mark - Operations Handling
@@ -1723,6 +1723,27 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // update our table view on the main thread
     [self performSelectorOnMainThread:@selector(mainThread_operationFinished:) withObject:theNotification waitUntilDone:NO];
 
+}
+
+-(void) adjustSideInformation:(id) sender {
+    if (self->applicationMode == ApplicationMode2Views) {
+        [self.buttonCopyTo setEnabled:YES];
+        [self.buttonMoveTo setEnabled:YES];
+        if (sender == myLeftView) {
+            [self.buttonCopyTo setTitle: @"Copy Right"];
+            [self.buttonMoveTo setTitle: @"Move Right"];
+        }
+        else {
+            [self.buttonCopyTo setTitle: @"Copy Left"];
+            [self.buttonMoveTo setTitle: @"Move Left"];
+        }
+    }
+    else {
+        [self.buttonCopyTo setEnabled:NO];
+        [self.buttonMoveTo setEnabled:NO];
+        [self.buttonCopyTo setTitle: @"Copy"];
+        [self.buttonMoveTo setTitle: @"Move"];
+    }
 }
 
 -(void) updateStatus:(NSDictionary *)status {

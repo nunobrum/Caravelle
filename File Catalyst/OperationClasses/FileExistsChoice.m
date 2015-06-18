@@ -192,8 +192,8 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
 }
 
 
-- (void)controlTextDidEndEditing:(NSNotification *)obj {
-    [self actionRename:nil];
-}
+//- (void)controlTextDidEndEditing:(NSNotification *)obj {
+//    [self actionRename:nil];
+//}
 
 @end
