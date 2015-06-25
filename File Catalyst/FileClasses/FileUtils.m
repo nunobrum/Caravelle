@@ -29,6 +29,11 @@ BOOL isWritable(NSURL* url) {
     return [isWritable boolValue];
 }
 
+BOOL isHidden(NSURL* url) {
+    NSNumber *isHidden;
+    [url getResourceValue:&isHidden forKey:NSURLIsHiddenKey error:NULL];
+    return [isHidden boolValue];
+}
 
 NSString* utiType(NSURL* url) {
     NSString *typeIdentifier=nil;

@@ -1549,7 +1549,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     else {
         operationStatus = @"Unknown Operation";
     }
-    NSLog(operationStatus);
+    //NSLog(operationStatus);
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];

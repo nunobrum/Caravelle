@@ -121,6 +121,12 @@
         _tag &= ~tagTreeItemReadOnly;
     else
         _tag |= tagTreeItemReadOnly;
+    
+    if (isHidden(_url))
+        _tag |= tagTreeItemHidden;
+    else
+        _tag &= ~tagTreeItemHidden;
+    
 }
 
 -(NSString*) name {
@@ -210,16 +216,45 @@
 }
 
 -(NSImage*) image {
+    NSImage *iconImage;
+    NSImage *image;
+    
+    // First get the image
     if ([self hasTags:tagTreeItemNew]) {
         if ([self itemType] == ItemTypeBranch)
-            return [NSImage imageNamed:@"GenericFolderIcon"];
+            iconImage = [NSImage imageNamed:@"GenericFolderIcon"];
         else
-            return [NSImage imageNamed:@"GenericDocumentIcon"];
+            iconImage = [NSImage imageNamed:@"GenericDocumentIcon"];
     }
-
     else  {
-        return[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
+        iconImage =[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
     }
+    
+    
+    NSSize imageSize= [iconImage size];
+    //TreeItemTagEnum tags = [self tag];
+    image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        [iconImage drawInRect:dstRect];
+        
+        // Then will apply an overlay
+        // The code below only draw one of the badges in the order the code is presented.
+        // TODO: ! Consider making an overlay where all the applicable badges are placed
+        //         in sequence, starting from right to left
+        if ([self hasTags:tagTreeItemHidden]) {
+            [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ private", [self url]);
+        }
+        else if ([self hasTags:tagTreeItemReadOnly]) {
+            [[NSImage imageNamed:@"ReadOnlyFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ read-only", [self url]);
+        }
+        else if ([self hasTags:tagTreeItemDropped]) {
+            [[NSImage imageNamed:@"DropFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ dropped", [self url]);
+        }
+        return YES;
+    }];
+    return image;
 }
 
 -(long long) filesize {

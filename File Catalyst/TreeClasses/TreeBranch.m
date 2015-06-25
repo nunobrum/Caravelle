@@ -345,6 +345,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
+/*
 -(void) _performSelectorInUndeveloppedBranches:(SEL)selector {
     if (self->_children!= nil) {
         @synchronized(self) {
@@ -361,6 +362,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
 }
+*/
 
 -(void) _propagateSize {
     BOOL all_sizes_available = YES; // Starts with an invalidated number
@@ -514,9 +516,26 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
 }
 
+-(void) _expandTreeInUndeveloppedBranches {
+    if (self->_children!= nil) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item itemType] == ItemTypeBranch) {
+                    [(TreeBranch*)item _expandTreeInUndeveloppedBranches];
+                }
+            }
+        }
+    }
+    else {
+        if ([self respondsToSelector:@selector(_expandTree)]) {
+            [self performSelector:@selector(_expandTree)];
+        }
+    }
+}
+
 -(void) expandAllBranches {
     NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
-        [self _performSelectorInUndeveloppedBranches:@selector(_expandTree)];
+        [self _expandTreeInUndeveloppedBranches];
         // Now sends a dummy change so that the tree is updated
         [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
         [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change

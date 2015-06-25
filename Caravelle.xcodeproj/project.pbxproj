@@ -77,6 +77,9 @@
 		3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
+		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
+		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
+		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -216,6 +219,9 @@
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
+		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
+		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
+		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -417,8 +423,11 @@
 		3CEA677618F87CE50080C4FC /* IconResources */ = {
 			isa = PBXGroup;
 			children = (
+				BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */,
 				3CF5B6C01ABF76620065E543 /* GenericDocumentIcon.icns */,
 				3CF5B6C11ABF76630065E543 /* GenericFolderIcon.icns */,
+				BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */,
+				BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */,
 			);
 			path = IconResources;
 			sourceTree = "<group>";
@@ -614,11 +623,14 @@
 			files = (
 				3CD788AB19D9C7E80042E8B9 /* UserDefault.plist in Resources */,
 				3CEA674D18F87C2F0080C4FC /* InfoPlist.strings in Resources */,
+				BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */,
 				3CF5DA8E1A65D09800786D64 /* RenameFileDialog.xib in Resources */,
+				BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */,
 				3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */,
 				3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */,
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
+				BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */,
 				3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */,
 				3CF5B6C31ABF76630065E543 /* GenericFolderIcon.icns in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,

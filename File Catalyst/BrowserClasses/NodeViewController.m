@@ -283,6 +283,7 @@
             NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"*=~|&<>"];
             if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
                 // TODO:!! Tokenize the filter field to make inteligent searches
+                // TODO:!! find Titles and replace for selectors.
                 @try {
                     predicate = [NSPredicate predicateWithFormat:self.filterText];
                 }
