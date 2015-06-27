@@ -1242,17 +1242,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             }
         }
     }
-    else if (mode == ApplicationModePreview) {
-        // TODO: !!! Preview Mode
-        NSLog(@"Preview Mode");
-    }
-    else if (mode == ApplicationModeSync) {
-        if (applicationMode != ApplicationModeDuplicate ||
-            applicationMode != ApplicationModeSync)
-            NSLog(@"Ask for which mode to jump to");
-        // TODO: !!! Directory Sync or Duplicate Finder
-        // Display drop menu to choose between Duplicate Finder or Directory Sync
-    }
     [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView adjustSubviews];
     [self.ContentSplitView displayIfNeeded];
@@ -1324,8 +1313,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
         theAction == @selector(toolbarGotoFolder:) ||
-        theAction == @selector(orderPreferencePanel:) ||
-        theAction == @selector(FindDuplicates:)
+        theAction == @selector(orderPreferencePanel:)
         ) {
         return YES;
     }
@@ -1560,9 +1548,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     else if ([operation isEqualToString:opNewFolder]) {
         operationStatus = @"Adding Folder";
     }
-    else if ([operation isEqualToString:opDuplicateFind]) {
-        operationStatus = @"Starting Duplicate Find";
-    }
     else {
         operationStatus = @"Unknown Operation";
     }
@@ -1676,7 +1661,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSString *status = @"Internal Error";
         NSArray *operations = [operationsQueue operations];
         NSOperation *currOperation = operations[0];
-        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:!!!! This should be moved to File Operations statusText Selector
+        if ([currOperation isKindOfClass:[FileOperation class]]) {
             NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
             
             if ([op isEqualToString:opCopyOperation]) {
@@ -1920,13 +1905,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 /* invoked by Find Duplicates Dialog on OK Button */
 - (void) startDuplicateFind:(NSNotification*)theNotification {
-    if (myRightView == nil) {
-        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-        [myRightView setParentController:self];
-        [myLeftView setName:@"Left" TwinName:@"Right"];
-        [myRightView setName:@"Right" TwinName:@"Left"];
-        [_ContentSplitView addSubview:myRightView.view];
-    }
     [myLeftView setViewMode:BViewDuplicateMode];
     [myLeftView setViewType:BViewTypeTable];
     [myRightView setViewMode:BViewDuplicateMode];
@@ -1936,15 +1914,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
 	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
     [self _startOperationBusyIndication:notifInfo];
-    
-    self->applicationMode = ApplicationModeDuplicate;
-    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeSync];
+
 
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
+    self->applicationMode = ApplicationModeDuplicate;
     TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates];
     [myLeftView addTreeRoot:rootDir];
     [myLeftView stopBusyAnimations];

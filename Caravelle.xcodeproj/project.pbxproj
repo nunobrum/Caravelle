@@ -79,6 +79,7 @@
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 		BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
+		BCADC24B1B3EACA400245F1D /* FileInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24A1B3EACA400245F1D /* FileInformation.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,6 +220,8 @@
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2461B3DB39B00245F1D /* FileCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileCollection.h; sourceTree = "<group>"; };
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
+		BCADC2491B3EACA400245F1D /* FileInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileInformation.h; sourceTree = "<group>"; };
+		BCADC24A1B3EACA400245F1D /* FileInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileInformation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -261,6 +264,8 @@
 		3C29463118F9B81C002B633C /* FileClasses */ = {
 			isa = PBXGroup;
 			children = (
+				BCADC2491B3EACA400245F1D /* FileInformation.h */,
+				BCADC24A1B3EACA400245F1D /* FileInformation.m */,
 				BCADC2461B3DB39B00245F1D /* FileCollection.h */,
 				BCADC2471B3DB39B00245F1D /* FileCollection.m */,
 				3C29464118F9B87C002B633C /* FolderCellView.h */,
@@ -667,6 +672,7 @@
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
+				BCADC24B1B3EACA400245F1D /* FileInformation.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,

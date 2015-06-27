@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "FileUtils.h"
 #import "FileCollection.h"
+#import "FileInformation.h"
 
 #import "Definitions.h"
 
@@ -94,19 +95,18 @@
     
 }*/
 
--(void) addFile: (TreeItem*) item {
+-(void) AddFileInformation: (FileInformation*) aFileInfo {
     if (fileArray==nil)
         fileArray = [[NSMutableArray new] init];
-    [fileArray addObject:item];
+    [fileArray addObject:aFileInfo];
     
 }
-
-//-(void) addFileByURL: (NSURL *) anURL {
-//    FileInformation *fi = [FileInformation createWithURL:anURL];
-//    if (fileArray==nil)
-//        fileArray = [[NSMutableArray new] init];
-//    [fileArray addObject:fi];    
-//}
+-(void) addFileByURL: (NSURL *) anURL {
+    FileInformation *fi = [FileInformation createWithURL:anURL];
+    if (fileArray==nil)
+        fileArray = [[NSMutableArray new] init];
+    [fileArray addObject:fi];    
+}
 
 -(void) addFiles: (NSMutableArray *)otherArray {
     if (otherArray!=nil) { // Will only do anything if the other array is valid
@@ -115,7 +115,7 @@
             [fileArray addObjectsFromArray:otherArray];
         }
         else {
-            for (TreeItem *fi in otherArray) {
+            for (FileInformation *fi in otherArray) {
                 if (NSNotFound==[fileArray indexOfObject:fi]) {
                     // Adds only if it doesn't already exist
                     [fileArray addObject:fi];
@@ -136,16 +136,16 @@
         NSArray *common_path = nil;
         NSArray *file_path;
         NSInteger ci=0;
-        for (TreeItem *fi in fileArray) {
+        for (FileInformation *fi in fileArray) {
             if (common_path==nil)
             {
-                common_path = [[fi url] pathComponents];
+                common_path = [fi getPathComponents];
                 ci = [common_path count]-1; /* This will exclude the file name */
             }
             else
             {
                 NSInteger i;
-                file_path = [[fi url] pathComponents];
+                file_path = [fi getPathComponents];
                 if ([file_path count]<ci)
                     ci = [file_path count];
                 for (i=0; i< ci; i++) {
@@ -181,10 +181,10 @@
 
 -(FileCollection*) filesInPath:(NSString*) path {
     FileCollection *newCollection = [[FileCollection new] init];
-    for (TreeItem *finfo in fileArray) {
-        enumPathCompare test = path_relation(path, finfo.path);
+    for (FileInformation *finfo in fileArray) {
+        enumPathCompare test = path_relation(path, finfo.getPath);
         if (test == pathIsChild || test == pathIsSame)
-            [newCollection->fileArray addObject:finfo];
+            [newCollection AddFileInformation:finfo];
 
     }
     return newCollection;
@@ -192,16 +192,16 @@
 
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount {
     FileCollection *newCollection = [[FileCollection new] init];
-    for (TreeItem *finfo in fileArray) {
-        enumPathCompare test = path_relation(path, finfo.path);
+    for (FileInformation *finfo in fileArray) {
+        enumPathCompare test = path_relation(path, finfo.getPath);
         if (test == pathIsChild || test == pathIsSame) {
-            TreeItem *cursor=[finfo nextDuplicate];
+            FileInformation *cursor=finfo->duplicate_chain;
             while (cursor!=finfo) {
-                if ([cursor duplicateRefreshCount]!=dCount) {
-                    [newCollection->fileArray addObject:cursor];
-                    [cursor setDuplicateRefreshCount: dCount];
+                if (cursor->dCounter!=dCount) {
+                    [newCollection AddFileInformation:cursor];
+                    cursor->dCounter = dCount;
                 }
-                cursor = [cursor nextDuplicate];
+                cursor = cursor->duplicate_chain;
             }
         }
     }
@@ -250,7 +250,7 @@
 }
 
 -(void) resetDuplicateLists {
-    for (TreeItem * filei in fileArray) {
+    for (FileInformation * filei in fileArray) {
         [filei resetDuplicates];
     }
 }
@@ -259,7 +259,7 @@
 // This method returns a new FileCollection with only the files that have duplicates
 -(FileCollection*) FilesWithDuplicates {
     FileCollection *result = [[FileCollection new] init];
-    for (TreeItem *fi in fileArray) {
+    for (FileInformation *fi in fileArray) {
         if ([fi duplicateCount]!=0)
             [result->fileArray addObject:fi];
     }
@@ -273,8 +273,8 @@
     [old removeAllObjects]; // Cleans up the old array
 }
 
-//-(void) sortByFileSize {
-//    [fileArray sortUsingSelector:@selector(compareSize:)];
-//}
+-(void) sortByFileSize {
+    [fileArray sortUsingSelector:@selector(compareSize:)];
+}
 
 @end

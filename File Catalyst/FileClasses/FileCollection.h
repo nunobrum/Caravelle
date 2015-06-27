@@ -10,7 +10,8 @@
 #ifndef _FileCollection_h
 #define _FileCollection_h
 
-#import "TreeItem.h"
+#import "Definitions.h"
+#import "FileInformation.h"
 
 @interface FileCollection : NSObject {
 @private
@@ -27,7 +28,8 @@
 -(NSString*) commonPath;
 -(NSMutableArray*) fileArray;
 
--(void) addFile: (TreeItem*) item;
+-(void) AddFileInformation: (FileInformation*) aFileInfo;
+-(void) addFileByURL: (NSURL *) anURL;
 -(void) addFiles: (NSMutableArray *)otherArray;
 
 -(FileCollection*) filesInPath:(NSString*) path;
@@ -43,7 +45,7 @@
 -(FileCollection*) FilesWithDuplicates;
 -(void) streamFilesWithDuplicates;
 
-//-(void) sortByFileSize;
+-(void) sortByFileSize;
 
 @end
 

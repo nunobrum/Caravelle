@@ -55,15 +55,10 @@ NSString *kOptionsKey = @"Options";
                     /* Should it be decided to inform */
                 }
                 else {
-                    //TODO:!!!! This needs to be changed so that it is integrated with the actual Tree Scheme.
-                    // 1. Will ask the Tree Manager for this URL,
-                    // 2.a If it doesn't exist create it
-                    // 2.b If it exists, add from nodes in branch
-                    
                     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                     for (NSURL *theURL in dirEnumerator) {
                         if (!isFolder(theURL)) {
-                            TreeItem *fi = [TreeItem treeItemForURL:theURL parent:nil];
+                            FileInformation *fi = [FileInformation createWithURL:theURL];
                             [fileArray addObject:fi];
 
                             if ([self isCancelled])
@@ -84,18 +79,10 @@ NSString *kOptionsKey = @"Options";
                     FileCollection *duplicateList = [[FileCollection new] init];
 
                     if (options & DupCompareSize) {
-                        [fileArray sortUsingComparator:^NSComparisonResult(TreeItem* obj1, TreeItem* obj2) {
-                            if (obj1.filesize == obj2.filesize)
-                                return NSOrderedSame;
-                            else if (obj1.filesize > obj2.filesize)
-                                return NSOrderedAscending;  // Order from biggest to smaller
-                            else
-                                return NSOrderedDescending;
-                            
-                        }];
+                        [fileArray sortUsingSelector:@selector(compareSize:)];
                     }
 
-                    TreeItem *FileA, *FileB;
+                    FileInformation *FileA, *FileB;
                     for (i=0;i<max_files;i++) {
                         if ([self isCancelled])
                             break;
@@ -103,19 +90,20 @@ NSString *kOptionsKey = @"Options";
                         for (j=i+1; j<max_files; j++) {
                             FileB = [fileArray objectAtIndex:j];
                             duplicate = TRUE;
-                            if (options & DupCompareName && [FileA.name isEqualToString: FileB.name]==FALSE) {
+                            if (options & DupCompareName && [FileA equalName: FileB]==FALSE) {
                                 duplicate= FALSE;
                             }
                             else if (options & DupCompareSize) {
-                                if (FileA.filesize > FileB.filesize) {
+                                NSComparisonResult result = [FileA compareSize:FileB];
+                                if (result ==NSOrderedAscending) {
                                     j = max_files; // This will make the inner cycle to end
                                     duplicate = FALSE;
                                 }
-                                else if (FileA.filesize < FileB.filesize) {
+                                else if (result == NSOrderedDescending) {
                                     duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                                 }
                             }
-                            if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA.date_modified isEqualToDate:FileB.date_modified]==FALSE) {
+                            if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA equalDate:FileB]==FALSE) {
                                 duplicate = FALSE;
                             }
                             if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {
@@ -123,12 +111,9 @@ NSString *kOptionsKey = @"Options";
                                 if ([FileA compareMD5checksum:FileB]==FALSE) {
                                     duplicate = FALSE;
                                 }
-                                else {
-                                    // If the MD5 Matches, then it must compare the full contents
-                                    if (options&DupCompareContentsFull) {
-                                        duplicate = [[NSFileManager defaultManager] contentsEqualAtPath:FileA.path andPath:FileB.path];
-                                        
-                                    }
+                                // If the MD5 Matches, then it must compare the full contents
+                                else if ((options&DupCompareContentsMD5) || [FileA compareContents:FileB]==FALSE) {
+                                    duplicate = FALSE;
                                 }
                             }
                             if (duplicate) {
@@ -141,7 +126,7 @@ NSString *kOptionsKey = @"Options";
                             }
                         }
                         if ([FileA hasDuplicates]==YES) {
-                            [duplicateList addFile:FileA];
+                            [duplicateList AddFileInformation:FileA];
                             dupGroup++;
                         }
                     }
