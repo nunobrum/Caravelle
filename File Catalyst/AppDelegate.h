@@ -8,11 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import "Definitions.h"
-#import "FileCollection.h"
 #import "BrowserController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate, ParentProtocol, NSMenuDelegate> {
-    //FileCollection *fileCollection;
     BrowserController *myLeftView;
     BrowserController *myRightView;
     id<MYViewProtocol> _selectedView;
@@ -40,6 +38,12 @@
 @property (weak) IBOutlet NSMenuItem *menuShowHiddenFilesMenu;
 @property (weak) IBOutlet NSMenuItem *menuBrowseApplicationsMenu;
 @property (weak) IBOutlet NSMenuItem *menuCalculateFolderSizes;
+
+/*
+ * Toolbar outlets
+ */
+
+@property (weak) IBOutlet NSSegmentedControl *toolbarAppModeSelect;
 
 @property (weak) IBOutlet NSSegmentedControl *toolbarFunctionBarSelect;
 

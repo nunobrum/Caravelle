@@ -10,7 +10,6 @@
 #import "NodeViewController.h"
 #import "BrowserTableView.h"
 #import "BrowserOutlineView.h"
-#import "FileCollection.h"
 #import "TreeRoot.h"
 #include "Definitions.h"
 
@@ -132,7 +131,6 @@ extern NSString *notificationCatalystRootUpdate;
 //-(void) removeSelectedDirectory;
 -(void) removeAll;
 //-(BOOL) canAddRoot: (NSString*) rootPath;
-//-(FileCollection *) concatenateAllCollections;
 -(TreeBranch*) selectFirstRoot;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;
 -(BOOL) selectFolderByURL:(NSURL*)theURL;

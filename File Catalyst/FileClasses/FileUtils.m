@@ -8,7 +8,7 @@
 
 #import "FileUtils.h"
 #import "Definitions.h"
-
+#include "MD5.h"
 
 
 BOOL isFolder(NSURL* url) {
@@ -437,5 +437,44 @@ NSDictionary *getDiskInformation(NSURL *diskPath) {
 NSString *mediaNameFromURL(NSURL *rootURL) {
     NSDictionary *diskInfo = getDiskInformation(rootURL);
     return diskInfo[@"DAVolumeName"];
+}
+
+
+/* 
+ * MD5 Calculation
+ */
+/* This function will calculate the file checksum based on the MD5 protocol */
+#define BUFFER_SIZE_MD5 4096
+NSData *calculateMD5(NSURL *url) {
+    NSData *NSbuffer;
+    md5_state_t state;
+    md5_byte_t digest[16];
+    md5_byte_t *data_pointer;
+    NSUInteger bytes_read;
+    NSError *error;
+    //char hex_output[16*2 + 1];
+    //int di;
+    
+    NSFileHandle *handler = [NSFileHandle fileHandleForReadingFromURL:url error:&error];
+    
+    if (error==nil && handler!=nil) {
+        
+        md5_init(&state);
+        
+        do  {
+            NSbuffer = [handler readDataOfLength:BUFFER_SIZE_MD5];
+            bytes_read = [NSbuffer length];
+            data_pointer = (md5_byte_t *)[NSbuffer bytes];
+            md5_append(&state, data_pointer, (int)bytes_read); // Potential dangerous cast since it is converting from unsigned long to int, mind size declared in BUFFER_SIZE
+            
+        } while (bytes_read == BUFFER_SIZE_MD5);
+        md5_finish(&state, digest);
+    }
+    [handler closeFile];
+    //for (di = 0; di < 16; ++di)
+    //    sprintf(hex_output + di * 2, "%02x", digest[di]);
+    //     memcpy(&self->md5_checksum, digest, 16);
+    NSData *MD5 = [[NSData alloc] initWithBytes:digest length:16];
+    return MD5;
 }
 

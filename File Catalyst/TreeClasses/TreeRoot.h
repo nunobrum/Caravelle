@@ -18,7 +18,7 @@
 @property bool isCollectionSet;
 
 -(void) setFileCollection:(FileCollection*)collection;
--(FileCollection *) fileCollection;
+//-(FileCollection *) fileCollection;
 -(NSString*) rootPath;
 
 +(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection;

@@ -130,6 +130,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                           Options, kOptionsKey,
                           pathList, kRootPathKey,
+                          opDuplicateFind, kDFOOperationKey,
                           nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:info];
     [self close];

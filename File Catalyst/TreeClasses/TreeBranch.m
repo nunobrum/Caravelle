@@ -888,23 +888,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark -
 #pragma mark collector methods
 
--(FileCollection*) filesInNode {
-    @synchronized(self) {
-        FileCollection *answer = [[FileCollection new] init];
-        for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeLeaf) {
-                FileInformation *finfo;
-                finfo = [FileInformation createWithURL:[(TreeLeaf*)item url]];
-                [answer AddFileInformation:finfo];
-            }
-        }
-        return answer;
-    }
-    return NULL;
-}
--(FileCollection*) filesInBranch {
-    return nil; // TODO:!! Pending Implementation
-}
 -(NSMutableArray*) itemsInNode {
     @synchronized(self) {
         NSMutableArray *answer = [[NSMutableArray new] init];

@@ -9,13 +9,27 @@
 #import "TreeRoot.h"
 #import "TreeBranch_TreeBranchPrivate.h"
 #import "TreeLeaf.h"
-#import "FileCollection.h"
+//#import "FileCollection.h"
 #import "MyDirectoryEnumerator.h"
 
 #import "definitions.h"
 
 @implementation TreeRoot
 
+/*-(FileCollection*) filesInNode {
+    @synchronized(self) {
+        FileCollection *answer = [[FileCollection new] init];
+        for (TreeItem *item in self->_children) {
+            if ([item itemType] == ItemTypeLeaf) {
+                FileInformation *finfo;
+                finfo = [FileInformation createWithURL:[(TreeLeaf*)item url]];
+                [answer AddFileInformation:finfo];
+            }
+        }
+        return answer;
+    }
+    return NULL;
+}
 
 -(FileCollection *) fileCollection {
     if (_isCollectionSet== NO) {
@@ -24,7 +38,7 @@
             _isCollectionSet  = YES;
     }
     return _fileCollection;
-}
+}*/
 
 -(NSString*) rootPath {
     return self.path; //rootDirectory; //[_fileCollection rootPath];
@@ -54,8 +68,9 @@
         /* Since a new tree is created there is no problems with contentions */
 
         /* Refresh the Trees so that the trees are displayed */
-        for (FileInformation *finfo in fileCollection.fileArray) {
-            [rootDir _addURLnoRecurr:finfo.getURL];
+        for (TreeItem *finfo in fileCollection.fileArray) {
+            // TODO: !!!!!!!! This is ultra-DUMB, we need a tree constructor that receives TreeItems not URLS.
+            [rootDir _addURLnoRecurr:finfo.url];
             fileno++;
 
         } // for

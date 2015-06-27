@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
-#ifndef File_Catalyst_Definitions_h
-#define File_Catalyst_Definitions_h
+#ifndef _Definitions_h
+#define _Definitions_h
 
 
 /* Used for Drag&Drop notifications */
@@ -33,6 +33,7 @@ extern NSString *opReplaceOperation;
 extern NSString *opNewFolder;
 extern NSString *opRename;
 extern NSString *opSendRecycleBinOperation;
+extern NSString *opDuplicateFind;
 
 extern NSString *notificationStatusUpdate;
 
@@ -133,6 +134,7 @@ typedef NS_ENUM(NSInteger, ApplicationwMode) {
     ApplicationMode1View = 0,
     ApplicationMode2Views, /* Each View is independent of the other */
     ApplicationModePreview,
+    ApplicationModeSync,
     ApplicationModeDuplicate,
 
 };

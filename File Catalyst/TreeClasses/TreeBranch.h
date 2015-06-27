@@ -8,7 +8,7 @@
 
 #import "TreeItem.h"
 #import "TreeLeaf.h"
-#import "FileCollection.h"
+//#import "FileCollection.h"
 
 extern NSString *const kvoTreeBranchPropertyChildren;
 extern NSString *const kvoTreeBranchPropertySize;
@@ -42,8 +42,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(long long) sizeOfNode;
 -(long long) filesize;
 
--(FileCollection*) filesInNode;
--(FileCollection*) filesInBranch;
+//-(FileCollection*) filesInNode;
+//-(FileCollection*) filesInBranch;
 -(NSMutableArray*) itemsInNode;
 -(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) leafsInNode;

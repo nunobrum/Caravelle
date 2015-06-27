@@ -7,9 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#include "Definitions.h"
 #import "FileUtils.h"
 
+extern const NSString *keyDuplicateInfo;
+extern const NSString *keyMD5Info;
+extern const NSString *keyDupRefresh;
 
 typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemDirty    = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
@@ -45,6 +48,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     NSURL           *_url;
     TreeItemTagEnum _tag;
     TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
+    NSMutableDictionary *_store;
 }
 
 @property (weak) TreeItem           *parent;
@@ -71,6 +75,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSNumber*) fileSize;
 -(NSString*) fileKind;
 -(NSString*) hint;
+-(NSData*) MD5;
 
 
 -(void) setUrl:(NSURL*)url;
@@ -105,5 +110,20 @@ typedef NS_ENUM(NSInteger, ItemType) {
  * Coding Compliant methods
  */
 -(void) setValue:(id)value forUndefinedKey:(NSString *)key;
+
+
+/*
+ * Dupplicate Support 
+ */
+-(BOOL) compareMD5checksum: (TreeItem *)otherFile;
+
+-(void) addDuplicate:(TreeItem*) duplicateFile;
+-(BOOL) hasDuplicates;
+-(TreeItem*) nextDuplicate;
+-(NSUInteger) duplicateCount;
+-(NSMutableArray*) duplicateList;
+-(void) resetDuplicates;
+-(void) setDuplicateRefreshCount:(NSInteger)count;
+-(NSInteger) duplicateRefreshCount;
 
 @end

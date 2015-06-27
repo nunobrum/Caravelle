@@ -131,8 +131,8 @@
     md5_byte_t *data_pointer;
     NSUInteger bytes_read;
     
-	char hex_output[16*2 + 1];
-	int di;
+	//char hex_output[16*2 + 1];
+	//int di;
     
     NSFileHandle *handler = [NSFileHandle fileHandleForReadingAtPath:self->path];
     
@@ -149,8 +149,8 @@
         } while (bytes_read == BUFFER_SIZE_MD5);
         md5_finish(&state, digest);
     }
-	for (di = 0; di < 16; ++di)
-	    sprintf(hex_output + di * 2, "%02x", digest[di]);
+	//for (di = 0; di < 16; ++di)
+	//    sprintf(hex_output + di * 2, "%02x", digest[di]);
     memcpy(&self->md5_checksum, digest, 16);
     valid_md5 = TRUE;
     //NSLog(@"%s",hex_output);

@@ -7,11 +7,10 @@
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
-#ifndef FileCatalyst1_FileCollection_h
-#define FileCatalyst1_FileCollection_h
+#ifndef _FileCollection_h
+#define _FileCollection_h
 
-#import "Definitions.h"
-#import "FileInformation.h"
+#import "TreeItem.h"
 
 @interface FileCollection : NSObject {
 @private
@@ -22,14 +21,13 @@
 
 
 //-(FileCollection *) init; No need to define at this moment, it is inherited from NSObject
--(void) addFilesInDirectory:(NSString *)rootpath callback:(void (^)(NSInteger fileno))callbackhandler;
+//-(void) addFilesInDirectory:(NSString *)rootpath callback:(void (^)(NSInteger fileno))callbackhandler;
 
 -(NSInteger) FileCount;
 -(NSString*) commonPath;
 -(NSMutableArray*) fileArray;
 
--(void) AddFileInformation: (FileInformation*) aFileInfo;
--(void) addFileByURL: (NSURL *) anURL;
+-(void) addFile: (TreeItem*) item;
 -(void) addFiles: (NSMutableArray *)otherArray;
 
 -(FileCollection*) filesInPath:(NSString*) path;
@@ -45,7 +43,7 @@
 -(FileCollection*) FilesWithDuplicates;
 -(void) streamFilesWithDuplicates;
 
--(void) sortByFileSize;
+//-(void) sortByFileSize;
 
 @end
 

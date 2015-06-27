@@ -12,6 +12,11 @@
 #import "TreePackage.h"
 #import "FileUtils.h"
 
+const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
+const NSString *keyMD5Info       = @"TStoreMD5Key";
+const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
+
+
 @implementation TreeItem
 
 -(ItemType) itemType {
@@ -25,6 +30,7 @@
         self->_tag = 0;
         [self setUrl:url];
         self->_parent = parent;
+        self->_store = nil;
     }
     return self;
 }
@@ -280,6 +286,19 @@
     return [self name];
 }
 
+-(NSData*) MD5 {
+    NSData *MD5 = [self->_store objectForKey:keyMD5Info];
+    if (MD5==nil) {
+        MD5 = calculateMD5(self->_url);
+        if (MD5!=nil) {// Success in the calculation
+            // Store it
+            [self addToStore:[NSDictionary dictionaryWithObjectsAndKeys:MD5, keyMD5Info, nil]];
+        }
+    }
+    return MD5;
+}
+
+
 -(TreeItem*) root {
     TreeItem *cursor = self;
     while (cursor->_parent!=NULL) {
@@ -453,5 +472,123 @@
 
     NSLog(@"Trying to set value for Key %@", key);
 }
+
+/*
+ * Dupplicate Support
+ */
+
+-(void) addToStore:(NSDictionary*) dict {
+    if (self->_store==nil)
+        self->_store = [[NSMutableDictionary alloc] initWithCapacity:3]; // Deems a reasonable number
+    
+    [self->_store addEntriesFromDictionary: dict];
+}
+
+
+
+-(BOOL) compareMD5checksum: (TreeItem *)otherFile {
+    NSData *myMD5 = [self MD5];
+    NSData *otherMD5 = [otherFile MD5];
+    return  [myMD5 isEqualToData:otherMD5];
+ }
+
+-(TreeItem*) nextDuplicate {
+    return [self->_store objectForKey:keyDuplicateInfo];
+}
+
+-(void) setNextDuplicate:(TreeItem*) item {
+    if (item==nil) {
+        // It will remove the current duplicate, if exists
+        [self->_store removeObjectForKey:keyDuplicateInfo];
+        // and also removes the refreshCount
+        [self->_store removeObjectForKey:keyDupRefresh];
+    }
+    else {
+        [self addToStore: [NSDictionary dictionaryWithObjectsAndKeys:item, keyDuplicateInfo, nil]];
+    }
+}
+
+// The duplicates are organized on a ring fashion for memory space efficiency
+// FileA -> FileB -> FileC-> FileA
+-(void) addDuplicate:(TreeItem*)duplicateFile {
+    if (self.nextDuplicate==nil)
+    {
+        [self setNextDuplicate: duplicateFile];
+        [duplicateFile setNextDuplicate: self];
+    }
+    else {
+        [duplicateFile setNextDuplicate: [self nextDuplicate]];
+        [self setNextDuplicate: duplicateFile];
+    }
+}
+
+-(BOOL) hasDuplicates {
+    return (self.nextDuplicate==nil ? NO : YES);
+}
+
+-(NSUInteger) duplicateCount {
+    if (self.nextDuplicate==nil)
+        return 0;
+    else
+    {
+        TreeItem *cursor=self.nextDuplicate;
+        int count =0;
+        while (cursor!=self) {
+            cursor = cursor.nextDuplicate;
+            count++;
+        }
+        return count;
+    }
+}
+-(NSMutableArray*) duplicateList {
+    if (self.nextDuplicate==nil)
+        return nil;
+    else
+    {
+        TreeItem *cursor=self.nextDuplicate;
+        NSMutableArray *answer =[[NSMutableArray new]init];
+        while (cursor!=self) {
+            [answer addObject:cursor];
+            cursor = cursor.nextDuplicate;
+        }
+        return answer;
+    }
+}
+
+-(void) removeFromDuplicateRing {
+    if (self.nextDuplicate!=nil)
+    {
+        TreeItem *cursor=self.nextDuplicate;
+        if (cursor == self.nextDuplicate) // In case if only one duplicate
+            [cursor setNextDuplicate: nil];   // Deletes the chain
+        else {
+            while (cursor.nextDuplicate!=self) { // searches for the file that references this one
+                cursor = cursor.nextDuplicate;
+            }
+            [cursor setNextDuplicate: self.nextDuplicate]; // and bypasses this one
+        }
+    }
+}
+
+-(void) resetDuplicates {
+    TreeItem *cursor=self;
+    TreeItem *tmp=self;
+    while (cursor.nextDuplicate!=nil) {
+        tmp = cursor;
+        cursor = cursor.nextDuplicate;
+        [tmp setNextDuplicate: nil]; // Deletes the nextDuplicate AND refreshCount
+    }
+    
+}
+
+-(void) setDuplicateRefreshCount:(NSInteger)count {
+    [self addToStore: [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithInteger:count ], keyDupRefresh, nil]];
+}
+
+-(NSInteger) duplicateRefreshCount {
+    return [[self->_store objectForKey:keyDupRefresh] integerValue];
+}
+
 
 @end

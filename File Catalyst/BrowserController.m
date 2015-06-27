@@ -18,7 +18,6 @@
 #import "TreeManager.h"
 #import "TreeRoot.h"
 #import "filterBranch.h"
-#import "FileInformation.h"
 #import "fileOperation.h"
 #import "TableViewController.h"
 #import "IconViewController.h"
@@ -1356,14 +1355,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return answer==pathsHaveNoRelation;
 }
 
-//-(FileCollection *) concatenateAllCollections {
-//    FileCollection *collection =[[FileCollection new] init];
-//    // Will concatenate all file collections into a single one.
-//    for (TreeRoot *theRoot in BaseDirectoriesArray) {
-//        [collection concatenateFileCollection: [theRoot fileCollection]];
-//    }
-//    return collection;
-//}
 
 -(NSURL*) getTreeViewSelectedURL {
     NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
