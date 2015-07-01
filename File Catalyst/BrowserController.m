@@ -16,7 +16,7 @@
 #import "TreeLeaf.h"
 #import "TreeBranch.h"
 #import "TreeManager.h"
-#import "TreeRoot.h"
+//#import "TreeRoot.h"
 #import "filterBranch.h"
 #import "fileOperation.h"
 #import "TableViewController.h"
@@ -214,9 +214,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
     // Use this notfication to set the select state of the button
-    NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
-    BOOL collapsed = [self->_mySplitView isSubviewCollapsed:firstView];
-    [self.viewOptionsSwitches setSelected:!collapsed forSegment:0];
+    [self.viewOptionsSwitches setSelected:![self treeViewCollapsed] forSegment:0];
     //NSLog(@"View:%@ splitViewDidResizeSubiews",_viewName);
 }
 
@@ -734,6 +732,36 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 }
 
+-(void) setTreeViewCollapsed:(BOOL) collapsed {
+    if (collapsed)
+        [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
+    else
+        [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
+    [self.viewOptionsSwitches setSelected:!collapsed forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
+}
+
+-(BOOL) treeViewCollapsed {
+    NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
+    return [self->_mySplitView isSubviewCollapsed:firstView];
+}
+
+-(void) setFlatView:(BOOL) flatView {
+    BOOL foldersDisplayed;
+    if (flatView)
+        foldersDisplayed = NO;
+    else
+        // TODO:!! get the value from USER Defaults
+        foldersDisplayed = YES;
+    
+    [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
+    [self.detailedViewController setDisplayFilesInSubdirs:flatView];
+    [self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
+}
+
+-(BOOL) flatView {
+    return self.detailedViewController.filesInSubdirsDisplayed;
+}
+
 - (IBAction)optionsSwitchSelect:(id)sender {
     NSInteger selectedSegment = [sender selectedSegment];
     BOOL isSelected = [self.viewOptionsSwitches isSelectedForSegment:selectedSegment];
@@ -751,16 +779,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
     }
     else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
-        [self.detailedViewController setDisplayFilesInSubdirs:isSelected];
+        [self setFlatView:isSelected];
         if (isSelected) { // If it is activated, it suffices the order the expansion.
                           // The refresh will be triggered by the KVO reload
-            [self.detailedViewController setFoldersDisplayed:NO];
             [self.detailedViewController startBusyAnimationsDelayed];
             [self.detailedViewController.currentNode expandAllBranches];
         }
         else {
-            // TODO:!! get the value from USER Defaults
-            [self.detailedViewController setFoldersDisplayed:YES];
             // refreshes the view
             [self.detailedViewController refreshKeepingSelections];
         }
@@ -1191,7 +1216,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return [NSNumber numberWithBool:allow];
 }
 
--(void) setViewType:(BViewType)viewType {
+-(void) setViewType:(EnumBrowserViewType)viewType {
     NodeViewController *newController = nil;
 
     if (viewType==BViewTypeVoid) {
@@ -1255,11 +1280,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
-- (BViewType) viewType {
+- (EnumBrowserViewType) viewType {
     return self->_viewType;
 }
 
--(void) setViewMode:(BViewMode)viewMode  {
+-(void) setViewMode:(EnumBrowserViewMode)viewMode  {
     if (viewMode!=_viewMode) {
         [self removeAll];
         [self refresh];
@@ -1267,7 +1292,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         _viewMode = viewMode;
     }
 }
--(BViewMode) viewMode {
+-(EnumBrowserViewMode) viewMode {
     return self->_viewMode;
 }
 
@@ -1321,6 +1346,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
+-(void) setRoots:(NSArray*) baseDirectories {
+    //TODO:Optimization Create a Class to manage arrays of Branches
+    [BaseDirectoriesArray removeAllObjects];
+    [BaseDirectoriesArray addObjectsFromArray:baseDirectories];
+}
+
 -(void) removeRootWithIndex:(NSInteger)index {
     if (index < [BaseDirectoriesArray count]) {
         [BaseDirectoriesArray removeObjectAtIndex:index];
@@ -1328,7 +1359,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     //[self refreshTrees];
 }
 
--(void) removeRoot: (TreeRoot*) root {
+-(void) removeRoot: (TreeBranch*) root {
     [BaseDirectoriesArray removeObjectIdenticalTo:root];
 }
 
@@ -1347,7 +1378,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 // This method checks if a root can be added to existing set.
 -(BOOL) canAddRoot: (NSString*) rootPath {
     enumPathCompare answer = pathsHaveNoRelation;
-    for(TreeRoot *root in BaseDirectoriesArray) {
+    for(TreeBranch *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         answer =[root relationToPath: rootPath];
         if (answer!=pathsHaveNoRelation) break;
@@ -1440,23 +1471,26 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) outlineSelectExpandNode:(TreeBranch*) cursor {
-    int retries = 2;
-    while (retries) {
-        NSInteger row = [_myOutlineView rowForItem:cursor];
-        if (row != -1) {
-            [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
-            retries = 0; /* Finished, dont need to retry any more. */
+    // Execute only if tree is shown
+    if (![self treeViewCollapsed]) {
+        int retries = 2;
+        while (retries) {
+            NSInteger row = [_myOutlineView rowForItem:cursor];
+            if (row != -1) {
+                [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
+                retries = 0; /* Finished, dont need to retry any more. */
+            }
+            else {
+                retries--;
+            }
+            // The object was not found, will need to force the expand
+            row = [_myOutlineView selectedRow];
+            if (row == -1) {
+                row = 0;
+            }
+            [_myOutlineView expandItem:[_myOutlineView itemAtRow:row]];
+            [_myOutlineView reloadData];
         }
-        else {
-            retries--;
-        }
-        // The object was not found, will need to force the expand
-        row = [_myOutlineView selectedRow];
-        if (row == -1)
-            row = 0;
-        [_myOutlineView expandItem:[_myOutlineView itemAtRow:row]];
-        [_myOutlineView reloadData];
-
     }
 }
 
@@ -1476,7 +1510,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1 && treeNode!=nil) {
 
-        for (TreeRoot *root in BaseDirectoriesArray) {
+        for (TreeBranch *root in BaseDirectoriesArray) {
             if ([root canContainURL:[treeNode url]]){ // Search for Root Node
                 _rootNodeSelected = root;
                 TreeBranch *lastBranch = nil;
@@ -1525,7 +1559,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(TreeBranch*) getRootWithURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
-    for(TreeRoot *root in BaseDirectoriesArray) {
+    for(TreeBranch *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */
@@ -1539,7 +1573,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(TreeItem*) getItemByURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
-    for(TreeRoot *root in BaseDirectoriesArray) {
+    for(TreeBranch *root in BaseDirectoriesArray) {
         /* Checks if rootPath in root */
         if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */

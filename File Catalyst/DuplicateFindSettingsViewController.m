@@ -8,6 +8,7 @@
 
 #import "Definitions.h"
 #import "AppOperation.h"
+#import "TreeManager.h"
 
 NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 
@@ -79,13 +80,8 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     // Determine if + or -
     NSInteger PlusOrMinus = [(NSSegmentedControl*)sender selectedSegment];
     if (PlusOrMinus==0) {/* This is an Add */
-        NSOpenPanel *SelectDirectoryDialog = [NSOpenPanel openPanel];
-        [SelectDirectoryDialog setTitle:@"Select a new Directory"];
-        [SelectDirectoryDialog setCanChooseFiles:NO];
-        [SelectDirectoryDialog setCanChooseDirectories:YES];
-        NSInteger returnOption =[SelectDirectoryDialog runModal];
-        if (returnOption == NSFileHandlingPanelOKButton) {
-            NSURL *rootURL = [SelectDirectoryDialog URL];
+        NSURL *rootURL = [appTreeManager powerboxOpenFolderWithTitle:@"Select a new Directory"];
+        if (rootURL) {
             NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL forKey:@"path"];
             [_pathContents addObject:newItem];
             [_pathContents commitEditing];
@@ -102,7 +98,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 }
 
 - (IBAction)pbOKAction:(id)sender {
-    DuplicateOptions options = DupCompareNone;
+    EnumDuplicateOptions options = DupCompareNone;
     options |= ([_cbFileName state]) ? DupCompareName : 0;
     options |= ([_cbFileSize state]) ? DupCompareSize : 0;
     if ([_cbFileDate state]) {
@@ -115,6 +111,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
             options |= DupCompareDateCreated;
     }
     if ([_cbFileContents state]) {
+        options |= DupCompareSize; // If it compares the content, its faster if the size is also compared.
         NSString *title = [[_rbGroupContents selectedCell] title];
         if ([title isEqualToString:@"MD5"])
             options |= DupCompareContentsMD5;

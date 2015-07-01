@@ -31,8 +31,10 @@
 @end
 
 @protocol BrowserParentProtocol <ParentProtocol>
-    - (void) selectionDidChangeOn:(id)object;
-    - (void) upOneLevel;
+- (void) selectionDidChangeOn:(id)object;
+- (void) upOneLevel;
+- (EnumBrowserViewMode) viewMode;
+- (EnumBrowserViewType) viewType;
 @end
 
 

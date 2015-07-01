@@ -28,16 +28,16 @@ NSString *const kvoTreeBranchPropertySize     = @"AllocatedSize";
 //    return queue;
 //}
 
-NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
-    NSMutableArray *children = [[NSMutableArray alloc] init];
-    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewBrowserMode];
-
-    for (NSURL *theURL in dirEnumerator) {
-        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:parent];
-        [children addObject:newObj];
-    }
-    return children;
-}
+//NSMutableArray *folderContentsFromURL(NSURL *url, TreeBranch* parent) {
+//    NSMutableArray *children = [[NSMutableArray alloc] init];
+//    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewBrowserMode];
+//
+//    for (NSURL *theURL in dirEnumerator) {
+//        TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:parent];
+//        [children addObject:newObj];
+//    }
+//    return children;
+//}
 
 /* Computes the common path between all paths in the array */
 NSString* commonPathFromItems(NSArray* itemArray) {
@@ -74,6 +74,47 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         return  [NSString pathWithComponents:[common_path objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:r]]];
     }
 
+}
+NSArray* treesContaining(NSArray* treeItems) {
+    //TODO:Optimization Create a Class to manage arrays of Branches. This is useful for the Browser Controller
+    NSMutableArray *treeRoots = [[NSMutableArray alloc] init];
+    
+    for (TreeItem *item in treeItems) {
+        BOOL found = NO;
+        // Check if existing Tree Roots
+        for (TreeBranch *parent in treeRoots) {
+            if ([parent canContainURL:item.url]) {
+                found = YES;
+                break; // The parent was found, no need to add anything
+            }
+        }
+        // If not found.
+        if (!found) {
+            //Check if there is a parent
+            TreeBranch *newBranch=(TreeBranch*)item.parent;
+            // If not creates it
+            if (newBranch==nil) {
+                NSURL *parentURL = [item.url URLByDeletingLastPathComponent];
+                newBranch = (TreeBranch*)[appTreeManager treeItemForURL:parentURL parent:nil];
+                //NSAssert(newBranch!=nil, @"treesContaining. Failed to get the parent");
+                assert(newBranch);
+            }
+            // Now will check it it contains one of the existing
+            NSUInteger i = 0;
+            while (i < [treeRoots count] ) {
+                if ([newBranch canContainURL: [(TreeBranch*)treeRoots[i] url]]) {
+                    [treeRoots removeObjectAtIndex:i];
+                }
+                else
+                    i++;
+            }
+            // Then adds the new root
+            [treeRoots addObject:newBranch];
+        }
+        // If yes, just add it to its children
+        // else ask one from the Tree Manager and add it to the treeRoots
+    }
+    return treeRoots;
 }
 
 
@@ -691,10 +732,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return newObj; /* Stops here Nothing More to Add */
 }
 
--(BOOL) addTreeItem:(TreeItem*)treeItem {
-    assert(NO);
-    return NO;
-}
+
 
 #pragma mark -
 #pragma mark size getters

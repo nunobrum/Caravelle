@@ -10,18 +10,15 @@
 #import "FileCollection.h"
 #import "TreeBranch.h"
 
+
 @interface TreeRoot : TreeBranch <TreeProtocol> {
-    FileCollection *_fileCollection;
-    //NSString *rootDirectory;
+    FileCollection* _fileCollection;
+    NSString* _name;
 }
 
-@property bool isCollectionSet;
+-(void) setName:(NSString*)name;
+-(NSString*) name;
 
 -(void) setFileCollection:(FileCollection*)collection;
-//-(FileCollection *) fileCollection;
--(NSString*) rootPath;
 
-+(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection;
-+(TreeRoot*) treeWithURL:(NSURL*) rootURL;
-//+(TreeRoot*) treeFromPath:(NSString*)rootPath;
 @end

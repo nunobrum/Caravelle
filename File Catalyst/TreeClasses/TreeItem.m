@@ -7,10 +7,10 @@
 //
 
 #import "TreeItem.h"
-//#import "MyDirectoryEnumerator.h"
 #import "TreeBranch.h"
 #import "TreePackage.h"
 #import "FileUtils.h"
+#import "DuplicateInformation.h"
 
 const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 const NSString *keyMD5Info       = @"TStoreMD5Key";
@@ -226,7 +226,7 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
     NSImage *image;
     
     // First get the image
-    if ([self hasTags:tagTreeItemNew]) {
+    if ([self hasTags:tagTreeItemNew] || self.url==nil) {
         if ([self itemType] == ItemTypeBranch)
             iconImage = [NSImage imageNamed:@"GenericFolderIcon"];
         else
@@ -287,11 +287,17 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 }
 
 -(NSData*) MD5 {
+    // First Check in the MD5 Key Store
     NSData *MD5 = [self->_store objectForKey:keyMD5Info];
     if (MD5==nil) {
-        MD5 = calculateMD5(self->_url);
-        if (MD5!=nil) {// Success in the calculation
-            // Store it
+        // Then tries the duplicate Info
+        DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+        if (dupInfo) {
+            MD5 = dupInfo.getMD5;
+        }
+        else {
+            MD5 = calculateMD5(self->_url);
+            /// Stores it
             [self addToStore:[NSDictionary dictionaryWithObjectsAndKeys:MD5, keyMD5Info, nil]];
         }
     }
@@ -474,16 +480,19 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 }
 
 /*
- * Dupplicate Support
+ * Storage Support
  */
 
 -(void) addToStore:(NSDictionary*) dict {
     if (self->_store==nil)
-        self->_store = [[NSMutableDictionary alloc] initWithCapacity:3]; // Deems a reasonable number
+        self->_store = [[NSMutableDictionary alloc] init];
     
     [self->_store addEntriesFromDictionary: dict];
 }
 
+/*
+ * Dupplicate Support
+ */
 
 
 -(BOOL) compareMD5checksum: (TreeItem *)otherFile {
@@ -511,6 +520,7 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 // The duplicates are organized on a ring fashion for memory space efficiency
 // FileA -> FileB -> FileC-> FileA
 -(void) addDuplicate:(TreeItem*)duplicateFile {
+    [self setTag:tagTreeItemDuplicate];
     if (self.nextDuplicate==nil)
     {
         [self setNextDuplicate: duplicateFile];
@@ -540,6 +550,7 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
         return count;
     }
 }
+
 -(NSMutableArray*) duplicateList {
     if (self.nextDuplicate==nil)
         return nil;
@@ -578,7 +589,7 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
         cursor = cursor.nextDuplicate;
         [tmp setNextDuplicate: nil]; // Deletes the nextDuplicate AND refreshCount
     }
-    
+    [self resetTag:tagTreeItemDuplicate];
 }
 
 -(void) setDuplicateRefreshCount:(NSInteger)count {

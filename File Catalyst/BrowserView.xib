@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6751" systemVersion="13F1077" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6751"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
@@ -29,7 +29,7 @@
             <rect key="frame" x="0.0" y="0.0" width="430" height="600"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <searchField toolTip="Filter Table Contents" horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
+                <searchField toolTip="Filter Table Contents" wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
                     <rect key="frame" x="300" y="568" width="118" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="150" id="3Va-0l-feg"/>
@@ -46,7 +46,7 @@
                     </connections>
                 </searchField>
                 <pathControl horizontalHuggingPriority="249" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="751" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Fc-gb-5JC">
-                    <rect key="frame" x="58" y="541" width="360" height="20"/>
+                    <rect key="frame" x="61" y="541" width="357" height="20"/>
                     <pathCell key="cell" controlSize="small" selectable="YES" editable="YES" alignment="left" id="VZQ-Zq-Xa7">
                         <font key="font" metaFont="smallSystem"/>
                         <url key="url" string="file://localhost/Applications/"/>
@@ -57,7 +57,7 @@
                     </connections>
                 </pathControl>
                 <popUpButton toolTip="Navigate upwards" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="tKW-QN-AmC">
-                    <rect key="frame" x="5" y="540" width="48" height="22"/>
+                    <rect key="frame" x="5" y="540" width="51" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="center" controlSize="small" lineBreakMode="truncatingTail" borderStyle="border" tag="-5" imageScaling="proportionallyDown" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="xJy-Gr-AlN" id="3Sm-Pr-bFB">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -139,7 +139,7 @@
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
                                                                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="zpT-yC-x1m">
-                                                                        <rect key="frame" x="35" y="17" width="99" height="17"/>
+                                                                        <rect key="frame" x="35" y="17" width="97" height="17"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" priority="40" constant="194" id="UZK-hI-yQR"/>
                                                                         </constraints>
@@ -158,7 +158,7 @@
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="GenericFolderIcon" id="H7x-uv-PWX"/>
                                                                     </imageView>
                                                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bZf-MO-Pdv">
-                                                                        <rect key="frame" x="35" y="2" width="99" height="17"/>
+                                                                        <rect key="frame" x="35" y="2" width="97" height="17"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" priority="42" constant="194" id="hdL-MC-dFz"/>
                                                                         </constraints>
@@ -195,8 +195,8 @@
                                                                         </constraints>
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="hta-Aw-6Ip"/>
                                                                     </imageView>
-                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
-                                                                        <rect key="frame" x="25" y="0.0" width="175" height="17"/>
+                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
+                                                                        <rect key="frame" x="25" y="0.0" width="396" height="17"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
                                                                             <font key="font" metaFont="system"/>
                                                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -298,7 +298,7 @@
                         <action selector="viewTypeSelection:" target="-2" id="DHC-Zf-uCu"/>
                     </connections>
                 </segmentedControl>
-                <segmentedControl toolTip="Turn ON or OFF the tree view" verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
+                <segmentedControl verticalHuggingPriority="750" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="olD-ez-fNy">
                     <rect key="frame" x="69" y="567" width="71" height="24"/>
                     <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="5mA-10-BVS">
                         <font key="font" metaFont="system"/>
@@ -452,11 +452,11 @@
         <image name="GrouppingOSX" width="15" height="16"/>
         <image name="IconTreeView20" width="20" height="20"/>
         <image name="NSActionTemplate" width="14" height="14"/>
-        <image name="NSIconViewTemplate" width="11" height="10"/>
-        <image name="NSLeftFacingTriangleTemplate" width="9" height="9"/>
-        <image name="NSListViewTemplate" width="11" height="10"/>
-        <image name="NSPathTemplate" width="13" height="10"/>
-        <image name="NSRightFacingTriangleTemplate" width="9" height="9"/>
+        <image name="NSIconViewTemplate" width="10" height="10"/>
+        <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
+        <image name="NSListViewTemplate" width="14" height="10"/>
+        <image name="NSPathTemplate" width="16" height="10"/>
+        <image name="NSRightFacingTriangleTemplate" width="9" height="12"/>
         <image name="Tornado16" width="16" height="16"/>
     </resources>
 </document>

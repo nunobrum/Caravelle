@@ -15,6 +15,7 @@ extern NSString *const kvoTreeBranchPropertySize;
 //extern NSString *const kvoTreeBranchReleased;
 
 extern NSString* commonPathFromItems(NSArray* itemArray);
+extern NSArray* treesContaining(NSArray* treeItems);
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
 
@@ -63,8 +64,6 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
 -(TreeItem*) getNodeWithPath:(NSString*)path;
 -(TreeItem*) addURL:(NSURL*)theURL;
-
--(BOOL) addTreeItem:(TreeItem*)treeItem;
 
 
 //-(NSMutableArray*) branchesInBranch;

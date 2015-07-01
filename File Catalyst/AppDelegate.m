@@ -12,7 +12,7 @@
 #import "TreeLeaf.h"
 #import "TreePackage.h"
 #import "TreeManager.h"
-#import "TreeScanOperation.h"
+#import "TreeRoot.h"
 #import "searchTree.h"
 #import "FileUtils.h" // The app shouldnt use functions that access the system directly. Rather go through the Operations
 #import "FileOperation.h"
@@ -33,7 +33,7 @@
 NSString *notificationStatusUpdate=@"StatusUpdateNotification";
 
 
-NSString *notificationCatalystRootUpdate=@"RootUpdate";
+//NSString *notificationCatalystRootUpdate=@"RootUpdate";
 NSString *catalystRootUpdateNotificationPath=@"RootUpdatePath";
 
 
@@ -103,7 +103,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 @end
 
 @implementation AppDelegate {
-    ApplicationwMode applicationMode;
+    EnumApplicationMode applicationMode;
     NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
@@ -112,13 +112,15 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
     NSMutableArray *pendingStatusMessages;
-    FileCollection *duplicates;
     BOOL isCutPending;
     BOOL isApplicationTerminating;
     BOOL isWindowClosing;
     NSInteger generalPasteBoardChangeCount;
     NSInteger statusTimeoutCounter;
     NSInteger statusFilesMoved,statusFilesCopied,statusFilesDeleted;
+    // Duplicate Support
+    FileCollection *duplicates;
+    TreeRoot *selectedDuplicatesRoot;
 }
 
 // -------------------------------------------------------------------------------
@@ -266,7 +268,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // Insert code here to initialize your application
 
     // register for the notification when an image file has been loaded by the NSOperation: "LoadOperation"
-	[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
+	//[center addObserver:self selector:@selector(anyThread_handleTreeConstructor:) name:notificationTreeConstructionFinished object:nil];
     [center addObserver:self selector:@selector(startOperationHandler:) name:notificationDoFileOperation object:nil];
     [center addObserver:self selector:@selector(processNextError:) name:notificationClosedFileExistsWindow object:nil];
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
@@ -276,7 +278,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:nil];
 
-    [center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:nil];
+    //[center addObserver:self selector:@selector(rootUpdate:) name:notificationCatalystRootUpdate object:nil];
 
     [center addObserver:self selector:@selector(refreshAllViews:) name:notificationRefreshViews object:nil];
 
@@ -312,6 +314,15 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // Setting the Menu with the correct state
     if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES])
         [self.menuCalculateFolderSizes setState:NSOnState];
+    
+    // TODO:!!! Implement the modes preview and Sync
+    if (applicationMode == ApplicationModeDuplicate ||
+        applicationMode == ApplicationModeSync ||
+        applicationMode == ApplicationModePreview) {
+        // For now just defaults to one Pane Mode
+        applicationMode = ApplicationMode1View;
+        [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationMode1View];
+    }
 
     if (applicationMode == ApplicationMode2Views) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -326,6 +337,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         myRightView = nil;
         [myLeftView setName:@"Single" TwinName:nil]; // setting to nil causes the cross operations menu's to be disabled
         [_ContentSplitView addSubview:myLeftView.view];
+    }
+    else {
+        NSAssert(NO,@"Application start mode not supported");
     }
     
     //NSDictionary *viewsDictionary = [NSDictionary dictionaryWithObject:myLeftView.view forKey:@"myLeftView"];
@@ -457,14 +471,25 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 return NSTerminateNow;
             }
             else if (reponse == NSAlertSecondButtonReturn) {
-                if (!fromWindowClosing)
-                    [fileExistsWindow displayWindow:self];
+                if (!fromWindowClosing) {
+                    if (fileExistsWindow) {
+                        [fileExistsWindow displayWindow:self];
+                    }
+                    else {
+                        [self processNextError:nil];
+                    }
+                }
                 return NSTerminateCancel;
             }
 
             // only displayed if message is comming from window closing
             else if (reponse == NSAlertThirdButtonReturn) {
-                [fileExistsWindow displayWindow:self];
+                if (fileExistsWindow) {
+                    [fileExistsWindow displayWindow:self];
+                }
+                else {
+                    [self processNextError:nil];
+                }
                 return NSTerminateLater;
             }
 
@@ -654,51 +679,51 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 /* Receives the notification from the BrowserView to reload the Tree */
 
 //TODO:!! Marked for clean-up. Revise this code. Only used in notificationCatalystRootUpdate.
-- (void) rootUpdate:(NSNotification*)theNotification {
-    NSDictionary *notifInfo = [theNotification userInfo];
-    BrowserController *BrowserView = [theNotification object];
-    /* In a normal mode the Browser only has one Root */
-    [BrowserView removeRootWithIndex:0];
+//- (void) rootUpdate:(NSNotification*)theNotification {
+//    NSDictionary *notifInfo = [theNotification userInfo];
+//    BrowserController *BrowserView = [theNotification object];
+//    /* In a normal mode the Browser only has one Root */
+//    [BrowserView removeRootWithIndex:0];
+//
+//    /* Add the Job to the Queue */
+//	//[queue cancelAllOperations];
+//
+//	// start the GetPathsOperation with the root path to start the search
+//	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
+//    treeUpdateOperationID = [treeScanOp operationID];
+//	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
+//    [self _startOperationBusyIndication: notifInfo];
+//
+//}
 
-    /* Add the Job to the Queue */
-	//[queue cancelAllOperations];
-
-	// start the GetPathsOperation with the root path to start the search
-	TreeScanOperation *treeScanOp = [[TreeScanOperation alloc] initWithInfo:notifInfo];
-    treeUpdateOperationID = [treeScanOp operationID];
-	[operationsQueue addOperation:treeScanOp];	// this will start the "GetPathsOperation"
-    [self _startOperationBusyIndication: notifInfo];
-
-}
-
-- (void)mainThread_handleTreeConstructor:(NSNotification *)note
-{
-    // Pending NSNotifications can possibly back up while waiting to be executed,
-	// and if the user stops the queue, we may have left-over pending
-	// notifications to process.
-	//
-	// So make sure we have "active" running NSOperations in the queue
-	// if we are to continuously add found image files to the table view.
-	// Otherwise, we let any remaining notifications drain out.
-	//
-	NSDictionary *notifData = [note userInfo];
-
-    NSNumber *loadScanCountNum = [notifData valueForKey:kOperationCountKey];
-
-    // make sure the current scan matches the scan of our loaded image
-    if (treeUpdateOperationID == loadScanCountNum)
-    {
-        TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
-        BrowserController *BView =[notifData valueForKey: kSenderKey];
-        id sender = [note object];
-        assert(BView!=sender); // check if the kSenderKey can't be deleted
-        [BView addTreeRoot:receivedTree];
-        [BView stopBusyAnimations];
-        [BView selectFolderByItem: receivedTree];
-        // set the number of images found indicator string
-        [_StatusBar setTitle:@"Updated"];
-    }
-}
+//- (void)mainThread_handleTreeConstructor:(NSNotification *)note
+//{
+//    // Pending NSNotifications can possibly back up while waiting to be executed,
+//	// and if the user stops the queue, we may have left-over pending
+//	// notifications to process.
+//	//
+//	// So make sure we have "active" running NSOperations in the queue
+//	// if we are to continuously add found image files to the table view.
+//	// Otherwise, we let any remaining notifications drain out.
+//	//
+//	NSDictionary *notifData = [note userInfo];
+//
+//    NSNumber *loadScanCountNum = [notifData valueForKey:kOperationCountKey];
+//
+//    // make sure the current scan matches the scan of our loaded image
+//    if (treeUpdateOperationID == loadScanCountNum)
+//    {
+//        TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
+//        BrowserController *BView =[notifData valueForKey: kSenderKey];
+//        id sender = [note object];
+//        assert(BView!=sender); // check if the kSenderKey can't be deleted
+//        [BView addTreeRoot:receivedTree];
+//        [BView stopBusyAnimations];
+//        [BView selectFolderByItem: receivedTree];
+//        // set the number of images found indicator string
+//        [_StatusBar setTitle:@"Updated"];
+//    }
+//}
 
 // -------------------------------------------------------------------------------
 //	anyThread_handleLoadedImages:note
@@ -709,11 +734,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 //	The notification contains the NSDictionary containing the image file's info
 //	to add to the table view.
 // -------------------------------------------------------------------------------
-- (void)anyThread_handleTreeConstructor:(NSNotification *)note
-{
-	// update our table view on the main thread
-	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
-}
+//- (void)anyThread_handleTreeConstructor:(NSNotification *)note
+//{
+//	// update our table view on the main thread
+//	[self performSelectorOnMainThread:@selector(mainThread_handleTreeConstructor:) withObject:note waitUntilDone:NO];
+//}
 
 
 
@@ -1247,11 +1272,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSLog(@"Preview Mode");
     }
     else if (mode == ApplicationModeSync) {
-        if (applicationMode != ApplicationModeDuplicate ||
-            applicationMode != ApplicationModeSync)
-            NSLog(@"Ask for which mode to jump to");
-        // TODO: !!! Directory Sync or Duplicate Finder
-        // Display drop menu to choose between Duplicate Finder or Directory Sync
+        // TODO: !!! Sync Mode
+        
+    }
+    else if (mode == ApplicationModeDuplicate) {
+        [self FindDuplicates:sender];
+        return;
     }
     [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView adjustSubviews];
@@ -1460,7 +1486,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (void)focusOnNextView:(id)sender {
     id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views) {
+        if (applicationMode == ApplicationMode2Views ||
+            applicationMode == ApplicationModeSync ||
+            applicationMode == ApplicationModeDuplicate) {
             focused_view = myRightView;
         }
         else {
@@ -1478,7 +1506,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (void) focusOnPreviousView:(id)sender {
     id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views) {
+        if (applicationMode == ApplicationMode2Views ||
+            applicationMode == ApplicationModeSync ||
+            applicationMode == ApplicationModeDuplicate) {
             focused_view = myRightView;
         }
         else {
@@ -1783,7 +1813,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(void) adjustSideInformation:(id) sender {
-    if (self->applicationMode == ApplicationMode2Views) {
+    if (self->applicationMode == ApplicationMode2Views ||
+        self->applicationMode == ApplicationModeSync) {
         [self.buttonCopyTo setEnabled:YES];
         [self.buttonMoveTo setEnabled:YES];
         if (sender == myLeftView) {
@@ -1810,35 +1841,54 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (void) statusUpdate:(NSNotification*)theNotification {
     static NSUInteger dupShow = 0;
     NSString *statusText;
-    id selView = [theNotification object];
+    NSString *leftTitle = nil, *rightTitle = nil;
+    
+    switch (applicationMode) {
+        case ApplicationModeSync:
+        case ApplicationMode2Views:
+            rightTitle = [myRightView title];
+        case ApplicationMode1View:
+        case ApplicationModePreview:
+            leftTitle = [myLeftView title];
+            break;
+        case ApplicationModeDuplicate:
+            leftTitle = @"Duplicate Find";
+            break;
+        default:
+            leftTitle = @"Unknown Mode";
+            break;
+    }
+    
     // Updates the window Title
     NSArray *titleComponents = [NSArray arrayWithObjects:@"Caravelle",
-                                [myLeftView title],
-                                [myRightView title], nil];
+                                leftTitle,
+                                rightTitle, nil];
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
     [[self myWindow] setTitle:windowTitle];
 
     //if ([selView isKindOfClass:[BrowserController class]]) {
 
-    NSArray *selectedFiles = [selView getSelectedItems];
+    NSArray *selectedFiles = [self.selectedView getSelectedItems];
 
     if (selectedFiles != nil) {
         NSInteger num_files=0;
         NSInteger files_size=0;
         NSInteger folders_size=0;
         NSInteger num_directories=0;
-        if (applicationMode==ApplicationModeDuplicate && selView==myLeftView) {
-            dupShow++;
-            FileCollection *selectedDuplicates = [[FileCollection alloc] init];
-            for (TreeItem *item in selectedFiles ) {
-                FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
-                [selectedDuplicates concatenateFileCollection: itemDups];
+        if (applicationMode==ApplicationModeDuplicate) {
+            id selView = [theNotification object];
+            //Check first if the object sending the
+            if (selView==myLeftView || selView ==myLeftView.detailedViewController) {
+                dupShow++;
+                FileCollection *selectedDuplicates = [[FileCollection alloc] init];
+                for (TreeItem *item in selectedFiles ) {
+                    FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
+                    [selectedDuplicates concatenateFileCollection: itemDups];
+                }
+                /* will now populate the Right View with Duplicates*/
+                [selectedDuplicatesRoot setFileCollection:selectedDuplicates];
+                [myRightView refresh];
             }
-            /* will now populate the Right View with Duplicates*/
-            [myRightView removeAll];
-            TreeRoot *rootDir = [TreeRoot treeWithFileCollection:selectedDuplicates];
-            [myRightView addTreeRoot:rootDir];
-            [myRightView selectFirstRoot];
         }
         if ([selectedFiles count]==0) {
             statusText = [NSString stringWithFormat:@"No Files Selected"];
@@ -1929,8 +1979,23 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
     [myLeftView setViewMode:BViewDuplicateMode];
     [myLeftView setViewType:BViewTypeTable];
+    // Activate the Tree View on the Left
+    [myLeftView setTreeViewCollapsed:NO];
+    // Make the FlatView and Group by Location
+    [myLeftView setFlatView:YES];
+    [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+    [myLeftView startAllBusyAnimations];
+    
     [myRightView setViewMode:BViewDuplicateMode];
     [myRightView setViewType:BViewTypeTable];
+    // Deactivate the Tree View on the Left
+    [myRightView setTreeViewCollapsed:YES];
+    // Activate the Flat View
+    [myRightView setFlatView:YES];
+    // Group by Location
+    [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+    [myRightView startAllBusyAnimations];
+    
     NSDictionary *notifInfo = [theNotification userInfo];
     // start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
@@ -1938,22 +2003,24 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self _startOperationBusyIndication:notifInfo];
     
     self->applicationMode = ApplicationModeDuplicate;
-    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeSync];
+    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
 
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
     NSDictionary *info = [theNotification userInfo];
     duplicates = [info objectForKey:kDuplicateList];
-    TreeRoot *rootDir = [TreeRoot treeWithFileCollection:duplicates];
-    [myLeftView addTreeRoot:rootDir];
+    NSArray *rootDirs = [info objectForKey:kRootsList];
+    [myLeftView setRoots:rootDirs];
     [myLeftView stopBusyAnimations];
-    [myLeftView selectFolderByItem: rootDir];
-
-    [myRightView addTreeRoot:rootDir];
+    
+    selectedDuplicatesRoot = [[TreeRoot alloc] init];
+    [selectedDuplicatesRoot setName:@"Duplicates"];
+    [myRightView setRoots:[NSArray arrayWithObject:selectedDuplicatesRoot]];
     [myRightView stopBusyAnimations];
-    [myRightView selectFolderByItem:rootDir];
-
+    [myRightView selectFirstRoot];
+    
+    [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
 }
 // -------------------------------------------------------------------------------
 //	anyThread_handleLoadedImages:note
@@ -1984,6 +2051,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSURL* sourceURL = note[0];
         NSURL* destinationURL = note[1];
         NSError *error = note[2];
+        //TODO:!!!!! This can be dangerous with Localizations
         NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
 
         NSDictionary *info = [theNotification userInfo];
@@ -2075,14 +2143,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             }
         }
         else {
-            NSAlert *alert = [NSAlert alertWithMessageText:@"Error not handled"
-                                             defaultButton:@"OK"
-                                           alternateButton:nil
-                                               otherButton:nil
-                                 informativeTextWithFormat:@"Error number %ld\%@", (long)error.code, error.description];
+            NSAlert *alert = [NSAlert alertWithError:error];
             [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
 
             NSLog(@"AppDelegate.processNext:Error: Error not processed %@", error); // Don't comment this, before all tests are completed.
+            // Delete the error not processed
+            [pendingOperationErrors removeObjectAtIndex:0];
         }
 
     }

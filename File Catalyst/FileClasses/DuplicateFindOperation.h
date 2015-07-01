@@ -11,6 +11,7 @@
 
 extern NSString *notificationDuplicateFindFinish;
 extern NSString *kDuplicateList;
+extern NSString *kRootsList;
 
 
 @interface DuplicateFindOperation : AppOperation

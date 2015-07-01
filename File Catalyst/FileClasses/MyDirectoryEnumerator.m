@@ -24,7 +24,7 @@ NSArray *urlKeyFieldsToStore() {
 
 @implementation MyDirectoryEnumerator
 
--(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode {
+-(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(EnumBrowserViewMode) viewMode {
      NSDirectoryEnumerationOptions dirEnumOptions = 0;
     if (viewMode == BViewCatalystMode) {
         dirEnumOptions = 0;

@@ -14,6 +14,6 @@ extern NSArray *urlKeyFieldsToStore();
 
 @interface MyDirectoryEnumerator : NSDirectoryEnumerator
 
--(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode;
+-(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(EnumBrowserViewMode) viewMode;
 
 @end

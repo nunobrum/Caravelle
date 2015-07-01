@@ -107,14 +107,8 @@ extern const CFStringRef kTreeItemDropUTI;
 // Animation delay Time in seconds
 #define ANIMATION_DELAY 0.5 // set to 500ms of delay
 
-extern NSFileManager *appFileManager;
-extern NSOperationQueue *operationsQueue;
-extern NSOperationQueue *browserQueue;
-extern NSOperationQueue *lowPriorityQueue;
 
-extern id appTreeManager;
-
-typedef NS_ENUM(NSInteger, BViewType) { // Needs to be synchronized with the BrowserView segmentedButton
+typedef NS_ENUM(NSInteger, EnumBrowserViewType) { // Needs to be synchronized with the BrowserView segmentedButton
     BViewTypeInvalid = -2,
     BViewTypeVoid = -1,
     BViewTypeIcon = 0,
@@ -122,7 +116,7 @@ typedef NS_ENUM(NSInteger, BViewType) { // Needs to be synchronized with the Bro
     BViewTypeBrowser = 2
 };
 
-typedef NS_ENUM(NSInteger, BViewMode) {
+typedef NS_ENUM(NSInteger, EnumBrowserViewMode) {
     BViewModeVoid = 0,
     BViewBrowserMode = 1,
     BViewCatalystMode,
@@ -130,7 +124,7 @@ typedef NS_ENUM(NSInteger, BViewMode) {
 };
 
 
-typedef NS_ENUM(NSInteger, ApplicationwMode) {
+typedef NS_ENUM(NSInteger, EnumApplicationMode) {
     ApplicationMode1View = 0,
     ApplicationMode2Views, /* Each View is independent of the other */
     ApplicationModePreview,
@@ -139,7 +133,7 @@ typedef NS_ENUM(NSInteger, ApplicationwMode) {
 
 };
 
-typedef NS_OPTIONS(NSUInteger, DuplicateOptions) {
+typedef NS_OPTIONS(NSUInteger, EnumDuplicateOptions) {
     DupCompareNone         = 0,
     DupCompareName         = 1 << 0,
     DupCompareSize         = 1 << 1,
@@ -159,6 +153,15 @@ typedef NS_ENUM(unichar, CommandKeys) {
 extern NSString *kOptionsKey;
 
 BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
+
+extern NSFileManager *appFileManager;
+extern NSOperationQueue *operationsQueue;
+extern NSOperationQueue *browserQueue;
+extern NSOperationQueue *lowPriorityQueue;
+extern EnumApplicationMode applicationMode;
+
+extern id appTreeManager;
+
 
 @protocol MYViewProtocol <NSObject>
 

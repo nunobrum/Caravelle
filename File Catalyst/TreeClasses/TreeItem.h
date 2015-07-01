@@ -11,21 +11,20 @@
 #import "FileUtils.h"
 
 extern const NSString *keyDuplicateInfo;
-extern const NSString *keyMD5Info;
-extern const NSString *keyDupRefresh;
 
 typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
-    tagTreeItemDirty    = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
-    tagTreeItemScanned  = (1UL << 1), // Used to indicate that the directory was already read from the disk
-    tagTreeItemMarked   = (1UL << 2),
-    tagTreeItemDropped  = (1UL << 3), // Used for drag&drop operations
-    tagTreeItemToMove   = (1UL << 4),
-    tagTreeItemUpdating = (1UL << 5),
-    tagTreeItemRelease  = (1UL << 6), // Used inform BrowserControllers to remove items from Root
-    tagTreeItemReadOnly = (1UL << 7),
-    tagTreeItemNew      = (1UL << 8),
-    tagTreeItemHidden   = (1UL << 9),
-    tagTreeItemAll      = NSUIntegerMax
+    tagTreeItemDirty     = (1UL << 0), // Used to force TreeBranches to make a refresh from disk
+    tagTreeItemScanned   = (1UL << 1), // Used to indicate that the directory was already read from the disk
+    tagTreeItemMarked    = (1UL << 2),
+    tagTreeItemDropped   = (1UL << 3), // Used for drag&drop operations
+    tagTreeItemToMove    = (1UL << 4),
+    tagTreeItemUpdating  = (1UL << 5),
+    tagTreeItemRelease   = (1UL << 6), // Used inform BrowserControllers to remove items from Root
+    tagTreeItemReadOnly  = (1UL << 7),
+    tagTreeItemNew       = (1UL << 8),
+    tagTreeItemHidden    = (1UL << 9),
+    tagTreeItemDuplicate = (1UL << 10),
+    tagTreeItemAll       = NSUIntegerMax
 };
 
 

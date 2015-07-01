@@ -10,21 +10,21 @@
 #import "NodeViewController.h"
 #import "BrowserTableView.h"
 #import "BrowserOutlineView.h"
-#import "TreeRoot.h"
+//#import "TreeRoot.h"
 #include "Definitions.h"
 
 
 
 
-extern NSString *notificationCatalystRootUpdate;
+//extern NSString *notificationCatalystRootUpdate;
 
 
 @interface BrowserController : NSViewController <BrowserParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
     NSSize iconSize;
     //NSString *_filterText;
     NSMutableArray *BaseDirectoriesArray;
-    BViewMode _viewMode;
-    BViewType _viewType;
+    EnumBrowserViewMode _viewMode;
+    EnumBrowserViewType _viewType;
     NSString * _twinName;
 }
 
@@ -110,11 +110,16 @@ extern NSString *notificationCatalystRootUpdate;
  */
 
 -(void) setName:(NSString*)viewName TwinName:(NSString *)twinName;
--(void) setViewType:(BViewType)viewType;
--(BViewType) viewType;
+-(void) setViewType:(EnumBrowserViewType)viewType;
+-(EnumBrowserViewType) viewType;
 
--(void) setViewMode:(BViewMode)viewMode;
--(BViewMode) viewMode;
+-(void) setViewMode:(EnumBrowserViewMode)viewMode;
+-(EnumBrowserViewMode) viewMode;
+
+-(void) setTreeViewCollapsed:(BOOL) collapsed;
+-(BOOL) treeViewCollapsed;
+-(void) setFlatView:(BOOL) flatView;
+-(BOOL) flatView;
 
 -(TreeBranch*) treeNodeSelected;
 -(void) setCurrentNode:(TreeBranch*) branch;
@@ -126,6 +131,7 @@ extern NSString *notificationCatalystRootUpdate;
 -(void) reloadItem:(id) item;
 -(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
+-(void) setRoots:(NSArray*) baseDirectories;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 //-(void) removeSelectedDirectory;

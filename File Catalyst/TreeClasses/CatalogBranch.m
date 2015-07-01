@@ -1,6 +1,6 @@
 //
 //  CatalogBranch.m
-//  File Catalyst
+//  Caravelle
 //
 //  Created by Nuno Brum on 26/10/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
