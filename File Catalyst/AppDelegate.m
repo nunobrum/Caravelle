@@ -67,6 +67,7 @@ NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
 NSOperationQueue *browserQueue;    // Queue for directory viewing (High Priority)
 NSOperationQueue *lowPriorityQueue; // Queue for size calculation (Low Priority)
+EnumApplicationMode applicationMode;
 
 NSArray *get_clipboard_files(NSPasteboard *clipboard) {
 
@@ -103,7 +104,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 @end
 
 @implementation AppDelegate {
-    EnumApplicationMode applicationMode;
     NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
@@ -1813,8 +1813,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(void) adjustSideInformation:(id) sender {
-    if (self->applicationMode == ApplicationMode2Views ||
-        self->applicationMode == ApplicationModeSync) {
+    if (applicationMode == ApplicationMode2Views ||
+        applicationMode == ApplicationModeSync) {
         [self.buttonCopyTo setEnabled:YES];
         [self.buttonMoveTo setEnabled:YES];
         if (sender == myLeftView) {
@@ -1996,20 +1996,22 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
     [myRightView startAllBusyAnimations];
     
+    applicationMode = ApplicationModeDuplicate;
+    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
+
+    duplicates = [[FileCollection alloc] init];
     NSDictionary *notifInfo = [theNotification userInfo];
     // start the GetPathsOperation with the root path to start the search
 	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
 	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
     [self _startOperationBusyIndication:notifInfo];
     
-    self->applicationMode = ApplicationModeDuplicate;
-    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
-
+    
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
     NSDictionary *info = [theNotification userInfo];
-    duplicates = [info objectForKey:kDuplicateList];
+    [duplicates setFiles: [info objectForKey:kDuplicateList]];
     NSArray *rootDirs = [info objectForKey:kRootsList];
     [myLeftView setRoots:rootDirs];
     [myLeftView stopBusyAnimations];

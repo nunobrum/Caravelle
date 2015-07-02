@@ -113,6 +113,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
  When the user navigates backward pointer moves back. When a forward is the requested,
  the pointer is moved forward. */
 -(void) mruSet:(NSURL*) url {
+    if(_viewMode!=BViewBrowserMode) return; // Sanity check. Needed for the Duplicate Mode.
     // gets the pointer to the last position
     NSUInteger mruCount = [_mruLocation count];
 
@@ -245,14 +246,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([ret itemType] == ItemTypeBranch) {
         // Use KVO to observe for changes of its children Array
         [self observeItem:ret];
-        if (_viewMode==BViewBrowserMode) {
-            if ([(TreeBranch*)ret needsRefresh]) {
-                [(TreeBranch*)ret refreshContents];
-            }
+        if ([(TreeBranch*)ret needsRefresh]) {
+            [(TreeBranch*)ret refreshContents];
         }
-//        else {
-//            [self refreshDataView];
-//        }
     }
     return ret;
 }
@@ -399,16 +395,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
                 //[self refreshDataView];
                 // Use KVO to observe for changes of its children Array
-                if (_viewMode==BViewBrowserMode) {
-                    if ([_treeNodeSelected needsRefresh]) {
-                        [self.detailedViewController startBusyAnimationsDelayed];
-                        [(TreeBranch*)_treeNodeSelected refreshContents];
-                        // This will automatically call for a refresh
-                    }
-                    else {
-                        // No need to keep the selection here since the folder is being changed
-                        [self.detailedViewController refresh];
-                    }
+                if ([_treeNodeSelected needsRefresh]) {
+                    [self.detailedViewController startBusyAnimationsDelayed];
+                    [(TreeBranch*)_treeNodeSelected refreshContents];
+                    // This will automatically call for a refresh
                 }
                 else {
                     // No need to keep the selection here since the folder is being changed

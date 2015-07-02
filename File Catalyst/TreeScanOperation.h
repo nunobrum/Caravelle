@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "AppOperation.h"
 
+
+//TODO: !!!!! Remove this class. Not being used.
 extern NSString *notificationTreeConstructionFinished;
 extern NSString *kTreeRootKey;
 

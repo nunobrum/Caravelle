@@ -298,31 +298,51 @@
                 predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
                                attributeName, attributeValue];
             }
-            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
+            if (applicationMode == ApplicationModeDuplicate) {
+                if (self.filesInSubdirsDisplayed==YES) {
+                    tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:iDepth];
+                }
+                else {
+                    tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:1];
+                }
             }
-            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
+            else {
+                if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                    tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
+                }
+                else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                    tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
+                }
+                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                    tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
+                }
+                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                    tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
+                }
             }
         }
         else {
-            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
+            if (applicationMode == ApplicationModeDuplicate) {
+                if (self.filesInSubdirsDisplayed==YES) {
+                    tableData = [self.currentNode duplicatesInBranchTillDepth:iDepth];
+                }
+                else  {
+                    tableData = [self.currentNode duplicatesInBranchTillDepth:1];
+                }
             }
-            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInNode];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInNode];
+            else {
+                if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                    tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
+                }
+                else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                    tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
+                }
+                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                    tableData = [self.currentNode itemsInNode];
+                }
+                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                    tableData = [self.currentNode leafsInNode];
+                }
             }
         }
 

@@ -108,7 +108,7 @@
 //    [fileArray addObject:fi];    
 //}
 
--(void) addFiles: (NSMutableArray *)otherArray {
+-(void) addFiles: (NSArray *)otherArray {
     if (otherArray!=nil) { // Will only do anything if the other array is valid
         if (fileArray==nil) {
             fileArray = [[NSMutableArray new] init];
@@ -124,6 +124,9 @@
             rootDirectory = nil; // It will be calculated next time the rootPath is called
         }
     }
+}
+-(void) setFiles:(NSArray *)otherArray {
+    self->fileArray = [NSMutableArray arrayWithArray:otherArray];
 }
 
 -(NSInteger) FileCount {

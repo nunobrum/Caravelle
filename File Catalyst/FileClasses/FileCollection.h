@@ -28,7 +28,8 @@
 -(NSMutableArray*) fileArray;
 
 -(void) addFile: (TreeItem*) item;
--(void) addFiles: (NSMutableArray *)otherArray;
+-(void) addFiles: (NSArray *)otherArray;
+-(void) setFiles: (NSArray *)otherArray;
 
 -(FileCollection*) filesInPath:(NSString*) path;
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount;

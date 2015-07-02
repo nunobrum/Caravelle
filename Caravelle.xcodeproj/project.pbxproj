@@ -64,7 +64,6 @@
 		3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */; };
 		3CF5DA8D1A65D09800786D64 /* RenameFileDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */; };
 		3CF5DA8E1A65D09800786D64 /* RenameFileDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5DA8C1A65D09800786D64 /* RenameFileDialog.xib */; };
-		3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */; };
 		3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
 		3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
 		3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
@@ -195,8 +194,6 @@
 		3CF5DA8A1A65D09800786D64 /* RenameFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenameFileDialog.h; sourceTree = "<group>"; };
 		3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenameFileDialog.m; sourceTree = "<group>"; };
 		3CF5DA8C1A65D09800786D64 /* RenameFileDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RenameFileDialog.xib; sourceTree = "<group>"; };
-		3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeScanOperation.h; path = ../TreeScanOperation.h; sourceTree = "<group>"; };
-		3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TreeScanOperation.m; path = ../TreeScanOperation.m; sourceTree = "<group>"; };
 		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
 		3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateFindSettingsViewController.h; sourceTree = "<group>"; };
 		3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateFindSettingsViewController.m; sourceTree = "<group>"; };
@@ -309,8 +306,6 @@
 				3CA7DFC119B5FE9D00600F41 /* AppOperation.m */,
 				3CA7DFC319B611E100600F41 /* FileOperation.h */,
 				3CA7DFC419B611E100600F41 /* FileOperation.m */,
-				3CF645B4199DBF3C00DD53F5 /* TreeScanOperation.h */,
-				3CF645B5199DBF3C00DD53F5 /* TreeScanOperation.m */,
 				3CF6C8D719ACA4D100968765 /* DuplicateFindOperation.h */,
 				3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */,
 				3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */,
@@ -666,7 +661,6 @@
 				3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */,
 				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
 				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
-				3CF645B6199DBF3C00DD53F5 /* TreeScanOperation.m in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,

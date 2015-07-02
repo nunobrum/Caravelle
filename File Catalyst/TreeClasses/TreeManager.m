@@ -199,11 +199,6 @@ TreeManager *appTreeManager;
         return NO;
 }
 
--(void) removeTreeBranch:(TreeBranch*)node {
-    @synchronized(self) {
-        [self->iArray removeObject:node];
-    }
-}
 
 -(void) fileSystemChangePath:(NSNotification *)note {
     NSDictionary *info = [note userInfo];

@@ -10,6 +10,7 @@
 #import "TreeBranch_TreeBranchPrivate.h"
 #import "TreeLeaf.h"
 #import "MyDirectoryEnumerator.h"
+#import "TreeManager.h"
 
 #import "definitions.h"
 #include "FileUtils.h"
@@ -95,7 +96,7 @@ NSArray* treesContaining(NSArray* treeItems) {
             // If not creates it
             if (newBranch==nil) {
                 NSURL *parentURL = [item.url URLByDeletingLastPathComponent];
-                newBranch = (TreeBranch*)[appTreeManager treeItemForURL:parentURL parent:nil];
+                newBranch = (TreeBranch*)[appTreeManager addTreeItemWithURL:parentURL];
                 //NSAssert(newBranch!=nil, @"treesContaining. Failed to get the parent");
                 assert(newBranch);
             }
@@ -732,7 +733,51 @@ NSArray* treesContaining(NSArray* treeItems) {
     return newObj; /* Stops here Nothing More to Add */
 }
 
-
+-(BOOL) addTreeItem:(TreeItem*) item {
+    @synchronized(self) {
+        if (self->_children == nil)
+            self->_children = [[NSMutableArray alloc] init];
+    }
+    TreeBranch *cursor = self;
+    NSArray *pcomps = [item.url pathComponents];
+    unsigned long level = [[_url pathComponents] count];
+    unsigned long leaf_level = [pcomps count]-1;
+    while (level < leaf_level) {
+        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
+        TreeItem *child = [cursor childContainingURL:pathURL];
+        if (child==nil) {/* Doesnt exist or if existing is not branch*/
+            /* This is a new Branch Item that will contain the URL*/
+            child = [TreeItem treeItemForURL:pathURL parent:self];
+            if (child!=nil) {
+                @synchronized(cursor) {
+                    [cursor->_children addObject:child];
+                }
+            }
+            else {
+                NSLog(@"TreeBranch._addURLnoRecurr: Couldn't create path %@",pathURL);
+            }
+        }
+        if ([child itemType] == ItemTypeBranch)
+        {
+            cursor = (TreeBranch*)child;
+            if (cursor->_children==nil) {
+                cursor->_children = [[NSMutableArray alloc] init];
+            }
+        }
+        else {
+            // Will ignore this child
+            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", item.url, pathURL);
+            return NO;
+        }
+        level++;
+    }
+    // Checks if it exists ; The base class is provided TreeItem so that it can match anything
+    @synchronized(cursor) {
+        [cursor->_children addObject:item];
+    }
+    [item setParent:cursor];
+    return YES; /* Stops here Nothing More to Add */
+}
 
 #pragma mark -
 #pragma mark size getters
@@ -965,21 +1010,15 @@ NSArray* treesContaining(NSArray* treeItems) {
     }
 }
 -(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestItemsInBranch:answer depth:depth filter:nil];
-        return answer; // Pending Implementation
-    }
-    return nil;
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    [self _harvestItemsInBranch:answer depth:depth filter:nil];
+    return answer;
 }
 
 -(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestItemsInBranch:answer depth:depth  filter:filter];
-        return answer; // Pending Implementation
-    }
-    return nil;
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    [self _harvestItemsInBranch:answer depth:depth  filter:filter];
+    return answer;
 }
 
 -(NSMutableArray*) leafsInNode {
@@ -1022,21 +1061,15 @@ NSArray* treesContaining(NSArray* treeItems) {
     }
 }
 -(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestLeafsInBranch: answer depth:depth filter:nil];
-        return answer; // Pending Implementation
-    }
-    return nil;
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    [self _harvestLeafsInBranch: answer depth:depth filter:nil];
+    return answer;
 }
 
 -(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        [self _harvestLeafsInBranch: answer depth:depth filter:filter];
-        return answer; // Pending Implementation
-    }
-    return nil;
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    [self _harvestLeafsInBranch: answer depth:depth filter:filter];
+    return answer;
 }
 
 -(NSMutableArray*) branchesInNode {
@@ -1050,6 +1083,65 @@ NSArray* treesContaining(NSArray* treeItems) {
         return answer;
     }
     return nil;
+}
+
+/* 
+ * Duplicate Support
+ */
+#pragma mark - Duplicate support
+
+-(NSInteger) numberOfDuplicatesInNode {
+    NSInteger total=0;
+    @synchronized(self) {
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                if ([item itemType] == ItemTypeLeaf &&
+                    [item hasDuplicates]) {
+                    total++;
+                }
+            }
+        }
+    }
+    return total;
+}
+
+-(TreeLeaf*) duplicateAtIndex:(NSUInteger) index {
+    NSInteger i=0;
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if ([item itemType] == ItemTypeLeaf &&
+                [item hasDuplicates]) {
+                if (i==index)
+                    return (TreeLeaf*)item;
+                i++;
+            }
+        }
+    }
+    return nil;
+}
+
+-(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth {
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    NSPredicate *duplicateFilter = [NSPredicate predicateWithFormat:@"hasDuplicates==YES"];
+    [self _harvestLeafsInBranch:answer depth:depth filter:duplicateFilter];
+    return answer;
+}
+
+-(NSMutableArray*) duplicatesInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+    NSMutableArray *answer = [[NSMutableArray new] init];
+    NSPredicate *duplicateFilter = [NSPredicate predicateWithFormat:@"hasDuplicates==YES"];
+    NSCompoundPredicate *composedFilter = [NSCompoundPredicate andPredicateWithSubpredicates:
+                                           [NSArray arrayWithObjects:duplicateFilter, filter, nil]];
+    [self _harvestLeafsInBranch:answer depth:depth  filter:composedFilter];
+    return answer;
+}
+
+-(void) prepareForDuplicates {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            [item resetDuplicates];
+        }
+    }
 }
 
 #pragma mark -

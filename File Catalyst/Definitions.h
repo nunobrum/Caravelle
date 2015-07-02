@@ -160,8 +160,6 @@ extern NSOperationQueue *browserQueue;
 extern NSOperationQueue *lowPriorityQueue;
 extern EnumApplicationMode applicationMode;
 
-extern id appTreeManager;
-
 
 @protocol MYViewProtocol <NSObject>
 

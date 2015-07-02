@@ -21,7 +21,7 @@ NSString *kOptionsKey = @"Options";
 
 @interface DuplicateFindOperation () {
     NSUInteger dupGroup;
-    NSUInteger i;
+    NSUInteger counter;
 }
 
 @end
@@ -30,9 +30,11 @@ NSString *kOptionsKey = @"Options";
 
 -(NSString*) statusText {
     if (statusCount==1)
-        return [NSString stringWithFormat:@"Indexed %lu files ", i];
+        return [NSString stringWithFormat:@"Indexed %lu files ", counter];
     else if (statusCount==2)
-        return [NSString stringWithFormat:@"%lu scanned, %lu duplicates", i, dupGroup];
+        return [NSString stringWithFormat:@"%lu scanned, %lu duplicates", counter, dupGroup];
+    else if (statusCount==3)
+        return [NSString stringWithFormat:@"Finishing %lu", counter];
     else
         return @"Starting..."; // This should only appear if this is called is before the task starts
 }
@@ -42,39 +44,34 @@ NSString *kOptionsKey = @"Options";
     if (![self isCancelled])
 	{
         NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
-        NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
         NSNumber *Options = [_taskInfo objectForKey: kOptionsKey];
 
         //    // This will eliminate any results from previous searches
         //    [filecollection resetDuplicateLists];
         //
+        
+        
         if (![self isCancelled])
         {
-            NSMutableArray *fileArray = [[NSMutableArray alloc] init];
-            i = 0;
+            EnumDuplicateOptions options = [Options integerValue];
+            NSMutableArray *duplicates = [[NSMutableArray new] init]; // A rough estimation
+            NSMutableArray *fileArray = [[NSMutableArray new] init];
+            counter = 0;
             for (NSURL *url in urls) {
                 /* Abort if problem detected */
                 if (url==nil) {
                     /* Should it be informed, or just skip it */
                 }
                 else {
-                    //TODO:!!!! This needs to be changed so that it is integrated with the actual Tree Scheme.
-                    // 1. Will ask the Tree Manager for this URL,
-                    TreeBranch *workBranch = [appTreeManager addTreeItemWithURL:url];
-                    [roots addObject:workBranch];
-                    // 2.a If it doesn't exist create it
-                    // 2.b If it exists, add from nodes in branch
-                    
                     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                     for (NSURL *theURL in dirEnumerator) {
-                        TreeItem *item = [workBranch addURL:theURL];
-                        [item resetDuplicates]; // in case this is a second run
-                        // TODO:!!!!! Other Filters here
                         if (!isFolder(theURL)) {
-                            [fileArray addObject:item];
+                            TreeItem *fi = [TreeItem treeItemForURL:theURL parent:nil];
+                            [fileArray addObject:fi];
+
                             if ([self isCancelled])
                                 break;
-                            i++;
+                            counter++;
                         } // for
                     }
                     if ([self isCancelled])
@@ -83,12 +80,11 @@ NSString *kOptionsKey = @"Options";
                 if (![self isCancelled])
                 {
                     statusCount = 2; // Second Phase
+                    counter=0;
                     NSUInteger j;
                     NSUInteger max_files = [fileArray count];
                     BOOL duplicate;
-                    EnumDuplicateOptions options = [Options integerValue];
-                    FileCollection *duplicateList = [[FileCollection new] init];
-
+                    
                     if (options & DupCompareSize) {
                         [fileArray sortUsingComparator:^NSComparisonResult(TreeItem* obj1, TreeItem* obj2) {
                             if (obj1.filesize == obj2.filesize)
@@ -102,11 +98,11 @@ NSString *kOptionsKey = @"Options";
                     }
 
                     TreeItem *FileA, *FileB;
-                    for (i=0;i<max_files;i++) {
+                    for (counter=0; counter < max_files ; counter++) {
                         if ([self isCancelled])
                             break;
-                        FileA = [fileArray objectAtIndex:i];
-                        for (j=i+1; j<max_files; j++) {
+                        FileA = [fileArray objectAtIndex:counter];
+                        for (j=counter+1; j<max_files; j++) {
                             FileB = [fileArray objectAtIndex:j];
                             duplicate = TRUE;
                             if (options & DupCompareName && [FileA.name isEqualToString: FileB.name]==FALSE) {
@@ -147,30 +143,49 @@ NSString *kOptionsKey = @"Options";
                             }
                         }
                         if ([FileA hasDuplicates]==YES) {
-                            [duplicateList addFile:FileA];
+                            [duplicates addObject:FileA];
                             dupGroup++;
                         }
-                        else {
-                            // Erase Duplicate information
-                            [FileA resetDuplicates];
-                        }
-                    }
-                    if (![self isCancelled])
-                    {
-                    if ([duplicateList FileCount]==0)
-                        duplicateList = nil;
-                    // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
-                    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          duplicateList, kDuplicateList,  // pass back to check if user cancelled/started a new scan
-                                          roots, kRootsList,
-                                          nil];
-                    // for the purposes of this sample, we're just going to post the information
-                    // out there and let whoever might be interested receive it (in our case its MyWindowController).
-                    //
-                    [_taskInfo addEntriesFromDictionary:info];
-                    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
                     }
                 }
+            }
+            if (![self isCancelled])
+            {
+                statusCount = 3;
+                NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
+                for (NSURL *url in urls) {
+                    // Will distribute the duplicates on the tree received
+                    // 1. Will ask the Tree Manager for this URL,
+                    TreeBranch *workBranch = [appTreeManager addTreeItemWithURL:url];
+                    [workBranch prepareForDuplicates];
+                    [roots addObject:workBranch];
+                }
+                counter = 0;
+                if ([duplicates count]==0)
+                    duplicates = nil;
+                else {
+                    // Adding the duplicates to the new Tree
+                    for (TreeItem *item in duplicates) {
+                        for (TreeBranch *root in roots) {
+                            if ([root canContainURL:item.url]) {
+                                [root addTreeItem:item];
+                                NSLog(@"Adding %@ to %@", item.url, root.url);
+                                break;
+                            }
+                        }
+                        counter++;
+                    }
+                }
+                // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
+                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      roots, kRootsList,
+                                      duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
+                                      nil];
+                // for the purposes of this sample, we're just going to post the information
+                // out there and let whoever might be interested receive it (in our case its MyWindowController).
+                //
+                [_taskInfo addEntriesFromDictionary:info];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
             }
         }
     }

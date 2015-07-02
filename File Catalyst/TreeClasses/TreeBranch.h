@@ -31,6 +31,7 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(NSInteger) numberOfLeafsInNode;
 -(NSInteger) numberOfBranchesInNode;
 -(NSInteger) numberOfItemsInNode;
+-(NSInteger) numberOfDuplicatesInNode;
 
 -(NSInteger) numberOfLeafsInBranch;
 
@@ -56,6 +57,11 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 -(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 
+// Duplicate Support
+-(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth;
+-(NSMutableArray*) duplicatesInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
+-(void)            prepareForDuplicates;
+
 -(BOOL) isExpandable;
 
 -(TreeItem*) childWithName:(NSString*) name class:(id)cls;
@@ -64,7 +70,7 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
 -(TreeItem*) getNodeWithPath:(NSString*)path;
 -(TreeItem*) addURL:(NSURL*)theURL;
-
+-(BOOL)      addTreeItem:(TreeItem*) item;
 
 //-(NSMutableArray*) branchesInBranch;
 
