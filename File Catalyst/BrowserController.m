@@ -232,7 +232,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     else {
         // Returns the total number of leafs
-        return [item numberOfBranchesInNode];
+        if (applicationMode==ApplicationModeDuplicate)
+            return [item numberOfBranchesWithDuplicatesInNode];
+        else
+            return [item numberOfBranchesInNode];
     }
 }
 
@@ -241,7 +244,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
         ret = [BaseDirectoriesArray objectAtIndex:index];
     else {
-        ret = [item branchAtIndex:index];
+        if (applicationMode==ApplicationModeDuplicate)
+            ret = [item duplicateBranchAtIndex:index];
+        else
+            ret = [item branchAtIndex:index];
     }
     if ([ret itemType] == ItemTypeBranch) {
         // Use KVO to observe for changes of its children Array
@@ -258,7 +264,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
     else if ([item itemType] == ItemTypeBranch) {
-        answer = ([(TreeBranch*)item isExpandable]);
+        if (applicationMode==ApplicationModeDuplicate)
+            answer = [item numberOfDuplicatesInNode] > 1 ? YES : NO;
+        else
+            answer = ([(TreeBranch*)item isExpandable]);
     }
     return answer;
 }
@@ -277,10 +286,19 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else if ([item itemType] == ItemTypeBranch) { // it is a directory
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
+                long long sizeOfFilesInBranch;
+                long fileCount;
+                if (applicationMode == ApplicationModeDuplicate) {
+                    fileCount = [(TreeBranch*)item numberOfDuplicatesInBranch];
+                    sizeOfFilesInBranch = [(TreeBranch*)item duplicateSize];
+                }
+                else {
+                    fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
+                    sizeOfFilesInBranch = [item filesize];
+                }
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
-                subTitle = [NSString stringWithFormat:@"%ld Files %@",
-                            (long)[(TreeBranch*)item numberOfLeafsInBranch],
-                            [NSByteCountFormatter stringFromByteCount:[item filesize] countStyle:NSByteCountFormatterCountStyleFile]];
+                subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,
+                            [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile]];
                 [(FolderCellView*)cellView setSubTitle:subTitle];
                 [(FolderCellView*)cellView setURL:[item url]];
                 [cellView setObjectValue:item];

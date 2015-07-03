@@ -1095,10 +1095,44 @@ NSArray* treesContaining(NSArray* treeItems) {
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeLeaf &&
-                    [item hasDuplicates]) {
+                if ([item itemType] == ItemTypeBranch ||
+                    ([item itemType] == ItemTypeLeaf &&
+                    [item hasDuplicates])) {
                     total++;
                 }
+            }
+        }
+    }
+    return total;
+}
+
+-(NSInteger) numberOfDuplicatesInBranch {
+    NSInteger total=0;
+    @synchronized(self) {
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                if ([item isKindOfClass:[TreeBranch class]])
+                    total += [(TreeBranch*)item numberOfDuplicatesInBranch];
+                else if ([item itemType] == ItemTypeLeaf &&
+                         [item hasDuplicates])
+                    total++;
+            }
+        }
+    }
+    return total;
+}
+
+/* Computes the total size of all the duplicate files  in all subdirectories */
+-(long long) duplicateSize {
+    long long total=0;
+    if (self->_children!=nil) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item isKindOfClass:[TreeBranch class]])
+                    total += [(TreeBranch*)item duplicateSize];
+                else if ([item itemType] == ItemTypeLeaf &&
+                         [item hasDuplicates])
+                    total += [item filesize];
             }
         }
     }
@@ -1109,11 +1143,42 @@ NSArray* treesContaining(NSArray* treeItems) {
     NSInteger i=0;
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeLeaf &&
-                [item hasDuplicates]) {
+            if ([item itemType] == ItemTypeBranch ||
+                ([item itemType] == ItemTypeLeaf &&
+                [item hasDuplicates])) {
                 if (i==index)
                     return (TreeLeaf*)item;
                 i++;
+            }
+        }
+    }
+    return nil;
+}
+-(NSInteger) numberOfBranchesWithDuplicatesInNode {
+    NSInteger total=0;
+    @synchronized(self) {
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                if ([item isKindOfClass:[TreeBranch class]])
+                    if ([(TreeBranch*)item numberOfDuplicatesInBranch]>0)
+                    total++;
+            }
+        }
+    }
+    return total;
+}
+-(TreeBranch*) duplicateBranchAtIndex:(NSUInteger) index {
+    NSInteger i=0;
+    @synchronized(self) {
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                if ([item isKindOfClass:[TreeBranch class]]) {
+                    if ([(TreeBranch*)item numberOfDuplicatesInBranch]>0) {
+                        if (i==index)
+                            return (TreeBranch*)item;
+                        i++;
+                    }
+                }
             }
         }
     }

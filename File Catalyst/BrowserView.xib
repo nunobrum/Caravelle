@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -339,6 +339,7 @@
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="5Fc-gb-5JC" secondAttribute="bottom" constant="6" id="CrY-vp-fN5"/>
                 <constraint firstAttribute="trailing" secondItem="BA4-h9-PGe" secondAttribute="trailing" constant="1" id="Db9-BV-be0"/>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="top" secondItem="VMb-R6-UcF" secondAttribute="top" constant="10" id="GvC-9a-P9h"/>
+                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="olD-ez-fNy" secondAttribute="bottom" constant="34" id="JWU-fX-kJa"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="top" secondItem="Wu7-Ak-lRK" secondAttribute="bottom" constant="8" id="KSl-dA-qma"/>
                 <constraint firstItem="olD-ez-fNy" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" id="MTY-Xf-mzC"/>
                 <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="tKW-QN-AmC" secondAttribute="bottom" constant="8" id="Saq-V9-NkH"/>
