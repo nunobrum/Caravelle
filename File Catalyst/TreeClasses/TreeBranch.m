@@ -1090,20 +1090,44 @@ NSArray* treesContaining(NSArray* treeItems) {
  */
 #pragma mark - Duplicate support
 
+-(BOOL) hasDuplicates {
+    @synchronized(self) {
+        if (self->_children!=nil) {
+            for (TreeItem *item in self->_children) {
+                if ([item hasDuplicates])
+                    return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 -(NSInteger) numberOfDuplicatesInNode {
     NSInteger total=0;
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
-                if ([item itemType] == ItemTypeBranch ||
-                    ([item itemType] == ItemTypeLeaf &&
-                    [item hasDuplicates])) {
+                if ([item hasDuplicates]) {
                     total++;
                 }
             }
         }
     }
     return total;
+}
+
+-(TreeLeaf*) duplicateAtIndex:(NSUInteger) index {
+    NSInteger i=0;
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if ([item hasDuplicates]) {
+                if (i==index)
+                    return (TreeLeaf*)item;
+                i++;
+            }
+        }
+    }
+    return nil;
 }
 
 -(NSInteger) numberOfDuplicatesInBranch {
@@ -1113,8 +1137,7 @@ NSArray* treesContaining(NSArray* treeItems) {
             for (TreeItem *item in self->_children) {
                 if ([item isKindOfClass:[TreeBranch class]])
                     total += [(TreeBranch*)item numberOfDuplicatesInBranch];
-                else if ([item itemType] == ItemTypeLeaf &&
-                         [item hasDuplicates])
+                else if ([item hasDuplicates])
                     total++;
             }
         }
@@ -1130,8 +1153,7 @@ NSArray* treesContaining(NSArray* treeItems) {
             for (TreeItem *item in self->_children) {
                 if ([item isKindOfClass:[TreeBranch class]])
                     total += [(TreeBranch*)item duplicateSize];
-                else if ([item itemType] == ItemTypeLeaf &&
-                         [item hasDuplicates])
+                else if ([item hasDuplicates])
                     total += [item filesize];
             }
         }
@@ -1139,28 +1161,13 @@ NSArray* treesContaining(NSArray* treeItems) {
     return total;
 }
 
--(TreeLeaf*) duplicateAtIndex:(NSUInteger) index {
-    NSInteger i=0;
-    @synchronized(self) {
-        for (TreeItem *item in self->_children) {
-            if ([item itemType] == ItemTypeBranch ||
-                ([item itemType] == ItemTypeLeaf &&
-                [item hasDuplicates])) {
-                if (i==index)
-                    return (TreeLeaf*)item;
-                i++;
-            }
-        }
-    }
-    return nil;
-}
 -(NSInteger) numberOfBranchesWithDuplicatesInNode {
     NSInteger total=0;
     @synchronized(self) {
         if (self->_children!=nil) {
             for (TreeItem *item in self->_children) {
                 if ([item isKindOfClass:[TreeBranch class]])
-                    if ([(TreeBranch*)item numberOfDuplicatesInBranch]>0)
+                    if ([(TreeBranch*)item hasDuplicates])
                     total++;
             }
         }
@@ -1204,7 +1211,9 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(void) prepareForDuplicates {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            [item resetDuplicates];
+            if ([item isKindOfClass:[TreeLeaf class]]) {
+                [(TreeLeaf*)item resetDuplicates];
+            }
         }
     }
 }

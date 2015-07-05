@@ -47,7 +47,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
     NSURL           *_url;
     TreeItemTagEnum _tag;
     TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
-    NSMutableDictionary *_store;
 }
 
 @property (weak) TreeItem           *parent;
@@ -55,8 +54,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 -(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
 
-+(TreeItem *)treeItemForURL:(NSURL *)url parent:(id)parent;
-+(TreeItem *)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
++(id)treeItemForURL:(NSURL *)url parent:(id)parent;
++(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
 - (TreeItem*) root;
 
 -(NSArray *) treeComponents;
@@ -74,7 +73,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSNumber*) fileSize;
 -(NSString*) fileKind;
 -(NSString*) hint;
--(NSData*) MD5;
 
 
 -(void) setUrl:(NSURL*)url;
@@ -110,19 +108,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
  */
 -(void) setValue:(id)value forUndefinedKey:(NSString *)key;
 
-
-/*
- * Dupplicate Support 
- */
--(BOOL) compareMD5checksum: (TreeItem *)otherFile;
-
--(void) addDuplicate:(TreeItem*) duplicateFile;
 -(BOOL) hasDuplicates;
--(TreeItem*) nextDuplicate;
--(NSUInteger) duplicateCount;
--(NSMutableArray*) duplicateList;
--(void) resetDuplicates;
--(void) setDuplicateRefreshCount:(NSInteger)count;
--(NSInteger) duplicateRefreshCount;
+
 
 @end

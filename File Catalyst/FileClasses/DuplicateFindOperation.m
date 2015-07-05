@@ -66,7 +66,7 @@ NSString *kOptionsKey = @"Options";
                     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                     for (NSURL *theURL in dirEnumerator) {
                         if (!isFolder(theURL)) {
-                            TreeItem *fi = [TreeItem treeItemForURL:theURL parent:nil];
+                            TreeLeaf *fi = [TreeLeaf treeItemForURL:theURL parent:nil];
                             [fileArray addObject:fi];
 
                             if ([self isCancelled])
@@ -86,7 +86,7 @@ NSString *kOptionsKey = @"Options";
                     BOOL duplicate;
                     
                     if (options & DupCompareSize) {
-                        [fileArray sortUsingComparator:^NSComparisonResult(TreeItem* obj1, TreeItem* obj2) {
+                        [fileArray sortUsingComparator:^NSComparisonResult(TreeLeaf* obj1, TreeLeaf* obj2) {
                             if (obj1.filesize == obj2.filesize)
                                 return NSOrderedSame;
                             else if (obj1.filesize > obj2.filesize)
@@ -97,7 +97,7 @@ NSString *kOptionsKey = @"Options";
                         }];
                     }
 
-                    TreeItem *FileA, *FileB;
+                    TreeLeaf *FileA, *FileB;
                     for (counter=0; counter < max_files ; counter++) {
                         if ([self isCancelled])
                             break;
@@ -165,11 +165,10 @@ NSString *kOptionsKey = @"Options";
                     duplicates = nil;
                 else {
                     // Adding the duplicates to the new Tree
-                    for (TreeItem *item in duplicates) {
+                    for (TreeLeaf *item in duplicates) {
                         for (TreeBranch *root in roots) {
                             if ([root canContainURL:item.url]) {
                                 [root addTreeItem:item];
-                                NSLog(@"Adding %@ to %@", item.url, root.url);
                                 break;
                             }
                         }

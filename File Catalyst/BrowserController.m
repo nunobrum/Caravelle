@@ -286,6 +286,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else if ([item itemType] == ItemTypeBranch) { // it is a directory
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
+                NSString *sizeString;
                 long long sizeOfFilesInBranch;
                 long fileCount;
                 if (applicationMode == ApplicationModeDuplicate) {
@@ -296,9 +297,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                     fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
                     sizeOfFilesInBranch = [item filesize];
                 }
+                if (sizeOfFilesInBranch==-1) // Undefined
+                    sizeString = @"--";
+                else
+                    sizeString = [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile];
+                
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
-                subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,
-                            [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile]];
+                subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,sizeString];
+                
                 [(FolderCellView*)cellView setSubTitle:subTitle];
                 [(FolderCellView*)cellView setURL:[item url]];
                 [cellView setObjectValue:item];

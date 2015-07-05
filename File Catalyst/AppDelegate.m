@@ -1236,14 +1236,19 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (IBAction)appModeChanged:(id)sender {
     NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
     NSUInteger panelCount = [[self.ContentSplitView subviews] count];
+    
+    if (applicationMode==ApplicationModeDuplicate &&
+        mode != applicationMode) {
+        [self goHome:myLeftView];
+    }
 
     if (mode == ApplicationMode1View) {
         if (myRightView!=nil && panelCount == 2) {
             [myLeftView setName:@"Single" TwinName:nil];
             [myRightView.view removeFromSuperview];
             //myRightView.view = nil;
-            applicationMode = ApplicationMode1View;
         }
+        applicationMode = mode;
     }
     else if (mode == ApplicationMode2Views) {
         if (panelCount==1) {
@@ -1254,7 +1259,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 [myRightView setName:@"Right" TwinName:@"Left"];
                 [_ContentSplitView addSubview:myRightView.view];
                 [self goHome:myRightView];
-                applicationMode = ApplicationMode2Views;
             }
             else if (myRightView.view==nil) {
                 NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
@@ -1263,9 +1267,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             else {
                 [_ContentSplitView addSubview:myRightView.view];
                 [myRightView refresh]; // Just Refreshes
-                applicationMode = ApplicationMode2Views;
             }
         }
+        else {
+            if (applicationMode==ApplicationModeDuplicate)
+                [self goHome:myRightView];
+        }
+        applicationMode = mode;
     }
     else if (mode == ApplicationModePreview) {
         // TODO: !!! Preview Mode
