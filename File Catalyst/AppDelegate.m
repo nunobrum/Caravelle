@@ -1972,49 +1972,66 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (IBAction)FindDuplicates:(id)sender {
     if (duplicateSettingsWindow==nil)
         duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
+    
+    // Setting the current node in the list
+    NSArray *selectedNodes;
+    if (applicationMode == ApplicationMode1View)
+        selectedNodes = [NSArray arrayWithObjects:[[myLeftView treeNodeSelected] url], nil];
+    else
+        selectedNodes = [NSArray arrayWithObjects:[[myLeftView treeNodeSelected] url],[[myRightView treeNodeSelected] url],nil];
+                                          
+    [self->duplicateSettingsWindow setURLs:selectedNodes];
     [duplicateSettingsWindow showWindow:self];
 
 }
 
 /* invoked by Find Duplicates Dialog on OK Button */
 - (void) startDuplicateFind:(NSNotification*)theNotification {
-    if (myRightView == nil) {
-        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-        [myRightView setParentController:self];
-        [myLeftView setName:@"Left" TwinName:@"Right"];
-        [myRightView setName:@"Right" TwinName:@"Left"];
-        [_ContentSplitView addSubview:myRightView.view];
-    }
-    [myLeftView setViewMode:BViewDuplicateMode];
-    [myLeftView setViewType:BViewTypeTable];
-    // Activate the Tree View on the Left
-    [myLeftView setTreeViewCollapsed:NO];
-    // Make the FlatView and Group by Location
-    [myLeftView setFlatView:YES];
-    [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
-    [myLeftView startAllBusyAnimations];
-    
-    [myRightView setViewMode:BViewDuplicateMode];
-    [myRightView setViewType:BViewTypeTable];
-    // Deactivate the Tree View on the Left
-    [myRightView setTreeViewCollapsed:YES];
-    // Activate the Flat View
-    [myRightView setFlatView:YES];
-    // Group by Location
-    [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
-    [myRightView startAllBusyAnimations];
-    
-    applicationMode = ApplicationModeDuplicate;
-    [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
-
-    duplicates = [[FileCollection alloc] init];
+    // First check if is not a cancel
+    // If there isn't an UserInfo Dictionary then its a cancel
     NSDictionary *notifInfo = [theNotification userInfo];
-    // start the GetPathsOperation with the root path to start the search
-	DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
-	[operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
-    [self _startOperationBusyIndication:notifInfo];
-    
-    
+    if (notifInfo==nil) {
+        // Reverts back to the previous view . Nothing is changed
+        [self.toolbarAppModeSelect setSelected:YES forSegment:applicationMode];
+    }
+    else {
+        
+        if (myRightView == nil) {
+            myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+            [myRightView setParentController:self];
+            [myLeftView setName:@"Left" TwinName:@"Right"];
+            [myRightView setName:@"Right" TwinName:@"Left"];
+            [_ContentSplitView addSubview:myRightView.view];
+        }
+        [myLeftView setViewMode:BViewDuplicateMode];
+        [myLeftView setViewType:BViewTypeTable];
+        // Activate the Tree View on the Left
+        [myLeftView setTreeViewCollapsed:NO];
+        // Make the FlatView and Group by Location
+        [myLeftView setFlatView:YES];
+        [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+        [myLeftView startAllBusyAnimations];
+        
+        [myRightView setViewMode:BViewDuplicateMode];
+        [myRightView setViewType:BViewTypeTable];
+        // Deactivate the Tree View on the Left
+        [myRightView setTreeViewCollapsed:YES];
+        // Activate the Flat View
+        [myRightView setFlatView:YES];
+        // Group by Location
+        [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+        [myRightView startAllBusyAnimations];
+        
+        applicationMode = ApplicationModeDuplicate;
+        [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
+        
+        duplicates = [[FileCollection alloc] init];
+        NSDictionary *notifInfo = [theNotification userInfo];
+        // start the GetPathsOperation with the root path to start the search
+        DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
+        [operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
+        [self _startOperationBusyIndication:notifInfo];
+    }
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {

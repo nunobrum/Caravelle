@@ -27,6 +27,7 @@
         self->_tag = 0;
         [self setUrl:url];
         self->_parent = parent;
+        self.nameCache = nil;
     }
     return self;
 }
@@ -99,6 +100,10 @@
     return _url;
 }
 
+-(void) purgeURLCacheResources {
+    [self->_url removeAllCachedResourceValues];
+}
+
 -(void) setTag:(TreeItemTagEnum)tag {
     _tag |= tag;
 }
@@ -132,10 +137,14 @@
 }
 
 -(NSString*) name {
+    if (self.nameCache) {
+        return self.nameCache;
+    }
     NSString *nameStr = [_url lastPathComponent];
     if ([nameStr isEqualToString:@"/"]) {
         nameStr = mediaNameFromURL(_url);
     }
+    self.nameCache = nameStr;
     return nameStr;
 }
 

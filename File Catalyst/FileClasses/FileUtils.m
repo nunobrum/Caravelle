@@ -445,7 +445,7 @@ NSString *mediaNameFromURL(NSURL *rootURL) {
  */
 /* This function will calculate the file checksum based on the MD5 protocol */
 #define BUFFER_SIZE_MD5 4096
-NSData *calculateMD5(NSURL *url) {
+void *calculateMD5(NSURL *url, void *buffer16bytes) {
     NSData *NSbuffer;
     md5_state_t state;
     md5_byte_t digest[16];
@@ -473,8 +473,8 @@ NSData *calculateMD5(NSURL *url) {
     [handler closeFile];
     //for (di = 0; di < 16; ++di)
     //    sprintf(hex_output + di * 2, "%02x", digest[di]);
-    //     memcpy(&self->md5_checksum, digest, 16);
-    NSData *MD5 = [[NSData alloc] initWithBytes:digest length:16];
-    return MD5;
+    memcpy(buffer16bytes, digest, 16);
+    //NSData *MD5 = [[NSData alloc] initWithBytes:digest length:16];
+    return buffer16bytes;
 }
 

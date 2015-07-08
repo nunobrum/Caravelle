@@ -83,17 +83,17 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         NSURL *rootURL = [appTreeManager powerboxOpenFolderWithTitle:@"Select a new Directory"];
         if (rootURL) {
             NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL forKey:@"path"];
-            [_pathContents addObject:newItem];
-            [_pathContents commitEditing];
+            [self.pathContents addObject:newItem];
+            [self.pathContents commitEditing];
         }
     }
     else { /* This is a subtract */
         //NSDictionary *dict = [_objectController content];
         //NSIndexSet *selected = [dict objectForKey:@"selectedPaths"];
-        //NSArray *selectedObjs = [_pathContents selectedObjects];
-        NSIndexSet *selected = [_pathContents selectionIndexes];
-        [_pathContents removeObjectsAtArrangedObjectIndexes:selected];
-        [_pathContents commitEditing];
+        //NSArray *selectedObjs = [self.pathContents selectedObjects];
+        NSIndexSet *selected = [self.pathContents selectionIndexes];
+        [self.pathContents removeObjectsAtArrangedObjectIndexes:selected];
+        [self.pathContents commitEditing];
     }
 }
 
@@ -121,7 +121,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     }
     NSNumber *Options = [NSNumber numberWithInteger:options];
     NSMutableArray *pathList = [[NSMutableArray alloc] init];
-    for (NSDictionary *objdict in [_pathContents content]) {
+    for (NSDictionary *objdict in [self.pathContents content]) {
         [pathList addObject: [objdict objectForKey:@"path"]];
     }
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -134,6 +134,18 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 }
 
 - (IBAction)pbCancelAction:(id)sender {
+    // Sends an empty dictionary to cancel the operation
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:nil];
     [self close];
+}
+
+-(void) setURLs:(NSArray *)urls {
+    // Remove All objects
+    [self.pathContents removeObjects: [self.pathContents arrangedObjects]];
+    for (NSURL* url in urls) {
+        NSDictionary *newItem = [NSDictionary dictionaryWithObject:url forKey:@"path"];
+        [self.pathContents addObject:newItem];
+    }
+    [self.pathContents commitEditing];
 }
 @end

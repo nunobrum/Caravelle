@@ -63,6 +63,7 @@ NSString *kOptionsKey = @"Options";
                     /* Should it be informed, or just skip it */
                 }
                 else {
+                    NSLog(@"DuplicateFindOperation: Starting Duplicate Scan");
                     MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                     for (NSURL *theURL in dirEnumerator) {
                         if (!isFolder(theURL)) {
@@ -82,9 +83,8 @@ NSString *kOptionsKey = @"Options";
                     statusCount = 2; // Second Phase
                     counter=0;
                     NSUInteger j;
-                    NSUInteger max_files = [fileArray count];
                     BOOL duplicate;
-                    
+                    NSLog(@"DuplicateFindOperation: Ordering Files");
                     if (options & DupCompareSize) {
                         [fileArray sortUsingComparator:^NSComparisonResult(TreeLeaf* obj1, TreeLeaf* obj2) {
                             if (obj1.filesize == obj2.filesize)
@@ -96,13 +96,16 @@ NSString *kOptionsKey = @"Options";
                             
                         }];
                     }
-
+                    NSLog(@"DuplicateFindOperation: File Matching");
                     TreeLeaf *FileA, *FileB;
-                    for (counter=0; counter < max_files ; counter++) {
+                    while ([fileArray count]>1) {
+                        counter++;
                         if ([self isCancelled])
                             break;
-                        FileA = [fileArray objectAtIndex:counter];
-                        for (j=counter+1; j<max_files; j++) {
+                        FileA = [fileArray objectAtIndex:0];
+                        NSUInteger max_files = [fileArray count];
+                        //NSLog(@"%@",FileA.url);
+                        for (j=1; j<max_files; j++) {
                             FileB = [fileArray objectAtIndex:j];
                             duplicate = TRUE;
                             if (options & DupCompareName && [FileA.name isEqualToString: FileB.name]==FALSE) {
@@ -146,12 +149,19 @@ NSString *kOptionsKey = @"Options";
                             [duplicates addObject:FileA];
                             dupGroup++;
                         }
+                        else {
+                            // Delete the Duplicate Information Key
+                            [FileA resetDuplicates];
+                            [FileA purgeURLCacheResources];
+                        }
+                        [fileArray removeObjectAtIndex:0];
                     }
                 }
             }
             if (![self isCancelled])
             {
                 statusCount = 3;
+                NSLog(@"DuplicateFindOperation: Creating Tree");
                 NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
                 for (NSURL *url in urls) {
                     // Will distribute the duplicates on the tree received

@@ -62,4 +62,4 @@ extern NSString *mediaNameFromURL(NSURL *rootURL);
  * MD5 Calculation
  */
 /* This function will calculate the file checksum based on the MD5 protocol */
-NSData *calculateMD5(NSURL *url);
+void *calculateMD5(NSURL *url, void *buffer16bytes);

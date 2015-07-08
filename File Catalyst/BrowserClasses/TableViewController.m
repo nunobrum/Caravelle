@@ -683,7 +683,7 @@
     NSString *key = [theEvent characters];
     unichar keyCode = [key characterAtIndex:0];
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
-    NSLog(@"KD: code:%@ - %@, [%d,%d]",key, keyWM, keyCode, [keyWM characterAtIndex:0]);
+    //NSLog(@"KD: code:%@ - %@, [%d,%d]",key, keyWM, keyCode, [keyWM characterAtIndex:0]);
     NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
 
     if ([theEvent modifierFlags] & NSCommandKeyMask) {

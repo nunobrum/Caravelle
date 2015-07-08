@@ -146,7 +146,8 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     while (cursor.duplicateInfo!=nil) {
         TreeLeaf *tmp = cursor;
         cursor = cursor.nextDuplicate;
-        [tmp->_store removeObjectForKey:keyDuplicateInfo]; // Deletes the nextDuplicate AND refreshCount
+        //[tmp->_store removeObjectForKey:keyDuplicateInfo]; // Deletes the nextDuplicate AND refreshCount
+        tmp->_store = nil;
     }
 }
 

@@ -49,9 +49,12 @@ typedef NS_ENUM(NSInteger, ItemType) {
 }
 
 @property (weak) TreeItem           *parent;
+@property NSString *nameCache; // This is to lower memory allocation calls, for each name call, a new CFString was being allocated
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 -(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
+
+-(void) purgeURLCacheResources;
 
 +(id)treeItemForURL:(NSURL *)url parent:(id)parent;
 +(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
