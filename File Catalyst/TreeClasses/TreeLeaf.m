@@ -11,8 +11,8 @@
 
 
 const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
-const NSString *keyMD5Info       = @"TStoreMD5Key";
-const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
+//const NSString *keyMD5Info       = @"TStoreMD5Key";
+//const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 
 @implementation TreeLeaf
 
@@ -28,23 +28,6 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
     return ItemTypeLeaf;
 }
 
--(NSData*) MD5 {
-    // First Check in the MD5 Key Store
-    NSData *MD5 = [self->_store objectForKey:keyMD5Info];
-    if (MD5==nil) {
-        // Then tries the duplicate Info
-        DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
-        if (dupInfo) {
-            MD5 = dupInfo.getMD5;
-        }
-        else {
-            MD5 = calculateMD5(self->_url);
-            /// Stores it
-            [self addToStore:[NSDictionary dictionaryWithObjectsAndKeys:MD5, keyMD5Info, nil]];
-        }
-    }
-    return MD5;
-}
 
 /*
  * Storage Support
@@ -61,34 +44,44 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
  * Dupplicate Support
  */
 
+-(DuplicateInformation*) duplicateInfo {
+    DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+    return dupInfo;
+}
 
--(BOOL) compareMD5checksum: (TreeLeaf *)otherFile {
-    NSData *myMD5 = [self MD5];
-    NSData *otherMD5 = [otherFile MD5];
-    return  [myMD5 isEqualToData:otherMD5];
+-(DuplicateInformation*) startDuplicateInfo {
+    DuplicateInformation *dupInfo = [[DuplicateInformation alloc] init];
+    [self addToStore:[NSDictionary dictionaryWithObject:dupInfo forKey:keyDuplicateInfo]];
+    return dupInfo;
 }
 
 -(TreeLeaf*) nextDuplicate {
-    return [self->_store objectForKey:keyDuplicateInfo];
+    DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+    if (dupInfo)
+        return [dupInfo nextDuplicate];
+    else
+        return nil;
 }
 
 -(void) setNextDuplicate:(TreeLeaf*) item {
     if (item==nil) {
         // It will remove the current duplicate, if exists
         [self->_store removeObjectForKey:keyDuplicateInfo];
-        // and also removes the refreshCount
-        [self->_store removeObjectForKey:keyDupRefresh];
     }
     else {
-        [self addToStore: [NSDictionary dictionaryWithObjectsAndKeys:item, keyDuplicateInfo, nil]];
+        // Get nextDuplicate and create it if Needed
+        DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+        if (dupInfo == nil) {
+            dupInfo = [self startDuplicateInfo];
+        }
+        [dupInfo setNextDuplicate:item];
     }
 }
 
 // The duplicates are organized on a ring fashion for memory space efficiency
 // FileA -> FileB -> FileC-> FileA
 -(void) addDuplicate:(TreeLeaf*)duplicateFile {
-    [self setTag:tagTreeItemDuplicate];
-    if (self.nextDuplicate==nil)
+    if ([self nextDuplicate]==nil)
     {
         [self setNextDuplicate: duplicateFile];
         [duplicateFile setNextDuplicate: self];
@@ -100,11 +93,11 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 }
 
 -(BOOL) hasDuplicates {
-    return (self.nextDuplicate==nil ? NO : YES);
+    return ([self nextDuplicate] == nil ? NO : YES);
 }
 
 -(NSUInteger) duplicateCount {
-    if (self.nextDuplicate==nil)
+    if ([self nextDuplicate] == nil)
         return 0;
     else
     {
@@ -150,22 +143,53 @@ const NSString *keyDupRefresh    = @"TStoreDupRefreshKey";
 
 -(void) resetDuplicates {
     TreeLeaf *cursor=self;
-    TreeLeaf *tmp=self;
-    while (cursor.nextDuplicate!=nil) {
-        tmp = cursor;
+    while (cursor.duplicateInfo!=nil) {
+        TreeLeaf *tmp = cursor;
         cursor = cursor.nextDuplicate;
-        [tmp setNextDuplicate: nil]; // Deletes the nextDuplicate AND refreshCount
+        [tmp->_store removeObjectForKey:keyDuplicateInfo]; // Deletes the nextDuplicate AND refreshCount
     }
-    [self resetTag:tagTreeItemDuplicate];
 }
 
 -(void) setDuplicateRefreshCount:(NSInteger)count {
-    [self addToStore: [NSDictionary dictionaryWithObjectsAndKeys:
-                       [NSNumber numberWithInteger:count ], keyDupRefresh, nil]];
+    [self duplicateInfo]->dupRefreshCounter = count;
 }
 
 -(NSInteger) duplicateRefreshCount {
-    return [[self->_store objectForKey:keyDupRefresh] integerValue];
+    return [self duplicateInfo]->dupRefreshCounter;
+}
+
+/*-(NSData*) MD5 {
+    NSData * MD5;
+    // First Check gets the duplicate Info
+    DuplicateInformation *dupInfo = [self duplicateInfo];
+    if (dupInfo) {
+        if (dupInfo->valid_md5) {
+            return [[NSData alloc] initWithBytes:dupInfo->md5_checksum length:16];
+        }
+    }
+    else {
+        dupInfo = [self startDuplicateInfo];
+    }
+    calculateMD5(self->_url, dupInfo->md5_checksum);
+    return [[NSData alloc] initWithBytes:dupInfo->md5_checksum length:16];
+}*/
+
+-(BOOL) compareMD5checksum: (TreeLeaf *)otherFile {
+    DuplicateInformation *myDupInfo = [self duplicateInfo];
+    DuplicateInformation *otherDupInfo = [otherFile duplicateInfo];
+    
+    if (myDupInfo    == nil)
+        myDupInfo = [self startDuplicateInfo];
+    if (otherDupInfo == nil)
+        otherDupInfo = [otherFile startDuplicateInfo];
+    
+    if (myDupInfo->valid_md5 == NO)
+        calculateMD5(self->_url, myDupInfo->md5_checksum);
+    if (otherDupInfo->valid_md5 == NO)
+        calculateMD5(self->_url, otherDupInfo->md5_checksum);
+    
+    int res = memcmp(myDupInfo->md5_checksum, otherDupInfo->md5_checksum, 16);
+    return  res==0 ? YES : NO;
 }
 
 

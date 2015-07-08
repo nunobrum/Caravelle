@@ -23,7 +23,6 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemReadOnly  = (1UL << 7),
     tagTreeItemNew       = (1UL << 8),
     tagTreeItemHidden    = (1UL << 9),
-    tagTreeItemDuplicate = (1UL << 10),
     tagTreeItemAll       = NSUIntegerMax
 };
 
