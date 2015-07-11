@@ -347,7 +347,7 @@
         }
 
         // Sort Data
-        if (self.sortAndGroupDescriptors!=nil) {
+        if ((self.sortAndGroupDescriptors!=nil) && ([self.sortAndGroupDescriptors count] > 0)) {
             NSArray *sortedArray = [tableData sortedArrayUsingDescriptors:self.sortAndGroupDescriptors];
             tableData = [NSMutableArray arrayWithArray:sortedArray];
 
@@ -396,8 +396,14 @@
     }
 
     NSString * key = keyForColID(colID);
+    NodeSortDescriptor *sortDesc;
+    if ([colID isEqualToString:COL_FILENAME])
+        sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending comparator:^NSComparisonResult(id obj1, id obj2) {
+            return [obj1 compare:obj2 options:NSNumericSearch];
+        }];
+    else
+        sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
 
-    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
     if (grouping==YES) {
         NSString *groupingSelector =[[columnInfo() objectForKey:colID] objectForKey:COL_GROUPING_KEY];
         if (groupingSelector==nil) {
