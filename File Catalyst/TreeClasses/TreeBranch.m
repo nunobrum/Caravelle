@@ -153,7 +153,7 @@ NSArray* treesContaining(NSArray* treeItems) {
         }
         _children=nil;
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about c
+    [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
 }
 
 
@@ -193,6 +193,14 @@ NSArray* treesContaining(NSArray* treeItems) {
     return automatic;
 }
 
+-(void) notifyDidChangeTreeBranchPropertyChildren {
+    TreeItem *cursor = self;
+    do {
+        [cursor didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        cursor = cursor.parent;
+    } while (cursor!=nil);
+}
+
 #pragma mark -
 #pragma mark Children Manipulation
 
@@ -201,7 +209,7 @@ NSArray* treesContaining(NSArray* treeItems) {
     @synchronized(self) {
         self->_children = children;
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
 
 }
 
@@ -214,7 +222,7 @@ NSArray* treesContaining(NSArray* treeItems) {
         //}
         [self->_children removeObject:item];
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
     return YES;
 }
 
@@ -226,7 +234,7 @@ NSArray* treesContaining(NSArray* treeItems) {
         [self->_children addObject:item];
         [item setParent:self];
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
     return YES;
 }
 
@@ -250,6 +258,9 @@ NSArray* treesContaining(NSArray* treeItems) {
                 if ([item isKindOfClass:[TreeBranch class]]) {
                     [(TreeBranch*)item releaseChildren];
                 }
+                else if ([item isKindOfClass:[TreeLeaf class]]) {
+                    [(TreeLeaf*)item removeFromDuplicateRing]; // Removing itself from the duplicate lists
+                }
                 //NSLog(@"Removing %@", [item path]);
                 [_children removeObjectAtIndex:index];
             }
@@ -257,7 +268,7 @@ NSArray* treesContaining(NSArray* treeItems) {
                 index++;
         }
     //}
-    //[self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+    //[self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
 }
 
 #pragma mark -
@@ -347,9 +358,10 @@ NSArray* treesContaining(NSArray* treeItems) {
 
                 for (NSURL *theURL in dirEnumerator) {
                     bool found=NO;
+                    NSString *urlName = [theURL lastPathComponent];
                     /* Retrieves existing Element */
                     for (TreeItem *it in self->_children) {
-                        if ([[it path] isEqualToString:[theURL path]]) { // Comparing paths as comparing URLs is dangerous
+                        if ([[it name] isEqualToString:urlName]) { // Comparing paths as comparing URLs is dangerous
                             // Found it
                             // resets the release Flag. Doesn't neet to be deleted
                             [it resetTag:tagTreeItemRelease];
@@ -382,7 +394,7 @@ NSArray* treesContaining(NSArray* treeItems) {
                 [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
                 [self setTag: tagTreeItemScanned];
             } // synchronized
-            [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+            [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
         }];
     }
 }
@@ -555,7 +567,7 @@ NSArray* treesContaining(NSArray* treeItems) {
             }
         }
     }
-    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
 }
 
 -(void) _expandTreeInUndeveloppedBranches {
@@ -580,7 +592,7 @@ NSArray* treesContaining(NSArray* treeItems) {
         [self _expandTreeInUndeveloppedBranches];
         // Now sends a dummy change so that the tree is updated
         [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
     }];
     [op setQueuePriority:NSOperationQueuePriorityVeryLow];
     [op setThreadPriority:0.5];
@@ -1271,7 +1283,7 @@ NSArray* treesContaining(NSArray* treeItems) {
                 }
             }
         }
-        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
     }
 }
 
@@ -1321,7 +1333,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 //        @synchronized (self) {
 //            [_children removeObjectsAtIndexes:indexesToDelete];
 //        }
-//        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
+//        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
 //    }
 //}
 

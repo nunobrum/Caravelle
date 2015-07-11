@@ -9,6 +9,8 @@
 #import "TreeLeaf.h"
 #import "DuplicateInformation.h"
 
+// TODO:!!? Store this in the NSURL instead of _store
+
 
 const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 //const NSString *keyMD5Info       = @"TStoreMD5Key";
@@ -130,14 +132,16 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     if (self.nextDuplicate!=nil)
     {
         TreeLeaf *cursor=self.nextDuplicate;
-        if (cursor == self.nextDuplicate) // In case if only one duplicate
+        if (cursor.nextDuplicate == self) { // In case if only one duplicate
             [cursor setNextDuplicate: nil];   // Deletes the chain
+        }
         else {
             while (cursor.nextDuplicate!=self) { // searches for the file that references this one
                 cursor = cursor.nextDuplicate;
             }
             [cursor setNextDuplicate: self.nextDuplicate]; // and bypasses this one
         }
+        [self setNextDuplicate:nil];
     }
 }
 

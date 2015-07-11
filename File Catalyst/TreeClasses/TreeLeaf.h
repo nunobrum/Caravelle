@@ -23,6 +23,7 @@
 -(TreeLeaf*) nextDuplicate;
 -(NSUInteger) duplicateCount;
 -(NSMutableArray*) duplicateList;
+-(void) removeFromDuplicateRing;
 -(void) resetDuplicates;
 -(void) setDuplicateRefreshCount:(NSInteger)count;
 -(NSInteger) duplicateRefreshCount;

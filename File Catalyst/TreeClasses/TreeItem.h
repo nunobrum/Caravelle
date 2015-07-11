@@ -65,6 +65,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 
 -(ItemType)  itemType;
 -(NSString*) name;
+-(void) setName:(NSString*)newName;
 -(NSDate*)   date_modified;
 -(NSDate*)   date_accessed;
 -(NSDate*)   date_created;

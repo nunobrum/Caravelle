@@ -88,9 +88,10 @@
 
 -(void) setUrl:(NSURL*)url {
     // The tags shoud be set here accordingly to the information got from URL
-    //[self willChangeValueForKey:@"url"];
+    // TODO: When the Icon View is changed to a data Delegate model instead of the ArrayController, these notifications can be removed.
     [self willChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change
     self->_url = url;
+    self->_nameCache = nil; // Will force update in the next call to name
     [self updateFileTags];
     //[self didChangeValueForKey:@"url"];
     [self didChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change.
@@ -160,6 +161,7 @@
         }
         operation = opRename;
     }
+    self.nameCache = newName;
     NSArray *items = [NSArray arrayWithObject:self];
 
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:

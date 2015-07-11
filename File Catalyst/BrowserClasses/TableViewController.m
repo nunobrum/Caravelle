@@ -399,23 +399,11 @@
             operation = opNewFolder;
         }
         else {
-            // If the name didn't change. Do Nothing
-            if ([[sender stringValue] isEqualToString:[item name]]) {
-                return;
+            // If the name did change. Do rename.
+            if (![[sender stringValue] isEqualToString:[item name]]) {
+                [item setName: [sender stringValue]];
             }
-            operation = opRename;
         }
-        NSArray *items = [NSArray arrayWithObject:item];
-
-        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              items, kDFOFilesKey,
-                              operation, kDFOOperationKey,
-                              [sender stringValue], kDFORenameFileKey,
-                              self.currentNode, kDFODestinationKey,
-                              //self, kFromObjectKey,
-                              nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
-
     }
 }
 
