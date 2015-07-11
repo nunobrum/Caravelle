@@ -13,6 +13,8 @@ extern NSString *notificationDirectoryChange;
 extern NSString *pathsKey;
 extern NSString *flagsKey;
 
+extern void LogFlags(unsigned int flags); // Debug Function
+
 extern void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBackInfo, size_t numEvents, void *eventPaths, const FSEventStreamEventFlags eventFlags[], const FSEventStreamEventId eventIds[]);
 
 @interface FileSystemMonitoring : NSThread {

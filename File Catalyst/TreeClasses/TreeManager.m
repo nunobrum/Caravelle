@@ -248,6 +248,7 @@ TreeManager *appTreeManager;
          */
 
         //NSLog(@"FSEvent %@", changedPath);
+        //LogFlags(flags);
 
         id itemToRefresh = [self getNodeWithPath:changedPath];
         if (itemToRefresh==nil) {// This could be because its a new File

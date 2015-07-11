@@ -299,9 +299,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
                 if (sizeOfFilesInBranch==-1) // Undefined
                     sizeString = @"--";
-                else
+                else {
+                    // !! Beware to change this if ever the transformer changes
+                    //NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:@"size"];
+                    //sizeString = [trans transformedValue:sizeOfFilesInBranch];
                     sizeString = [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile];
-                
+                }
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
                 subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,sizeString];
                 
@@ -575,7 +578,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - Path Bar Handling
 -(TreeBranch*) treeNodeSelected {
-    return _treeNodeSelected;
+    return self->_treeNodeSelected;
 }
 
 -(void) setCurrentNode:(TreeBranch*) branch {
@@ -1386,6 +1389,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     if (self.detailedViewController!=nil)
         [self.detailedViewController setCurrentNode:nil]; // This cleans the view
+    self->_treeNodeSelected = nil;
 }
 
 
