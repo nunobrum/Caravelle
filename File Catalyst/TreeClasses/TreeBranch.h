@@ -77,10 +77,7 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(TreeItem*) addURL:(NSURL*)theURL;
 -(BOOL)      addTreeItem:(TreeItem*) item;
 
-//-(NSMutableArray*) branchesInBranch;
 
-//-(FileCollection*) duplicatesInNode;
-//-(FileCollection*) duplicatesInBranch;
 -(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 
@@ -89,6 +86,8 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(void) forceRefreshOnBranch;
 -(void) calculateSize;
 -(void) expandAllBranches;
+
+-(void) notifyDidChangeTreeBranchPropertyChildren;
 
 // Private Method
 //-(void) _harvestItemsInBranch:(NSMutableArray*)collector;

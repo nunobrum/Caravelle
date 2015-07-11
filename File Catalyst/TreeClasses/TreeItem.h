@@ -60,6 +60,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 +(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
 - (TreeItem*) root;
 
+-(void) notifyChange;
+
 -(NSArray *) treeComponents;
 -(NSArray *) treeComponentsToParent:(id)parent;
 
