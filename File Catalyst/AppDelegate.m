@@ -164,7 +164,22 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 #pragma mark auxiliary functions
 
--(void) goHome:(id) view {
+-(void) prepareView:(id<MYViewProtocol>) view withItem:(TreeBranch*)item {
+    [(BrowserController*)view removeAll];
+    [(BrowserController*)view setViewMode:BViewBrowserMode ];
+    [(BrowserController*)view setViewType:BViewTypeVoid];
+    [(BrowserController*)view setFlatView:NO];
+    [[[(BrowserController*)view detailedViewController] sortAndGroupDescriptors] removeAllObjects];
+    [[(BrowserController*)view detailedViewController] makeSortOnColID:COL_FILENAME
+                                                             ascending:YES
+                                                              grouping:NO];
+    [(BrowserController*)view addTreeRoot: item];
+    [(BrowserController*)view selectFirstRoot]; // This calls a refresh
+    //[(BrowserController*)view refresh];
+    
+}
+
+-(void) goHome:(id<MYViewProtocol>) view {
     // Change the selected view to go Home in Browser Mode
     if ([view isKindOfClass:[BrowserController class]]) {
         NSString *homepath;
@@ -192,12 +207,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             // and this homepath is authorized
             if (url_allowed!=nil) {
                 id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed];
-                [(BrowserController*)view removeAll];
-                [(BrowserController*)view setViewMode:BViewBrowserMode ];
-                [(BrowserController*)view setViewType:BViewTypeVoid];
-                [(BrowserController*)view addTreeRoot: item];
-                [(BrowserController*)view selectFirstRoot];
-                [(BrowserController*)view refresh];
+                [self prepareView:view withItem:item];
                 return;
             }
             else {
@@ -219,13 +229,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
         url = [NSURL fileURLWithPath:homepath isDirectory:YES];
         id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
-        [(BrowserController*)view removeAll];
-        [(BrowserController*)view setViewMode:BViewBrowserMode];
-        [(BrowserController*)view setViewType:BViewTypeVoid];
-        [(BrowserController*)view addTreeRoot: item];
-        [(BrowserController*)view selectFirstRoot];
+        [self prepareView:view withItem:item];
 #endif
-        [(BrowserController*)view refresh];
     }
 }
 
@@ -1239,9 +1244,19 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     
     if (applicationMode==ApplicationModeDuplicate &&
         mode != applicationMode) {
-        [self goHome:myLeftView];
+        NSArray *roots = [myLeftView roots];
+        if ([roots count]>=1) {
+            [self prepareView:myLeftView withItem:roots[0]];
+            if ([roots count]>=2)
+                [self prepareView:myRightView withItem:roots[1]];
+            else
+                [self goHome:myRightView];
+        }
+        else {
+            [self goHome:myLeftView];
+            [self goHome:myRightView];
+        }
     }
-
     if (mode == ApplicationMode1View) {
         if (myRightView!=nil && panelCount == 2) {
             [myLeftView setName:@"Single" TwinName:nil];
@@ -1671,7 +1686,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 }
                 else {
                     NSInteger count = [[info objectForKey:kDFOOkCountKey] integerValue];
-                    statusText  = [NSString stringWithFormat:@"%lu Files copied", count];
+                    statusText  = [NSString stringWithFormat:@"%lu Files renamed", count];
                 }
             }
             else if ([operation isEqualToString:opNewFolder]) {
@@ -1974,15 +1989,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
     
     // Setting the current node in the list
-    NSArray *selectedNodes;
-    if (applicationMode == ApplicationMode1View)
-        selectedNodes = [NSArray arrayWithObjects:[[myLeftView treeNodeSelected] url], nil];
-    else
-        selectedNodes = [NSArray arrayWithObjects:[[myLeftView treeNodeSelected] url],[[myRightView treeNodeSelected] url],nil];
-                                          
-    [self->duplicateSettingsWindow setURLs:selectedNodes];
+    NSMutableArray *selectedNodes;
+    selectedNodes = [NSMutableArray arrayWithObjects:[[myLeftView treeNodeSelected] url], nil]; // Prefering this form since the url can be nil
+    if (applicationMode != ApplicationMode1View) {
+        if ([[myLeftView treeNodeSelected] compareTo:[myRightView treeNodeSelected]] == pathsHaveNoRelation)
+            [selectedNodes addObject:[[myRightView treeNodeSelected] url]];
+    }
     [duplicateSettingsWindow showWindow:self];
-
+    [self->duplicateSettingsWindow setURLs:selectedNodes];
 }
 
 /* invoked by Find Duplicates Dialog on OK Button */

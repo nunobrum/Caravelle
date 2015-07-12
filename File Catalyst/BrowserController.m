@@ -306,7 +306,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                     sizeString = [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile];
                 }
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
-                subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,sizeString];
+                if (fileCount==0)
+                    subTitle = @"No Files";
+                else
+                    subTitle = [NSString stringWithFormat:@"%ld Files %@", fileCount,sizeString];
                 
                 [(FolderCellView*)cellView setSubTitle:subTitle];
                 [(FolderCellView*)cellView setURL:[item url]];
@@ -1369,6 +1372,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     [BaseDirectoriesArray addObjectsFromArray:baseDirectories];
 }
 
+-(NSMutableArray*) roots {
+    return BaseDirectoriesArray;
+}
+
 -(void) removeRootWithIndex:(NSInteger)index {
     if (index < [BaseDirectoriesArray count]) {
         [BaseDirectoriesArray removeObjectAtIndex:index];
@@ -1518,6 +1525,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         TreeBranch *root = BaseDirectoriesArray[0];
         _rootNodeSelected = root;
         [self setCurrentNode:root];
+        [self stopBusyAnimations];
         [self outlineSelectExpandNode:root];
         [self.detailedViewController refresh];
         return root;

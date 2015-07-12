@@ -132,6 +132,7 @@
 -(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) setRoots:(NSArray*) baseDirectories;
+-(NSMutableArray*) roots;
 -(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 //-(void) removeSelectedDirectory;
