@@ -9,7 +9,7 @@
 #import "FileOperation.h"
 #import "FileUtils.h"
 
-//#define UPDATE_TREE
+#define UPDATE_TREE
 
 
 NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
@@ -174,7 +174,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 if (newURL) {
                                     okCount++;
 #ifdef UPDATE_TREE
-                                    [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                    [dest addURL:newURL];
 #endif //UPDATE_TREE
                                 }
                                 else
@@ -192,7 +192,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                     if (newURL) {
                                         okCount++;
 #ifdef UPDATE_TREE
-                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        [dest addURL:newURL];
 #endif //UPDATE_TREE
                                     }
                                     else
@@ -204,7 +204,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                     if (newURL) {
                                         okCount++;
 #ifdef UPDATE_TREE
-                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        [dest addURL:newURL];
                                         // Remove itself from the former parent
                                         [(TreeItem*)item removeItem];
 #endif //UPDATE_TREE
@@ -224,7 +224,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                     if (newURL) {
                                         okCount++;
 #ifdef UPDATE_TREE
-                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        [dest addURL:newURL];
 #endif //UPDATE_TREE
                                     }
                                     else
@@ -236,7 +236,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                     if (newURL) {
                                         okCount++;
 #ifdef UPDATE_TREE
-                                        [dest addChild:[TreeItem treeItemForURL:newURL parent:dest]];
+                                        [dest addURL:newURL];
                                         // Remove itself from the former parent
                                         [(TreeItem*)item removeItem];
 #endif //UPDATE_TREE
