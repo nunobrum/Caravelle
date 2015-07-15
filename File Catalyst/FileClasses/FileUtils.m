@@ -11,31 +11,31 @@
 #include "MD5.h"
 
 
-BOOL isFolder(NSURL* url) {
+inline BOOL isFolder(NSURL* url) {
     NSNumber *isDirectory;
     [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:NULL];
     return [isDirectory boolValue];
 }
 
-BOOL isPackage(NSURL* url) {
+inline BOOL isPackage(NSURL* url) {
     NSNumber *isPackage;
     [url getResourceValue:&isPackage forKey:NSURLIsPackageKey error:NULL];
     return [isPackage boolValue];
 }
 
-BOOL isWritable(NSURL* url) {
+inline BOOL isWritable(NSURL* url) {
     NSNumber *isWritable;
     [url getResourceValue:&isWritable forKey:NSURLIsWritableKey error:NULL];
     return [isWritable boolValue];
 }
 
-BOOL isHidden(NSURL* url) {
+inline BOOL isHidden(NSURL* url) {
     NSNumber *isHidden;
     [url getResourceValue:&isHidden forKey:NSURLIsHiddenKey error:NULL];
     return [isHidden boolValue];
 }
 
-NSString* utiType(NSURL* url) {
+inline NSString* utiType(NSURL* url) {
     NSString *typeIdentifier=nil;
     [url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL];
     return typeIdentifier;
@@ -46,7 +46,7 @@ inline NSString* name(NSURL*url) {
     return [url lastPathComponent];
 }
 
-inline NSDate* dateModified(NSURL*url) {
+NSDate* dateModified(NSURL*url) {
     NSDate *date=nil;
     NSError *errorCode;
     if ([url isFileURL]) {
@@ -75,7 +75,7 @@ inline long long filesize(NSURL*url) {
     return [filesize longLongValue];
 }
 
-BOOL fileURLlExists(NSURL *url) {
+inline BOOL fileURLlExists(NSURL *url) {
     return [[NSFileManager defaultManager]fileExistsAtPath:[url path]];
 }
 

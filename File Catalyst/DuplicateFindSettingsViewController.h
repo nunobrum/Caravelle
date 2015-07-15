@@ -11,6 +11,11 @@
 extern NSString *notificationStartDuplicateFind;
 
 @interface DuplicateFindSettingsViewController : NSWindowController
+
+/*
+ * General Pane
+ */
+
 @property (strong) IBOutlet NSTableView *folderList;
 
 @property (strong) IBOutlet NSButton *cbFileName;
@@ -23,6 +28,21 @@ extern NSString *notificationStartDuplicateFind;
 @property (strong) IBOutlet NSObjectController *objectController;
 
 @property (strong) IBOutlet NSArrayController *pathContents;
+
+/*
+ * Filters Panel
+ */
+@property (weak) IBOutlet NSTextField *ebFilenameFilter;
+@property (weak) IBOutlet NSTextField *ebMinimumFileSize;
+@property (weak) IBOutlet NSComboBox *cbMinimumFileSizeUnit;
+@property (weak) IBOutlet NSDatePicker *dpStartDateFilter;
+@property (weak) IBOutlet NSDatePicker *dpEndDateFilter;
+
+
+
+/*
+ * Actions
+ */
 
 - (IBAction)addRemoveFolderButton:(id)sender;
 - (IBAction)pbOKAction:(id)sender;

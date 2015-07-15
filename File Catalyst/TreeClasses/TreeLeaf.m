@@ -31,6 +31,10 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 }
 
 
+-(BOOL) removeItem {
+    [self removeFromDuplicateRing];
+    return [super removeItem];
+}
 /*
  * Storage Support
  */

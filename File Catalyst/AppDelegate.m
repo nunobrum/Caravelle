@@ -14,7 +14,7 @@
 #import "TreeManager.h"
 #import "TreeRoot.h"
 #import "searchTree.h"
-#import "FileUtils.h" // The app shouldnt use functions that access the system directly. Rather go through the Operations
+#import "FileUtils.h" // TODO: The app shouldnt use functions that access the system directly. Rather go through the Operations
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
 #import "FileExistsChoice.h"
@@ -1285,8 +1285,15 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             }
         }
         else {
-            if (applicationMode==ApplicationModeDuplicate)
-                [self goHome:myRightView];
+            //if (applicationMode==ApplicationModeDuplicate)
+                // This is handled above
+            
+            if (applicationMode == ApplicationModePreview) {
+                // TODO: code here for Application Mode Preview
+            }
+            else if (applicationMode == ApplicationModeSync){
+                // TODO: develop this if needed
+            }
         }
         applicationMode = mode;
     }
@@ -1696,6 +1703,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 else
                     statusText = @"Folder Created";
             }
+            else if ([operation isEqualToString:opDuplicateFind]) {
+                if (OK)
+                    statusText = @"No Duplicates Found";
+                else {
+                    NSInteger count = [(NSArray*)[info objectForKey:kDuplicateList] count];
+                    statusText = [NSString stringWithFormat:@"%ld Duplicates Found", count];
+                }
+            }
             else {
                 NSLog(@"Unkown operation"); // Unknown operation
             }
@@ -1794,10 +1809,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else {
             TreeBranch *dest = [info objectForKey:kDFODestinationKey];
-            // a URL arrived here in one of the tests. Placing here an assertion to trap it if it happens again
-            NSAssert([dest isKindOfClass:[TreeBranch class]], @"ERROR. Received an object that isn't a TreeBranch");
-            [dest setTag:tagTreeItemDirty];
-            [dest refreshContents];
+            if (dest) {// a URL arrived here in one of the tests. Placing here an assertion to trap it if it happens again
+                NSAssert([dest isKindOfClass:[TreeBranch class]], @"ERROR. Received an object that isn't a TreeBranch");
+                [dest setTag:tagTreeItemDirty];
+                [dest refreshContents];
+            }
         }
     }
 
@@ -1827,6 +1843,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
 
     }
+    [self statusUpdate:nil];
 }
 
 - (void) anyThread_operationFinished:(NSNotification*) theNotification {
@@ -1888,31 +1905,40 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                                 rightTitle, nil];
     NSString *windowTitle = [titleComponents componentsJoinedByString:@" - "];
     [[self myWindow] setTitle:windowTitle];
+    
+    NSArray *selectedFiles;
 
     //if ([selView isKindOfClass:[BrowserController class]]) {
 
-    NSArray *selectedFiles = [self.selectedView getSelectedItems];
+    if (applicationMode==ApplicationModeDuplicate) {
+        id selView = [theNotification object];
+        //Check first if the object sending the
+        if (selView==nil) { // Sent by Operation Finished
+            //Defaults to the LeftView
+            selView = myLeftView;
+        }
+        if (selView==myLeftView || selView ==myLeftView.detailedViewController) {
+            selectedFiles = [selView getSelectedItems];
+            dupShow++;
+            FileCollection *selectedDuplicates = [[FileCollection alloc] init];
+            for (TreeItem *item in selectedFiles ) {
+                FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
+                [selectedDuplicates concatenateFileCollection: itemDups];
+            }
+            /* will now populate the Right View with Duplicates*/
+            [selectedDuplicatesRoot setFileCollection:selectedDuplicates];
+            [myRightView refresh];
+        }
+    }
+    
+    selectedFiles = [self.selectedView getSelectedItems];
 
     if (selectedFiles != nil) {
         NSInteger num_files=0;
         NSInteger files_size=0;
         NSInteger folders_size=0;
         NSInteger num_directories=0;
-        if (applicationMode==ApplicationModeDuplicate) {
-            id selView = [theNotification object];
-            //Check first if the object sending the
-            if (selView==myLeftView || selView ==myLeftView.detailedViewController) {
-                dupShow++;
-                FileCollection *selectedDuplicates = [[FileCollection alloc] init];
-                for (TreeItem *item in selectedFiles ) {
-                    FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
-                    [selectedDuplicates concatenateFileCollection: itemDups];
-                }
-                /* will now populate the Right View with Duplicates*/
-                [selectedDuplicatesRoot setFileCollection:selectedDuplicates];
-                [myRightView refresh];
-            }
-        }
+        
         if ([selectedFiles count]==0) {
             statusText = [NSString stringWithFormat:@"No Files Selected"];
         }
@@ -2054,6 +2080,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSArray *rootDirs = [info objectForKey:kRootsList];
     [myLeftView setRoots:rootDirs];
     [myLeftView stopBusyAnimations];
+    if (pendingStatusMessages==nil)
+        pendingStatusMessages = [NSMutableArray array];
+    [pendingStatusMessages addObject:info];
+    [self _operationsInfoFired:nil];
     
     selectedDuplicatesRoot = [[TreeRoot alloc] init];
     [selectedDuplicatesRoot setName:@"Duplicates"];
@@ -2221,6 +2251,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     if (pendingOperationErrors==nil) {
         pendingOperationErrors = [[NSMutableArray alloc] init];
     }
+    // TODO: !!!!! Only add errors that can be treated.
     [pendingOperationErrors addObject:note];
     if ([pendingOperationErrors count] == 1) { // Call it if there aren't more pending
         [self processNextError:nil]; // Nil is passed on purpose to trigger the reading of the error queue

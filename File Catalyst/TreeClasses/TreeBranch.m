@@ -340,7 +340,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 }
 
 - (void) refreshContents {
-    //NSLog(@"TreeBranch.refreshContentsOnQueue:(%@)", [self path]);
+    NSLog(@"TreeBranch.refreshContents:(%@)", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
         [browserQueue addOperationWithBlock:^(void) { 
@@ -745,13 +745,13 @@ NSArray* treesContaining(NSArray* treeItems) {
     return newObj; /* Stops here Nothing More to Add */
 }
 
--(BOOL) addTreeItem:(TreeItem*) item {
+-(BOOL) addTreeItem:(TreeItem*) newItem {
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
     }
     TreeBranch *cursor = self;
-    NSArray *pcomps = [item.url pathComponents];
+    NSArray *pcomps = [newItem.url pathComponents];
     unsigned long level = [[_url pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
@@ -778,16 +778,19 @@ NSArray* treesContaining(NSArray* treeItems) {
         }
         else {
             // Will ignore this child
-            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", item.url, pathURL);
+            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", newItem.url, pathURL);
             return NO;
         }
         level++;
     }
     // Checks if it exists ; The base class is provided TreeItem so that it can match anything
+    TreeItem *replacedChild = [self childWithName:[newItem name] class:[TreeLeaf class]];
     @synchronized(cursor) {
-        [cursor->_children addObject:item];
+        if (replacedChild)
+            [cursor->_children removeObject:replacedChild];
+        [cursor->_children addObject:newItem];
     }
-    [item setParent:cursor];
+    [newItem setParent:cursor];
     return YES; /* Stops here Nothing More to Add */
 }
 
@@ -1223,8 +1226,11 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(void) prepareForDuplicates {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item isKindOfClass:[TreeLeaf class]]) {
+            if ([item respondsToSelector:@selector(resetDuplicates)]) {
                 [(TreeLeaf*)item resetDuplicates];
+            }
+            else if ([item respondsToSelector:@selector(prepareForDuplicates)]) {
+                [(TreeBranch*)item prepareForDuplicates];
             }
         }
     }

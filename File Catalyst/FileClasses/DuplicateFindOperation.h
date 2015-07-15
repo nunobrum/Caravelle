@@ -13,6 +13,10 @@ extern NSString *notificationDuplicateFindFinish;
 extern NSString *kDuplicateList;
 extern NSString *kRootsList;
 
+extern NSString *kFilenameFilter;
+extern NSString *kMinSizeFilter;
+extern NSString *kStartDateFilter;
+extern NSString *kEndDateFilter;
 
 @interface DuplicateFindOperation : AppOperation
 

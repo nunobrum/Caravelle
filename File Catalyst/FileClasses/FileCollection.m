@@ -78,12 +78,16 @@
         enumPathCompare test = path_relation(path, finfo.path);
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
+            if (cursor==nil)
+                NSLog(@"Deleted Duplicate %@",finfo.url);
+            else {
             while (cursor!=finfo) {
                 if ([cursor duplicateRefreshCount]!=dCount) {
                     [newCollection addFile:cursor];
                     [cursor setDuplicateRefreshCount: dCount];
                 }
                 cursor = [cursor nextDuplicate];
+            }
             }
         }
     }

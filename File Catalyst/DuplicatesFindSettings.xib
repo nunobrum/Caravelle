@@ -11,6 +11,11 @@
                 <outlet property="cbFileDate" destination="X53-fW-uEU" id="pNw-y7-yA8"/>
                 <outlet property="cbFileName" destination="WUj-X9-Dj9" id="1F4-wd-kaK"/>
                 <outlet property="cbFileSize" destination="SyL-or-fyH" id="YLa-l4-MOt"/>
+                <outlet property="cbMinimumFileSizeUnit" destination="9Fu-iV-Isc" id="E8R-bm-Afn"/>
+                <outlet property="dpEndDateFilter" destination="LYF-uj-tES" id="V8s-dp-G0i"/>
+                <outlet property="dpStartDateFilter" destination="7va-7M-h9H" id="RJD-MG-Srp"/>
+                <outlet property="ebFilenameFilter" destination="Ghe-TZ-5Vv" id="7zh-Xs-1lu"/>
+                <outlet property="ebMinimumFileSize" destination="N6F-Ur-LxT" id="RPd-dZ-FTV"/>
                 <outlet property="folderList" destination="WUc-LE-lTE" id="is2-qT-Uqt"/>
                 <outlet property="objectController" destination="WyN-Pv-1ez" id="mVh-iV-jEb"/>
                 <outlet property="pathContents" destination="Hj2-tu-aZ1" id="O50-js-kVR"/>
@@ -247,12 +252,107 @@ DQ
                                 <view key="view" id="1I6-ZW-xqi">
                                     <rect key="frame" x="10" y="33" width="217" height="174"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                            </tabViewItem>
-                            <tabViewItem label="Meta Data" identifier="" id="17a-MB-JZv">
-                                <view key="view" id="Vun-Ye-0Dh">
-                                    <rect key="frame" x="10" y="33" width="217" height="174"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <subviews>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xnt-hX-0d0">
+                                            <rect key="frame" x="3" y="154" width="116" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Filename contains" id="vjO-dd-l4l">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ghe-TZ-5Vv">
+                                            <rect key="frame" x="5" y="130" width="195" height="22"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="*.*" drawsBackground="YES" id="MMl-o8-I7q">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vV9-5O-Llt">
+                                            <rect key="frame" x="3" y="106" width="116" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Minimum File Size" id="G7e-U7-SYx">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zoD-VV-Q5d">
+                                            <rect key="frame" x="3" y="51" width="72" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Start Date*" id="za9-lK-vFN">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Zzg-st-Dmq">
+                                            <rect key="frame" x="3" y="21" width="72" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="End Date*" id="J5A-Dm-9Xv">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LOg-eM-cSB">
+                                            <rect key="frame" x="12" y="-2" width="129" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="* Last File Access" id="yFw-cL-FDr">
+                                                <font key="font" metaFont="smallSystem"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="N6F-Ur-LxT">
+                                            <rect key="frame" x="21" y="80" width="105" height="22"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="right" placeholderString="0" drawsBackground="YES" id="g4L-0d-liQ">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                        <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Fu-iV-Isc">
+                                            <rect key="frame" x="134" y="77" width="75" height="26"/>
+                                            <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Bytes" drawsBackground="YES" numberOfVisibleItems="5" id="4x0-Tm-aao">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                <objectValues>
+                                                    <string>Bytes</string>
+                                                    <string>kBytes</string>
+                                                    <string>MBytes</string>
+                                                    <string>GBytes</string>
+                                                </objectValues>
+                                            </comboBoxCell>
+                                        </comboBox>
+                                        <datePicker verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7va-7M-h9H">
+                                            <rect key="frame" x="99" y="48" width="104" height="27"/>
+                                            <datePickerCell key="cell" borderStyle="bezel" alignment="left" id="LGY-sT-iIs">
+                                                <font key="font" metaFont="system"/>
+                                                <date key="date" timeIntervalSinceReferenceDate="458492400">
+                                                    <!--2015-07-13 15:00:00 +0000-->
+                                                </date>
+                                                <date key="minDate" timeIntervalSinceReferenceDate="-978307200">
+                                                    <!--1970-01-01 00:00:00 +0000-->
+                                                </date>
+                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            </datePickerCell>
+                                        </datePicker>
+                                        <datePicker verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LYF-uj-tES">
+                                            <rect key="frame" x="99" y="18" width="104" height="27"/>
+                                            <datePickerCell key="cell" borderStyle="bezel" alignment="left" id="Csy-J8-61i">
+                                                <font key="font" metaFont="system"/>
+                                                <calendarDate key="date" timeIntervalSinceReferenceDate="-595929600" calendarFormat="%Y-%m-%d %H:%M:%S %z">
+                                                    <!--1982-02-12 16:00:00 +0000-->
+                                                    <timeZone key="timeZone" name="US/Pacific"/>
+                                                </calendarDate>
+                                                <date key="minDate" timeIntervalSinceReferenceDate="-978307200">
+                                                    <!--1970-01-01 00:00:00 +0000-->
+                                                </date>
+                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            </datePickerCell>
+                                        </datePicker>
+                                    </subviews>
                                 </view>
                             </tabViewItem>
                         </tabViewItems>

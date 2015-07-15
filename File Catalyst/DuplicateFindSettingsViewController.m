@@ -9,6 +9,7 @@
 #import "Definitions.h"
 #import "AppOperation.h"
 #import "TreeManager.h"
+#import "DuplicateFindOperation.h"
 
 NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 
@@ -72,8 +73,20 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         // register it with the name that we refer to it with
         [NSValueTransformer setValueTransformer:fToCTransformer
                                         forName:@"ValueToBoolean"];
+        
     }
     return self;
+}
+
+-(void) windowDidLoad {
+    [super windowDidLoad];
+    // Initializing Date Pickers
+    [self.dpEndDateFilter setDateValue: [NSDate date]];
+    [self.dpStartDateFilter setDateValue: [self.dpStartDateFilter minDate]];
+    
+    // Size Selector
+    [self.cbMinimumFileSizeUnit selectItemAtIndex:0];
+    
 }
 
 - (IBAction)addRemoveFolderButton:(id)sender {
@@ -120,6 +133,15 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 
     }
     NSNumber *Options = [NSNumber numberWithInteger:options];
+    NSString *filenameFilter = [self.ebFilenameFilter stringValue];
+    NSInteger fileSizeFilter = [self.ebMinimumFileSize integerValue];
+    NSInteger pow1000 = [self.cbMinimumFileSizeUnit indexOfSelectedItem];
+    for (int i=0; i < pow1000; i++) {
+        fileSizeFilter *= 1000;
+    }
+    NSDate * startDateFilter = [self.dpStartDateFilter dateValue];
+    NSDate * endDateFilter   = [self.dpEndDateFilter  dateValue];
+    
     NSMutableArray *pathList = [[NSMutableArray alloc] init];
     for (NSDictionary *objdict in [self.pathContents content]) {
         [pathList addObject: [objdict objectForKey:@"path"]];
@@ -128,6 +150,10 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
                           Options, kOptionsKey,
                           pathList, kRootPathKey,
                           opDuplicateFind, kDFOOperationKey,
+                          filenameFilter, kFilenameFilter,
+                          [NSNumber numberWithInteger:fileSizeFilter], kMinSizeFilter,
+                          startDateFilter, kStartDateFilter,
+                          endDateFilter, kEndDateFilter,
                           nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationStartDuplicateFind object:nil userInfo:info];
     [self close];

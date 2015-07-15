@@ -98,7 +98,7 @@ extern NSArray* treesContaining(NSArray* treeItems);
 
 -(BOOL) addChild:(TreeItem*)item;
 -(BOOL) removeChild:(TreeItem*)item;
--(BOOL) moveChild:(TreeItem*)item;
+//-(BOOL) moveChild:(TreeItem*)item;
 
 /*
  * Tag manipulation

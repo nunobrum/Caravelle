@@ -16,8 +16,11 @@
 NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 NSString *kDuplicateList = @"DuplicateList";
 NSString *kRootsList = @"RootsList";
-
 NSString *kOptionsKey = @"Options";
+NSString *kFilenameFilter  = @"FilenameFilter";
+NSString *kMinSizeFilter   = @"MinSizeFilter";
+NSString *kStartDateFilter = @"StartDateFilter";
+NSString *kEndDateFilter   = @"EndDateFilter";
 
 @interface DuplicateFindOperation () {
     NSUInteger dupGroup;
@@ -49,154 +52,177 @@ NSString *kOptionsKey = @"Options";
         //    // This will eliminate any results from previous searches
         //    [filecollection resetDuplicateLists];
         //
+        long long int minFileSize = [[_taskInfo objectForKey:kMinSizeFilter] longLongValue];
+        NSDate *startDateFilter = [_taskInfo objectForKey:kStartDateFilter];
+        NSDate *endDateFilter   = [_taskInfo objectForKey:kEndDateFilter];
+        NSString *fileFilter    = [_taskInfo objectForKey:kFilenameFilter];
         
-        
-        if (![self isCancelled])
-        {
-            EnumDuplicateOptions options = [Options integerValue];
-            NSMutableArray *duplicates = [[NSMutableArray new] init]; // A rough estimation
-            NSMutableArray *fileArray = [[NSMutableArray new] init];
-            counter = 0;
-            for (NSURL *url in urls) {
-                /* Abort if problem detected */
-                if (url==nil) {
-                    /* Should it be informed, or just skip it */
-                }
-                else {
-                    NSLog(@"DuplicateFindOperation: Starting Duplicate Scan");
-                    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
-                    for (NSURL *theURL in dirEnumerator) {
-                        if (!isFolder(theURL)) {
+        NSPredicate *namePredicate;
+        if ([fileFilter length]==0)
+            namePredicate = nil;
+        else {
+            // Testing the presence of wildcards
+            NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
+            NSRange wildcardsPresent = [fileFilter rangeOfCharacterFromSet:wildcards];
+            if (wildcardsPresent.location == NSNotFound)  // Wildcard not present
+                namePredicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@", fileFilter];
+            else
+                namePredicate = [NSPredicate predicateWithFormat:@"name like[cd] %@", fileFilter];
+        }
+        EnumDuplicateOptions options = [Options integerValue];
+        NSMutableArray *duplicates = [[NSMutableArray new] init]; // A rough estimation
+        NSMutableArray *fileArray = [[NSMutableArray new] init];
+        counter = 0;
+        for (NSURL *url in urls) {
+            /* Abort if problem detected */
+            if (url==nil) {
+                /* Should it be informed, or just skip it */
+            }
+            else {
+                NSLog(@"DuplicateFindOperation: Starting Duplicate Scan");
+                MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
+                for (NSURL *theURL in dirEnumerator) {
+                    if ((!isFolder(theURL)) &&
+                        (filesize(theURL) >= minFileSize)) {
+                        NSDate *fileDate = dateModified(theURL);
+                        if ([startDateFilter laterDate:fileDate] && [endDateFilter earlierDate:fileDate]) {
                             TreeLeaf *fi = [TreeLeaf treeItemForURL:theURL parent:nil];
-                            [fileArray addObject:fi];
-
-                            if ([self isCancelled])
-                                break;
-                            counter++;
-                        } // for
-                    }
-                    if ([self isCancelled])
-                        break;
-                }
-                if (![self isCancelled])
-                {
-                    statusCount = 2; // Second Phase
-                    counter=0;
-                    NSUInteger j;
-                    BOOL duplicate;
-                    NSLog(@"DuplicateFindOperation: Ordering Files");
-                    if (options & DupCompareSize) {
-                        [fileArray sortUsingComparator:^NSComparisonResult(TreeLeaf* obj1, TreeLeaf* obj2) {
-                            if (obj1.filesize == obj2.filesize)
-                                return NSOrderedSame;
-                            else if (obj1.filesize > obj2.filesize)
-                                return NSOrderedAscending;  // Order from biggest to smaller
-                            else
-                                return NSOrderedDescending;
-                            
-                        }];
-                    }
-                    NSLog(@"DuplicateFindOperation: File Matching");
-                    TreeLeaf *FileA, *FileB;
-                    while ([fileArray count]>1) {
-                        counter++;
+                            if (namePredicate==nil || [namePredicate evaluateWithObject:fi]) {
+                                [fileArray addObject:fi];
+                                 //NSLog(@"accepted %@",theURL);
+                            }
+                            //else { NSLog(@"rejected %@",theURL); }
+                        }
                         if ([self isCancelled])
                             break;
-                        FileA = [fileArray objectAtIndex:0];
-                        NSUInteger max_files = [fileArray count];
-                        //NSLog(@"%@",FileA.url);
-                        for (j=1; j<max_files; j++) {
-                            FileB = [fileArray objectAtIndex:j];
-                            duplicate = TRUE;
-                            if (options & DupCompareName && [FileA.name isEqualToString: FileB.name]==FALSE) {
-                                duplicate= FALSE;
-                            }
-                            else if (options & DupCompareSize) {
-                                if (FileA.filesize > FileB.filesize) {
-                                    j = max_files; // This will make the inner cycle to end
-                                    duplicate = FALSE;
-                                }
-                                else if (FileA.filesize < FileB.filesize) {
-                                    duplicate = FALSE; // This in principle will never happen if the files are sorted by size
-                                }
-                            }
-                            if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA.date_modified isEqualToDate:FileB.date_modified]==FALSE) {
-                                duplicate = FALSE;
-                            }
-                            if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {
-                                // First tries to make the difference using MD5 checksums
-                                if ([FileA compareMD5checksum:FileB]==FALSE) {
-                                    duplicate = FALSE;
-                                }
-                                else {
-                                    // If the MD5 Matches, then it must compare the full contents
-                                    if (options&DupCompareContentsFull) {
-                                        duplicate = [[NSFileManager defaultManager] contentsEqualAtPath:FileA.path andPath:FileB.path];
-                                        
-                                    }
-                                }
-                            }
-                            if (duplicate) {
-                                //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
-                                [FileA addDuplicate:FileB];
-                                // The cycle will end once one duplicate is found
-                                // This must be like this in order for the
-                                // Duplicate ring to work, and it makes the algorithm much faster
-                                j = max_files;
-                            }
-                        }
-                        if ([FileA hasDuplicates]==YES) {
-                            [duplicates addObject:FileA];
-                            dupGroup++;
-                        }
-                        else {
-                            // Delete the Duplicate Information Key
-                            [FileA resetDuplicates];
-                            [FileA purgeURLCacheResources];
-                        }
-                        [fileArray removeObjectAtIndex:0];
-                    }
+                        counter++;
+                    } // for
                 }
+                if ([self isCancelled])
+                    break;
             }
             if (![self isCancelled])
             {
-                statusCount = 3;
-                NSLog(@"DuplicateFindOperation: Creating Tree");
-                NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
-                for (NSURL *url in urls) {
-                    // Will distribute the duplicates on the tree received
-                    // 1. Will ask the Tree Manager for this URL,
-                    TreeBranch *workBranch = [appTreeManager addTreeItemWithURL:url];
-                    [workBranch prepareForDuplicates];
-                    [roots addObject:workBranch];
+                statusCount = 2; // Second Phase
+                counter=0;
+                NSUInteger j;
+                BOOL duplicate;
+                NSLog(@"DuplicateFindOperation: Ordering Files");
+                if (options & DupCompareSize) {
+                    [fileArray sortUsingComparator:^NSComparisonResult(TreeLeaf* obj1, TreeLeaf* obj2) {
+                        if (obj1.filesize == obj2.filesize)
+                            return NSOrderedSame;
+                        else if (obj1.filesize > obj2.filesize)
+                            return NSOrderedAscending;  // Order from biggest to smaller
+                        else
+                            return NSOrderedDescending;
+                        
+                    }];
                 }
-                counter = 0;
-                if ([duplicates count]==0)
-                    duplicates = nil;
-                else {
-                    // Adding the duplicates to the new Tree
-                    for (TreeLeaf *item in duplicates) {
-                        for (TreeBranch *root in roots) {
-                            if ([root canContainURL:item.url]) {
-                                [root addTreeItem:item];
-                                break;
+                NSLog(@"DuplicateFindOperation: File Matching");
+                TreeLeaf *FileA, *FileB;
+                while ([fileArray count]>1) {
+                    counter++;
+                    if ([self isCancelled])
+                        break;
+                    FileA = [fileArray objectAtIndex:0];
+                    NSUInteger max_files = [fileArray count];
+                    //NSLog(@"%@",FileA.url);
+                    for (j=1; j<max_files; j++) {
+                        FileB = [fileArray objectAtIndex:j];
+                        duplicate = TRUE;
+                        if (options & DupCompareName && [FileA.name isEqualToString: FileB.name]==FALSE) {
+                            duplicate= FALSE;
+                        }
+                        else if (options & DupCompareSize) {
+                            if (FileA.filesize > FileB.filesize) {
+                                j = max_files; // This will make the inner cycle to end
+                                duplicate = FALSE;
+                            }
+                            else if (FileA.filesize < FileB.filesize) {
+                                duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                             }
                         }
-                        counter++;
+                        if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA.date_modified isEqualToDate:FileB.date_modified]==FALSE) {
+                            duplicate = FALSE;
+                        }
+                        if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {
+                            // First tries to make the difference using MD5 checksums
+                            if ([FileA compareMD5checksum:FileB]==FALSE) {
+                                duplicate = FALSE;
+                            }
+                            else {
+                                // If the MD5 Matches, then it must compare the full contents
+                                if (options&DupCompareContentsFull) {
+                                    duplicate = [[NSFileManager defaultManager] contentsEqualAtPath:FileA.path andPath:FileB.path];
+                                    
+                                }
+                            }
+                        }
+                        if (duplicate) {
+                            //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
+                            [FileA addDuplicate:FileB];
+                            // The cycle will end once one duplicate is found
+                            // This must be like this in order for the
+                            // Duplicate ring to work, and it makes the algorithm much faster
+                            j = max_files;
+                        }
                     }
+                    if ([FileA hasDuplicates]==YES) {
+                        [duplicates addObject:FileA];
+                        dupGroup++;
+                    }
+                    else {
+                        // Delete the Duplicate Information Key
+                        [FileA resetDuplicates];
+                        [FileA purgeURLCacheResources];
+                    }
+                    [fileArray removeObjectAtIndex:0];
                 }
-                // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
-                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      roots, kRootsList,
-                                      duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
-                                      nil];
-                // for the purposes of this sample, we're just going to post the information
-                // out there and let whoever might be interested receive it (in our case its MyWindowController).
-                //
-                [_taskInfo addEntriesFromDictionary:info];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
             }
         }
+        if (![self isCancelled])
+        {
+            statusCount = 3;
+            NSLog(@"DuplicateFindOperation: Creating Tree");
+            NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
+            for (NSURL *url in urls) {
+                // Will distribute the duplicates on the tree received
+                // 1. Will ask the Tree Manager for this URL,
+                TreeBranch *workBranch = [appTreeManager addTreeItemWithURL:url];
+                [workBranch prepareForDuplicates];
+                [roots addObject:workBranch];
+            }
+            counter = 0;
+            if ([duplicates count]==0) {
+                duplicates = nil;
+            }
+            else {
+                // Adding the duplicates to the new Tree
+                for (TreeLeaf *item in duplicates) {
+                    for (TreeBranch *root in roots) {
+                        if ([root canContainURL:item.url]) {
+                            [root addTreeItem:item];
+                            break;
+                        }
+                    }
+                    counter++;
+                }
+            }
+            // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
+            NSNumber *OK = [NSNumber numberWithBool:[duplicates count]==0];
+            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  OK, kDFOOkKey,
+                                  roots, kRootsList,
+                                  duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
+                                  nil];
+            // for the purposes of this sample, we're just going to post the information
+            // out there and let whoever might be interested receive it (in our case its MyWindowController).
+            //
+            [_taskInfo addEntriesFromDictionary:info];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
+        }
+        
     }
 }
 @end
