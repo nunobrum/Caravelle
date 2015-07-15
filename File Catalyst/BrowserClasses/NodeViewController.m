@@ -280,7 +280,7 @@
         /* if the filter is empty, doesn't filter anything */
         if (_filterText!=nil && [_filterText length]!=0) {
             NSPredicate *predicate;
-            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"*=~|&<>"];
+            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
             if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
                 // TODO:!! Tokenize the filter field to make inteligent searches
                 // TODO:!! find Titles and replace for selectors.
@@ -293,10 +293,17 @@
                 /*@finally {}*/
             }
             else {
+                
                 NSString *attributeName  = @"name";
-                NSString *attributeValue = [NSString stringWithFormat:@"*%@*", self.filterText];
-                predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
-                               attributeName, attributeValue];
+                NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
+                NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
+                
+                if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
+                    predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
+                                   attributeName, self.filterText];
+                else
+                    predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
+                                   attributeName, self.filterText];
             }
             if (applicationMode == ApplicationModeDuplicate) {
                 if (self.filesInSubdirsDisplayed==YES) {
