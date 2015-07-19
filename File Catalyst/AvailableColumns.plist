@@ -15,6 +15,45 @@
 		<key>grouping</key>
 		<string>size</string>
 	</dict>
+	<key>COL_SIZE_ALLOCATED</key>
+	<dict>
+		<key>title</key>
+		<string>Space on Disk</string>
+		<key>accessor</key>
+		<string>allocatedSize</string>
+		<key>transformer</key>
+		<string>size</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>size</string>
+	</dict>
+	<key>COL_SIZE_TOTAL</key>
+	<dict>
+		<key>title</key>
+		<string>Size incl. Metadata</string>
+		<key>accessor</key>
+		<string>totalSize</string>
+		<key>transformer</key>
+		<string>size</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>size</string>
+	</dict>
+	<key>COL_SIZE_TOTAL_ALLOCATED</key>
+	<dict>
+		<key>title</key>
+		<string>Space on Disk incl. Metadata</string>
+		<key>accessor</key>
+		<string>totalAllocatedSize</string>
+		<key>transformer</key>
+		<string>size</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>size</string>
+	</dict>
 	<key>COL_PATH</key>
 	<dict>
 		<key>title</key>
@@ -82,6 +121,17 @@
 		<string>location</string>
 		<key>grouping</key>
 		<string>string</string>
+	</dict>
+	<key>COL_DUP_GROUP</key>
+	<dict>
+		<key>title</key>
+		<string>Dup. Group ID</string>
+		<key>accessor</key>
+		<string>duplicateGroup</string>
+		<key>transformer</key>
+		<string>integer</string>
+		<key>grouping</key>
+		<string>integer</string>
 	</dict>
 </dict>
 </plist>

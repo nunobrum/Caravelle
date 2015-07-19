@@ -79,6 +79,27 @@ DateToStringTransformer *DateToDayTransformer() {
 
 @end
 
+@implementation IntegerToStringTransformer
+
++ (Class)transformedValueClass {
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+    return NO;
+}
+
+- (id)transformedValue:(id)value {
+    if ([value isKindOfClass:[NSNumber class] ]) {
+        long long v = [(NSNumber*) value longLongValue];
+        return [NSString stringWithFormat:@"%lld",v];
+    }
+    return nil;
+}
+
+@end
+
+
 @implementation BookmarkToPathTransformer
 
 + (Class)transformedValueClass {

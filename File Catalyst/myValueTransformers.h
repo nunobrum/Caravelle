@@ -20,6 +20,10 @@
 
 @end
 
+@interface IntegerToStringTransformer : NSValueTransformer
+
+@end
+
 extern DateToStringTransformer *DateToYearTransformer();
 extern DateToStringTransformer *DateToMonthTransformer();
 extern DateToStringTransformer *DateToDayTransformer();
@@ -31,3 +35,4 @@ extern DateToStringTransformer *DateToDayTransformer();
 @interface MySelectedColorTransformer : NSValueTransformer
 
 @end
+
