@@ -61,6 +61,11 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     return dupInfo;
 }
 
+-(void) removeDuplicateInfo {
+    // It will remove the current duplicate, if exists
+    [self->_store removeObjectForKey:keyDuplicateInfo];
+}
+
 -(TreeLeaf*) nextDuplicate {
     DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
     if (dupInfo)
@@ -69,32 +74,45 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
         return nil;
 }
 
--(void) setNextDuplicate:(TreeLeaf*) item {
-    if (item==nil) {
-        // It will remove the current duplicate, if exists
-        [self->_store removeObjectForKey:keyDuplicateInfo];
+/*-(void) setNextDuplicate:(TreeLeaf*)item group:(NSUInteger)group {
+    assert(item!=nil);
+    // Get nextDuplicate and create it if Needed
+    DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+    if (dupInfo == nil) {
+        dupInfo = [self startDuplicateInfo];
     }
-    else {
-        // Get nextDuplicate and create it if Needed
-        DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
-        if (dupInfo == nil) {
-            dupInfo = [self startDuplicateInfo];
-        }
-        [dupInfo setNextDuplicate:item];
-    }
-}
+    [dupInfo setNextDuplicate:item];
+    dupInfo->dupGroup = group;
+}*/
 
 // The duplicates are organized on a ring fashion for memory space efficiency
 // FileA -> FileB -> FileC-> FileA
--(void) addDuplicate:(TreeLeaf*)duplicateFile {
-    if ([self nextDuplicate]==nil)
+// This function returns an indicator whether the group should be incremented, if it is a new group of duplicates
+
+-(BOOL) addDuplicate:(TreeLeaf*)duplicateFile group:(NSUInteger)group {
+    DuplicateInformation *selfdi = [self duplicateInfo];
+    if (selfdi == nil) {
+        selfdi = [self startDuplicateInfo];
+    }
+    
+    DuplicateInformation *dupdi = [duplicateFile duplicateInfo];
+    if (dupdi == nil) {
+        dupdi = [duplicateFile startDuplicateInfo];
+    }
+    
+    if ([selfdi nextDuplicate]==nil) // A new set of duplicates
     {
-        [self setNextDuplicate: duplicateFile];
-        [duplicateFile setNextDuplicate: self];
+        [selfdi setNextDuplicate:duplicateFile];
+        selfdi->dupGroup = group;
+        [dupdi setNextDuplicate:self];
+        dupdi->dupGroup = group;
+        return YES;
     }
     else {
-        [duplicateFile setNextDuplicate: [self nextDuplicate]];
-        [self setNextDuplicate: duplicateFile];
+        [dupdi setNextDuplicate:[selfdi nextDuplicate]];
+        dupdi->dupGroup = selfdi->dupGroup;
+        [selfdi setNextDuplicate:duplicateFile];
+        return  NO;
     }
 }
 
@@ -137,15 +155,15 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     {
         TreeLeaf *cursor=self.nextDuplicate;
         if (cursor.nextDuplicate == self) { // In case if only one duplicate
-            [cursor setNextDuplicate: nil];   // Deletes the chain
+            [cursor removeDuplicateInfo];   // Deletes the chain
         }
         else {
             while (cursor.nextDuplicate!=self) { // searches for the file that references this one
                 cursor = cursor.nextDuplicate;
             }
-            [cursor setNextDuplicate: self.nextDuplicate]; // and bypasses this one
+            [cursor.duplicateInfo setNextDuplicate: self.nextDuplicate ]; // and bypasses this one
         }
-        [self setNextDuplicate:nil];
+        [self removeDuplicateInfo];
     }
 }
 
@@ -166,6 +184,15 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 -(NSInteger) duplicateRefreshCount {
     return [self duplicateInfo]->dupRefreshCounter;
 }
+
+-(NSNumber*)duplicateGroup {
+    DuplicateInformation *dupInfo = [self->_store objectForKey:keyDuplicateInfo];
+    if (dupInfo)
+        return [NSNumber numberWithInteger:dupInfo->dupGroup];
+    else
+        return [super duplicateGroup];
+}
+
 
 /*-(NSData*) MD5 {
     NSData * MD5;

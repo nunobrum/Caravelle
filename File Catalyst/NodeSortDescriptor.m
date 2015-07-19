@@ -10,6 +10,7 @@
 #import "SizeGrouping.h"
 #import "StringGrouping.h"
 #import "DateGrouping.h"
+#import "NumberGrouping.h"
 
 /*
  * Grouping of elements
@@ -35,6 +36,8 @@
             self->_groupObject = [[DateGrouping alloc] initWithAscending:self.ascending];
         else if ([groupID isEqualToString:@"string"])
             self->_groupObject = [[StringGrouping alloc] initWithAscending:self.ascending];
+        else if ([groupID isEqualToString:@"integer"])
+            self->_groupObject = [[NumberGrouping alloc] initWithAscending:self.ascending];
         else {
             NSLog(@"NodeSortDescriptor.setGrouping:using:  Not supported");
             self->_grouping = NO;

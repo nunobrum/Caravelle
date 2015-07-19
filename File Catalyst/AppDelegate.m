@@ -148,11 +148,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         appTreeManager = [[TreeManager alloc] init];
         [appFileManager setDelegate:self];
         /* Registering Transformers */
-        NSValueTransformer *date_transformer = [[DateToStringTransformer alloc] init];
+        DateToStringTransformer *date_transformer = [[DateToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:date_transformer forName:@"date"];
-        NSValueTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
+        SizeToStringTransformer *size_transformer = [[SizeToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
-
+        IntegerToStringTransformer *integer_transformer = [[IntegerToStringTransformer alloc] init];
+        [NSValueTransformer setValueTransformer:integer_transformer forName:@"integer"];
+        
         isCutPending = NO; // used for the Cut to Clipboard operations.
         isApplicationTerminating = NO; // to inform that the application should quit after all processes are finished.
         isWindowClosing = NO;
@@ -1178,6 +1180,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (IBAction)operationCancel:(id)sender {
     NSArray *operations = [operationsQueue operations];
     [(NSOperation*)[operations firstObject] cancel];
+    [self.statusProgressLabel setTextColor:[NSColor redColor]];
+    [self.statusProgressLabel setStringValue: @"Canceling..."];
 }
 
 - (IBAction)cut:(id)sender {
@@ -1630,6 +1634,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];
+    [self.statusProgressLabel setTextColor:[NSColor blueColor]];
     [self.statusProgressLabel setStringValue: operationStatus];
     [self.statusCancelButton setHidden:NO];
     statusTimeoutCounter = 0;
@@ -1704,11 +1709,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     statusText = @"Folder Created";
             }
             else if ([operation isEqualToString:opDuplicateFind]) {
-                if (OK)
-                    statusText = @"No Duplicates Found";
+                if (!OK)
+                    statusText = @"Duplicate Find Aborted";
                 else {
                     NSInteger count = [(NSArray*)[info objectForKey:kDuplicateList] count];
-                    statusText = [NSString stringWithFormat:@"%ld Duplicates Found", count];
+                    if (count==0)
+                        statusText = @"No Duplicates Found";
+                    else
+                        statusText = [NSString stringWithFormat:@"%ld Duplicates Found", count];
                 }
             }
             else {
@@ -2036,33 +2044,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
     else {
         
-        if (myRightView == nil) {
-            myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-            [myRightView setParentController:self];
-            [myLeftView setName:@"Left" TwinName:@"Right"];
-            [myRightView setName:@"Right" TwinName:@"Left"];
-            [_ContentSplitView addSubview:myRightView.view];
-        }
-        [myLeftView setViewMode:BViewDuplicateMode];
-        [myLeftView setViewType:BViewTypeTable];
-        // Activate the Tree View on the Left
-        [myLeftView setTreeViewCollapsed:NO];
-        // Make the FlatView and Group by Location
-        [myLeftView setFlatView:YES];
-        [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+        if (myRightView!=nil )
+            [myRightView startAllBusyAnimations];
         [myLeftView startAllBusyAnimations];
         
-        [myRightView setViewMode:BViewDuplicateMode];
-        [myRightView setViewType:BViewTypeTable];
-        // Deactivate the Tree View on the Left
-        [myRightView setTreeViewCollapsed:YES];
-        // Activate the Flat View
-        [myRightView setFlatView:YES];
-        // Group by Location
-        [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
-        [myRightView startAllBusyAnimations];
-        
-        applicationMode = ApplicationModeDuplicate;
         [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
         
         duplicates = [[FileCollection alloc] init];
@@ -2075,8 +2060,63 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
+
     NSDictionary *info = [theNotification userInfo];
-    [duplicates setFiles: [info objectForKey:kDuplicateList]];
+    BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
+    NSArray *duplicatedFileArray = [info objectForKey:kDuplicateList];
+    // Check if operation was not aborted
+    if (!OK || ([duplicatedFileArray count]==0)) {
+        // Reverts back to the previous view . Nothing is changed
+        [self.toolbarAppModeSelect setSelected:YES forSegment:applicationMode];
+        [myLeftView stopBusyAnimations];
+        [myRightView stopBusyAnimations];
+        if (OK) { // The operation was not cancelled.
+            // Display information that no duplicates were found
+            NSAlert *alert = [NSAlert alertWithMessageText:@"Congratulations !"
+                                             defaultButton:@"OK"
+                                           alternateButton:nil
+                                               otherButton:nil
+                                 informativeTextWithFormat:@"No Duplicate Files were found"];
+            [alert setAlertStyle:NSInformationalAlertStyle];
+            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        }
+        return;
+    }
+    
+    applicationMode = ApplicationModeDuplicate;
+    
+    // ___________________________________
+    // Prepare the view for Duplicate View
+    // -----------------------------------
+    if (myRightView == nil) {
+        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+        [myRightView setParentController:self];
+        [myLeftView setName:@"Left" TwinName:@"Right"];
+        [myRightView setName:@"Right" TwinName:@"Left"];
+        [_ContentSplitView addSubview:myRightView.view];
+    }
+    [myLeftView setViewMode:BViewDuplicateMode];
+    [myLeftView setViewType:BViewTypeTable];
+    // Activate the Tree View on the Left
+    [myLeftView setTreeViewCollapsed:NO];
+    // Make the FlatView and Group by Location
+    [myLeftView setFlatView:YES];
+    [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+    
+    [myRightView setViewMode:BViewDuplicateMode];
+    [myRightView setViewType:BViewTypeTable];
+    // Deactivate the Tree View on the Left
+    [myRightView setTreeViewCollapsed:YES];
+    // Activate the Flat View
+    [myRightView setFlatView:YES];
+    // Group by Location
+    [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+    
+    // ___________________________
+    // Setting the duplicate Files
+    // ---------------------------
+    
+    [duplicates setFiles: duplicatedFileArray];
     NSArray *rootDirs = [info objectForKey:kRootsList];
     [myLeftView setRoots:rootDirs];
     [myLeftView stopBusyAnimations];

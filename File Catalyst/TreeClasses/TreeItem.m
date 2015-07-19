@@ -281,7 +281,24 @@
     NSNumber *filesize;
     [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
     return filesize;
+}
 
+-(NSNumber*) allocatedSize {
+    NSNumber *filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLFileAllocatedSizeKey error:NULL];
+    return filesize;
+}
+
+-(NSNumber*) totalSize {
+    NSNumber *filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLTotalFileSizeKey error:NULL];
+    return filesize;
+}
+
+-(NSNumber*) totalAllocatedSize {
+    NSNumber *filesize;
+    [_url getResourceValue:&filesize     forKey:NSURLTotalFileAllocatedSizeKey error:NULL];
+    return filesize;
 }
 
 -(NSString*) fileKind {
@@ -483,6 +500,10 @@
 // This function is just a placeholder. It has to be overriden in Branches and Leafs
 -(BOOL) hasDuplicates {
     return NO;
+}
+
+-(NSNumber*)duplicateGroup {
+    return [NSNumber numberWithInt:0];
 }
 
 @end

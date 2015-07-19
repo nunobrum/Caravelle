@@ -148,7 +148,7 @@
         }
 
         else { // All other cases are handled here
-            if ([identifier isEqualToString:COL_SIZE]) {
+            if ([identifier hasPrefix:COL_SIZE]) { // SIZES
                 cellView = [aTableView makeViewWithIdentifier:COL_SIZE owner:self];
                 [((SizeTableCellView*)cellView)  stopAnimation];
 
@@ -192,7 +192,7 @@
                 else {
                     // If its the filesize and it wasn't found, ask for
                     // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
-                    if ([theFile isKindOfClass:[TreeBranch class]] && [identifier isEqualToString:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                    if ([theFile isKindOfClass:[TreeBranch class]] && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                         [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
                         [self->observedTreeItemsForSizeCalculation addObject:theFile];
                         cellView.textField.objectValue = @"";

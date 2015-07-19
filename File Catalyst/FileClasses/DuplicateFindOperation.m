@@ -23,7 +23,7 @@ NSString *kStartDateFilter = @"StartDateFilter";
 NSString *kEndDateFilter   = @"EndDateFilter";
 
 @interface DuplicateFindOperation () {
-    NSUInteger dupGroup;
+    NSUInteger dupCounter;
     NSUInteger counter;
 }
 
@@ -35,7 +35,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
     if (statusCount==1)
         return [NSString stringWithFormat:@"Indexed %lu files ", counter];
     else if (statusCount==2)
-        return [NSString stringWithFormat:@"%lu scanned, %lu duplicates", counter, dupGroup];
+        return [NSString stringWithFormat:@"%lu scanned, %lu duplicates", counter, dupCounter]; // One is subtracted since the counter is initialized as 1.
     else if (statusCount==3)
         return [NSString stringWithFormat:@"Finishing %lu", counter];
     else
@@ -44,9 +44,12 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 
 -(void) main {
     statusCount=1; // Indicates the first Phase
+    NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
+    NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
+    NSMutableArray *duplicates = [[NSMutableArray new] init]; 
+    
     if (![self isCancelled])
 	{
-        NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
         NSNumber *Options = [_taskInfo objectForKey: kOptionsKey];
 
         //    // This will eliminate any results from previous searches
@@ -70,7 +73,6 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                 namePredicate = [NSPredicate predicateWithFormat:@"name like[cd] %@", fileFilter];
         }
         EnumDuplicateOptions options = [Options integerValue];
-        NSMutableArray *duplicates = [[NSMutableArray new] init]; // A rough estimation
         NSMutableArray *fileArray = [[NSMutableArray new] init];
         counter = 0;
         for (NSURL *url in urls) {
@@ -103,21 +105,16 @@ NSString *kEndDateFilter   = @"EndDateFilter";
             }
             if (![self isCancelled])
             {
+                NSUInteger dupGroup = 1; // Starts at one since 0 is reserved for no Duplicates
+                dupCounter = 0;
                 statusCount = 2; // Second Phase
                 counter=0;
-                NSUInteger j;
+                NSUInteger j;  // Scan index
                 BOOL duplicate;
                 NSLog(@"DuplicateFindOperation: Ordering Files");
                 if (options & DupCompareSize) {
-                    [fileArray sortUsingComparator:^NSComparisonResult(TreeLeaf* obj1, TreeLeaf* obj2) {
-                        if (obj1.filesize == obj2.filesize)
-                            return NSOrderedSame;
-                        else if (obj1.filesize > obj2.filesize)
-                            return NSOrderedAscending;  // Order from biggest to smaller
-                        else
-                            return NSOrderedDescending;
-                        
-                    }];
+                    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"fileSize" ascending:NO];
+                    [fileArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
                 }
                 NSLog(@"DuplicateFindOperation: File Matching");
                 TreeLeaf *FileA, *FileB;
@@ -135,11 +132,12 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                             duplicate= FALSE;
                         }
                         else if (options & DupCompareSize) {
-                            if (FileA.filesize > FileB.filesize) {
+                            NSComparisonResult comp = [FileA.fileSize compare:FileB.fileSize];
+                            if (comp == NSOrderedAscending) { // FileA.fileSize > FileB.fileSize
                                 j = max_files; // This will make the inner cycle to end
                                 duplicate = FALSE;
                             }
-                            else if (FileA.filesize < FileB.filesize) {
+                            else if (comp == NSOrderedAscending) { // (FileA.fileSize < FileB.fileSize)
                                 duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                             }
                         }
@@ -161,16 +159,16 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                         }
                         if (duplicate) {
                             //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
-                            [FileA addDuplicate:FileB];
+                            if ([FileA addDuplicate:FileB group:dupGroup])
+                                dupGroup++;
                             // The cycle will end once one duplicate is found
-                            // This must be like this in order for the
-                            // Duplicate ring to work, and it makes the algorithm much faster
+                            // This simplifies the algorithm, but makes the group IDs more complex
                             j = max_files;
                         }
                     }
                     if ([FileA hasDuplicates]==YES) {
                         [duplicates addObject:FileA];
-                        dupGroup++;
+                        dupCounter++;
                     }
                     else {
                         // Delete the Duplicate Information Key
@@ -185,7 +183,6 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         {
             statusCount = 3;
             NSLog(@"DuplicateFindOperation: Creating Tree");
-            NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
             for (NSURL *url in urls) {
                 // Will distribute the duplicates on the tree received
                 // 1. Will ask the Tree Manager for this URL,
@@ -210,19 +207,21 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                 }
             }
             // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
-            NSNumber *OK = [NSNumber numberWithBool:[duplicates count]==0];
-            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  OK, kDFOOkKey,
-                                  roots, kRootsList,
-                                  duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
-                                  nil];
-            // for the purposes of this sample, we're just going to post the information
-            // out there and let whoever might be interested receive it (in our case its MyWindowController).
-            //
-            [_taskInfo addEntriesFromDictionary:info];
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
         }
-        
     }
+    NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          OK, kDFOOkKey,
+                          roots, kRootsList,
+                          duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
+                          nil];
+    // for the purposes of this sample, we're just going to post the information
+    // out there and let whoever might be interested receive it (in our case its MyWindowController).
+    //
+    [_taskInfo addEntriesFromDictionary:info];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDuplicateFindFinish object:nil userInfo:_taskInfo];
+    
+    
+
 }
 @end

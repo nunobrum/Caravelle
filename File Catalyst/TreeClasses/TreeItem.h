@@ -76,6 +76,9 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSImage*) image;
 -(long long) filesize ;
 -(NSNumber*) fileSize;
+-(NSNumber*) allocatedSize;
+-(NSNumber*) totalSize;
+-(NSNumber*) totalAllocatedSize;
 -(NSString*) fileKind;
 -(NSString*) hint;
 
@@ -114,6 +117,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(void) setValue:(id)value forUndefinedKey:(NSString *)key;
 
 -(BOOL) hasDuplicates;
+-(NSNumber*) duplicateGroup;
 
 
 @end

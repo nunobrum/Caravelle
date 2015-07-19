@@ -18,6 +18,7 @@
     md5_byte_t md5_checksum[16];
     bool valid_md5;
     NSUInteger dupRefreshCounter;
+    NSUInteger dupGroup;
 }
 
 @property TreeLeaf *nextDuplicate;

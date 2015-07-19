@@ -18,6 +18,7 @@
         _nextDuplicate = nil;
         dupRefreshCounter = 0;
         valid_md5 = FALSE;
+        dupGroup = 0;
     }
     return self;
 }

@@ -19,7 +19,7 @@
  */
 -(BOOL) compareMD5checksum: (TreeLeaf*)otherFile;
 
--(void) addDuplicate:(TreeLeaf*) duplicateFile;
+-(BOOL) addDuplicate:(TreeLeaf*) duplicateFile group:(NSUInteger)group;
 -(TreeLeaf*) nextDuplicate;
 -(NSUInteger) duplicateCount;
 -(NSMutableArray*) duplicateList;
