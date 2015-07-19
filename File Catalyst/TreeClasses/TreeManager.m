@@ -86,6 +86,11 @@ TreeManager *appTreeManager;
                 // If the path is a parent, then inherently it should be a Branch
                 answer = (TreeBranch*)[self sandboxTreeItemFromURL:url];
                 if (answer!=nil) {
+                    enumPathCompare comparison1 = url_relation([answer url], url);
+                    if (comparison1 == pathIsChild) {
+                        NSLog(@"A"); // If in the case that the user selected a parent of the desired URL
+                    }
+                    
                     BOOL OK = [self addTreeItem:item To:(TreeBranch*)answer];
                     if (OK) {
                         // answer can now replace item in iArray.
@@ -146,6 +151,11 @@ TreeManager *appTreeManager;
         //Start the loop
         [FSMonitorThread start];
     }
+    enumPathCompare comparison = url_relation([answer url], url);
+    if (comparison == pathIsChild) {
+        // If in the case that the user selected a parent of the desired URL
+        return (TreeBranch*)[answer getNodeWithURL:url];
+    }
     return answer;
 }
 
@@ -184,7 +194,7 @@ TreeManager *appTreeManager;
             if (child==nil) {
                 NSRange rng;
                 rng.location=0;
-                rng.length = level;
+                rng.length = level+1;
                 NSURL *newURL = [NSURL fileURLWithPathComponents:[pathComponents objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:rng]]];
                 child = [TreeItem treeItemForURL:newURL parent:cursor];
                 [child setTag:tagTreeItemDirty];
@@ -278,13 +288,14 @@ TreeManager *appTreeManager;
                     [itemToRefresh setTag:tagTreeItemDirty];
                     [itemToRefresh refreshContents];
                 }
-                // It will try to refresh the parent
-                id itemParent = [itemToRefresh parent];
-                if ([itemParent respondsToSelector:@selector(refreshContents)]) {
-                    [itemParent setTag:tagTreeItemDirty];
-                    [itemParent refreshContents];
+                else {
+                    // It will try to refresh the parent
+                    id itemParent = [itemToRefresh parent];
+                    if ([itemParent respondsToSelector:@selector(refreshContents)]) {
+                        [itemParent setTag:tagTreeItemDirty];
+                        [itemParent refreshContents];
+                    }
                 }
-
             }
         }
     }
@@ -414,12 +425,15 @@ TreeManager *appTreeManager;
     url_allowed = url;
 #endif
     if (url_allowed) {
-        if (NO == [[url path] isEqualToString:[url_allowed path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
-        // TODO: !!! NSAlert telling that the program will proceed with this new URL
+        enumPathCompare comp = url_relation(url_allowed, url);
+        if (comp==pathIsChild || comp == pathIsSame) {
+            answer = [TreeItem treeItemForURL:url_allowed parent:nil];
+            [answer setTag:tagTreeItemDirty]; // Forcing its update
         }
-        answer = [TreeItem treeItemForURL:url_allowed parent:nil];
-        [answer setTag:tagTreeItemDirty]; // Forcing its update
-
+        else {
+            // TODO: !!! NSAlert telling that the program will proceed with this new URL
+        }
+        
         // But will only return it if is a Branch Like
          /*{
                 TreeItem *ti;

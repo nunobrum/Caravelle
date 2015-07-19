@@ -15,6 +15,7 @@
 #import "PasteboardUtils.h"
 #import "NodeSortDescriptor.h"
 #import "BrowserController.h"
+#import "CalcFolderSizes.h"
 
 //#define COL_DATE_MOD @"COL_DATE_MODIFIED"
 //#define COL_SIZE     @"COL_SIZE"
@@ -543,9 +544,15 @@
     NSInteger rowToReload = [self->_displayedItems indexOfObject:object];
     if (rowToReload >=0  && rowToReload!=NSNotFound) {
         NSIndexSet *rowIndexes = [NSIndexSet indexSetWithIndex:rowToReload];
-        NSInteger colSize = [self.myTableView columnWithIdentifier:@"COL_SIZE"];
-        NSRange columnsRange = {colSize, 1 };
-        NSIndexSet *columnIndexes = [NSIndexSet indexSetWithIndexesInRange:columnsRange];
+        
+        NSMutableIndexSet *columnIndexes = [[NSMutableIndexSet alloc] init];
+        int index=0;
+        for (NSTableColumn * colID in [self.myTableView tableColumns]) {
+            if ([[colID identifier] hasPrefix:@"COL_SIZE"]) {
+                [columnIndexes addIndex:index];
+            }
+            index++;
+        }
         [_myTableView reloadDataForRowIndexes:rowIndexes columnIndexes:columnIndexes];
 
         // Now the observe can be removed
@@ -557,6 +564,28 @@
 }
 
 - (void) setCurrentNode:(TreeBranch*)branch {
+    //Unobserve Tree Items that were set for size calculation
+    for (TreeItem *item in self->observedTreeItemsForSizeCalculation) {
+        [item removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
+    }
+    if ([self->observedTreeItemsForSizeCalculation count]!=0) {
+        // Cancelling all pending
+        //NSLog(@"Canceling all size operations");
+        NSArray *operations = [lowPriorityQueue operations];
+        for (NSOperation *op in operations) {
+            if ([op isKindOfClass:[CalcFolderSizes class]]) {
+                TreeBranch *tb = [(CalcFolderSizes*)op item];
+                if (![tb containedInURL:branch.url]) {
+                    [op cancel];
+                    [tb sizeCalculationCancelled];
+                }
+                
+            }
+        }
+    }
+    [self->observedTreeItemsForSizeCalculation removeAllObjects];
+    
+    
     [super setCurrentNode:branch];
     if (branch==nil) {
         // Removing everything

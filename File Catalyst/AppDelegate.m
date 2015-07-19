@@ -1952,7 +1952,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else if ([selectedFiles count] == 1) {
             TreeItem *item = [selectedFiles objectAtIndex:0];
-            long long size = [item filesize];
+            long long size = [[item fileSize] longLongValue];
             NSString *sizeText;
             if (size != -1) {
                 sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]];
@@ -1979,11 +1979,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             for (TreeItem *item in selectedFiles ) {
                 if ([item itemType] == ItemTypeLeaf) {
                     num_files++;
-                    files_size += [(TreeLeaf*)item filesize];
+                    files_size += [[(TreeLeaf*)item fileSize] longLongValue];
                 }
                 else if ([item itemType] == ItemTypeBranch) {
                     num_directories++;
-                    folders_size += [(TreeBranch*)item filesize];
+                    folders_size += [[(TreeBranch*)item fileSize] longLongValue];
                 }
             }
 

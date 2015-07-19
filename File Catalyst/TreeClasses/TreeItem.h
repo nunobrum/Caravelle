@@ -23,6 +23,8 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemReadOnly  = (1UL << 7),
     tagTreeItemNew       = (1UL << 8),
     tagTreeItemHidden    = (1UL << 9),
+    tagTreeSizeCalcReq   = (1UL << 10), // Used to avoid multiple orders to size calculation
+    //tagTreeSizeCalcDone  = (1UL << 11),
     tagTreeItemAll       = NSUIntegerMax
 };
 
@@ -74,7 +76,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSString*) path ;
 -(NSString*) location;
 -(NSImage*) image;
--(long long) filesize ;
 -(NSNumber*) fileSize;
 -(NSNumber*) allocatedSize;
 -(NSNumber*) totalSize;

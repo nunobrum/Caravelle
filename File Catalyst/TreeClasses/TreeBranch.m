@@ -11,6 +11,7 @@
 #import "TreeLeaf.h"
 #import "MyDirectoryEnumerator.h"
 #import "TreeManager.h"
+#import "CalcFolderSizes.h"
 
 #import "definitions.h"
 #include "FileUtils.h"
@@ -130,7 +131,10 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
-    self->allocated_size = -1; // Attribute used to store the value of the computed folder size
+    self->size_files = -1; // Attribute used to store the value of the computed folder size
+    self->size_allocated = -1;
+    self->size_total = -1;
+    self->size_total_allocated = -1;
     return self;
 }
 
@@ -354,7 +358,10 @@ NSArray* treesContaining(NSArray* treeItems) {
                 for (TreeItem *item in _children) {
                     [item setTag:tagTreeItemRelease];
                 }
-                self->allocated_size = -1; // Invalidates the previous calculated size
+                self->size_files = -1; // Invalidates the previous calculated size
+                self->size_total = -1;
+                self->size_allocated = -1;
+                self->size_total_allocated = -1;
 
                 for (NSURL *theURL in dirEnumerator) {
                     bool found=NO;
@@ -376,7 +383,10 @@ NSArray* treesContaining(NSArray* treeItems) {
                             // NOTE: isKindOfClass is preferred over itemType.
                             if ([item isKindOfClass:[TreeBranch class]]) {
                                 [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
-                                ((TreeBranch*)item)->allocated_size = -1;
+                                ((TreeBranch*)item)->size_files = -1;
+                                ((TreeBranch*)item)->size_allocated = -1;
+                                ((TreeBranch*)item)->size_total = -1;
+                                ((TreeBranch*)item)->size_total_allocated = -1;
                             }
                             if (self->_children==nil)
                                 self->_children = [[NSMutableArray alloc] init];
@@ -425,7 +435,7 @@ NSArray* treesContaining(NSArray* treeItems) {
             for (TreeItem *item in self->_children) {
                 // NOTE: isKindOfClass is preferred over itemType.
                 if ([item isKindOfClass:[TreeBranch class]] &&
-                     ((TreeBranch*)item)->allocated_size == -1) {
+                     ((TreeBranch*)item)->size_files == -1) { // Only one of the sizes is tested. It's OK
                     all_sizes_available = NO;
                     break;
                 }
@@ -434,6 +444,7 @@ NSArray* treesContaining(NSArray* treeItems) {
     }
     if (all_sizes_available) { // Will update
         [self willChangeValueForKey:kvoTreeBranchPropertySize];
+        [self resetTag:tagTreeSizeCalcReq];
         [self didChangeValueForKey:kvoTreeBranchPropertySize];
         // and propagates to parent
         if (self->_parent)
@@ -441,51 +452,63 @@ NSArray* treesContaining(NSArray* treeItems) {
     }
 }
 
--(void) _computeAllocatedSize {
-    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
+-(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated {
+    [self willChangeValueForKey:kvoTreeBranchPropertySize];
+    @synchronized(self) {
+        self->size_files           = files;
+        self->size_allocated       = allocated;
+        self->size_total           = total;
+        self->size_total_allocated = totalallocated;
+        [self resetTag:tagTreeSizeCalcReq];
+    }
+    [self didChangeValueForKey:kvoTreeBranchPropertySize];
+    if (self->_parent) {
+        [(TreeBranch*)self->_parent _propagateSize];
+        // This will trigger a kvoTreeBranchPropertySize from the parent in case of
+        // completion of the directory size computation
+    }
+}
 
-        NSFileManager *localFileManager = [NSFileManager defaultManager];
-        NSArray *fieldsToGet = [NSArray arrayWithObjects:NSURLFileSizeKey, NSURLIsRegularFileKey, nil];
-        NSDirectoryEnumerator *treeEnum = [localFileManager enumeratorAtURL:self.url
-                                                 includingPropertiesForKeys:fieldsToGet
-                                                                    options:0
-                                                               errorHandler:nil];
-        long long total = 0;
-        for (NSURL *theURL in treeEnum) {
-            NSError *error;
-            NSDictionary *fields = [theURL resourceValuesForKeys:fieldsToGet error:&error];
-            if ([fields[NSURLIsRegularFileKey] boolValue]) {
-                total += [fields[NSURLFileSizeKey] longLongValue];
-            }
-        }
-
+-(void) sizeCalculationCancelled {
+    if ([self hasTags:tagTreeSizeCalcReq]) {
         [self willChangeValueForKey:kvoTreeBranchPropertySize];
-        self->allocated_size = total;
+        self->size_files           = -1;
+        self->size_allocated       = -1;
+        self->size_total           = -1;
+        self->size_total_allocated = -1;
+        [self resetTag:tagTreeSizeCalcReq];
         [self didChangeValueForKey:kvoTreeBranchPropertySize];
+        // and propagates to parent
         if (self->_parent) {
-            [(TreeBranch*)self->_parent _propagateSize];
-            // This will trigger a kvoTreeBranchPropertySize from the parent in case of
-            // completion of the directory size computation
+            [(TreeBranch*)self->_parent sizeCalculationCancelled];
         }
-    }];
+    }
+}
+
+-(void) _computeAllocatedSize {
+    CalcFolderSizes * op = [[CalcFolderSizes alloc] init];
+    [op setItem:self];
     [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [op setThreadPriority:0.3];
+    [op setThreadPriority:0.5];
     [lowPriorityQueue addOperation:op];
 }
 
 -(void) calculateSize {
-    if (self->_children!= nil) {
-        @synchronized(self) {
-            for (TreeItem *item in self->_children) {
-                // NOTE: isKindOfClass is preferred over itemType.
-                if ([item isKindOfClass:[TreeBranch class]]) {
-                    [(TreeBranch*)item calculateSize];
+    if ([self hasTags:tagTreeSizeCalcReq]==0) {
+        [self setTag:tagTreeSizeCalcReq];
+        if (self->_children!= nil) {
+            @synchronized(self) {
+                for (TreeItem *item in self->_children) {
+                    // NOTE: isKindOfClass is preferred over itemType.
+                    if ([item isKindOfClass:[TreeBranch class]]) {
+                        [(TreeBranch*)item calculateSize];
+                    }
                 }
             }
         }
-    }
-    else {
-        [self performSelector:@selector(_computeAllocatedSize)];
+        else {
+            [self performSelector:@selector(_computeAllocatedSize)];
+        }
     }
 }
 
@@ -805,44 +828,10 @@ NSArray* treesContaining(NSArray* treeItems) {
             for (TreeItem *item in self->_children) {
                 // NOTE: isKindOfClass is preferred over itemType.
                 if ([item isKindOfClass:[TreeBranch class]]) {
-                    total+=[item filesize];
+                    total+=[[item fileSize] longLongValue];
                 }
             }
         }
-    }
-    return total;
-}
-
-/* Computes the total size of all the files contains in all subdirectories */
-/* If one directory is not completed, it will return -1 which invalidates the sum */
--(long long) filesize {
-    long long total=0;
-    long long size;
-    if (self->_children!=nil) {
-        size = 0;
-        @synchronized(self) {
-            for (TreeItem *item in self->_children) {
-                size = [item filesize];
-                if (size>=0)
-                    total+= size;
-                else {
-                    size = -1;
-                    break;
-                }
-            }
-        }
-    }
-    else
-        size = -1;
-    // if the allocated size is calculated and the size not, use the allocated size
-    if (size == -1) {
-        if (self->allocated_size != -1)
-            total = self->allocated_size;
-        else
-            total = -1; // Invalidates this
-    }
-    else { // Successfully found the size of the Folder
-        self->allocated_size = total;
     }
     return total;
 }
@@ -850,11 +839,126 @@ NSArray* treesContaining(NSArray* treeItems) {
 /* Computes the total size of all the files contains in all subdirectories */
 /* If one directory is not completed, it will return nil which invalidates the sum */
 -(NSNumber*) fileSize {
-    long long size = [self filesize];
-    if (size==-1)
-        return nil;
-    return [NSNumber numberWithLongLong: size];
+    if (self->size_files == -1) {
+        long long total=0;
+        NSNumber *size = nil;
+        if (self->_children!=nil) {
+            @synchronized(self) {
+                for (TreeItem *item in self->_children) {
+                    size = [item fileSize] ;
+                    if (size) {
+                        total += [size longLongValue];
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        // if the allocated size is calculated and the size not, use the allocated size
+        if (size != nil) {
+            // Successfully found the size of the Folder
+            self->size_files = total;
+        }
+        else {
+            self->size_files = -1;
+            return nil;
+        }
+    }
+    return [NSNumber numberWithLongLong: self->size_files];
 }
+
+-(NSNumber*) allocatedSize {
+    if (self->size_allocated==-1) {
+        long long total=0;
+        NSNumber *size = nil;
+        if (self->_children!=nil) {
+            @synchronized(self) {
+                for (TreeItem *item in self->_children) {
+                    size = [item allocatedSize] ;
+                    if (size) {
+                        total += [size longLongValue];
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        // if the allocated size is calculated and the size not, use the allocated size
+        if (size != nil) {
+            // Successfully found the size of the Folder
+            self->size_allocated = total;
+        }
+        else {
+            self->size_allocated = -1;
+            return nil;
+        }
+    }
+    return [NSNumber numberWithLongLong: self->size_allocated];
+}
+
+-(NSNumber*) totalSize {
+    if (self->size_total==-1) {
+        long long total=0;
+        NSNumber *size = nil;
+        if (self->_children!=nil) {
+            @synchronized(self) {
+                for (TreeItem *item in self->_children) {
+                    size = [item totalSize] ;
+                    if (size) {
+                        total += [size longLongValue];
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        // if the allocated size is calculated and the size not, use the allocated size
+        if (size != nil) {
+            // Successfully found the size of the Folder
+            self->size_total = total;
+        }
+        else {
+            self->size_total = -1;
+            return nil;
+        }
+    }
+    return [NSNumber numberWithLongLong: self->size_total];
+}
+
+-(NSNumber*) totalAllocatedSize {
+    if (self->size_total_allocated==-1) {
+        long long total=0;
+        NSNumber *size = nil;
+        if (self->_children!=nil) {
+            @synchronized(self) {
+                for (TreeItem *item in self->_children) {
+                    size = [item totalAllocatedSize] ;
+                    if (size) {
+                        total += [size longLongValue];
+                    }
+                    else {
+                        break;
+                    }
+                }
+            }
+        }
+        // if the allocated size is calculated and the size not, use the allocated size
+        if (size != nil) {
+            // Successfully found the size of the Folder
+            self->size_total_allocated = total;
+        }
+        else {
+            self->size_total_allocated = -1;
+            return nil;
+        }
+    }
+    return [NSNumber numberWithLongLong: self->size_total_allocated];
+}
+
+#pragma mark - number of elements
 
 -(NSInteger) numberOfLeafsInNode {
     NSInteger total=0;
@@ -1169,7 +1273,7 @@ NSArray* treesContaining(NSArray* treeItems) {
                 if ([item isKindOfClass:[TreeBranch class]])
                     total += [(TreeBranch*)item duplicateSize];
                 else if ([item hasDuplicates])
-                    total += [item filesize];
+                    total += [[item fileSize] longLongValue];
             }
         }
     }

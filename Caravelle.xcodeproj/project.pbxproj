@@ -74,6 +74,9 @@
 		3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
+		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
+		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
+		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
 		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
@@ -212,6 +215,12 @@
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
+		BC27BFE51B5C13F9001AE181 /* CalcFolderSizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalcFolderSizes.h; sourceTree = "<group>"; };
+		BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcFolderSizes.m; sourceTree = "<group>"; };
+		BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandFolders.h; sourceTree = "<group>"; };
+		BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpandFolders.m; sourceTree = "<group>"; };
+		BC523DD51B594B7C0030C97A /* NumberGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberGrouping.h; path = BrowserClasses/Groupings/NumberGrouping.h; sourceTree = "<group>"; };
+		BC523DD61B594B7C0030C97A /* NumberGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberGrouping.m; path = BrowserClasses/Groupings/NumberGrouping.m; sourceTree = "<group>"; };
 		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
@@ -254,6 +263,8 @@
 				3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */,
 				3C15E93F1AF3E2AF006DF095 /* DateGrouping.h */,
 				3C15E9401AF3E2AF006DF095 /* DateGrouping.m */,
+				BC523DD51B594B7C0030C97A /* NumberGrouping.h */,
+				BC523DD61B594B7C0030C97A /* NumberGrouping.m */,
 			);
 			name = Groupings;
 			sourceTree = "<group>";
@@ -303,6 +314,8 @@
 				3CF17D211A18C9E50082A9B0 /* FileExistsChoice.h */,
 				3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */,
 				3CA7DFC019B5FE9D00600F41 /* AppOperation.h */,
+				BC27BFE51B5C13F9001AE181 /* CalcFolderSizes.h */,
+				BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */,
 				3CA7DFC119B5FE9D00600F41 /* AppOperation.m */,
 				3CA7DFC319B611E100600F41 /* FileOperation.h */,
 				3CA7DFC419B611E100600F41 /* FileOperation.m */,
@@ -310,6 +323,8 @@
 				3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */,
 				3C980EAE1A1CDF8500F70DCB /* FileSystemMonitoring.h */,
 				3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */,
+				BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */,
+				BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */,
 			);
 			name = OperationClasses;
 			path = FileClasses;
@@ -668,6 +683,7 @@
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
+				BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */,
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
@@ -694,10 +710,12 @@
 				3CFBF5B91AD5E48E00185505 /* IconCollectionItem.m in Sources */,
 				3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */,
 				3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */,
+				BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3C15E93E1AF3D13C006DF095 /* SizeGrouping.m in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
+				BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */,
 				3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */,
 				3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */,
 			);

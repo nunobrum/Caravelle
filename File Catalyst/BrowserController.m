@@ -295,7 +295,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 }
                 else {
                     fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
-                    sizeOfFilesInBranch = [item filesize];
+                    sizeOfFilesInBranch = [[(TreeBranch*)item fileSize] longLongValue];
                 }
                 if (sizeOfFilesInBranch==-1) // Undefined
                     sizeString = @"--";

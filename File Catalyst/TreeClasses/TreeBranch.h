@@ -21,7 +21,10 @@ extern NSArray* treesContaining(NSArray* treeItems);
 
 @protected
     NSMutableArray *_children;
-    long long allocated_size;
+    long long size_files;
+    long long size_allocated;
+    long long size_total;
+    long long size_total_allocated;
 }
 
 -(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
@@ -41,7 +44,6 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(NSInteger) indexOfChild:(TreeItem*)item;
 
 -(long long) sizeOfNode;
--(long long) filesize;
 
 //-(FileCollection*) filesInNode;
 //-(FileCollection*) filesInBranch;
@@ -86,6 +88,9 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(void) forceRefreshOnBranch;
 -(void) calculateSize;
 -(void) expandAllBranches;
+-(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;
+-(void) sizeCalculationCancelled;
+
 
 -(void) notifyDidChangeTreeBranchPropertyChildren;
 

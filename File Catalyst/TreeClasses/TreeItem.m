@@ -271,11 +271,6 @@
     return image;
 }
 
--(long long) filesize {
-    NSNumber *filesize;
-    [_url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
-    return [filesize longLongValue];
-}
 
 -(NSNumber*) fileSize {
     NSNumber *filesize;
