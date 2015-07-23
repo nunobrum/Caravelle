@@ -219,11 +219,14 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     if (otherDupInfo == nil)
         otherDupInfo = [otherFile startDuplicateInfo];
     
-    if (myDupInfo->valid_md5 == NO)
+    if (myDupInfo->valid_md5 == NO) {
         calculateMD5(self->_url, myDupInfo->md5_checksum);
-    if (otherDupInfo->valid_md5 == NO)
-        calculateMD5(self->_url, otherDupInfo->md5_checksum);
-    
+        myDupInfo->valid_md5 = YES;
+    }
+    if (otherDupInfo->valid_md5 == NO) {
+        calculateMD5(otherFile->_url, otherDupInfo->md5_checksum);
+        otherDupInfo->valid_md5 = YES;
+    }
     int res = memcmp(myDupInfo->md5_checksum, otherDupInfo->md5_checksum, 16);
     return  res==0 ? YES : NO;
 }

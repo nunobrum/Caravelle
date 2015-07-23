@@ -17,6 +17,8 @@
 #import "FileUtils.h" // TODO: The app shouldnt use functions that access the system directly. Rather go through the Operations
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
+#import "ExpandFolders.h"
+
 #import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
@@ -61,7 +63,8 @@ NSString *opEraseOperation =@"EraseOperation";
 NSString *opSendRecycleBinOperation = @"SendRecycleBin";
 NSString *opNewFolder = @"NewFolderOperation";
 NSString *opRename = @"RenameOperation";
-NSString *opDuplicateFind = @"DuplicateFindOperation";
+NSString const *opDuplicateFind = @"DuplicateFindOperation";
+NSString const *opFlatOperation = @"com.cascode.op.flat";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
@@ -100,7 +103,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (void)     statusUpdate:(NSNotification*)theNotification;
 - (void)       rootUpdate:(NSNotification*)theNotification;
 - (void) processNextError:(NSNotification*)theNotification;
-- (id)   selectedView;
+- (id<MYViewProtocol>)   selectedView;
 @end
 
 @implementation AppDelegate {
@@ -236,7 +239,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
 }
 
--(id) selectedView {
+-(id<MYViewProtocol>) selectedView {
     return _selectedView;
 }
 
@@ -837,7 +840,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                                       fileName, kDFORenameFileKey,
                                       [[self selectedView] treeNodeSelected], kDFODestinationKey,
                                       nil];
-                [self startOperation: taskinfo];
+                [self startFileOperation: taskinfo];
             }
         }
     }
@@ -855,7 +858,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
 }
 
--(BOOL) startOperation:(NSDictionary *) operationInfo {
+-(BOOL) startFileOperation:(NSDictionary *) operationInfo {
     [self _startOperationBusyIndication: operationInfo];
     putInQueue(operationInfo);
     return YES;
@@ -867,7 +870,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                               files, kDFOFilesKey,
                               target, kDFODestinationKey,
                               nil];
-    [self startOperation:taskinfo];
+    [self startFileOperation:taskinfo];
 }
 
 -(void) moveItems:(NSArray*)files toBranch:(TreeBranch*)target {
@@ -876,7 +879,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                               files, kDFOFilesKey,
                               target, kDFODestinationKey,
                               nil];
-    [self startOperation:taskinfo];
+    [self startFileOperation:taskinfo];
 }
 
 -(void) executeCopyTo:(NSArray*) selectedFiles {
@@ -1032,7 +1035,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                               opSendRecycleBinOperation, kDFOOperationKey,
                               selectedFiles, kDFOFilesKey,
                               nil];
-    [self startOperation:taskinfo];
+    [self startFileOperation:taskinfo];
 }
 
 
@@ -1579,7 +1582,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 oneFolder = NO; /* Only one Folder can be Opened */
             }
             else
-                NSLog(@"BrowserController.TableDoubleClickEvent: - Unknown Class '%@'", [node className]);
+                NSLog(@"AppDelegate.startOperationHandler: - Unknown Class '%@'", [node className]);
 
         }
     }
@@ -1588,7 +1591,16 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         ([operation isEqualToString:opNewFolder])||
         ([operation isEqualToString:opRename])) {
         // Redirects all to file operation
-        [self startOperation:[note userInfo]];
+        [self startFileOperation:[note userInfo]];
+    }
+    else if ([operation isEqualTo:opFlatOperation]) {
+        ExpandFolders * op = [[ExpandFolders alloc] init];
+        [op setItem:[[note userInfo] objectForKey:kDFODestinationKey]];
+        [op setQueuePriority:NSOperationQueuePriorityNormal];
+        [op setThreadPriority:0.25];
+        [self _startOperationBusyIndication: [note userInfo]];
+        [operationsQueue addOperation:op];
+
     }
 }
 
@@ -1605,7 +1617,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     else {
         nItems = [NSString stringWithFormat:@"%ld items", (long)count];
     }
-    
+    // TODO:!!!!! Move this to the File Operations
     if ([operation isEqualToString:opCopyOperation]) {
         operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
     }
@@ -1624,8 +1636,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     else if ([operation isEqualToString:opNewFolder]) {
         operationStatus = @"Adding Folder";
     }
-    else if ([operation isEqualToString:opDuplicateFind]) {
+    else if ([operation isEqualTo:opDuplicateFind]) {
         operationStatus = @"Starting Duplicate Find";
+    }
+    else if ([operation isEqualTo:opFlatOperation]) {
+        operationStatus = @"Flattening Folder";
     }
     else {
         operationStatus = @"Unknown Operation";
@@ -1708,7 +1723,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 else
                     statusText = @"Folder Created";
             }
-            else if ([operation isEqualToString:opDuplicateFind]) {
+            else if ([operation isEqualTo:opDuplicateFind]) {
                 if (!OK)
                     statusText = @"Duplicate Find Aborted";
                 else {
@@ -2193,7 +2208,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                                       new_name, kDFORenameFileKey,
                                       nil];
 
-            [self startOperation:taskinfo];
+            [self startFileOperation:taskinfo];
             // The file system notifications will make sure that the views are updated
         }
         else if (answer == FileExistsSkip) {
@@ -2209,7 +2224,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                                       //new_name, kDFORenameFileKey, // No renaming, just replaces the file
                                       nil];
 
-            [self startOperation:taskinfo];
+            [self startFileOperation:taskinfo];
 
         }
         [pendingOperationErrors removeObjectAtIndex:0];

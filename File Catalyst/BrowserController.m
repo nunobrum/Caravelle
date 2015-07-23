@@ -803,7 +803,13 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         if (isSelected) { // If it is activated, it suffices the order the expansion.
                           // The refresh will be triggered by the KVO reload
             [self.detailedViewController startBusyAnimationsDelayed];
-            [self.detailedViewController.currentNode expandAllBranches];
+            // Send notification for App Delegate to execute this task
+            // For feedback reasons it has to be done in appOperations
+            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  opFlatOperation, kDFOOperationKey,
+                                  self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
+                                  nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
         }
         else {
             // refreshes the view
@@ -1330,7 +1336,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [BaseDirectoriesArray removeObjectAtIndex:idx];
         }
         else { // Refreshes all the others
-            [tree setTag:tagTreeItemDirty];
+            [tree setTag:tagTreeItemDirty];  // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
             [tree refreshContents];
             idx++;
         }
@@ -1339,7 +1345,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     for (TreeBranch *tree in _observedVisibleItems) {
         // But avoiding repeating the refreshes already done
         if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
-            [tree setTag:tagTreeItemDirty];
+            [tree setTag:tagTreeItemDirty]; // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
             [tree refreshContents];
         }
     }
@@ -1570,7 +1576,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // Replaces current root
             item = [appTreeManager addTreeItemWithURL:theURL];
             [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
-            [item setTag:tagTreeItemDirty];
+            [item setTag:tagTreeItemDirty]; // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
             [self selectFolderByItem:item];
             return (NULL!=[self selectFirstRoot]);
         }

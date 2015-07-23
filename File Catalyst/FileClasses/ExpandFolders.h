@@ -7,7 +7,10 @@
 //
 
 #import "AppOperation.h"
+#import "TreeBranch.h"
 
 @interface ExpandFolders : AppOperation
+
+@property TreeBranch *item;
 
 @end

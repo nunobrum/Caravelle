@@ -5,6 +5,9 @@
 //  Created by Nuno Brum on 1/22/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.
 //
+#include "definitions.h"
+#include "FileUtils.h"
+
 
 #import "TreeBranch.h"
 #import "TreeBranch_TreeBranchPrivate.h"
@@ -13,8 +16,7 @@
 #import "TreeManager.h"
 #import "CalcFolderSizes.h"
 
-#import "definitions.h"
-#include "FileUtils.h"
+
 
 NSString *const kvoTreeBranchPropertyChildren = @"childrenArray";
 NSString *const kvoTreeBranchPropertySize     = @"AllocatedSize";
@@ -207,6 +209,14 @@ NSArray* treesContaining(NSArray* treeItems) {
 
 #pragma mark -
 #pragma mark Children Manipulation
+
+-(NSMutableArray*) children {
+    return self->_children;
+}
+
+-(void) initChildren {
+    self->_children = [[NSMutableArray alloc] init];
+}
 
 -(void) _setChildren:(NSMutableArray*) children {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
@@ -511,116 +521,104 @@ NSArray* treesContaining(NSArray* treeItems) {
         }
     }
 }
+//
+//-(void) _expandTree {
+//    //NSLog(@"Expanding path %@", self.path);
+//    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewCatalystMode];
+//
+//    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+//    @synchronized(self) {
+//        self->_children = [[NSMutableArray alloc] init];
+//        TreeBranch *cursor = self;
+//        NSMutableArray *cursorComponents = [NSMutableArray arrayWithArray:[[self url] pathComponents]];
+//        unsigned long current_level = [cursorComponents count]-1;
+//
+//
+//        for (NSURL *theURL in dirEnumerator) {
+//            BOOL ignoreURL = NO;
+//            NSArray *newURLComponents = [theURL pathComponents];
+//            unsigned long target_level = [newURLComponents count]-2;
+//            while (target_level < current_level) { // Needs to go back if the new URL is at a lower branch
+//                cursor = (TreeBranch*) cursor->_parent;
+//                current_level--;
+//            }
+//            while (target_level != current_level &&
+//                   [cursorComponents[current_level] isEqualToString:newURLComponents[current_level]]) {
+//                // Must navigate into the right folder
+//                if (target_level <= current_level) { // The equality is considered because it means that the components at this level are different
+//                    // steps down in the tree
+//                    cursor = (TreeBranch*) cursor->_parent;
+//                    current_level--;
+//                }
+//                else { // Needs to grow the tree
+//                    current_level++;
+//                    NSURL *pathURL = [cursor.url URLByAppendingPathComponent:newURLComponents[current_level] isDirectory:YES];
+//                    cursorComponents[current_level] = newURLComponents[current_level];
+//                    TreeItem *child = [TreeItem treeItemForURL:pathURL parent:cursor];
+//                    if (child!=nil) {
+//                        if (cursor->_children==nil) {
+//                            cursor->_children = [[NSMutableArray alloc] init];
+//                        }
+//                        [cursor->_children addObject:child];
+//                        if ([child itemType] == ItemTypeBranch)
+//                        {
+//                            cursor = (TreeBranch*)child;
+//                            cursor->_children = [[NSMutableArray alloc] init];
+//                        }
+//                        else {
+//                            // Will ignore this child and just addd the size to the current node
+//                            [dirEnumerator skipDescendents];
+//                            // IGNORE URL
+//                            ignoreURL = YES;
+//                        }
+//                    }
+//                    else {
+//                        NSAssert(NO, @"TreeBranch.TreeBranch._expandTree: Couldn't create path %@ \nwhile creating %@",pathURL, theURL);
+//                    }
+//                }
+//
+//            }
+//            if (ignoreURL==NO)  {
+//                TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
+//                if (newObj!=nil) {
+//                    if (cursor->_children==nil) {
+//                        cursor->_children = [[NSMutableArray alloc] init];
+//                    }
+//                    [cursor->_children addObject:newObj];
+//                    // if it's a folder jump into it, so that the next URL can be directly inserted
+//                    if ([newObj isKindOfClass:[TreeBranch class]]) {
+//                        cursor = (TreeBranch*)newObj;
+//                        cursor->_children = [[NSMutableArray alloc] init];
+//                        current_level++;
+//                        cursorComponents[current_level] = newURLComponents[current_level];
+//
+//                    }
+//                }
+//                else {
+//                    NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
+//                }
+//            }
+//        }
+//    }
+//    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
+//}
 
--(void) _expandTree {
-    //NSLog(@"Expanding path %@", self.path);
-    MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[self url] WithMode:BViewCatalystMode];
-
-    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    @synchronized(self) {
-        self->_children = [[NSMutableArray alloc] init];
-        TreeBranch *cursor = self;
-        NSMutableArray *cursorComponents = [NSMutableArray arrayWithArray:[[self url] pathComponents]];
-        unsigned long current_level = [cursorComponents count]-1;
-
-
-        for (NSURL *theURL in dirEnumerator) {
-            BOOL ignoreURL = NO;
-            NSArray *newURLComponents = [theURL pathComponents];
-            unsigned long target_level = [newURLComponents count]-2;
-            while (target_level < current_level) { // Needs to go back if the new URL is at a lower branch
-                cursor = (TreeBranch*) cursor->_parent;
-                current_level--;
-            }
-            while (target_level != current_level &&
-                   [cursorComponents[current_level] isEqualToString:newURLComponents[current_level]]) {
-                // Must navigate into the right folder
-                if (target_level <= current_level) { // The equality is considered because it means that the components at this level are different
-                    // steps down in the tree
-                    cursor = (TreeBranch*) cursor->_parent;
-                    current_level--;
-                }
-                else { // Needs to grow the tree
-                    current_level++;
-                    NSURL *pathURL = [cursor.url URLByAppendingPathComponent:newURLComponents[current_level] isDirectory:YES];
-                    cursorComponents[current_level] = newURLComponents[current_level];
-                    TreeItem *child = [TreeItem treeItemForURL:pathURL parent:cursor];
-                    if (child!=nil) {
-                        if (cursor->_children==nil) {
-                            cursor->_children = [[NSMutableArray alloc] init];
-                        }
-                        [cursor->_children addObject:child];
-                        if ([child itemType] == ItemTypeBranch)
-                        {
-                            cursor = (TreeBranch*)child;
-                            cursor->_children = [[NSMutableArray alloc] init];
-                        }
-                        else {
-                            // Will ignore this child and just addd the size to the current node
-                            [dirEnumerator skipDescendents];
-                            // IGNORE URL
-                            ignoreURL = YES;
-                        }
-                    }
-                    else {
-                        NSAssert(NO, @"TreeBranch.TreeBranch._expandTree: Couldn't create path %@ \nwhile creating %@",pathURL, theURL);
-                    }
-                }
-
-            }
-            if (ignoreURL==NO)  {
-                TreeItem *newObj = [TreeItem treeItemForURL:theURL parent:cursor];
-                if (newObj!=nil) {
-                    if (cursor->_children==nil) {
-                        cursor->_children = [[NSMutableArray alloc] init];
-                    }
-                    [cursor->_children addObject:newObj];
-                    // if it's a folder jump into it, so that the next URL can be directly inserted
-                    if ([newObj isKindOfClass:[TreeBranch class]]) {
-                        cursor = (TreeBranch*)newObj;
-                        cursor->_children = [[NSMutableArray alloc] init];
-                        current_level++;
-                        cursorComponents[current_level] = newURLComponents[current_level];
-
-                    }
-                }
-                else {
-                    NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
-                }
-            }
-        }
-    }
-    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
-}
-
--(void) _expandTreeInUndeveloppedBranches {
+-(void) harverstUndeveloppedFolders:(NSMutableArray*)collector {
+    
     if (self->_children!= nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
                 if ([item itemType] == ItemTypeBranch) {
-                    [(TreeBranch*)item _expandTreeInUndeveloppedBranches];
+                    [(TreeBranch*)item harverstUndeveloppedFolders:collector];
                 }
             }
         }
     }
     else {
-        if ([self respondsToSelector:@selector(_expandTree)]) {
-            [self performSelector:@selector(_expandTree)];
-        }
+        [collector addObject:self];
     }
 }
 
--(void) expandAllBranches {
-    NSBlockOperation * op = [NSBlockOperation blockOperationWithBlock:^(void) {
-        [self _expandTreeInUndeveloppedBranches];
-        // Now sends a dummy change so that the tree is updated
-        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
-    }];
-    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [op setThreadPriority:0.5];
-    [lowPriorityQueue addOperation:op];
-}
 
 #pragma mark -
 #pragma mark Tree Access
@@ -841,7 +839,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) fileSize {
     if (self->size_files == -1) {
         long long total=0;
-        NSNumber *size = nil;
+        NSNumber *size = @0; // Initializing as zero. If the directory is empty
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -871,7 +869,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) allocatedSize {
     if (self->size_allocated==-1) {
         long long total=0;
-        NSNumber *size = nil;
+        NSNumber *size = @0; // Initializing as zero. If the directory is empty
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -901,7 +899,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) totalSize {
     if (self->size_total==-1) {
         long long total=0;
-        NSNumber *size = nil;
+        NSNumber *size = @0; // Initializing as zero. If the directory is empty
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -931,7 +929,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) totalAllocatedSize {
     if (self->size_total_allocated==-1) {
         long long total=0;
-        NSNumber *size = nil;
+        NSNumber *size = @0; // Initializing as zero. If the directory is empty
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {

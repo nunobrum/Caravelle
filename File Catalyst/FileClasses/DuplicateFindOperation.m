@@ -39,7 +39,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
     else if (statusCount==3)
         return [NSString stringWithFormat:@"Finishing %lu", counter];
     else
-        return @"Starting..."; // This should only appear if this is called is before the task starts
+        return @"Starting Duplicate Find"; // This should only appear if this is called is before the task starts
 }
 
 -(void) main {
@@ -133,7 +133,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                         }
                         else if (options & DupCompareSize) {
                             NSComparisonResult comp = [FileA.fileSize compare:FileB.fileSize];
-                            if (comp == NSOrderedAscending) { // FileA.fileSize > FileB.fileSize
+                            if (comp == NSOrderedDescending) { // FileA.fileSize > FileB.fileSize
                                 j = max_files; // This will make the inner cycle to end
                                 duplicate = FALSE;
                             }

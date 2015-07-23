@@ -87,7 +87,6 @@ extern NSArray* treesContaining(NSArray* treeItems);
 -(void) refreshContents;
 -(void) forceRefreshOnBranch;
 -(void) calculateSize;
--(void) expandAllBranches;
 -(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;
 -(void) sizeCalculationCancelled;
 

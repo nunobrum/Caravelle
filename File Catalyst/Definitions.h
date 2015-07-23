@@ -33,7 +33,8 @@ extern NSString *opReplaceOperation;
 extern NSString *opNewFolder;
 extern NSString *opRename;
 extern NSString *opSendRecycleBinOperation;
-extern NSString *opDuplicateFind;
+extern NSString const *opDuplicateFind;
+extern NSString const *opFlatOperation;
 
 extern NSString *notificationStatusUpdate;
 
