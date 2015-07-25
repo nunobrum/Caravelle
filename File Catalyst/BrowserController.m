@@ -597,6 +597,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else {
             node = (TreeBranch*)[branch parent];
         }
+        // if the flat view is set, if outside of the current node, launch an expand Tree
+        if (self.flatView) {
+            if (![node containedInURL:[_treeNodeSelected url]]) {
+                // Send notification to request Expansion
+                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      opFlatOperation, kDFOOperationKey,
+                                      self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
+                                      node, kDFODestinationKey, // This has to be placed in last because it can be nil
+                                      nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+            }
+        }
         [self setPathBarToItem:node];
 
         [self mruSet:[node url]];
@@ -767,11 +779,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setFlatView:(BOOL) flatView {
     BOOL foldersDisplayed;
-    if (flatView)
+    if (flatView) {
         foldersDisplayed = NO;
-    else
+        // In no groupings defined, use COL_LOCATION
+        if (NO == [(NodeSortDescriptor*)[self.detailedViewController.sortAndGroupDescriptors firstObject] isGrouping]) {
+            [self.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+        }
+    }
+    else {
         // TODO:!! get the value from USER Defaults
         foldersDisplayed = YES;
+        
+        // if COL_LOCATION grouping, cancel
+        NodeSortDescriptor *sortDesc = [self.detailedViewController sortDescriptorForColID:@"COL_LOCATION"];
+        if (sortDesc) {
+            [self.detailedViewController removeSortKey:sortDesc.key];
+        }
+    }
     
     [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
     [self.detailedViewController setDisplayFilesInSubdirs:flatView];
