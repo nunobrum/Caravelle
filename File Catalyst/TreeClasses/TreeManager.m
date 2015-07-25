@@ -88,7 +88,7 @@ TreeManager *appTreeManager;
                 if (answer!=nil) {
                     enumPathCompare comparison1 = url_relation([answer url], url);
                     if (comparison1 == pathIsChild) {
-                        NSLog(@"A"); // If in the case that the user selected a parent of the desired URL
+                        //NSLog(@"A"); // If in the case that the user selected a parent of the desired URL
                     }
                     
                     BOOL OK = [self addTreeItem:item To:(TreeBranch*)answer];
@@ -154,7 +154,7 @@ TreeManager *appTreeManager;
     enumPathCompare comparison = url_relation([answer url], url);
     if (comparison == pathIsChild) {
         // If in the case that the user selected a parent of the desired URL
-        return (TreeBranch*)[answer getNodeWithURL:url];
+        return (TreeBranch*)[answer addURL:url];
     }
     return answer;
 }

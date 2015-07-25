@@ -1,6 +1,6 @@
 //
 //  FolderCellView.m
-//  FileCatalyst1
+//  Caravelle
 //
 //  Created by Nuno Brum on 3/30/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.

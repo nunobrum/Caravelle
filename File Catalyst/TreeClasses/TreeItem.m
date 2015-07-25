@@ -1,6 +1,6 @@
 //
 //  TreeItem.m
-//  FileCatalyst1
+//  Caravelle
 //
 //  Created by Nuno Brum on 12/31/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
@@ -386,10 +386,10 @@
     NSArray *cpself = [[self path] pathComponents];
     NSArray *cppath = [path pathComponents];
     NSUInteger cppc = [cppath count];
-    if (cppc> [cppath count])
+    if (cppc> [cpself count])
         return NO;
     for (NSUInteger i = 0 ; i < cppc ; i++) {
-        if (NO == [cpself[i] isEqualToString:cppath[i]]) {
+        if (NO == [cppath[i] isEqualToString:cpself[i]]) {
             return NO;
         }
     }

@@ -1,6 +1,6 @@
 //
 //  TreeItem.h
-//  FileCatalyst1
+//  Caravelle
 //
 //  Created by Nuno Brum on 12/31/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
