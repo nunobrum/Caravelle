@@ -131,7 +131,7 @@
 -(void) insertItem:(id)item {
     NSAssert(NO, @"NodeViewController.insertItem: This method should be overriden");
 }
-- (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
+- (void) orderOperation:(NSString const*)operation onItems:(NSArray*)orderedItems;
  {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               orderedItems, kDFOFilesKey,

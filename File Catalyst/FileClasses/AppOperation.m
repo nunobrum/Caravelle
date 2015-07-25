@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
+#include "Definitions.h"
 #import "AppOperation.h"
 
 // key for obtaining the current scan count
@@ -20,7 +21,12 @@ NSString *kSenderKey = @"Sender";
 
 NSString *kModeKey = @"Mode";
 
+NSString *notificationFinishedOperation = @"FinishedOperation";
+
+
 static NSUInteger appOperationCounter = 0;
+
+
 
 @implementation AppOperation
 
@@ -47,3 +53,13 @@ static NSUInteger appOperationCounter = 0;
 }
 
 @end
+
+
+BOOL putInQueue(AppOperation *operation) {
+    //AppOperation *operation = [[AppOperation alloc ] initWithInfo:taskInfo];
+    BOOL answer = [operation isReady];
+    if (answer==YES)
+        [operationsQueue addOperation:operation];
+    return answer;
+}
+

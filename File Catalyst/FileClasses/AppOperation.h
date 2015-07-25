@@ -13,6 +13,8 @@ extern NSString *kModeKey;
 extern NSString *kOperationCountKey;
 extern NSString *kRootPathKey;
 
+extern NSString *notificationFinishedOperation;
+
 //extern NSUInteger appOperationCounter;
 
 
@@ -31,3 +33,6 @@ extern NSString *kRootPathKey;
 -(NSDictionary*) info;
 
 @end
+
+
+extern BOOL putInQueue(AppOperation *operation);

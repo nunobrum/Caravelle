@@ -395,7 +395,7 @@
     NSInteger row = [_myTableView rowForView:sender];
     if (row != -1) {
         TreeItem *item = [self->_displayedItems objectAtIndex:row];
-        NSString *operation=nil;
+        NSString const *operation=nil;
         if ([item hasTags:tagTreeItemNew]) {
             operation = opNewFolder;
         }

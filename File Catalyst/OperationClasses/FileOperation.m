@@ -5,14 +5,14 @@
 //  Created by Nuno Brum on 02/09/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
-
+#include "Definitions.h"
 #import "FileOperation.h"
 #import "FileUtils.h"
+#import "TreeBranch.h"
 
 #define UPDATE_TREE
 
 
-NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 
 @implementation FileOperation
 
@@ -33,7 +33,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
             send_notification = NO;
         }
         else {
-            if ([op isEqualToString:opSendRecycleBinOperation]) {
+            if ([op isEqualTo:opSendRecycleBinOperation]) {
                 if (![self isCancelled]) {
 
                     // No need to send notification. It will be sent on the completion handler
@@ -69,7 +69,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     }
                 }
             }
-            else if ([op isEqualToString:opEraseOperation]) {
+            else if ([op isEqualTo:opEraseOperation]) {
                 for (id item in items) {
                     if ([item isKindOfClass:[NSURL class]])
                         OK = eraseFile(item, error);
@@ -88,8 +88,8 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
             }
 
             // Its a rename or a file new
-            else if ([op isEqualToString:opRename] ||
-                     [op isEqualToString:opNewFolder]) {
+            else if ([op isEqualTo:opRename] ||
+                     [op isEqualTo:opNewFolder]) {
 
                 // Check whether it is a rename or a New File/Folder. Both required an edit of a name.
                 // To distinguish from the two, if the file/folder exists is a rename, else is a new
@@ -109,7 +109,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
                     // create a new Folder.
 
-                    if ([op isEqualToString:opNewFolder]) {
+                    if ([op isEqualTo:opNewFolder]) {
                         NSURL *parentURL;
                         id destObj = [_taskInfo objectForKey:kDFODestinationKey];
                         if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
@@ -164,7 +164,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 
                         // Assuming all will go well, and revert to No if anything happens
                         OK = YES;
-                        if ([op isEqualToString:opCopyOperation]) {
+                        if ([op isEqualTo:opCopyOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]])
@@ -184,7 +184,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 if ([self isCancelled] || OK==NO) break;
                             }
                         }
-                        else if ([op isEqualToString:opMoveOperation]) {
+                        else if ([op isEqualTo:opMoveOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]]) {
@@ -216,7 +216,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                 if ([self isCancelled] || OK==NO) break;
                             }
                         }
-                        else if ([op isEqualToString:opReplaceOperation]) {
+                        else if ([op isEqualTo:opReplaceOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]]) {
@@ -257,7 +257,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                     NSURL *dest = destObj;
                     // Assuming all will go well, and revert to No if anything happens
                     OK = YES;
-                    if ([op isEqualToString:opCopyOperation]) {
+                    if ([op isEqualTo:opCopyOperation]) {
                         for (id item in items) {
                             NSURL *newURL = NULL;
                             if ([item isKindOfClass:[NSURL class]])
@@ -274,7 +274,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                             if ([self isCancelled] || OK==NO) break;
                         }
                     }
-                    else if ([op isEqualToString:opMoveOperation]) {
+                    else if ([op isEqualTo:opMoveOperation]) {
                         for (id item in items) {
                             NSURL *newURL = NULL;
                             if ([item isKindOfClass:[NSURL class]]) {
@@ -294,7 +294,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                         }
                     }
 
-                    else if ([op isEqualToString:opReplaceOperation]) {
+                    else if ([op isEqualTo:opReplaceOperation]) {
                         for (id item in items) {
                             NSURL *newURL = NULL;
                             if ([item isKindOfClass:[NSURL class]]) {
@@ -322,7 +322,7 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
                                          [NSNumber numberWithBool:OK], kDFOOkKey,
                                          error, kDFOErrorKey, nil];
                 [_taskInfo addEntriesFromDictionary:OKError];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];
             }
         }
     }
@@ -330,12 +330,4 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 
 
 @end
-
-BOOL putInQueue(NSDictionary *taskInfo) {
-    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskInfo];
-    BOOL answer = [operation isReady];
-    if (answer==YES)
-        [operationsQueue addOperation:operation];
-    return answer;
-}
 

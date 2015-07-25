@@ -22,17 +22,16 @@ extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
 extern NSString *kDFOOkCountKey;
 extern NSString *kDFOStatusCountKey;
+extern NSString *kDFOFromViewKey;
 
-//extern NSString *kFromObjectKey;
-
-extern NSString *opOpenOperation;
-extern NSString *opCopyOperation;
-extern NSString *opMoveOperation;
-extern NSString *opEraseOperation;
-extern NSString *opReplaceOperation;
-extern NSString *opNewFolder;
-extern NSString *opRename;
-extern NSString *opSendRecycleBinOperation;
+extern NSString const *opOpenOperation;
+extern NSString const *opCopyOperation;
+extern NSString const *opMoveOperation;
+extern NSString const *opEraseOperation;
+extern NSString const *opReplaceOperation;
+extern NSString const *opNewFolder;
+extern NSString const *opRename;
+extern NSString const *opSendRecycleBinOperation;
 extern NSString const *opDuplicateFind;
 extern NSString const *opFlatOperation;
 

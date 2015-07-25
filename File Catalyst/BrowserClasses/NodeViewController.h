@@ -70,7 +70,7 @@
 
 - (BOOL) startEditItemName:(TreeItem*)item;
 - (void) insertItem:(id)item;
-- (void) orderOperation:(NSString*)operation onItems:(NSArray*)orderedItems;
+- (void) orderOperation:(NSString const*)operation onItems:(NSArray*)orderedItems;
 
 - (void) registerDraggedTypes;
 - (void) unregisterDraggedTypes;

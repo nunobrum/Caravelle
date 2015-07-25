@@ -49,20 +49,20 @@ NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
 NSString *kDFOOkCountKey = @"OkCountKey";
 NSString *kDFOStatusCountKey = @"StatusCountKey";
-//NSString *kFromObjectKey = @"FromObjectKey";
+NSString *kDFOFromViewKey = @"FromObjectKey";
 
 #ifdef USE_UTI
 const CFStringRef kTreeItemDropUTI=CFSTR("com.cascode.treeitemdragndrop");
 #endif
 
-NSString *opOpenOperation=@"OpenOperation";
-NSString *opCopyOperation=@"CopyOperation";
-NSString *opMoveOperation =@"MoveOperation";
-NSString *opReplaceOperation = @"ReplaceOperation";
-NSString *opEraseOperation =@"EraseOperation";
-NSString *opSendRecycleBinOperation = @"SendRecycleBin";
-NSString *opNewFolder = @"NewFolderOperation";
-NSString *opRename = @"RenameOperation";
+NSString const *opOpenOperation=@"OpenOperation";
+NSString const *opCopyOperation=@"CopyOperation";
+NSString const *opMoveOperation =@"MoveOperation";
+NSString const *opReplaceOperation = @"ReplaceOperation";
+NSString const *opEraseOperation =@"EraseOperation";
+NSString const *opSendRecycleBinOperation = @"SendRecycleBin";
+NSString const *opNewFolder = @"NewFolderOperation";
+NSString const *opRename = @"RenameOperation";
 NSString const *opDuplicateFind = @"DuplicateFindOperation";
 NSString const *opFlatOperation = @"com.cascode.op.flat";
 
@@ -284,7 +284,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [center addObserver:self selector:@selector(startDuplicateFind:) name:notificationStartDuplicateFind object:nil];
     [center addObserver:self selector:@selector(anyThread_handleDuplicateFinish:) name:notificationDuplicateFindFinish object:nil];
 
-    [center addObserver:self selector:@selector(anyThread_operationFinished:) name:notificationFinishedFileOperation object:nil];
+    [center addObserver:self selector:@selector(anyThread_operationFinished:) name:notificationFinishedOperation object:nil];
 
     [center addObserver:self selector:@selector(statusUpdate:) name:notificationStatusUpdate object:nil];
 
@@ -860,7 +860,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 -(BOOL) startFileOperation:(NSDictionary *) operationInfo {
     [self _startOperationBusyIndication: operationInfo];
-    putInQueue(operationInfo);
+    // TODO:!!!! Divide the operations per classes
+    FileOperation *operation = [[FileOperation alloc] initWithInfo:operationInfo];
+    putInQueue(operation);
     return YES;
 }
 
@@ -1567,7 +1569,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 -(void) startOperationHandler: (NSNotification*) note {
 
     NSString *operation = [[note userInfo] objectForKey:kDFOOperationKey];
-    if ([operation isEqualToString:opOpenOperation]) {
+    if ([operation isEqualTo:opOpenOperation]) {
         NSArray *receivedItems = [[note userInfo] objectForKey:kDFOFilesKey];
         BOOL oneFolder=YES;
         for (TreeItem *node in receivedItems) {
@@ -1586,21 +1588,19 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
         }
     }
-    else if (([operation isEqualToString:opCopyOperation]) ||
-        ([operation isEqualToString:opMoveOperation]) ||
-        ([operation isEqualToString:opNewFolder])||
-        ([operation isEqualToString:opRename])) {
+    else if (([operation isEqualTo:opCopyOperation]) ||
+        ([operation isEqualTo:opMoveOperation]) ||
+        ([operation isEqualTo:opNewFolder])||
+        ([operation isEqualTo:opRename])) {
         // Redirects all to file operation
         [self startFileOperation:[note userInfo]];
     }
     else if ([operation isEqualTo:opFlatOperation]) {
-        ExpandFolders * op = [[ExpandFolders alloc] init];
-        [op setItem:[[note userInfo] objectForKey:kDFODestinationKey]];
+        ExpandFolders * op = [[ExpandFolders alloc] initWithInfo:[note userInfo]];
         [op setQueuePriority:NSOperationQueuePriorityNormal];
         [op setThreadPriority:0.25];
         [self _startOperationBusyIndication: [note userInfo]];
-        [operationsQueue addOperation:op];
-
+        putInQueue(op);
     }
 }
 
@@ -1618,22 +1618,22 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         nItems = [NSString stringWithFormat:@"%ld items", (long)count];
     }
     // TODO:!!!!! Move this to the File Operations
-    if ([operation isEqualToString:opCopyOperation]) {
+    if ([operation isEqualTo:opCopyOperation]) {
         operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
     }
-    else if ([operation isEqualToString:opMoveOperation]) {
+    else if ([operation isEqualTo:opMoveOperation]) {
         operationStatus = [NSString stringWithFormat:@"Moving %@",nItems];
     }
-    else if ([operation isEqualToString:opSendRecycleBinOperation]) {
+    else if ([operation isEqualTo:opSendRecycleBinOperation]) {
         operationStatus = [NSString stringWithFormat:@"Trashing %@",nItems];
     }
-    else if ([operation isEqualToString:opEraseOperation]) {
+    else if ([operation isEqualTo:opEraseOperation]) {
         operationStatus = [NSString stringWithFormat:@"Erasing %@",nItems];
     }
-    else if ([operation isEqualToString:opRename]) {
+    else if ([operation isEqualTo:opRename]) {
         operationStatus = [NSString stringWithFormat:@"Renaming %@",nItems];
     }
-    else if ([operation isEqualToString:opNewFolder]) {
+    else if ([operation isEqualTo:opNewFolder]) {
         operationStatus = @"Adding Folder";
     }
     else if ([operation isEqualTo:opDuplicateFind]) {
@@ -1676,7 +1676,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             // Its more correct in an object oriented perspective. File Operations should also be subclassed.
             // the main on the File Operations is becomming a big mess
             // Also, make sure that the URL vs TreeItem recovery is done in the FileUtils.
-            if ([operation isEqualToString:opCopyOperation]) {
+            if ([operation isEqualTo:opCopyOperation]) {
                 if (OK)
                     statusText  = [NSString stringWithFormat:@"%lu Files copied",
                                    statusFilesCopied];
@@ -1684,14 +1684,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     statusText = @"Copy Failed";
 
             }
-            else if ([operation isEqualToString:opMoveOperation]) {
+            else if ([operation isEqualTo:opMoveOperation]) {
                 if (OK)
                     statusText  = [NSString stringWithFormat:@"%lu Files moved",
                                    statusFilesMoved];
                 else
                     statusText = @"Move Failed";
             }
-            else if ([operation isEqualToString:opSendRecycleBinOperation]) {
+            else if ([operation isEqualTo:opSendRecycleBinOperation]) {
                 if (OK)
                     statusText  = [NSString stringWithFormat:@"%@ Files Trashed",
                                    [info objectForKey:kDFOOkCountKey]];
@@ -1699,7 +1699,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     statusText = @"Trash Failed";
 
             }
-            else if ([operation isEqualToString:opEraseOperation]) {
+            else if ([operation isEqualTo:opEraseOperation]) {
                 if (OK)
                     statusText  = [NSString stringWithFormat:@"%lu Files Trashed",
                                    statusFilesDeleted];
@@ -1707,7 +1707,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     statusText = @"Trash Failed";
 
             }
-            else if ([operation isEqualToString:opRename]) {
+            else if ([operation isEqualTo:opRename]) {
                 if (!OK) {
                     statusText = @"Rename Failed";
                 }
@@ -1716,7 +1716,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                     statusText  = [NSString stringWithFormat:@"%lu Files renamed", count];
                 }
             }
-            else if ([operation isEqualToString:opNewFolder]) {
+            else if ([operation isEqualTo:opNewFolder]) {
                 if (!OK) {
                     statusText = @"New Folder creation failed";
                 }
@@ -1770,13 +1770,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:!!!! This should be moved to File Operations statusText Selector
             NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
             
-            if ([op isEqualToString:opCopyOperation]) {
+            if ([op isEqualTo:opCopyOperation]) {
                 status = [NSString stringWithFormat:@"Copying...%ld", statusFilesCopied];
             }
-            else if ([op isEqualToString:opMoveOperation]) {
+            else if ([op isEqualTo:opMoveOperation]) {
                 status = [NSString stringWithFormat:@"Moving...%ld", statusFilesMoved];
             }
-            else if ([op isEqualToString:opSendRecycleBinOperation]) {
+            else if ([op isEqualTo:opSendRecycleBinOperation]) {
                 status = [NSString stringWithFormat:@"Trashing...%ld", statusFilesDeleted];
             }
         }
@@ -1809,7 +1809,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
     if (!OK) {
         NSString *operation = [info objectForKey:kDFOOperationKey];
-        if ([operation isEqualToString:opRename]) {
+        if ([operation isEqualTo:opRename]) {
 
             // Since the rename actually didn't activate the FSEvents, have to update the view
             // Reload the items in the Selected View
@@ -1817,7 +1817,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 [(BrowserController*)_selectedView reloadItem:item];
             }
         }
-        else if ([operation isEqualToString:opNewFolder]) {
+        else if ([operation isEqualTo:opNewFolder]) {
             // Removing the inserted item
             for (TreeItem* item in [info objectForKey:kDFOFilesKey]) {
                 [item removeItem];
@@ -1829,6 +1829,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                                                otherButton:nil
                                  informativeTextWithFormat:@"Possible Causes:\nFile already exists or write is restricted"];
             [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        }
+        else if ([operation isEqualTo:opFlatOperation]) {
+            // Cancel the Flat View
+            BrowserController *selView = [info objectForKey:kDFOFromViewKey];
+            [selView setFlatView:NO];
+            [selView refresh];
         }
         else {
             TreeBranch *dest = [info objectForKey:kDFODestinationKey];
@@ -2108,7 +2114,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         [myRightView setParentController:self];
         [myLeftView setName:@"Left" TwinName:@"Right"];
         [myRightView setName:@"Right" TwinName:@"Left"];
+    }
+    if ([[_ContentSplitView subviews] count]==1) { // in single mode view
         [_ContentSplitView addSubview:myRightView.view];
+        [_ContentSplitView adjustSubviews];
+        //[_ContentSplitView setNeedsDisplay:YES];
     }
     [myLeftView setViewMode:BViewDuplicateMode];
     [myLeftView setViewType:BViewTypeTable];
@@ -2187,7 +2197,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         // Lauch the new Operation based on the user choice
         fileExistsQuestionResult answer = [[info objectForKey:kFileExistsAnswerKey] integerValue];
         if  (answer== FileExistsRename) {
-            NSString *op;
+            NSString const *op;
             if ([operation isEqualToString:@"Copy"]) {
                 op = opCopyOperation;
             }

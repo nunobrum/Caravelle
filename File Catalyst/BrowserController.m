@@ -807,6 +807,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // For feedback reasons it has to be done in appOperations
             NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                   opFlatOperation, kDFOOperationKey,
+                                  self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
                                   self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
                                   nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
@@ -1666,7 +1667,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger row = [self->_myOutlineView rowForView:sender];
     if (row != -1) {
         TreeItem *item = [self->_myOutlineView itemAtRow:row];
-        NSString *operation=nil;
+        NSString const *operation=nil;
         if ([item hasTags:tagTreeItemNew]) {
             operation = opNewFolder;
         }

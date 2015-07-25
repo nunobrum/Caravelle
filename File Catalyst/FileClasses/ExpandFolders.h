@@ -11,6 +11,5 @@
 
 @interface ExpandFolders : AppOperation
 
-@property TreeBranch *item;
 
 @end

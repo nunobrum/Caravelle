@@ -151,7 +151,7 @@
 }
 
 -(void) setName:(NSString*)newName {
-    NSString *operation=nil;
+    NSString const *operation=nil;
     if ([self hasTags:tagTreeItemNew]) {
         operation = opNewFolder;
     }

@@ -99,7 +99,7 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
 
 BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation operation, id fromObject) {
     BOOL fireNotfication = NO;
-    NSString *strOperation;
+    NSString const *strOperation;
     NSPasteboard *pboard = [info draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
