@@ -102,8 +102,13 @@
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
     id objectValue = [self->_displayedItems objectAtIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
-    NSString *identifier = [aTableColumn identifier];
-
+    
+    
+    NSDictionary *colControl = [columnInfo() objectForKey:[aTableColumn identifier]];
+    NSString *identifier = [colControl objectForKey:COL_COL_ID_KEY];
+    if (identifier==nil) {
+        identifier = COL_TEXT_ONLY;
+    }
     NSTableCellView *cellView = nil;
 
     if ([objectValue isKindOfClass:[TreeItem class]]) {
@@ -122,117 +127,87 @@
             [cellView setObjectValue:objectValue];
 
             // If it's a new file, then assume a default ICON
-
-            NSString *path = [[theFile url] path];
-            if (path) {
-                // Then setup properties on the cellView based on the column
-                NSString *fileName = [theFile name];  // Display simply the name of the file;
-                cellView.textField.stringValue = fileName;
-                [cellView setToolTip:[theFile hint]]; //TODO:!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
-
-                cellView.imageView.objectValue = [theFile image];
-
-                // Setting the color
-                if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty+tagTreeItemToMove]) {
-                    [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
-                }
-                else {
-                    // Set color back to normal
-                    [cellView.textField setTextColor:foreground];
-
-                }
+            
+            // Then setup properties on the cellView based on the column
+            [cellView setToolTip:[theFile hint]]; //TODO:!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
+            
+            cellView.imageView.objectValue = [theFile image];
+            
+            // Setting the color
+            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty+tagTreeItemToMove]) {
+                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
             }
             else {
-                // This is not supposed to happen, just setting an error
-                [cellView.textField setStringValue:@"-- ERROR %% Path is null --"];
+                // Set color back to normal
+                [cellView.textField setTextColor:foreground];
+                
             }
         }
-
-        else { // All other cases are handled here
-            if ([identifier hasPrefix:COL_SIZE]) { // SIZES
-                cellView = [aTableView makeViewWithIdentifier:COL_SIZE owner:self];
-                [((SizeTableCellView*)cellView)  stopAnimation];
-
-            }
-            else
+    
+        else if ([identifier hasPrefix:COL_SIZE]) { // SIZES
+            cellView = [aTableView makeViewWithIdentifier:COL_SIZE owner:self];
+            [((SizeTableCellView*)cellView)  stopAnimation];
+            
+        }
+        else
             // We pass us as the owner so we can setup target/actions into this main controller object
-                cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
-
-            NSDictionary *colControl = [columnInfo() objectForKey:identifier];
-            if (colControl!=nil) { // The column exists
-                NSString *prop_name = colControl[COL_ACCESSOR_KEY];
-                id prop = nil;
-                @try {
-                    prop = [objectValue valueForKey:prop_name];
-                }
-                @catch (NSException *exception) {
-                    NSLog(@"BrowserController.tableView:viewForTableColumn:row - Property '%@' not found", prop_name);
-                }
-
-                if (prop){
-                    if ([prop isKindOfClass:[NSString class]])
-                        cellView.textField.objectValue = prop;
-                    else { // Need to use one of the NSValueTransformers
-                        NSString *trans_name = [colControl objectForKey:COL_TRANS_KEY];
-                        if (trans_name) {
-                            NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
-                            if (trans) {
-                                NSString *text = [trans transformedValue:prop];
-                                if (text)
-                                    cellView.textField.objectValue = text;
-                                else
-                                    cellView.textField.objectValue = @"error transforming value";
-                            }
+            cellView = [aTableView makeViewWithIdentifier:COL_TEXT_ONLY owner:self];
+        
+        if (colControl!=nil) { // The column exists
+            NSString *prop_name = colControl[COL_ACCESSOR_KEY];
+            id prop = nil;
+            @try {
+                prop = [objectValue valueForKey:prop_name];
+            }
+            @catch (NSException *exception) {
+                NSLog(@"BrowserController.tableView:viewForTableColumn:row - Property '%@' not found", prop_name);
+            }
+            
+            if (prop){
+                if ([prop isKindOfClass:[NSString class]])
+                    cellView.textField.objectValue = prop;
+                else { // Need to use one of the NSValueTransformers
+                    NSString *trans_name = [colControl objectForKey:COL_TRANS_KEY];
+                    if (trans_name) {
+                        NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
+                        if (trans) {
+                            NSString *text = [trans transformedValue:prop];
+                            if (text)
+                                cellView.textField.objectValue = text;
                             else
-                                cellView.textField.objectValue = @"invalid transformer";
+                                cellView.textField.objectValue = @"error transforming value";
                         }
                         else
-                            cellView.textField.objectValue = @"no transformer found";
-                    }
-                }
-                else {
-                    // If its the filesize and it wasn't found, ask for
-                    // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
-                    if ([theFile isKindOfClass:[TreeBranch class]] && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
-                        [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
-                        [self->observedTreeItemsForSizeCalculation addObject:theFile];
-                        cellView.textField.objectValue = @"";
-                        [((SizeTableCellView*)cellView)  startAnimation];
-                        [(TreeBranch*)theFile calculateSize];
+                            cellView.textField.objectValue = @"invalid transformer";
                     }
                     else
-                        cellView.textField.objectValue = @"--";
-
+                        cellView.textField.objectValue = @"no transformer found";
                 }
             }
             else {
-                cellView.textField.objectValue = @"Invalid Column";
+                // If its the filesize and it wasn't found, ask for
+                // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
+                if ([theFile isKindOfClass:[TreeBranch class]] && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                    [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
+                    [self->observedTreeItemsForSizeCalculation addObject:theFile];
+                    cellView.textField.objectValue = @"";
+                    [((SizeTableCellView*)cellView)  startAnimation];
+                    [(TreeBranch*)theFile calculateSize];
+                }
+                else
+                    cellView.textField.objectValue = @"--";
+                
             }
-
-
-            //        if ([identifier isEqualToString:COL_SIZE]) {
-            //        if (_viewMode==BViewBrowserMode && [theFile itemType] == ItemTypeBranch){
-            //            //cellView.textField.objectValue = [NSString stringWithFormat:@"%ld Items", [(TreeBranch*)theFile numberOfItemsInNode]];
-            //            cellView.textField.objectValue = @"--";
-            //        }
-            //        else
-            //            cellView.textField.objectValue = [NSByteCountFormatter stringFromByteCount:[theFile filesize] countStyle:NSByteCountFormatterCountStyleFile];
-            //
-            //    } else if ([identifier isEqualToString:COL_DATE_MOD]) {
-            //        NSString *result=nil;
-            //        DateFormatter([theFile date_modified], &result);
-            //        if (result == nil)
-            //            cellView.textField.stringValue = NSLocalizedString(@"(Date)", @"Unknown Date");
-            //        else
-            //            cellView.textField.stringValue = result;
-            //    }
-            //    else {
-            //        /* Debug code for further implementation */
-            //        cellView.textField.stringValue = [NSString stringWithFormat:@"%@ %ld", aTableColumn.identifier, rowIndex];
-            //    }
         }
-        // other cases are not considered here. returning Nil
+        else {
+            cellView.textField.objectValue = @"Invalid Column";
+        }
+        
+        
+
     }
+    
+    
     else if ([objectValue isKindOfClass:[GroupItem class]]) {
         // this is a group Row
         cellView = [aTableView makeViewWithIdentifier:ROW_GROUP owner:self];
@@ -240,6 +215,7 @@
         [cellView setObjectValue:objectValue];
 
     }
+    // other cases are not considered here. returning Nil
     return cellView;
 }
 
@@ -312,6 +288,8 @@
     [self refreshKeepingSelections];
 }
 
+#pragma mark - Column Support
+
 #ifdef COLUMN_NOTIFICATION
 
 -(void) selectColumnTitles:(NSNotification *) note {
@@ -355,6 +333,53 @@
 }
 
 #endif
+
+-(void) setupColumns:(NSArray*) columns {
+    int i=0;
+    // Removing uneeded columns and obtaining a new sort
+    while (i < [self.myTableView.tableColumns count]) {
+        BOOL found = NO;
+        NSTableColumn *col = self.myTableView.tableColumns[i];
+        for (NSString *colID in columns) {
+            if ([col.identifier isEqualToString:colID]) {
+                found = YES;
+                break;
+            }
+        }
+        if (!found)  // Not present needs to be removed
+            [self.myTableView removeTableColumn:col];
+        i++;
+    }
+    i=0;
+    // Cycling throgh the columns to set
+    for (NSString *colID in columns) {
+        // Check if is present on existing columns
+        int j =0;
+        for (NSTableColumn *col in self.myTableView.tableColumns) {
+            if ([col.identifier isEqualToString:colID]) {
+                // Found column
+                if (i!=j) {
+                    // The column is not in the right place
+                    [self.myTableView moveColumn:j toColumn:i];
+                }
+                j = -1; // Signal that column was found
+                break;
+            }
+            j++;
+        }
+        if (j != -1) {
+            // Needs to insert this new column
+            NSTableColumn *columnToAdd= [[NSTableColumn alloc] initWithIdentifier:colID];
+            [[columnToAdd headerCell] setStringValue:columnInfo()[colID][COL_TITLE_KEY]];
+            [[self myTableView] addTableColumn:columnToAdd];
+            NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
+            if (i<lastColumn-1) { // -1 so to avoid calling a move to the same position
+                [[self myTableView] moveColumn:lastColumn toColumn:i]; // Inserts to the right
+            }
+        }
+        i++;
+    }
+}
 
 // This action is called from the BrowserTableView when the contextual menu for groupings is called.
 -(IBAction)groupContextSelect:(id)sender {
@@ -407,6 +432,8 @@
         }
     }
 }
+
+#pragma mark - Selection Support Functions
 
 -(NSArray*) getSelectedItems {
     NSArray* answer = nil;
