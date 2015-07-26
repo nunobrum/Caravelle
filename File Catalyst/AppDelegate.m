@@ -1734,6 +1734,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                         statusText = [NSString stringWithFormat:@"%ld Duplicates Found", count];
                 }
             }
+            else if ([operation isEqualTo:opFlatOperation]) {
+                if (!OK)
+                    statusText = @"Flat View Aborted";
+                else
+                    statusText = nil; // Cancel any existing text
+            }
             else {
                 NSLog(@"Unkown operation"); // Unknown operation
             }
@@ -1745,10 +1751,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 [self.statusProgressLabel setTextColor:[NSColor textColor]];
             }
             
-            if (statusText!=nil) // If nothing was set, don't update status
+            if (statusText!=nil)
                 [self.statusProgressLabel setStringValue: statusText];
-            else
+            else {
+                // If nothing was set, don't update status
+                [self _stopOperationBusyIndication];
                 [self.statusProgressLabel setStringValue: @""];
+            }
         }
         else {
             // Update nothing, so that the previous message does not stand for less time than expected

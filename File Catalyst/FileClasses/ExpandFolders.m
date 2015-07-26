@@ -115,14 +115,14 @@
     }
     if (self.isCancelled==NO)
         [itemToFlat notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
-    else { // Will have to cancel the flat View. 
-        NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
-        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              OK, kDFOOkKey,
-                              nil];
-        [_taskInfo addEntriesFromDictionary:info];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];
-    }
+    
+    // If not OK Will have to cancel the flat View. OK Will clear the operating status message.
+    NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          OK, kDFOOkKey,
+                          nil];
+    [_taskInfo addEntriesFromDictionary:info];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];
 }
 
 @end
