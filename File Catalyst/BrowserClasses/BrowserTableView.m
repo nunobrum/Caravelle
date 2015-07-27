@@ -74,7 +74,7 @@
     unichar keyCode = [key characterAtIndex:0];
     //NSLog(@"KD: code:%@ - %hu",key, keyCode);
 
-    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVIOUR] ;
 
     if ((([theEvent modifierFlags] & NSCommandKeyMask) &&
             (keyCode == KeyCodeUp  ||

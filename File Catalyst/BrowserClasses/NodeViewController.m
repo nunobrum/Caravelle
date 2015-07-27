@@ -478,6 +478,24 @@
     return nil;
 }
 
+-(void) setupColumns:(NSArray*) columns {
+    // Overrided in Table View. Ignored in other views
+}
+
+-(NSArray*) columns {
+    // Overrided in Table View. Ignored in other views
+    return nil;
+}
+
+-(void) loadPreferencesFrom:(NSDictionary*) preferences {
+    // Needs to be overrided in subclasses
+}
+
+-(NSDictionary*) savePreferences {
+    // Needs to be overrided in subclassses
+    return nil;
+}
+
 -(void) _startBusyAnimations {
     if (self->animation_needed == YES) {
         [self startBusyAnimations];

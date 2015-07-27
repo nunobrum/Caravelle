@@ -447,9 +447,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         // Force a store of the User Defaults
         NSString *homepath = [[myLeftView treeNodeSelected] path];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
+        [myLeftView savePreferences];
         if (myRightView) {
             homepath = [[myRightView treeNodeSelected] path];
             [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+            [myRightView savePreferences];
         }
         BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
         if (!OK)
@@ -2135,6 +2137,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [myLeftView setTreeViewCollapsed:NO];
     // Make the FlatView and Group by Location
     [myLeftView setFlatView:YES];
+    // TODO:!!!! use the [view setName:twinName:] To change to a "Dup Left" and "Dup Right"
+    // TODO:!!! Mode Duplicate should cancel all operations, except if plugin is activated
+    NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
+    [myLeftView.detailedViewController setupColumns:dupColumns];
     [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
     
     [myRightView setViewMode:BViewDuplicateMode];
@@ -2143,6 +2149,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [myRightView setTreeViewCollapsed:YES];
     // Activate the Flat View
     [myRightView setFlatView:YES];
+    [myRightView.detailedViewController setupColumns:dupColumns];
     // Group by Location
     [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
     

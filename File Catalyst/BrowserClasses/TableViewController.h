@@ -34,5 +34,10 @@
 - (IBAction)filenameDidChange:(id)sender;
 -(void) initController;
 
+-(void) setupColumns:(NSArray*) columns;
+-(NSArray*) columns;
+
+-(void) loadPreferencesFrom:(NSDictionary*) preferences;
+-(NSDictionary*) savePreferences;
 
 @end

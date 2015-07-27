@@ -60,7 +60,7 @@
     NSString *key = [theEvent characters];
     unichar keyCode = [key characterAtIndex:0];
 
-    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVIOUR] ;
 
     if ((([theEvent modifierFlags] & NSCommandKeyMask) &&
          (keyCode == KeyCodeUp  ||

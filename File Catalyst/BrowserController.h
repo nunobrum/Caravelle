@@ -116,6 +116,8 @@
 -(void) setViewMode:(EnumBrowserViewMode)viewMode;
 -(EnumBrowserViewMode) viewMode;
 
+-(void) savePreferences;
+
 -(void) setTreeViewCollapsed:(BOOL) collapsed;
 -(BOOL) treeViewCollapsed;
 -(void) setFlatView:(BOOL) flatView;

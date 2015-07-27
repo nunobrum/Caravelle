@@ -40,6 +40,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeItem *_validatedDestinationItem;
     BOOL _didRegisterDraggedTypes;
     BOOL _awakeFromNibConfigDone;
+    BOOL _didLoadPreferences;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
@@ -64,6 +65,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
     self->_awakeFromNibConfigDone = NO;
+    self->_didLoadPreferences = NO;
     self->_detailedViewController = nil;
     self->tableViewController = nil;
     self->iconViewController = nil;
@@ -80,9 +82,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         if (self.myOutlineView==nil) return;
         if (self.myFilterText.selectedCell==nil) return;
 
-        [[self myOutlineView] setAutosaveName:[self->_viewName stringByAppendingString:@"Outline"]];
+        //[[self myOutlineView] setAutosaveName:[self->_viewName stringByAppendingString:@"Outline"]];
         // The Outline view has no customizable settings
-        [[self myOutlineView] setAutosaveTableColumns:YES];
+        //[[self myOutlineView] setAutosaveTableColumns:YES];
 
         NSButtonCell *searchCell = [self.myFilterText.selectedCell searchButtonCell];
         NSImage *filterImage = [NSImage imageNamed:@"FilterIcon16"];
@@ -578,6 +580,42 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return NO;
 }
  */
+
+-(NSNumber*) validateContextualCopyTo {
+    // I have to write this function because the binding actually overrides the automatic Menu Validation.
+    BOOL allow;
+    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
+    if ((itemsSelected==nil) || ([itemsSelected count]==0))  // no selection, go for the selected view
+        allow = NO;
+    else
+        allow = YES;
+    
+    return [NSNumber numberWithBool:allow];
+}
+
+-(NSNumber*) validateContextualMoveTo {
+    // I have to write this function because the binding actually overrides the automatic Menu Validation.
+    BOOL allow = YES;
+    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
+    if (itemsSelected==nil) {
+        // If nothing was returned is selected then don't allow anything
+        allow = NO;
+    }
+    else if ([itemsSelected count]==0) { // no selection, go for the selected view
+        allow = NO;
+    }
+    else {
+        // The file has to be read/write
+        for (TreeItem *item in itemsSelected) {
+            if ([item hasTags:tagTreeItemReadOnly]) {
+                allow = NO;
+                break;
+            }
+        }
+    }
+    return [NSNumber numberWithBool:allow];
+}
+
 
 #pragma mark - Path Bar Handling
 -(TreeBranch*) treeNodeSelected {
@@ -1132,7 +1170,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
 
     if (sentView == _myOutlineView) {
-        NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+        NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVIOUR] ;
 
         if (([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_MULTIPLATFORM) ||
             ([key isEqualToString:@" "] && behave == APP_BEHAVIOUR_NATIVE))
@@ -1212,13 +1250,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 -(void) setName:(NSString*)viewName TwinName:(NSString *)twinName {
+    if (![self->_viewName isEqualToString:viewName]) {
+        self->_viewName = viewName;
+        // Setting the AutoSave Settings
+        
+        NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
+        [self.preferences removeAllObjects];
+        [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
+        self->_didLoadPreferences = NO;
+    }
+    
     self->_twinName = twinName;
-    self->_viewName = viewName;
-    // Setting the AutoSave Settings
-
-    NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
-    [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
-
+    
     if (twinName==nil) { // there is no twin view
         self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
         self.titleCopyTo = @"Copy to...";
@@ -1231,40 +1274,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         self.titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
 
     }
-}
-
--(NSNumber*) validateContextualCopyTo {
-    // I have to write this function because the binding actually overrides the automatic Menu Validation.
-    BOOL allow;
-    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
-    if ((itemsSelected==nil) || ([itemsSelected count]==0))  // no selection, go for the selected view
-        allow = NO;
-    else
-        allow = YES;
-
-    return [NSNumber numberWithBool:allow];
-}
--(NSNumber*) validateContextualMoveTo {
-    // I have to write this function because the binding actually overrides the automatic Menu Validation.
-    BOOL allow = YES;
-    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
-    if (itemsSelected==nil) {
-        // If nothing was returned is selected then don't allow anything
-        allow = NO;
-    }
-    else if ([itemsSelected count]==0) { // no selection, go for the selected view
-        allow = NO;
-    }
-    else {
-        // The file has to be read/write
-        for (TreeItem *item in itemsSelected) {
-            if ([item hasTags:tagTreeItemReadOnly]) {
-                allow = NO;
-                break;
-            }
-        }
-    }
-    return [NSNumber numberWithBool:allow];
 }
 
 -(void) setViewType:(EnumBrowserViewType)viewType {
@@ -1283,6 +1292,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [tableViewController initController];
                 [tableViewController setParentController:self];
                 [tableViewController setName:self.viewName twinName:self->_twinName];
+                self->_didLoadPreferences = NO;
             }
             newController = tableViewController;
             [self.myGroupingPopDpwnButton setHidden:NO];
@@ -1295,6 +1305,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [iconViewController initController];
                 [iconViewController setParentController:self];
                 [iconViewController setName:self.viewName twinName:self->_twinName];
+                self->_didLoadPreferences = NO;
             }
             newController = iconViewController;
             [self.myGroupingPopDpwnButton setHidden:YES];
@@ -1317,7 +1328,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
         [self.mySplitView displayIfNeeded];
         
-        // Load Preferences
         // TODO: !!! make the bindings to UserDefaults
         [newController setFoldersDisplayed:YES];
 
@@ -1327,6 +1337,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // Changing User Defaults
         self->_viewType = viewType;
         [self.myViewSelectorButton setSelectedSegment:viewType];
+        // Load Preferences
+        if (self->_didLoadPreferences==NO) {
+            self->_didLoadPreferences = YES;
+            [self loadPreferences];
+        }
+        // Update Current View Type Preference
         [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
     }
 }
@@ -1345,6 +1361,23 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 -(EnumBrowserViewMode) viewMode {
     return self->_viewMode;
+}
+
+-(void) savePreferences {
+    if (self->iconViewController) {
+        [self.preferences addEntriesFromDictionary:
+            [self->iconViewController savePreferences]];
+    }
+    if (self->tableViewController) {
+        [self.preferences addEntriesFromDictionary:
+         [self->tableViewController savePreferences]];
+    }
+    NSString *prefKey = [self.viewName stringByAppendingString:@"Preferences"];
+    [[NSUserDefaults standardUserDefaults] setObject:self.preferences forKey:prefKey];
+}
+
+-(void) loadPreferences {
+    [self.detailedViewController loadPreferencesFrom:self.preferences ];
 }
 
 -(void) set_filterText:(NSString *) filterText {

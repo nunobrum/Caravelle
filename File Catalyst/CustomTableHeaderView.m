@@ -89,6 +89,8 @@ NSString *fieldStringOnItem(id object, NSString* colID) {
     return nil;
 }
 
+
+// Function used on the FileExistsChoice menu
 NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude_equals) {
     id src_field, dst_field;
 

@@ -36,7 +36,7 @@
 @end
 
 @implementation TableViewController {
-    BOOL _awakeFromNibConfigDone;
+    
 }
 
 - (void)viewDidLoad {
@@ -47,10 +47,13 @@
 
 - (void)awakeFromNib
 {
-    if (self->_awakeFromNibConfigDone==NO) {
-        [[self myTableView] setAutosaveName:[self.viewName stringByAppendingString:@"Table"]];
-        [[self myTableView] setAutosaveTableColumns:YES];
-    }
+    
+}
+
+-(void) setViewName:(NSString *)viewName {
+    [super setViewName:viewName];
+    //[[self myTableView] setAutosaveName:[self.viewName stringByAppendingString:@"Table"]];
+    //[[self myTableView] setAutosaveTableColumns:YES];
 }
 
 - (void) initController {
@@ -60,8 +63,7 @@
     self->_draggedItemsIndexSet = nil;
 #endif
     self->extendedSelection = nil;
-    self->_awakeFromNibConfigDone = NO;
-
+    
     //To Get Notifications from the Table Header
 #ifdef COLUMN_NOTIFICATION
     [[NSNotificationCenter defaultCenter]
@@ -335,51 +337,45 @@
 #endif
 
 -(void) setupColumns:(NSArray*) columns {
-    int i=0;
-    // Removing uneeded columns and obtaining a new sort
-    while (i < [self.myTableView.tableColumns count]) {
-        BOOL found = NO;
-        NSTableColumn *col = self.myTableView.tableColumns[i];
-        for (NSString *colID in columns) {
-            if ([col.identifier isEqualToString:colID]) {
-                found = YES;
-                break;
-            }
-        }
-        if (!found)  // Not present needs to be removed
-            [self.myTableView removeTableColumn:col];
-        i++;
+
+    // Removing all columns
+    while ([self.myTableView.tableColumns count]) {
+        NSTableColumn *col = self.myTableView.tableColumns[0];
+        [self.myTableView removeTableColumn:col];
     }
-    i=0;
+
     // Cycling throgh the columns to set
     for (NSString *colID in columns) {
-        // Check if is present on existing columns
-        int j =0;
-        for (NSTableColumn *col in self.myTableView.tableColumns) {
-            if ([col.identifier isEqualToString:colID]) {
-                // Found column
-                if (i!=j) {
-                    // The column is not in the right place
-                    [self.myTableView moveColumn:j toColumn:i];
-                }
-                j = -1; // Signal that column was found
-                break;
-            }
-            j++;
-        }
-        if (j != -1) {
-            // Needs to insert this new column
-            NSTableColumn *columnToAdd= [[NSTableColumn alloc] initWithIdentifier:colID];
-            [[columnToAdd headerCell] setStringValue:columnInfo()[colID][COL_TITLE_KEY]];
-            [[self myTableView] addTableColumn:columnToAdd];
-            NSInteger lastColumn = [[self myTableView] numberOfColumns] - 1 ;
-            if (i<lastColumn-1) { // -1 so to avoid calling a move to the same position
-                [[self myTableView] moveColumn:lastColumn toColumn:i]; // Inserts to the right
-            }
-        }
-        i++;
+        // Needs to insert this new column
+        NSTableColumn *columnToAdd= [[NSTableColumn alloc] initWithIdentifier:colID];
+        [[columnToAdd headerCell] setStringValue:columnInfo()[colID][COL_TITLE_KEY]];
+        [[self myTableView] addTableColumn:columnToAdd];
     }
 }
+
+-(NSArray*) columns {
+    // Gets the array with all the column identifiers
+    NSArray *columns = [[self.myTableView tableColumns] valueForKeyPath:@"@unionOfObjects.identifier"];
+    return columns;
+}
+
+-(void) loadPreferencesFrom:(NSDictionary*) preferences {
+    NSArray *columns = [preferences objectForKey:USER_DEF_TABLE_VIEW_COLUMNS];
+    if (columns) {
+        [self setupColumns:columns];
+    }
+}
+
+-(NSDictionary*) savePreferences {
+    // Needs to be overrided in subclassses
+    NSArray *colIDs = [self columns];
+    if (colIDs) {
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+                colIDs, USER_DEF_TABLE_VIEW_COLUMNS, nil];
+    }
+    return nil;
+}
+
 
 // This action is called from the BrowserTableView when the contextual menu for groupings is called.
 -(IBAction)groupContextSelect:(id)sender {
@@ -728,7 +724,7 @@
     unichar keyCode = [key characterAtIndex:0];
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
     //NSLog(@"KD: code:%@ - %@, [%d,%d]",key, keyWM, keyCode, [keyWM characterAtIndex:0]);
-    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVIOUR] ;
 
     if ([theEvent modifierFlags] & NSCommandKeyMask) {
         if (keyCode == KeyCodeDown) {    // will open the subject

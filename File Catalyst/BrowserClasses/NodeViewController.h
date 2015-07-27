@@ -94,4 +94,11 @@
 
 -(IBAction) menuGroupingSelector:(id) sender;
 
+// Support for Table View : Ignored in other views
+-(void) setupColumns:(NSArray*) columns;
+-(NSArray*) columns;
+
+-(void) loadPreferencesFrom:(NSDictionary*) preferences;
+-(NSDictionary*) savePreferences;
+
 @end

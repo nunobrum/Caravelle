@@ -325,7 +325,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
     
     NSString *keyWM = [theEvent charactersIgnoringModifiers];
 
-    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVOUR] ;
+    NSInteger behave = [[NSUserDefaults standardUserDefaults] integerForKey: USER_DEF_APP_BEHAVIOUR] ;
 
     if ([theEvent modifierFlags] & NSCommandKeyMask) {
         if (keyCode == KeyCodeDown) {    // will open the subject

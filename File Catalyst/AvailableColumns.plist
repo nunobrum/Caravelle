@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>COL_NAME</key>
+	<dict>
+		<key>title</key>
+		<string>Name</string>
+		<key>accessor</key>
+		<string>name</string>
+		<key>col_id</key>
+		<string>COL_NAME</string>
+	</dict>
 	<key>COL_SIZE</key>
 	<dict>
 		<key>title</key>
@@ -10,8 +19,8 @@
 		<string>fileSize</string>
 		<key>transformer</key>
 		<string>size</string>
-		<key>selected</key>
-		<false/>
+		<key>col_id</key>
+		<string>COL_SIZE</string>
 		<key>grouping</key>
 		<string>size</string>
 	</dict>
@@ -23,8 +32,8 @@
 		<string>allocatedSize</string>
 		<key>transformer</key>
 		<string>size</string>
-		<key>selected</key>
-		<false/>
+		<key>col_id</key>
+		<string>COL_SIZE</string>
 		<key>grouping</key>
 		<string>size</string>
 	</dict>
@@ -36,8 +45,8 @@
 		<string>totalSize</string>
 		<key>transformer</key>
 		<string>size</string>
-		<key>selected</key>
-		<false/>
+		<key>col_id</key>
+		<string>COL_SIZE</string>
 		<key>grouping</key>
 		<string>size</string>
 	</dict>
@@ -49,8 +58,8 @@
 		<string>totalAllocatedSize</string>
 		<key>transformer</key>
 		<string>size</string>
-		<key>selected</key>
-		<false/>
+		<key>col_id</key>
+		<string>COL_SIZE</string>
 		<key>grouping</key>
 		<string>size</string>
 	</dict>
@@ -60,8 +69,8 @@
 		<string>Path</string>
 		<key>accessor</key>
 		<string>path</string>
-		<key>selected</key>
-		<false/>
+		<key>col_id</key>
+		<string>COL_NAME</string>
 	</dict>
 	<key>COL_DATE_MODIFIED</key>
 	<dict>

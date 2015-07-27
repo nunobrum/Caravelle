@@ -66,6 +66,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define COL_TITLE_KEY @"title"
 #define COL_TRANS_KEY @"transformer" 
 #define COL_GROUPING_KEY @"grouping"
+#define COL_COL_ID_KEY @"col_id"
 
 
 // User Definitions
@@ -76,12 +77,15 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
 #define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
 #define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used.
-#define USER_DEF_APP_BEHAVOUR @"ApplicationBehaviour"
+#define USER_DEF_APP_BEHAVIOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
 #define USER_DEF_CALCULATE_SIZES @"CalculateFolderSizes"
 
+// View Preferences
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
+#define USER_DEF_TABLE_VIEW_COLUMNS @"TableColumns"
+
 
 #define SHOW_OPTION_HIDDEN_FILES_NO  0
 #define SHOW_OPTION_BROWSE_APP_NO   1
