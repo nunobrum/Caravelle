@@ -14,7 +14,6 @@
 #import "TreeManager.h"
 #import "TreeRoot.h"
 #import "searchTree.h"
-#import "FileUtils.h" // TODO: The app shouldnt use functions that access the system directly. Rather go through the Operations
 #import "FileOperation.h"
 #import "DuplicateFindOperation.h"
 #import "ExpandFolders.h"
@@ -26,6 +25,8 @@
 #import "RenameFileDialog.h"
 #import "PasteboardUtils.h"
 
+#import "StartupScreenController.h"
+#import "DuplicateModeStartWindow.h"
 
 // TODO:! Virtual Folders
 // #import "filterBranch.h"
@@ -109,6 +110,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 @implementation AppDelegate {
     NSTimer	*_operationInfoTimer;                  // update timer for progress indicator
     NSNumber *treeUpdateOperationID;
+    DuplicateModeStartWindow *duplicateStartupScreenCtrl; // Duplicates Dialog
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
     UserPreferencesDialog *userPreferenceWindow;
     RenameFileDialog *renameFilePanel;
@@ -134,6 +136,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     self = [super init];
 	if (self)
     {
+        self->duplicateSettingsWindow = nil;
+        self->duplicateStartupScreenCtrl = nil;
+        self->userPreferenceWindow = nil;
+        self->renameFilePanel = nil;
+        self->fileExistsWindow = nil;
+        
         operationsQueue   = [[NSOperationQueue alloc] init];
         browserQueue      = [[NSOperationQueue alloc] init];
         lowPriorityQueue  = [[NSOperationQueue alloc] init];
@@ -174,8 +182,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [(BrowserController*)view setViewMode:BViewBrowserMode ];
     [(BrowserController*)view setViewType:BViewTypeVoid];
     [(BrowserController*)view setFlatView:NO];
+    // TODO:!!!!! replace this with a loadPreferences
     [[[(BrowserController*)view detailedViewController] sortAndGroupDescriptors] removeAllObjects];
-    [[(BrowserController*)view detailedViewController] makeSortOnColID:COL_FILENAME
+    [[(BrowserController*)view detailedViewController] makeSortOnFieldID:@"COL_NAME"
                                                              ascending:YES
                                                               grouping:NO];
     [(BrowserController*)view addTreeRoot: item];
@@ -224,7 +233,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
 
         [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
-
+        [self savePreferences]; // TODO:!!!!! Check if this is saving the path correctly. An possible workaround this is just using the first Bookmark available
 
 #else
         if (homepath == nil || [homepath isEqualToString:@""]) {
@@ -247,7 +256,21 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     return self->_contextualFocus;
 }
 
-
+-(BOOL) savePreferences {
+    NSLog(@"AppDelegate.savePreferences:");
+    NSString *homepath = [[myLeftView treeNodeSelected] path];
+    [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
+    [myLeftView savePreferences];
+    if (myRightView) {
+        homepath = [[myRightView treeNodeSelected] path];
+        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        [myRightView savePreferences];
+    }
+    BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
+    if (!OK)
+        NSLog(@"AppDelegate.savePreferences: Failed to store User Defaults");
+    return OK;
+}
 
 #pragma mark - Application Delegate
 
@@ -338,7 +361,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
         [myRightView setParentController:self];
 
-        [myLeftView  setName:@"Left"  TwinName:@"Right"];
+        [myLeftView  setName:@"Left"  TwinName:@"Right"];  // A first call not valid, because its called before the add view
         [myRightView setName:@"Right" TwinName:@"Left"];
         [_ContentSplitView addSubview:myLeftView.view];
         [_ContentSplitView addSubview:myRightView.view];
@@ -352,6 +375,15 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSAssert(NO,@"Application start mode not supported");
     }
     
+    // Displaying Startup Screen
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DONT_START_SCREEN]==NO) {
+        StartupScreenController *startupScreenCtrl = [[StartupScreenController alloc] initWithWindowNibName:@"StartupScreen"];
+        NSInteger dont = [NSApp runModalForWindow:startupScreenCtrl.window];
+        if (dont == 1) { // Doesn't display the message again
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:USER_DEF_DONT_START_SCREEN];
+        }
+        //[startupScreenCtrl showWindow:self];
+    }
     //NSDictionary *viewsDictionary = [NSDictionary dictionaryWithObject:myLeftView.view forKey:@"myLeftView"];
     //NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-0-[myLeftView]-0-|"
     //                                                               options:0 metrics:nil views:viewsDictionary];
@@ -445,17 +477,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
     if (fromWindowClosing) {
         // Force a store of the User Defaults
-        NSString *homepath = [[myLeftView treeNodeSelected] path];
-        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
-        [myLeftView savePreferences];
-        if (myRightView) {
-            homepath = [[myRightView treeNodeSelected] path];
-            [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
-            [myRightView savePreferences];
-        }
-        BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
-        if (!OK)
-            NSLog(@"AppDelegate.shouldTerminate: Failed to store User Defaults");
+        [self savePreferences];
     }
 
     if (numOperationsRunning ==0 && numErrorsPending==0) {
@@ -553,7 +575,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 /*-(void) applicationWillTerminate:(NSNotification *)aNotification {
-    // TODO:!! applicationWillTerminate :Save Application State
     NSLog(@"Application Will Terminate");
 }*/
 
@@ -562,9 +583,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     //NSLog(@"Application Will Resign Active");
 
     // Force a store of the User Defaults
-    BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
-    if (!OK)
-        NSLog(@"AppDelegate.applicationWillResignActive: Failed to store User Defaults");
+    [self savePreferences];
 }
 
 
@@ -690,7 +709,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 /* Receives the notification from the BrowserView to reload the Tree */
 
-//TODO:!! Marked for clean-up. Revise this code. Only used in notificationCatalystRootUpdate.
+//TODO: Marked for clean-up. Revise this code. Only used in notificationCatalystRootUpdate.
 //- (void) rootUpdate:(NSNotification*)theNotification {
 //    NSDictionary *notifInfo = [theNotification userInfo];
 //    BrowserController *BrowserView = [theNotification object];
@@ -775,13 +794,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
         NSPasteboard *pboard = [NSPasteboard pasteboardWithUniqueName];
         [pboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
-
-        NSMutableArray *fileList = [NSMutableArray new]; // TODO: This can be replaced with union.url
-
-        //Add as many as file's path in the fileList array
-        for(TreeItem *item in selectedFiles) {
-            [fileList addObject:[item path]];
-        }
+        
+        NSArray * fileList = [selectedFiles valueForKeyPath:@"@unionOfObjects.path"];
 
         [pboard setPropertyList:fileList forType:NSFilenamesPboardType];
         NSPerformService(@"Finder/Show Info", pboard);
@@ -862,7 +876,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 -(BOOL) startFileOperation:(NSDictionary *) operationInfo {
     [self _startOperationBusyIndication: operationInfo];
-    // TODO:!!!! Divide the operations per classes
+    // TODO:FILOP Divide the operations per classes
     FileOperation *operation = [[FileOperation alloc] initWithInfo:operationInfo];
     putInQueue(operation);
     return YES;
@@ -1225,7 +1239,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 - (IBAction)contextualPaste:(id)sender {
     // the validateMenuItems insures that node is Branch
     NSArray *items = [[self contextualFocus] getSelectedItemsForContextualMenu1];
-    if ([items count]==1) { // Can only paste on one item
+    if ([items count]==1) { // Can only paste on one item. TODO: In the future can paste to many
         TreeItem *item = [items firstObject];
         // TODO:!! need to test if its an application,
         //if ([item isKindOfClass:[TreePackage class]]) {
@@ -1253,15 +1267,20 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
     NSUInteger panelCount = [[self.ContentSplitView subviews] count];
     
-    if (applicationMode==ApplicationModeDuplicate &&
-        mode != applicationMode) {
+    if (applicationMode==ApplicationModeDuplicate && mode != applicationMode) {
+        [myLeftView setViewMode:BViewBrowserMode];
+        [myRightView setViewMode:BViewBrowserMode];
+        
         NSArray *roots = [myLeftView roots];
         if ([roots count]>=1) {
+    
             [self prepareView:myLeftView withItem:roots[0]];
-            if ([roots count]>=2)
-                [self prepareView:myRightView withItem:roots[1]];
-            else
-                [self goHome:myRightView];
+            if (myRightView!=nil) {
+                if ([roots count]>=2)
+                    [self prepareView:myRightView withItem:roots[1]];
+                else
+                    [self goHome:myRightView];
+            }
         }
         else {
             [self goHome:myLeftView];
@@ -1270,10 +1289,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
     if (mode == ApplicationMode1View) {
         if (myRightView!=nil && panelCount == 2) {
-            [myLeftView setName:@"Single" TwinName:nil];
             [myRightView.view removeFromSuperview];
             //myRightView.view = nil;
         }
+        [myLeftView setName:@"Single" TwinName:nil];
+        [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
         applicationMode = mode;
     }
     else if (mode == ApplicationMode2Views) {
@@ -1281,7 +1301,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             if (myRightView == nil) {
                 myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
                 [myRightView setParentController:self];
-                [myLeftView setName:@"Left" TwinName:@"Right"];
                 [myRightView setName:@"Right" TwinName:@"Left"];
                 [_ContentSplitView addSubview:myRightView.view];
                 [self goHome:myRightView];
@@ -1291,6 +1310,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 return;
             }
             else {
+                [myRightView setName:@"Right" TwinName:@"Left"];
                 [_ContentSplitView addSubview:myRightView.view];
                 [myRightView refresh]; // Just Refreshes
             }
@@ -1300,20 +1320,47 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 // This is handled above
             
             if (applicationMode == ApplicationModePreview) {
-                // TODO: code here for Application Mode Preview
+                // TODO:1.4 code here for Application Mode Preview
+                // Delete the current preview view
+                // and add myRightView
             }
             else if (applicationMode == ApplicationModeSync){
-                // TODO: develop this if needed
+                // TODO:1.4 develop this if needed
             }
+            [myRightView refresh]; // Refreshes just in case
         }
+        [myLeftView setName:@"Left" TwinName:@"Right"];
+        [myLeftView refresh];  // Needs to always refresh the left view since preferences may have changed
         applicationMode = mode;
     }
     else if (mode == ApplicationModePreview) {
-        // TODO: !!! Preview Mode
-        NSLog(@"Preview Mode");
+        // TODO:1.4 Preview Mode
+        NSLog(@"AppDelegate.appModeChanged: Preview Mode");
+        // Now displaying an NSAlert with the information that this will be available in a next version
+        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Preview Pane"
+                                                      defaultButton:@"OK"
+                                                    alternateButton:nil
+                                                        otherButton:nil
+                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+        [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
+        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        // Reposition last mode
+        [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
+        
     }
     else if (mode == ApplicationModeSync) {
-        // TODO: !!! Sync Mode
+        // TODO:1.4 Sync Mode
+        NSLog(@"AppDelegate.appModeChanged: Sync Mode");// TODO: !!! Preview Mode
+        // Now displaying an NSAlert with the information that this will be available in a next version
+        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Directory Compare & Synchronization"
+                                                      defaultButton:@"OK"
+                                                    alternateButton:nil
+                                                        otherButton:nil
+                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+        [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
+        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        // Reposition last mode
+        [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
         
     }
     else if (mode == ApplicationModeDuplicate) {
@@ -1619,7 +1666,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     else {
         nItems = [NSString stringWithFormat:@"%ld items", (long)count];
     }
-    // TODO:!!!!! Move this to the File Operations
+    // TODO:FILOP Move this to the File Operations
     if ([operation isEqualTo:opCopyOperation]) {
         operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
     }
@@ -1674,7 +1721,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             //NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
             NSString *operation = [info objectForKey:kDFOOperationKey];
             BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
-            // TODO:!! The FileOperations should generate their own messages to display here.
+            // TODO:FILOP The FileOperations should generate their own messages to display here.
             // Its more correct in an object oriented perspective. File Operations should also be subclassed.
             // the main on the File Operations is becomming a big mess
             // Also, make sure that the URL vs TreeItem recovery is done in the FileUtils.
@@ -1778,7 +1825,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSString *status = @"Internal Error";
         NSArray *operations = [operationsQueue operations];
         NSOperation *currOperation = operations[0];
-        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:!!!! This should be moved to File Operations statusText Selector
+        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:FILOP This should be moved to File Operations statusText Selector
             NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
             
             if ([op isEqualTo:opCopyOperation]) {
@@ -2052,7 +2099,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (IBAction)FindDuplicates:(id)sender {
     if (duplicateSettingsWindow==nil)
-        duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:nil];
+        duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:@"DuplicatesFindSettings"];
     
     // Setting the current node in the list
     NSMutableArray *selectedNodes;
@@ -2084,15 +2131,30 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         
         duplicates = [[FileCollection alloc] init];
         NSDictionary *notifInfo = [theNotification userInfo];
+        
         // start the GetPathsOperation with the root path to start the search
         DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
         [operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
         [self _startOperationBusyIndication:notifInfo];
+        
+        // While the process runs, the user can choose what is the prefered way of displaying
+        
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DONT_START_DUP_SCREEN]==NO) {
+            duplicateStartupScreenCtrl = [[DuplicateModeStartWindow alloc] initWithWindowNibName:@"DuplicateModeStartWindow"];
+            [duplicateStartupScreenCtrl showWindow:self];
+        }
+    }
+}
+
+-(void) closeDuplicatesStartUpWindow {
+    if (self->duplicateStartupScreenCtrl!=nil) {
+        [self->duplicateStartupScreenCtrl close];
+        self->duplicateStartupScreenCtrl = nil;
     }
 }
 
 - (void) mainThread_duplicateFindFinish:(NSNotification*)theNotification {
-
+    BOOL use_classic_view = NO;
     NSDictionary *info = [theNotification userInfo];
     BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
     NSArray *duplicatedFileArray = [info objectForKey:kDuplicateList];
@@ -2102,17 +2164,57 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         [self.toolbarAppModeSelect setSelected:YES forSegment:applicationMode];
         [myLeftView stopBusyAnimations];
         [myRightView stopBusyAnimations];
+        
         if (OK) { // The operation was not cancelled.
-            // Display information that no duplicates were found
-            NSAlert *alert = [NSAlert alertWithMessageText:@"Congratulations !"
-                                             defaultButton:@"OK"
-                                           alternateButton:nil
-                                               otherButton:nil
-                                 informativeTextWithFormat:@"No Duplicate Files were found"];
-            [alert setAlertStyle:NSInformationalAlertStyle];
-            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            // closing the window if it was opened
+            if (self->duplicateStartupScreenCtrl!=nil) {
+                [self->duplicateStartupScreenCtrl.message setStringValue:@"No duplicate files were found. Auto closing..."];
+                [self performSelector:@selector(closeDuplicatesStartUpWindow) withObject:nil afterDelay:3.0];
+            }
+            else {
+                // Display information that no duplicates were found
+                NSAlert *alert = [NSAlert alertWithMessageText:@"Congratulations !"
+                                                 defaultButton:@"OK"
+                                               alternateButton:nil
+                                                   otherButton:nil
+                                     informativeTextWithFormat:@"No duplicate files were found"];
+                [alert setAlertStyle:NSInformationalAlertStyle];
+                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            }
+        }
+        else {
+            [self closeDuplicatesStartUpWindow];
         }
         return;
+    }
+    
+    // Updating operation Status
+    if (pendingStatusMessages==nil)
+        pendingStatusMessages = [NSMutableArray array];
+    [pendingStatusMessages addObject:info];
+    [self _operationsInfoFired:nil];
+    
+    
+    if (self->duplicateStartupScreenCtrl !=  nil) {
+        
+        if ((self->duplicateStartupScreenCtrl.answer & DupDialogMaskOKPressed) == 0) {
+            NSModalSession session = [NSApp beginModalSessionForWindow:self->duplicateStartupScreenCtrl.window];
+            for (;;) {
+                if ([NSApp runModalSession:session] != NSModalResponseContinue)
+                    break;
+            }
+            [NSApp endModalSession:session];
+        }
+        use_classic_view = (self->duplicateStartupScreenCtrl.answer & DupDialogMaskClassicView) != 0;
+        if (self->duplicateStartupScreenCtrl.answer & DupDialogMaskChkDontDisplayAgain) {
+            // Then stores this in the User Defaults
+            [[NSUserDefaults standardUserDefaults] setBool:YES forKey:USER_DEF_DONT_START_DUP_SCREEN];
+            [[NSUserDefaults standardUserDefaults] setBool:use_classic_view forKey:USER_DEF_DUPLICATE_CLASSIC_VIEW];
+            
+        }
+    }
+    else  { // retrieve the option from the last used. Default is Caravelle View
+        use_classic_view = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DUPLICATE_CLASSIC_VIEW];
     }
     
     applicationMode = ApplicationModeDuplicate;
@@ -2120,59 +2222,90 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // ___________________________________
     // Prepare the view for Duplicate View
     // -----------------------------------
-    if (myRightView == nil) {
-        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-        [myRightView setParentController:self];
-        [myLeftView setName:@"Left" TwinName:@"Right"];
-        [myRightView setName:@"Right" TwinName:@"Left"];
+    if (use_classic_view) {
+        // Reduce to single panel view
+        if ([[self.ContentSplitView subviews] count]==2) { // in dual mode view
+            [[[self.ContentSplitView subviews] objectAtIndex:1] removeFromSuperview];
+        }
+        [myLeftView setName:@"DuplicateSingle" TwinName:nil];
+        [myLeftView setViewMode:BViewDuplicateMode];
+        [myLeftView setViewType:BViewTypeTable];
+        [myLeftView setTreeViewCollapsed:YES];
+        // Activate the Flat View
+        [myLeftView setFlatView:YES];
+        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
+        [myLeftView.detailedViewController setupColumns:dupColumns];
+        // Group by Location
+        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
+        
+        // ___________________________
+        // Setting the duplicate Files
+        // ---------------------------
+        [duplicates setFiles: duplicatedFileArray];
+        selectedDuplicatesRoot = [[TreeRoot alloc] init];
+        [selectedDuplicatesRoot setName:@"Duplicates"];
+        [selectedDuplicatesRoot setFileCollection:duplicates];
+        [myLeftView setRoots:[NSArray arrayWithObject:selectedDuplicatesRoot]];
+        [myLeftView stopBusyAnimations];
+        [myLeftView selectFirstRoot];
+        
     }
-    if ([[_ContentSplitView subviews] count]==1) { // in single mode view
-        [_ContentSplitView addSubview:myRightView.view];
-        [_ContentSplitView adjustSubviews];
-        //[_ContentSplitView setNeedsDisplay:YES];
+    else {
+         // Create right window if needed
+        if (myRightView == nil) {
+            myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+            [myRightView setParentController:self];
+        }
+        
+        // Change the name so to get new preferences
+        [myLeftView setName:@"DuplicateMaster" TwinName:nil];
+        [myRightView setName:@"DuplicateDetail" TwinName:nil];
+        
+        // change to Dual View
+        if ([[_ContentSplitView subviews] count]==1) { // in single mode view
+            [_ContentSplitView addSubview:myRightView.view];
+            [_ContentSplitView adjustSubviews];
+            //[_ContentSplitView setNeedsDisplay:YES];
+        }
+        [myLeftView setViewMode:BViewDuplicateMode];
+        [myLeftView setViewType:BViewTypeTable];
+        // Activate the Tree View on the Left
+        [myLeftView setTreeViewCollapsed:NO];
+        // Make the FlatView and Group by Location
+        [myLeftView setFlatView:YES];
+        // TODO:!!!! use the [view setName:twinName:] To change to a "Dup Left" and "Dup Right"
+        // TODO:!!! Mode Duplicate should cancel all operations, except if plugin is activated
+        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
+        [myLeftView.detailedViewController setupColumns:dupColumns];
+        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        
+        [myRightView setViewMode:BViewDuplicateMode];
+        [myRightView setViewType:BViewTypeTable];
+        // Deactivate the Tree View on the Left
+        [myRightView setTreeViewCollapsed:YES];
+        // Activate the Flat View
+        [myRightView setFlatView:YES];
+        [myRightView.detailedViewController setupColumns:dupColumns];
+        // Group by Location
+        [myRightView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        
+        // ___________________________
+        // Setting the duplicate Files
+        // ---------------------------
+        
+        [duplicates setFiles: duplicatedFileArray];
+        NSArray *rootDirs = [info objectForKey:kRootsList];
+        [myLeftView setRoots:rootDirs];
+        [myLeftView stopBusyAnimations];
+        
+        selectedDuplicatesRoot = [[TreeRoot alloc] init];
+        [selectedDuplicatesRoot setName:@"Duplicates"];
+        [myRightView setRoots:[NSArray arrayWithObject:selectedDuplicatesRoot]];
+        [myRightView stopBusyAnimations];
+        [myRightView selectFirstRoot];
+        
+        [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
     }
-    [myLeftView setViewMode:BViewDuplicateMode];
-    [myLeftView setViewType:BViewTypeTable];
-    // Activate the Tree View on the Left
-    [myLeftView setTreeViewCollapsed:NO];
-    // Make the FlatView and Group by Location
-    [myLeftView setFlatView:YES];
-    // TODO:!!!! use the [view setName:twinName:] To change to a "Dup Left" and "Dup Right"
-    // TODO:!!! Mode Duplicate should cancel all operations, except if plugin is activated
-    NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
-    [myLeftView.detailedViewController setupColumns:dupColumns];
-    [myLeftView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
-    
-    [myRightView setViewMode:BViewDuplicateMode];
-    [myRightView setViewType:BViewTypeTable];
-    // Deactivate the Tree View on the Left
-    [myRightView setTreeViewCollapsed:YES];
-    // Activate the Flat View
-    [myRightView setFlatView:YES];
-    [myRightView.detailedViewController setupColumns:dupColumns];
-    // Group by Location
-    [myRightView.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
-    
-    // ___________________________
-    // Setting the duplicate Files
-    // ---------------------------
-    
-    [duplicates setFiles: duplicatedFileArray];
-    NSArray *rootDirs = [info objectForKey:kRootsList];
-    [myLeftView setRoots:rootDirs];
-    [myLeftView stopBusyAnimations];
-    if (pendingStatusMessages==nil)
-        pendingStatusMessages = [NSMutableArray array];
-    [pendingStatusMessages addObject:info];
-    [self _operationsInfoFired:nil];
-    
-    selectedDuplicatesRoot = [[TreeRoot alloc] init];
-    [selectedDuplicatesRoot setName:@"Duplicates"];
-    [myRightView setRoots:[NSArray arrayWithObject:selectedDuplicatesRoot]];
-    [myRightView stopBusyAnimations];
-    [myRightView selectFirstRoot];
-    
-    [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
 }
 // -------------------------------------------------------------------------------
 //	anyThread_handleLoadedImages:note

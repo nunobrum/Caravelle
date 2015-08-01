@@ -380,7 +380,7 @@ TreeManager *appTreeManager;
     NSURL *url_allowed =[self secScopeContainer:url];
     // checks if part of the allowed urls
     if (url_allowed==nil) {
-#ifdef BEFORE_POWERBOX_ALERT
+#if (BEFORE_POWERBOX_ALERT==1)
         // if fails then will open it with a Powerbox
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"Proceed"];
@@ -389,7 +389,7 @@ TreeManager *appTreeManager;
         NSString *title = [NSString stringWithFormat:@"Caravelle will ask access to Folder\n%@", [url path]];
 
         [alert setMessageText:title];
-        [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated."];
+        [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated. Accesses can be revoked in the preferences panel."];
 
         [alert setAlertStyle:NSWarningAlertStyle];
         NSModalResponse reponse = [alert runModal];
@@ -401,7 +401,7 @@ TreeManager *appTreeManager;
         NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", [url path]];
         url_allowed = [self powerboxOpenFolderWithTitle:title];
 #endif
-#ifdef AFTER_POWERBOX_INFORMATION
+#if (AFTER_POWERBOX_INFORMATION==1)
         // TODO:!! Make this a information with a checkbox to skip future messages
         NSAlert *alert = [[NSAlert alloc] init];
         [alert addButtonWithTitle:@"OK"];
@@ -431,7 +431,7 @@ TreeManager *appTreeManager;
             [answer setTag:tagTreeItemDirty]; // Forcing its update
         }
         else {
-            // TODO: !!! NSAlert telling that the program will proceed with this new URL
+            // TODO: !!!! NSAlert telling that the program will proceed with this new URL
         }
         
         // But will only return it if is a Branch Like

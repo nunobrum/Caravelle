@@ -38,15 +38,12 @@ NSArray* sortedColumnNames() {
 }
 
 
-NSString* keyForColID(NSString* colID) {
-    if ([colID isEqualToString:COL_FILENAME])
-        return @"name";
-    else // Else uses the identifier that is linked to the treeItem KVO property
-        return  [[columnInfo() objectForKey:colID] objectForKey:COL_ACCESSOR_KEY];
+NSString* keyForFieldID(NSString* fieldID) {
+    return  [[columnInfo() objectForKey:fieldID] objectForKey:COL_ACCESSOR_KEY];
 }
 
-id fieldOnItem(id object, NSString *colID) {
-    NSString *prop_name = keyForColID(colID);
+id fieldOnItem(id object, NSString *fieldID) {
+    NSString *prop_name = keyForFieldID(fieldID);
     id prop = nil;
     @try {
         prop = [object valueForKey:prop_name];
@@ -57,8 +54,8 @@ id fieldOnItem(id object, NSString *colID) {
     return prop;
 }
 
-NSString *transformerOnField(id field, NSString *colID) {
-    NSString *trans_name = [[columnInfo() objectForKey:colID] objectForKey:COL_TRANS_KEY];
+NSString *transformerOnField(id field, NSString *fieldID) {
+    NSString *trans_name = [[columnInfo() objectForKey:fieldID] objectForKey:COL_TRANS_KEY];
     if (trans_name) {
         NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:trans_name];
         if (trans) {
@@ -76,14 +73,14 @@ NSString *transformerOnField(id field, NSString *colID) {
     return nil;
 }
 
-NSString *fieldStringOnItem(id object, NSString* colID) {
-    id prop = fieldOnItem(object, colID);
+NSString *stringOnField(id object, NSString* fieldID) {
+    id prop = fieldOnItem(object, fieldID);
 
     if (prop){
         if ([prop isKindOfClass:[NSString class]])
             return prop;
         else { // Need to use one of the NSValueTransformers
-            return transformerOnField(prop, colID);
+            return transformerOnField(prop, fieldID);
         }
     }
     return nil;
@@ -102,8 +99,8 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
         }
     }
     else {
-        src_field = fieldStringOnItem(source, colKey);
-        dst_field = fieldStringOnItem(dest, colKey);
+        src_field = stringOnField(source, colKey);
+        dst_field = stringOnField(dest, colKey);
         if (exclude_equals && [src_field isEqualToString:dst_field])
             return nil;
     }
@@ -164,9 +161,8 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
         NSString *clickedColumnText = [[column headerCell] stringValue];
 
         // Column Names cannot be groupped
-        if (NO == [[column identifier] isEqualToString:COL_FILENAME] && // it's not the file name
-            [[columnInfo() objectForKey:[column identifier]] objectForKey:COL_GROUPING_KEY]!=nil) { // and can be grouped
-            // TODO: !! Label the item ungroup when the field is already being groupped.
+        if ([[columnInfo() objectForKey:[column identifier]] objectForKey:COL_GROUPING_KEY]!=nil) { // and can be grouped
+            // TODO: !!!! Label the item ungroup when the field is already being groupped.
             NSString *itemTitle = [NSString stringWithFormat:@"Group using %@", clickedColumnText];
             [theMenu addItemWithTitle:itemTitle action:@selector(groupSelect:) keyEquivalent:@""];
 

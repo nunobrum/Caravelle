@@ -51,14 +51,16 @@ extern const CFStringRef kTreeItemDropUTI;
 
 #if (APP_IS_SANDBOXED==1)
 
-#define AFTER_POWERBOX_INFORMATION 1
+#define AFTER_POWERBOX_INFORMATION 0
+#define BEFORE_POWERBOX_ALERT 1
+#else
+
+#define AFTER_POWERBOX_INFORMATION 0
+#define BEFORE_POWERBOX_ALERT 0
 
 #endif
 
 #define USE_TREEITEM_PASTEBOARD_WRITING // Controls how paste to board is done
-
-// Table Column Identifier for File Name
-#define COL_FILENAME @"COL_NAME"
 
 
 //#define COL_ID_KEY @"ID"
@@ -70,6 +72,9 @@ extern const CFStringRef kTreeItemDropUTI;
 
 
 // User Definitions
+#define USER_DEF_DONT_START_SCREEN @"DontDisplayStartScreen"
+#define USER_DEF_DONT_START_DUP_SCREEN @"DontDisplayDupStartScreen"
+
 #define USER_DEF_LEFT_HOME @"BrowserLeftHomeDir"
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
@@ -85,6 +90,12 @@ extern const CFStringRef kTreeItemDropUTI;
 // View Preferences
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
 #define USER_DEF_TABLE_VIEW_COLUMNS @"TableColumns"
+#define USER_DEF_TREE_VISIBLE @"TreeVisible"
+#define USER_DEF_TREE_WIDTH   @"TreeWidth"
+#define USER_DEF_SORT_KEYS    @"SortKeys"
+
+#define USER_DEF_DUPLICATE_CLASSIC_VIEW @"DuplicateClassicView"
+
 
 
 #define SHOW_OPTION_HIDDEN_FILES_NO  0

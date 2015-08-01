@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="DuplicateModeStartWindow">
+            <connections>
+                <outlet property="chkDontDisplayAgain" destination="fxT-Xe-pbB" id="tgo-XM-UNR"/>
+                <outlet property="duplicateOrganization" destination="bIR-Cw-j6z" id="UZQ-ru-3JV"/>
+                <outlet property="message" destination="tLE-co-WRh" id="BCj-Wa-jnK"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="920" height="649"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="920" height="649"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cea-K6-fSc">
+                        <rect key="frame" x="17" y="35" width="886" height="556"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="550" id="DF4-mM-ZQb"/>
+                            <constraint firstAttribute="width" constant="880" id="gmZ-pO-XO6"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="DuplicateShow" id="iVs-Y7-Tgi"/>
+                    </imageView>
+                    <button translatesAutoresizingMaskIntoConstraints="NO" id="fxT-Xe-pbB">
+                        <rect key="frame" x="18" y="10" width="145" height="18"/>
+                        <buttonCell key="cell" type="check" title="Don't ask this again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="bNa-8m-7D7">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReU-RE-TA4">
+                        <rect key="frame" x="778" y="11" width="122" height="19"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="122" id="OFJ-Fb-P1i"/>
+                        </constraints>
+                        <buttonCell key="cell" type="roundRect" title="OK" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SAs-tl-NU0">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="cellTitle"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="close:" target="-2" id="wwX-e6-2jG"/>
+                        </connections>
+                    </button>
+                    <matrix verticalHuggingPriority="750" tag="1" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIR-Cw-j6z">
+                        <rect key="frame" x="20" y="596" width="880" height="18"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        <size key="cellSize" width="438" height="18"/>
+                        <size key="intercellSpacing" width="4" height="2"/>
+                        <buttonCell key="prototype" type="radio" title="Radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="d4X-no-h0P">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <cells>
+                            <column>
+                                <buttonCell type="radio" title="Classic View" imagePosition="left" alignment="left" tag="1" inset="2" id="v9j-6w-uZi">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </column>
+                            <column>
+                                <buttonCell type="radio" title="Caravelle View" imagePosition="left" alignment="left" state="on" inset="2" id="06g-rU-j9o">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </column>
+                        </cells>
+                        <connections>
+                            <action selector="organizationChanged:" target="-2" id="Ukm-Ro-VR1"/>
+                        </connections>
+                    </matrix>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Day-Fb-YYc">
+                        <rect key="frame" x="18" y="619" width="884" height="18"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="The duplicate has started, take a moment to select how files are going to be presented." id="4bA-ew-jI0">
+                            <font key="font" metaFont="system" size="15"/>
+                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh">
+                        <rect key="frame" x="18" y="309" width="884" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="32" id="BNn-gP-y1a"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="bu8-b1-BPF">
+                            <font key="font" metaFont="system" size="32"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="cea-K6-fSc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="11T-bA-d2V"/>
+                    <constraint firstAttribute="centerX" secondItem="tLE-co-WRh" secondAttribute="centerX" id="6cr-wD-15i"/>
+                    <constraint firstItem="bIR-Cw-j6z" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="6dh-Ri-7gn"/>
+                    <constraint firstAttribute="trailing" secondItem="Day-Fb-YYc" secondAttribute="trailing" constant="20" symbolic="YES" id="BK6-Za-6Dr"/>
+                    <constraint firstAttribute="trailing" secondItem="tLE-co-WRh" secondAttribute="trailing" constant="20" symbolic="YES" id="DMk-Ep-axL"/>
+                    <constraint firstItem="fxT-Xe-pbB" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="KCB-pk-7th"/>
+                    <constraint firstItem="Day-Fb-YYc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="KKb-T1-aYX"/>
+                    <constraint firstItem="ReU-RE-TA4" firstAttribute="top" secondItem="cea-K6-fSc" secondAttribute="bottom" constant="8" id="Kx3-pp-QLI"/>
+                    <constraint firstAttribute="trailing" secondItem="bIR-Cw-j6z" secondAttribute="trailing" constant="20" symbolic="YES" id="LdC-30-Kpx"/>
+                    <constraint firstAttribute="bottom" secondItem="ReU-RE-TA4" secondAttribute="bottom" constant="12" id="T1e-8o-Eqr"/>
+                    <constraint firstItem="Day-Fb-YYc" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="12" id="UKG-Z2-aNE"/>
+                    <constraint firstAttribute="trailing" secondItem="cea-K6-fSc" secondAttribute="trailing" constant="20" symbolic="YES" id="XdP-Ss-AcZ"/>
+                    <constraint firstItem="cea-K6-fSc" firstAttribute="top" secondItem="bIR-Cw-j6z" secondAttribute="bottom" constant="8" symbolic="YES" id="eKE-zB-wFs"/>
+                    <constraint firstAttribute="centerY" secondItem="tLE-co-WRh" secondAttribute="centerY" id="iSC-Ja-Cq0"/>
+                    <constraint firstAttribute="trailing" secondItem="ReU-RE-TA4" secondAttribute="trailing" constant="20" symbolic="YES" id="n29-7U-mrO"/>
+                    <constraint firstItem="tLE-co-WRh" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="p1V-mL-klZ"/>
+                    <constraint firstAttribute="bottom" secondItem="fxT-Xe-pbB" secondAttribute="bottom" constant="12" id="s97-Bx-fZ1"/>
+                    <constraint firstItem="bIR-Cw-j6z" firstAttribute="top" secondItem="Day-Fb-YYc" secondAttribute="bottom" constant="5" id="tWg-FY-kPV"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="313" y="220.5"/>
+        </window>
+    </objects>
+    <resources>
+        <image name="DuplicateShow" width="1880" height="1180"/>
+    </resources>
+</document>

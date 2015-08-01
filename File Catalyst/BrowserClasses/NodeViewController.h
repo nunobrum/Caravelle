@@ -77,9 +77,9 @@
 - (NSView*) containerView;
 
 - (NSMutableArray*) itemsToDisplay;
-- (NodeSortDescriptor*) sortDescriptorForColID:(NSString*)colID;
-- (void) makeSortOnColID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
-- (void) removeSortKey:(NSString*)key;
+- (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
+- (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
+- (void) removeSortOnField:(NSString*)key;
 
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;
@@ -99,6 +99,6 @@
 -(NSArray*) columns;
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences;
--(NSDictionary*) savePreferences;
+-(void) savePreferences:(NSMutableDictionary*) preferences;
 
 @end

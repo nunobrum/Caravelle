@@ -77,6 +77,10 @@
 		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
 		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
+		BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
+		BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
+		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
+		BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
 		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
@@ -221,6 +225,12 @@
 		BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpandFolders.m; sourceTree = "<group>"; };
 		BC523DD51B594B7C0030C97A /* NumberGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberGrouping.h; path = BrowserClasses/Groupings/NumberGrouping.h; sourceTree = "<group>"; };
 		BC523DD61B594B7C0030C97A /* NumberGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberGrouping.m; path = BrowserClasses/Groupings/NumberGrouping.m; sourceTree = "<group>"; };
+		BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartupScreen.xib; sourceTree = "<group>"; };
+		BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartupScreenController.h; sourceTree = "<group>"; };
+		BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartupScreenController.m; sourceTree = "<group>"; };
+		BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateModeStartWindow.h; sourceTree = "<group>"; };
+		BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateModeStartWindow.m; sourceTree = "<group>"; };
+		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
 		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
@@ -394,6 +404,9 @@
 				3CF5DA8A1A65D09800786D64 /* RenameFileDialog.h */,
 				3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */,
 				3CF5DA8C1A65D09800786D64 /* RenameFileDialog.xib */,
+				BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */,
+				BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */,
+				BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */,
 			);
 			path = "File Catalyst";
 			sourceTree = "<group>";
@@ -540,6 +553,9 @@
 				3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */,
 				3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */,
 				3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */,
+				BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */,
+				BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */,
+				BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */,
 			);
 			name = DuplicatedFindClasses;
 			sourceTree = "<group>";
@@ -648,7 +664,9 @@
 				3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */,
 				3C717C06198D54720025E28A /* BrowserView.xib in Resources */,
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
+				BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */,
 				3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */,
+				BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */,
 				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
 				3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */,
 			);
@@ -686,6 +704,7 @@
 				BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */,
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
+				BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */,
 				3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */,
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
@@ -694,6 +713,7 @@
 				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,
 				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
+				BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */,
 				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CDD42F81AF60C0C0018D24D /* ByteCounterUtils.c in Sources */,

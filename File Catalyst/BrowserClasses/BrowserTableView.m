@@ -93,7 +93,7 @@
     /* if (([theEvent modifierFlags] & NSCommandKeyMask) &&
      keyCode == KeyCodeLeft ||
      keyCode == KeyCodeRight)
-     // TODO: !! In the future this will rather "transport" the selected items to the view on the right (if exists)
+     // TODO:1.6 In the future this will rather "transport" the selected items to the view on the right (if exists)
      // The concept of transport mode needs to be further defined.
      */
     // perform nextView

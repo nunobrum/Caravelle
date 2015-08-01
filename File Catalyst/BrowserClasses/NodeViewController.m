@@ -256,7 +256,7 @@
     }
     BOOL ascending = NO; // Just initialize with something
     if (activate_grouping) {
-        NodeSortDescriptor *currentDesc = [self sortDescriptorForColID: identifier];
+        NodeSortDescriptor *currentDesc = [self sortDescriptorForFieldID: identifier];
         if (currentDesc==nil || [currentDesc ascending]==NO)
         {
             ascending = YES;
@@ -266,7 +266,7 @@
             ascending = NO;
         }
     }
-    [self makeSortOnColID:identifier ascending:ascending grouping:activate_grouping];
+    [self makeSortOnFieldID:identifier ascending:ascending grouping:activate_grouping];
     [self refreshKeepingSelections];
 }
 
@@ -275,6 +275,7 @@
     /* Always uses the self.currentNode property to manage the Table View */
     // Get the depth configuration
     NSInteger iDepth = NSIntegerMax;
+    NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
 
     if ([self.currentNode itemType] == ItemTypeBranch){
         /* if the filter is empty, doesn't filter anything */
@@ -282,8 +283,8 @@
             NSPredicate *predicate;
             NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
             if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
-                // TODO:!! Tokenize the filter field to make inteligent searches
-                // TODO:!! find Titles and replace for selectors.
+                // TODO:1.5 Tokenize the filter field to make inteligent searches
+                // TODO:1.5 find Titles and replace for selectors.
                 @try {
                     predicate = [NSPredicate predicateWithFormat:self.filterText];
                 }
@@ -378,17 +379,17 @@
     return tableData;
 }
 
-- (void) removeSortKey:(NSString*)key {
+- (void) removeSortOnField:(NSString*)field {
     for (NodeSortDescriptor *i in self.sortAndGroupDescriptors) {
-        if ([i.key isEqualToString:key] ) {
+        if ([i.field isEqualToString:field] ) {
             [self.sortAndGroupDescriptors removeObject:i];
             return;
         }
     }
 }
 
--(NodeSortDescriptor*) sortDescriptorForColID:(NSString*)colID {
-    NSString * key = keyForColID(colID);
+-(NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID {
+    NSString * key = keyForFieldID(fieldID);
     for (NodeSortDescriptor* desc in self.sortAndGroupDescriptors) {
         if ([desc.key isEqualToString:key]) {
             return desc;
@@ -397,32 +398,15 @@
     return nil;
 }
 
-- (void) makeSortOnColID:(NSString*)colID ascending:(BOOL)ascending grouping:(BOOL)grouping {
+
+- (void) makeSortOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending grouping:(BOOL)grouping {
     if (self.sortAndGroupDescriptors==nil) {
         self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
 
-    NSString * key = keyForColID(colID);
-    NodeSortDescriptor *sortDesc;
-    if ([colID isEqualToString:COL_FILENAME])
-        sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending comparator:^NSComparisonResult(id obj1, id obj2) {
-            return [obj1 compare:obj2 options:NSNumericSearch];
-        }];
-    else
-        sortDesc = [[NodeSortDescriptor alloc] initWithKey:key ascending:ascending];
-
-    if (grouping==YES) {
-        NSString *groupingSelector =[[columnInfo() objectForKey:colID] objectForKey:COL_GROUPING_KEY];
-        if (groupingSelector==nil) {
-            // Try to get a selector from the transformer
-            groupingSelector =[[columnInfo() objectForKey:colID] objectForKey:COL_TRANS_KEY];
-        }
-        if (groupingSelector!=nil) {
-            [sortDesc setGrouping:grouping using:groupingSelector];
-        }
-    }
+    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending grouping:grouping];
     // Removes the key if it was already existing in the remaining of the array
-    [self removeSortKey:key];
+    [self removeSortOnField:fieldID];
 
     NSInteger i=0;
     if (grouping==NO) {
@@ -488,12 +472,33 @@
 }
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences {
-    // Needs to be overrided in subclasses
+    // Needs to be called from subclasses
+    NSArray *sortElements = [preferences objectForKey:USER_DEF_SORT_KEYS];
+    [self.sortAndGroupDescriptors removeAllObjects];
+    for (NSDictionary *dict in sortElements) {
+        NSString *field = [dict objectForKey:@"field"];
+        BOOL ascending = [[dict objectForKey:@"ascending"] boolValue];
+        BOOL grouping  = [[dict objectForKey:@"grouping"] boolValue];
+        NodeSortDescriptor *desc = [[NodeSortDescriptor alloc] initWithField:field ascending:ascending grouping:grouping];
+        NSLog(@"Loading preferences: Field:%@ ascending:%d grouping:%d", field, ascending, grouping);
+        [self.sortAndGroupDescriptors addObject:desc];
+    }
 }
 
--(NSDictionary*) savePreferences {
-    // Needs to be overrided in subclassses
-    return nil;
+-(void) savePreferences:(NSMutableDictionary*)preferences {
+    // Needs to be called from subclasses
+    NSMutableArray *sortElements = [[NSMutableArray alloc] initWithCapacity:[self.sortAndGroupDescriptors count]];
+    
+    for (NodeSortDescriptor* desc in self.sortAndGroupDescriptors) {
+        NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
+        [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                 desc.field, @"field",
+                                 [NSNumber numberWithBool:desc.ascending], @"ascending",
+                                 [NSNumber numberWithBool:desc.isGrouping], @"grouping",
+                                 nil]];
+    }
+    
+     [preferences setObject:sortElements forKey: USER_DEF_SORT_KEYS];
 }
 
 -(void) _startBusyAnimations {

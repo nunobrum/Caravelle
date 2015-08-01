@@ -181,7 +181,7 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
 
     // if one folder is contained in another, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:! create an error subclass, in order to make a error dialog
+        //TODO:!!!! create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
@@ -201,7 +201,7 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     }
     // if one file is contained in another, or the same, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:! create an error subclass, in order to make a error dialog
+        //TODO:!!!! create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];
@@ -274,7 +274,7 @@ BOOL fileExistsOnPath(NSString*path) {
 NSString *duplicateFileNameProposal(NSString *path) {
     // Making the rename in consistency with Mac OSX
     
-    // TODO: !! Localization of the "copy" word
+    // TODO:2.0 Localization of the "copy" word
     NSString *copyS = @"copy";
     NSString *newFileName = nil;
     NSString *newName;

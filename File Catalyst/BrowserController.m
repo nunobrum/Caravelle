@@ -9,8 +9,7 @@
 #import "BrowserController.h"
 #import "FileUtils.h"
 
-// TODO:!! Get rid of this class. Is not being used.
-#import "FolderCellView.h"
+#import "FolderCellView.h"  // Used for the Duplicate/Catalyst View
 
 #import "TreeItem.h"
 #import "TreeLeaf.h"
@@ -40,7 +39,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeItem *_validatedDestinationItem;
     BOOL _didRegisterDraggedTypes;
     BOOL _awakeFromNibConfigDone;
-    BOOL _didLoadPreferences;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
@@ -62,10 +60,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     self->_focusedView = nil;
     self->_viewMode = BViewModeVoid; // This is an invalid view mode. This forces the App to change it.
     self->_viewType = BViewTypeInvalid; // This is an invalid view type. This forces the App to change it.
+    self->_viewName = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self->_didRegisterDraggedTypes = NO;
     self->_awakeFromNibConfigDone = NO;
-    self->_didLoadPreferences = NO;
     self->_detailedViewController = nil;
     self->tableViewController = nil;
     self->iconViewController = nil;
@@ -115,7 +113,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
  When the user navigates backward pointer moves back. When a forward is the requested,
  the pointer is moved forward. */
 -(void) mruSet:(NSURL*) url {
-    if(_viewMode!=BViewBrowserMode) return; // Sanity check. Needed for the Duplicate Mode.
+    if(_viewMode!=BViewBrowserMode)
+        return; // Sanity check. Needed for the Duplicate Mode.
+    
+    if (url==nil)
+        return; // Second sanity check. URL cannot be null
+    
     // gets the pointer to the last position
     NSUInteger mruCount = [_mruLocation count];
 
@@ -345,7 +348,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //
 //}
 
-// TODO:!! This doesn't seem to be used, but its needed.
+// TODO:!! This doesn't seem to be used, but it's needed.
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
     NSLog(@"BrowserController.outlineView:setObjectValue:forTableColumn:byItem - Not implemented");
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
@@ -805,8 +808,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) setTreeViewCollapsed:(BOOL) collapsed {
     if (collapsed)
         [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
-    else
-        [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
+    else {
+        // TODO:!!!! Get this from user defaults
+        CGFloat width = 200.0;
+        // TODO:!!!!! Save this in the preferences
+        NSNumber *prefWidth =[self.preferences objectForKey:@"TreeWidth"];
+        if (prefWidth != nil) {
+            width = [prefWidth floatValue];
+        }
+        [self->_mySplitView setPosition:width ofDividerAtIndex:0];
+    }
     [self.viewOptionsSwitches setSelected:!collapsed forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
 }
 
@@ -821,18 +832,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         foldersDisplayed = NO;
         // In no groupings defined, use COL_LOCATION
         if (NO == [(NodeSortDescriptor*)[self.detailedViewController.sortAndGroupDescriptors firstObject] isGrouping]) {
-            [self.detailedViewController makeSortOnColID:@"COL_LOCATION" ascending:YES grouping:YES];
+            [self.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
         }
     }
     else {
-        // TODO:!! get the value from USER Defaults
+        // TODO:!!!! get the value from USER Defaults
         foldersDisplayed = YES;
         
         // if COL_LOCATION grouping, cancel
-        NodeSortDescriptor *sortDesc = [self.detailedViewController sortDescriptorForColID:@"COL_LOCATION"];
-        if (sortDesc) {
-            [self.detailedViewController removeSortKey:sortDesc.key];
-        }
+        [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
     }
     
     [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
@@ -848,7 +856,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSInteger selectedSegment = [sender selectedSegment];
     BOOL isSelected = [self.viewOptionsSwitches isSelectedForSegment:selectedSegment];
     if (selectedSegment==BROWSER_VIEW_OPTION_TREE_ENABLE) {
-        // TODO:! Animate collapsing and showing of the treeView
+        // TODO:? Animate collapsing and showing of the treeView
         if (isSelected) {
             // Adding the tree view
             [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
@@ -1027,7 +1035,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
             }
 
-            // TODO:! Animate updates on the TreeView
+            // TODO:? Animate updates on the TreeView
             // Idea is have a separate method that replaces reloadData
             // This method will cycle through all the rows and check if they exist on the
             // DataSource. If they don't it will be deleted.
@@ -1251,13 +1259,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setName:(NSString*)viewName TwinName:(NSString *)twinName {
     if (![self->_viewName isEqualToString:viewName]) {
+        
+        if (self->_viewName != nil) // Storing previous settings if the view Name is changed.
+            [self savePreferences];
+        
         self->_viewName = viewName;
         // Setting the AutoSave Settings
         
         NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
-        [self.preferences removeAllObjects];
+        [self.preferences removeAllObjects]; // This can pose problems if ever bindings are used.
         [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
-        self->_didLoadPreferences = NO;
+        [self loadPreferences];
     }
     
     self->_twinName = twinName;
@@ -1278,7 +1290,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setViewType:(EnumBrowserViewType)viewType {
     NodeViewController *newController = nil;
-
+    BOOL didLoadPreferences = NO;
+    
     if (viewType==BViewTypeVoid) {
         viewType = [[self.preferences objectForKey:USER_DEF_PANEL_VIEW_TYPE] integerValue];
     }
@@ -1292,7 +1305,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [tableViewController initController];
                 [tableViewController setParentController:self];
                 [tableViewController setName:self.viewName twinName:self->_twinName];
-                self->_didLoadPreferences = NO;
+                didLoadPreferences = NO;
             }
             newController = tableViewController;
             [self.myGroupingPopDpwnButton setHidden:NO];
@@ -1305,7 +1318,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 [iconViewController initController];
                 [iconViewController setParentController:self];
                 [iconViewController setName:self.viewName twinName:self->_twinName];
-                self->_didLoadPreferences = NO;
+                didLoadPreferences = NO;
             }
             newController = iconViewController;
             [self.myGroupingPopDpwnButton setHidden:YES];
@@ -1330,21 +1343,22 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         
         // TODO: !!! make the bindings to UserDefaults
         [newController setFoldersDisplayed:YES];
+        didLoadPreferences = NO;
 
         [newController registerDraggedTypes];
         self.detailedViewController = newController;
-
-        // Changing User Defaults
-        self->_viewType = viewType;
-        [self.myViewSelectorButton setSelectedSegment:viewType];
-        // Load Preferences
-        if (self->_didLoadPreferences==NO) {
-            self->_didLoadPreferences = YES;
-            [self loadPreferences];
-        }
-        // Update Current View Type Preference
-        [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
     }
+
+    // Changing User Defaults
+    self->_viewType = viewType;
+    [self.myViewSelectorButton setSelectedSegment:viewType];
+    // Load Preferences
+    if (didLoadPreferences==NO) {
+        [self loadPreferences];
+    }
+    // Update Current View Type Preference
+    [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
+    
 }
 
 - (EnumBrowserViewType) viewType {
@@ -1364,20 +1378,24 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) savePreferences {
+    NSLog(@"BrowserController.savePreferences %@", self->_viewName);
     if (self->iconViewController) {
-        [self.preferences addEntriesFromDictionary:
-            [self->iconViewController savePreferences]];
+         [self->iconViewController savePreferences: self.preferences];
     }
     if (self->tableViewController) {
-        [self.preferences addEntriesFromDictionary:
-         [self->tableViewController savePreferences]];
+        [self->tableViewController savePreferences:self.preferences];
     }
+    
+    [self.preferences setObject:[NSNumber numberWithBool:self.treeViewCollapsed==NO] forKey:USER_DEF_TREE_VISIBLE];
+    
     NSString *prefKey = [self.viewName stringByAppendingString:@"Preferences"];
     [[NSUserDefaults standardUserDefaults] setObject:self.preferences forKey:prefKey];
 }
 
 -(void) loadPreferences {
+    NSLog(@"BrowserController.loadPreferences %@", self->_viewName);
     [self.detailedViewController loadPreferencesFrom:self.preferences ];
+    [self setTreeViewCollapsed: NO==[[self.preferences objectForKey: USER_DEF_TREE_VISIBLE ] boolValue]];
 }
 
 -(void) set_filterText:(NSString *) filterText {
@@ -1431,7 +1449,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) setRoots:(NSArray*) baseDirectories {
-    //TODO:Optimization Create a Class to manage arrays of Branches
+    //TODO: Optimization Create a Class to manage arrays of Branches
     [BaseDirectoriesArray removeAllObjects];
     [BaseDirectoriesArray addObjectsFromArray:baseDirectories];
 }
@@ -1588,10 +1606,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
         TreeBranch *root = BaseDirectoriesArray[0];
         _rootNodeSelected = root;
-        [self setCurrentNode:root];
+        [self selectFolderByItem:root];
         [self stopBusyAnimations];
         [self outlineSelectExpandNode:root];
-        [self.detailedViewController refresh];
         return root;
     }
     return NULL;

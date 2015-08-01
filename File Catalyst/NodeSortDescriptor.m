@@ -11,6 +11,8 @@
 #import "StringGrouping.h"
 #import "DateGrouping.h"
 #import "NumberGrouping.h"
+#include "Definitions.h"
+#import "CustomTableHeaderView.h"
 
 /*
  * Grouping of elements
@@ -27,24 +29,53 @@
 
 @implementation NodeSortDescriptor
 
--(void) setGrouping:(BOOL)grouping using:(NSString*)groupID {
+-(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending grouping:(BOOL)grouping {
+    NSString * key =      [[columnInfo() objectForKey:field] objectForKey:COL_ACCESSOR_KEY];
+    NSString *column_id  =[[columnInfo() objectForKey:field] objectForKey:COL_COL_ID_KEY];
+    
+    if ([column_id isEqualToString:@"COL_NAME"]) // testing the col_id instead of the FieldID. This will also cover the COL_PATH field
+        self = [super initWithKey:key ascending:ascending comparator:^NSComparisonResult(id obj1, id obj2) {
+            return [obj1 compare:obj2 options:NSNumericSearch];
+        }];
+    else
+        self = [super initWithKey:key ascending:ascending];
+    
+    self->_field = field;
     self->_grouping = grouping;
-    if (grouping) {
-        if ([groupID isEqualToString:@"size"])
-            self->_groupObject = [[SizeGrouping alloc] initWithAscending:self.ascending];
-        else if ([groupID isEqualToString:@"date"])
-            self->_groupObject = [[DateGrouping alloc] initWithAscending:self.ascending];
-        else if ([groupID isEqualToString:@"string"])
-            self->_groupObject = [[StringGrouping alloc] initWithAscending:self.ascending];
-        else if ([groupID isEqualToString:@"integer"])
-            self->_groupObject = [[NumberGrouping alloc] initWithAscending:self.ascending];
-        else {
-            NSLog(@"NodeSortDescriptor.setGrouping:using:  Not supported");
-            self->_grouping = NO;
+    
+    if (grouping==YES) {
+        NSString *groupingSelector =[[columnInfo() objectForKey:field] objectForKey:COL_GROUPING_KEY];
+        if (groupingSelector==nil) {
+            // Try to get a selector from the transformer
+            groupingSelector =[[columnInfo() objectForKey:field] objectForKey:COL_TRANS_KEY];
         }
+        if (groupingSelector!=nil) {
+            if ([groupingSelector isEqualToString:@"size"])
+                self->_groupObject = [[SizeGrouping alloc] initWithAscending:self.ascending];
+            else if ([groupingSelector isEqualToString:@"date"])
+                self->_groupObject = [[DateGrouping alloc] initWithAscending:self.ascending];
+            else if ([groupingSelector isEqualToString:@"string"])
+                self->_groupObject = [[StringGrouping alloc] initWithAscending:self.ascending];
+            else if ([groupingSelector isEqualToString:@"integer"])
+                self->_groupObject = [[NumberGrouping alloc] initWithAscending:self.ascending];
+            else {
+                NSLog(@"NodeSortDescriptor.setGrouping:using:  Not supported");
+                self->_grouping = NO;
+            }
+        }
+        else
+            self->_grouping = NO;
     }
+    if (self->_grouping != grouping) {
+        NSLog(@"NodeSortDescriptor.initWithField:ascending:grouping Failed to set grouping");
+    }
+    return self;
 }
 
+
+-(NSString*) field {
+    return self->_field;
+}
 
 -(void) copyGroupObject:(NodeSortDescriptor *)other {
     self->_grouping = other->_grouping;

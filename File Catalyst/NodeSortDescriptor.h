@@ -17,16 +17,21 @@
 
 @interface NodeSortDescriptor : NSSortDescriptor {
     BOOL _grouping;
+    NSString *_field;
     BaseGrouping *_groupObject;
 }
 
--(void) setGrouping:(BOOL)grouping using:(NSString*)groupID ;
+-(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending grouping:(BOOL)grouping;
+
+//-(void) setGrouping:(BOOL)grouping using:(NSString*)groupID ;
 -(void) copyGroupObject:(NSSortDescriptor*) other;
 -(BaseGrouping*) groupOpject;
 -(BOOL) isGrouping;
 -(NSArray*) groupItemsForObject:(id)object;
 -(NSArray*) flushGroups;
 -(void) reset;
+-(NSString*) field;
+
 @end
 
 

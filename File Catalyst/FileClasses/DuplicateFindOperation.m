@@ -206,7 +206,6 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                     counter++;
                 }
             }
-            // TODO:!! - Consider creating the Tree here. It only justifies if the tree creation takes too long.
         }
     }
     NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];

@@ -252,7 +252,7 @@
         
         // Then will apply an overlay
         // The code below only draw one of the badges in the order the code is presented.
-        // TODO: ! Consider making an overlay where all the applicable badges are placed
+        // TODO: ! Consider making an shifted overlay where all the applicable badges are placed
         //         in sequence, starting from right to left
         if ([self hasTags:tagTreeItemHidden]) {
             [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];

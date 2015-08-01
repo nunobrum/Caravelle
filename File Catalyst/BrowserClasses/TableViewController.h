@@ -38,6 +38,6 @@
 -(NSArray*) columns;
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences;
--(NSDictionary*) savePreferences;
+-(void) savePreferences:(NSMutableDictionary*) preferences;
 
 @end

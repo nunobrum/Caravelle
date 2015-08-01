@@ -17,15 +17,6 @@
 #import "BrowserController.h"
 #import "CalcFolderSizes.h"
 
-//#define COL_DATE_MOD @"COL_DATE_MODIFIED"
-//#define COL_SIZE     @"COL_SIZE"
-//#define COL_PATH     @"COL_PATH"
-
-//#define AVAILABLE_COLUMNS  COL_FILENAME, COL_DATE_MOD, COL_SIZE, COL_PATH
-//#define SYSTEM_COLUMNS     COL_FILENAME
-//#define DEFAULT_COLUMNS    COL_SIZE, COL_DATE_MOD
-
-
 
 @interface TableViewController ( ) {
 #ifdef UPDATE_TREE
@@ -131,7 +122,7 @@
             // If it's a new file, then assume a default ICON
             
             // Then setup properties on the cellView based on the column
-            [cellView setToolTip:[theFile hint]]; //TODO:!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
+            [cellView setToolTip:[theFile hint]]; //TODO:!!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
             
             cellView.imageView.objectValue = [theFile image];
             
@@ -273,7 +264,7 @@
         }
     }
     [inTableView setHighlightedTableColumn:tableColumn];
-    NodeSortDescriptor *currentDesc = [self sortDescriptorForColID:[tableColumn identifier]];
+    NodeSortDescriptor *currentDesc = [self sortDescriptorForFieldID:[tableColumn identifier]];
 
     BOOL ascending;
     if (currentDesc==nil || [currentDesc ascending]==NO)
@@ -286,7 +277,7 @@
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
         ascending = NO;
     }
-    [self makeSortOnColID:[tableColumn identifier] ascending:ascending grouping:[currentDesc isGrouping]];
+    [self makeSortOnFieldID:[tableColumn identifier] ascending:ascending grouping:[currentDesc isGrouping]];
     [self refreshKeepingSelections];
 }
 
@@ -328,7 +319,7 @@
             // Get the column
             NSTableColumn *colToGroup = [[[self myTableView] tableColumns] objectAtIndex:colHeaderClicked];
             // Remove it from Columns : [[self myTableView] removeTableColumn:colToGroup];
-            [self makeSortOnColID:[colToGroup identifier] ascending:YES grouping:YES];
+            [self makeSortOnFieldID:[colToGroup identifier] ascending:YES grouping:YES];
         }
         [self refreshKeepingSelections];
     }
@@ -360,20 +351,19 @@
 }
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences {
+    [super loadPreferencesFrom:preferences];
     NSArray *columns = [preferences objectForKey:USER_DEF_TABLE_VIEW_COLUMNS];
     if (columns) {
         [self setupColumns:columns];
     }
 }
 
--(NSDictionary*) savePreferences {
-    // Needs to be overrided in subclassses
+-(void) savePreferences:(NSMutableDictionary*) preferences {
+    [super savePreferences:preferences];
     NSArray *colIDs = [self columns];
     if (colIDs) {
-        return [NSDictionary dictionaryWithObjectsAndKeys:
-                colIDs, USER_DEF_TABLE_VIEW_COLUMNS, nil];
+        [preferences setObject:colIDs forKey:USER_DEF_TABLE_VIEW_COLUMNS];
     }
-    return nil;
 }
 
 
@@ -538,7 +528,7 @@
 }
 
 -(void) refreshKeepingSelections {
-    // TODO:! Animate the updates (new files, deleted files)
+    // TODO:? Animate the updates (new files, deleted files)
     // Storing Selected URLs
     NSArray *selectedURLs = [self getTableViewSelectedURLs];
     // Refreshing the View
@@ -832,7 +822,7 @@
 -(BOOL) startEditItemName:(TreeItem*)item  {
     NSUInteger row = [self->_displayedItems indexOfObject:item];
     if (row!=NSNotFound) {
-        NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME];
+        NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME]; // TODO:!!!!! Need to check how this behaves when the COL_PATH is chosen
         [_myTableView editColumn:column row:row withEvent:nil select:YES];
         // Obtain the NSTextField from the view
         NSTextField *textField = [[_myTableView viewAtColumn:column row:row makeIfNecessary:NO] textField];
