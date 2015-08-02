@@ -181,12 +181,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [(BrowserController*)view removeAll];
     [(BrowserController*)view setViewMode:BViewBrowserMode ];
     [(BrowserController*)view setViewType:BViewTypeVoid];
+    
+    [(BrowserController*)view loadPreferences];
     [(BrowserController*)view setFlatView:NO];
-    // TODO:!!!!! replace this with a loadPreferences
-    [[[(BrowserController*)view detailedViewController] sortAndGroupDescriptors] removeAllObjects];
-    [[(BrowserController*)view detailedViewController] makeSortOnFieldID:@"COL_NAME"
-                                                             ascending:YES
-                                                              grouping:NO];
+    
     [(BrowserController*)view addTreeRoot: item];
     [(BrowserController*)view selectFirstRoot]; // This calls a refresh
     //[(BrowserController*)view refresh];
@@ -231,9 +229,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         else {
             NSLog(@"AppDelegate.goHome:Failed to retrieve home folder from NSUserDefaults");
         }
-
+        // TODO:An possible workaround this is just using the first Bookmark available
+        
         [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
-        [self savePreferences]; // TODO:!!!!! Check if this is saving the path correctly. An possible workaround this is just using the first Bookmark available
+        [self savePreferences];
 
 #else
         if (homepath == nil || [homepath isEqualToString:@""]) {
@@ -258,12 +257,16 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 -(BOOL) savePreferences {
     NSLog(@"AppDelegate.savePreferences:");
-    NSString *homepath = [[myLeftView treeNodeSelected] path];
-    [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
+    if (applicationMode != ApplicationModeDuplicate) {
+        NSString *homepath = [[myLeftView treeNodeSelected] path];
+        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
+    }
     [myLeftView savePreferences];
     if (myRightView) {
-        homepath = [[myRightView treeNodeSelected] path];
-        [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        if (applicationMode != ApplicationModeDuplicate) {
+            NSString *homepath = [[myRightView treeNodeSelected] path];
+            [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        }
         [myRightView savePreferences];
     }
     BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];

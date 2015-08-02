@@ -9,20 +9,21 @@
             <connections>
                 <outlet property="chkDontDisplayAgain" destination="fxT-Xe-pbB" id="tgo-XM-UNR"/>
                 <outlet property="duplicateOrganization" destination="bIR-Cw-j6z" id="UZQ-ru-3JV"/>
+                <outlet property="exampleImage" destination="cea-K6-fSc" id="a6k-Dt-Pdh"/>
                 <outlet property="message" destination="tLE-co-WRh" id="BCj-Wa-jnK"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
-            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+        <window title="Duplicate Display Option" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="920" height="649"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="920" height="649"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cea-K6-fSc">
                         <rect key="frame" x="17" y="35" width="886" height="556"/>
@@ -127,6 +128,6 @@
         </window>
     </objects>
     <resources>
-        <image name="DuplicateShow" width="1880" height="1180"/>
+        <image name="DuplicateShow" width="858.5" height="508.5"/>
     </resources>
 </document>

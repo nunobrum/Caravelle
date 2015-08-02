@@ -22,9 +22,22 @@
 }
 
 - (IBAction)organizationChanged:(id)sender {
-    NSLog(@"organizationChanged %ld", (long)[(NSMatrix*)sender selectedColumn]);
+    NSInteger choice = [(NSMatrix*)sender selectedColumn];
     // Changing the image according to selection
+    NSImage *show;
+    switch (choice) {
+        case 0:
+            show = [NSImage imageNamed:@"DuplicateShowClassic"];
+            break;
+        case 1:
+            show = [NSImage imageNamed:@"DuplicateShow"];
+            break;
+        default:
+            break;
+    }
+    [self.exampleImage setImage:show];
 }
+
 
 - (IBAction)close:(id)sender {
     self->_answer = DupDialogMaskOKPressed;

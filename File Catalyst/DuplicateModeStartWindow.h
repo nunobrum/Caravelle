@@ -17,6 +17,7 @@ typedef NS_OPTIONS(NSUInteger, EnumDupStartDialogAnswer) {
 
 @interface DuplicateModeStartWindow : NSWindowController
 
+@property (weak) IBOutlet NSImageView *exampleImage;
 @property (weak) IBOutlet NSButton *chkDontDisplayAgain;
 @property (weak) IBOutlet NSMatrix *duplicateOrganization;
 @property (weak) IBOutlet NSTextField *message;
