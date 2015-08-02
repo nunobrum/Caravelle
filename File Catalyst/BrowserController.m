@@ -1412,7 +1412,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [BaseDirectoriesArray removeObjectAtIndex:idx];
         }
         else { // Refreshes all the others
-            [tree setTag:tagTreeItemDirty];  // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
+            // [tree setTag:tagTreeItemDirty];  // Only treeManager and operations should make items dirty
             [tree refreshContents];
             idx++;
         }
@@ -1421,7 +1421,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     for (TreeBranch *tree in _observedVisibleItems) {
         // But avoiding repeating the refreshes already done
         if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
-            [tree setTag:tagTreeItemDirty]; // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
+            // [tree setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
             [tree refreshContents];
         }
     }
@@ -1650,17 +1650,17 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         if (_viewMode == BViewBrowserMode) {
             // Replaces current root
             item = [appTreeManager addTreeItemWithURL:theURL];
-            [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
-            [item setTag:tagTreeItemDirty]; // TODO:!!!!! remove all these instructions. Only treeManager and operations should make items dirty
-            [self selectFolderByItem:item];
-            return (NULL!=[self selectFirstRoot]);
+            if (item != nil) {
+                [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
+                //[item setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
+                return [self selectFolderByItem:item];
+            }
         }
-        else
-            return NO;
     }
     else {
         return [self selectFolderByItem:item];
     }
+    return NO;
 }
 
 -(TreeBranch*) getRootWithURL:(NSURL*)theURL {
