@@ -44,7 +44,7 @@
 		<key>ViewType</key>
 		<integer>1</integer>
 		<key>TreeVisible</key>
-		<true/>
+		<false/>
 		<key>TableColumns</key>
 		<array>
 			<string>COL_NAME</string>
@@ -71,6 +71,8 @@
 	<dict>
 		<key>ViewType</key>
 		<integer>1</integer>
+		<key>TreeVisible</key>
+		<true/>
 		<key>TableColumns</key>
 		<array>
 			<string>COL_NAME</string>
