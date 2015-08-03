@@ -28,20 +28,20 @@
         return nil;
 }
 
--(IconViewBox*) lastClick {
-    return self->_lastClick;
+-(IconViewBox*) lastClicked {
+    return self->_lastClicked;
 }
 
 - (IBAction)mouseDown:(NSEvent *)theEvent {
-    self->_lastClick = [self iconForEvent:theEvent];
+    self->_lastClicked = [self iconForEvent:theEvent];
     if([theEvent clickCount] > 1) {
         if(self.delegate && [self.delegate respondsToSelector:@selector(doubleClick:)]) {
-            [(IconViewController*)self.delegate doubleClick:self->_lastClick];
+            [(IconViewController*)self.delegate doubleClick:self];
         }
     }
     else {
         if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
-            [(IconViewController*)self.delegate lastClick:self->_lastClick];
+            [(IconViewController*)self.delegate lastClick:self];
         }
     }
     [super mouseDown:theEvent];
@@ -49,9 +49,9 @@
 }
 
 - (IBAction)rightMouseDown:(NSEvent *)theEvent {
-    self->_lastClick = [self iconForEvent:theEvent];
-    if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
-        [(IconViewController*)self.delegate lastClick:self->_lastClick];
+    self->_lastClicked = [self iconForEvent:theEvent];
+    if(self.delegate && [self.delegate respondsToSelector:@selector(lastRightClick:)]) {
+        [(IconViewController*)self.delegate lastRightClick:self];
     }
     [super rightMouseDown:theEvent];
 }

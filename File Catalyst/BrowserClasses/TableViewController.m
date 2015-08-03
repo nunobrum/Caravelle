@@ -360,6 +360,29 @@
     }
 }
 
+-(void) addColumn:(NSString*) fieldID {
+    NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
+    assert (colInfo); // Checking Problem in getting
+    // Checks whether to add or to delete a column
+    if ([[self myTableView] columnWithIdentifier:fieldID]==-1) { // column not existing
+        // It was added
+        NSTableColumn *columnToAdd= [NSTableColumn alloc];
+        columnToAdd = [columnToAdd initWithIdentifier:fieldID];
+        [[columnToAdd headerCell] setStringValue:colInfo[COL_TITLE_KEY]];
+        [[self myTableView] addTableColumn:columnToAdd];
+    }
+    else {
+        // It was removed
+        [self removeColumn:fieldID];
+    }
+
+}
+
+-(void) removeColumn:(NSString*) fieldID {
+    NSTableColumn *colToDelete = [[self myTableView] tableColumnWithIdentifier:fieldID];
+    [[self myTableView] removeTableColumn:colToDelete];
+}
+
 -(void) savePreferences:(NSMutableDictionary*) preferences {
     [super savePreferences:preferences];
     NSArray *colIDs = [self columns];

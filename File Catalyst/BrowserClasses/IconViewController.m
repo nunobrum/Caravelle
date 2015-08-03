@@ -64,10 +64,12 @@ NSString *KEY_ICON = @"icon";
     return self.collectionView;
 }
 
-
+-(IBAction) lastRightClick:(id)sender {
+    [self.parentController contextualFocus:self];
+}
 
 -(IBAction) lastClick:(id)sender {
-    [self.parentController contextualFocus:self];
+    [self.parentController updateFocus:self];
 }
 
 /* This action is associated manually with the doubleClickTarget in Bindings */
@@ -160,9 +162,9 @@ NSString *KEY_ICON = @"icon";
 
 // Can select the current Node
 - (NSArray*)getSelectedItemsForContextualMenu1 {
-    if ([self.collectionView lastClick] != nil) {
+    if ([self.collectionView lastClicked] != nil) {
         NSArray *selectedItems = [self getSelectedItems];
-        TreeItem *item = [[self.collectionView lastClick] representedObject];
+        TreeItem *item = [[self.collectionView lastClicked] representedObject];
         if ([selectedItems containsObject:item])
             return selectedItems;
         else
@@ -173,9 +175,9 @@ NSString *KEY_ICON = @"icon";
 
 // Doesn't select the current Node
 - (NSArray*)getSelectedItemsForContextualMenu2 {
-    if ([self.collectionView lastClick] != nil) {
+    if ([self.collectionView lastClicked] != nil) {
         NSArray *selectedItems = [self getSelectedItems];
-        TreeItem *item = [[self.collectionView lastClick] representedObject];
+        TreeItem *item = [[self.collectionView lastClicked] representedObject];
         if ([selectedItems containsObject:item])
             return selectedItems;
         else
@@ -185,8 +187,8 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(TreeItem*) getLastClickedItem {
-    if ([self.collectionView lastClick] != nil) {
-        TreeItem *item = [[self.collectionView lastClick] representedObject];
+    if ([self.collectionView lastClicked] != nil) {
+        TreeItem *item = [[self.collectionView lastClicked] representedObject];
         if ([[self.iconArrayController arrangedObjects] containsObject:item]) {
             // Returns the current selected item
             return item;
@@ -300,7 +302,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 #pragma - NS Menu Delegate
 
 - (void)menuWillOpen:(NSMenu *)menu {
-    self->menuTarget = [self.collectionView lastClick];
+    self->menuTarget = [self.collectionView lastClicked];
 
     [self->menuTarget setFillColor:[NSColor windowBackgroundColor]];
     [self->menuTarget setTransparent:NO];

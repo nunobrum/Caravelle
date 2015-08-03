@@ -93,10 +93,13 @@
 -(void) stopBusyAnimations;
 
 -(IBAction) menuGroupingSelector:(id) sender;
+-(IBAction) menuColumnSelector:(id)sender;
 
 // Support for Table View : Ignored in other views
 -(void) setupColumns:(NSArray*) columns;
 -(NSArray*) columns;
+-(void) addColumn:(NSString*) fieldID;
+-(void) removeColumn:(NSString*) fieldID;
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences;
 -(void) savePreferences:(NSMutableDictionary*) preferences;

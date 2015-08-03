@@ -44,7 +44,7 @@
  */
 
 @property (weak) IBOutlet NSSegmentedControl *toolbarAppModeSelect;
-
+@property (weak) IBOutlet NSSegmentedControl *toolbarViewTypeSelect;
 @property (weak) IBOutlet NSSegmentedControl *toolbarFunctionBarSelect;
 
 
@@ -100,6 +100,7 @@
 - (IBAction)contextualCopyName:(id)sender ;
 
 - (IBAction)appModeChanged:(id)sender;
+- (IBAction)viewTypeChanged:(id)sender;
 
 - (void) adjustSideInformation:(id) sender;
 

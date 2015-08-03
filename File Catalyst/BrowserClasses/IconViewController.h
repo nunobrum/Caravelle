@@ -23,6 +23,7 @@
 @property (strong) IBOutlet NSLayoutConstraint *viewWidthConstraint;
 
 - (IBAction) lastClick:(id)sender;
+- (IBAction) lastRightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;
 	
 @end

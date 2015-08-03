@@ -334,6 +334,7 @@ CA
                 <outlet property="statusProgressLabel" destination="Clz-g3-ghw" id="bjP-th-9Hn"/>
                 <outlet property="toolbarAppModeSelect" destination="5de-cw-kiE" id="JiJ-tp-wFy"/>
                 <outlet property="toolbarFunctionBarSelect" destination="Bii-Yd-WT4" id="CCW-k8-qTp"/>
+                <outlet property="toolbarViewTypeSelect" destination="uVR-In-oSw" id="nxX-dM-3ZO"/>
             </connections>
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
@@ -347,7 +348,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="95" y="99" width="856" height="660"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -403,8 +404,8 @@ CA
                     <customView hidden="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cfC-d6-5mb" userLabel="FunctionBar">
                         <rect key="frame" x="0.0" y="25" width="856" height="26"/>
                         <subviews>
-                            <button toolTip="Send to Recycle Bin" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="743" y="3" width="81" height="19"/>
+                            <button toolTip="Send to Recycle Bin" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
+                                <rect key="frame" x="743" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Delete" alternateTitle="Trash" bezelStyle="roundedRect" image="trashcanman32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -413,7 +414,7 @@ CA
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
+                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
                                 <rect key="frame" x="134" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Rename" alternateTitle="Rename" bezelStyle="roundedRect" image="NSFontPanel" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -423,7 +424,7 @@ CA
                                     <action selector="toolbarRename:" target="494" id="6My-yD-mQw"/>
                                 </connections>
                             </button>
-                            <button toolTip="Comming Soon (Under Construction)" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
+                            <button toolTip="Comming Soon (Under Construction)" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
                                 <rect key="frame" x="235" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="View" alternateTitle="Search" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -434,7 +435,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Add a new Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
-                                <rect key="frame" x="640" y="3" width="82" height="19"/>
+                                <rect key="frame" x="641" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Folder+" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -444,7 +445,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Copy to the side" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
-                                <rect key="frame" x="437" y="3" width="82" height="19"/>
+                                <rect key="frame" x="438" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Copy" alternateTitle="Copy" bezelStyle="roundedRect" image="mancopy32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -453,8 +454,8 @@ CA
                                     <action selector="toolbarCopyTo:" target="-1" id="D2V-Ze-9rH"/>
                                 </connections>
                             </button>
-                            <button toolTip="Move to the side" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="540" y="3" width="81" height="19"/>
+                            <button toolTip="Move to the side" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
+                                <rect key="frame" x="540" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Move" alternateTitle="Move" bezelStyle="roundedRect" image="manmove32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -463,8 +464,8 @@ CA
                                     <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
                                 </connections>
                             </button>
-                            <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="337" y="3" width="81" height="19"/>
+                            <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                                <rect key="frame" x="337" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Open" bezelStyle="roundedRect" image="NSQuickLookTemplate" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -497,7 +498,7 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-oh-KH9">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-oh-KH9">
                                 <rect key="frame" x="322" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F4" id="D3W-cm-n4y">
                                     <font key="font" metaFont="miniSystem"/>
@@ -506,14 +507,14 @@ CA
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="twh-j1-43J">
-                                <rect key="frame" x="422" y="8" width="16" height="11"/>
+                                <rect key="frame" x="423" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F5" id="aJg-MJ-qpM">
                                     <font key="font" metaFont="miniSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j0g-ZO-QjL">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="j0g-ZO-QjL">
                                 <rect key="frame" x="525" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F6" id="csw-Qb-bcB">
                                     <font key="font" metaFont="miniSystem"/>
@@ -522,14 +523,14 @@ CA
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hsp-sw-ygQ">
-                                <rect key="frame" x="625" y="8" width="16" height="11"/>
+                                <rect key="frame" x="626" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F7" id="r5J-Wx-vXM">
                                     <font key="font" metaFont="miniSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q3S-UC-RWi">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q3S-UC-RWi">
                                 <rect key="frame" x="728" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F8" id="5dk-vB-CiF">
                                     <font key="font" metaFont="miniSystem"/>
@@ -642,7 +643,7 @@ CA
                                 </segmentedCell>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S4e-Ro-5Lx">
-                                <rect key="frame" x="225" y="6" width="63" height="24"/>
+                                <rect key="frame" x="296" y="6" width="63" height="24"/>
                                 <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="tYy-rB-lbq">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -667,7 +668,7 @@ CA
                                 </searchFieldCell>
                             </searchField>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bii-Yd-WT4">
-                                <rect key="frame" x="183" y="6" width="38" height="24"/>
+                                <rect key="frame" x="254" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="wx1-RO-MFB">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -679,15 +680,13 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="Grouping" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsd-Du-IYs">
-                                <rect key="frame" x="333" y="5" width="50" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" selectedItem="wsl-HW-Rax" id="Qc6-E4-OxL">
+                                <rect key="frame" x="412" y="5" width="50" height="26"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" id="Qc6-E4-OxL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="7tR-Hd-XDV">
                                         <items>
                                             <menuItem state="on" image="NSActionTemplate" hidden="YES" id="wsl-HW-Rax"/>
-                                            <menuItem title="Item 2" id="Bg6-YU-0vE"/>
-                                            <menuItem title="Item 3" id="GPi-fK-g8Q"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -696,7 +695,7 @@ CA
                                 </connections>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u5A-Di-okM">
-                                <rect key="frame" x="292" y="6" width="38" height="24"/>
+                                <rect key="frame" x="363" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="6Rs-Kf-Pcm">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -710,18 +709,13 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="View Options" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="urp-yc-gQO">
-                                <rect key="frame" x="417" y="5" width="58" height="26"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="52" id="C8O-Ez-ojh"/>
-                                </constraints>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="Ebb-cn-RnD" id="rI1-hz-veL">
+                                <rect key="frame" x="472" y="5" width="55" height="26"/>
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="rI1-hz-veL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="0XE-01-CZ6">
                                         <items>
                                             <menuItem state="on" image="NSQuickLookTemplate" hidden="YES" id="Ebb-cn-RnD"/>
-                                            <menuItem title="Item 2" id="thp-Ry-zrr"/>
-                                            <menuItem title="Item 3" id="Hgc-X5-vYg"/>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -729,19 +723,34 @@ CA
                                     <outlet property="menu" destination="twM-Bq-W5l" id="j4G-Xr-ZY8"/>
                                 </connections>
                             </popUpButton>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uVR-In-oSw">
+                                <rect key="frame" x="181" y="6" width="65" height="24"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="ksp-w8-Ak1">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment toolTip="Icon View" image="NSIconViewTemplate" width="29"/>
+                                        <segment toolTip="Table View" image="NSListViewTemplate" width="29" tag="1"/>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="viewTypeChanged:" target="494" id="Pgk-fb-Mh5"/>
+                                </connections>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
                             <constraint firstItem="5de-cw-kiE" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="3HE-QM-lxt"/>
+                            <constraint firstAttribute="centerY" secondItem="uVR-In-oSw" secondAttribute="centerY" id="AbX-d9-hXx"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
-                            <constraint firstItem="fsd-Du-IYs" firstAttribute="leading" secondItem="u5A-Di-okM" secondAttribute="trailing" constant="8" symbolic="YES" id="HJ7-fc-QH7"/>
-                            <constraint firstItem="urp-yc-gQO" firstAttribute="leading" secondItem="fsd-Du-IYs" secondAttribute="trailing" constant="40" id="I6O-mA-ypd"/>
+                            <constraint firstItem="fsd-Du-IYs" firstAttribute="leading" secondItem="u5A-Di-okM" secondAttribute="trailing" constant="16" id="HJ7-fc-QH7"/>
+                            <constraint firstItem="urp-yc-gQO" firstAttribute="leading" secondItem="fsd-Du-IYs" secondAttribute="trailing" constant="16" id="I6O-mA-ypd"/>
                             <constraint firstAttribute="trailing" secondItem="685-pk-2bz" secondAttribute="trailing" id="Jyr-L0-vZi"/>
                             <constraint firstItem="v0W-ls-fHr" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="6" id="M3o-oM-mbf"/>
-                            <constraint firstItem="Bii-Yd-WT4" firstAttribute="leading" secondItem="5de-cw-kiE" secondAttribute="trailing" constant="14" id="OF8-VB-xHK"/>
                             <constraint firstAttribute="trailing" secondItem="v0W-ls-fHr" secondAttribute="trailing" constant="20" id="Pv0-B0-2aJ"/>
                             <constraint firstAttribute="centerY" secondItem="u5A-Di-okM" secondAttribute="centerY" id="TUB-Ui-V9C"/>
+                            <constraint firstItem="uVR-In-oSw" firstAttribute="leading" secondItem="5de-cw-kiE" secondAttribute="trailing" constant="12" id="WjT-at-dkN"/>
                             <constraint firstItem="S4e-Ro-5Lx" firstAttribute="leading" secondItem="Bii-Yd-WT4" secondAttribute="trailing" constant="8" symbolic="YES" id="acw-po-UU4"/>
                             <constraint firstAttribute="centerY" secondItem="Bii-Yd-WT4" secondAttribute="centerY" id="b3b-TB-x4J"/>
+                            <constraint firstItem="Bii-Yd-WT4" firstAttribute="leading" secondItem="uVR-In-oSw" secondAttribute="trailing" constant="12" id="bdU-YB-WCw"/>
                             <constraint firstAttribute="centerY" secondItem="S4e-Ro-5Lx" secondAttribute="centerY" id="clg-oe-kta"/>
                             <constraint firstAttribute="centerY" secondItem="urp-yc-gQO" secondAttribute="centerY" id="csj-2E-k0B"/>
                             <constraint firstAttribute="centerY" secondItem="fsd-Du-IYs" secondAttribute="centerY" id="dJA-1c-vu8"/>
@@ -780,7 +789,7 @@ CA
                     <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="uJf-ro-GFu"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="192" y="598"/>
+            <point key="canvasLocation" x="211" y="630"/>
         </window>
         <menu title="ShowOptions" autoenablesItems="NO" id="twM-Bq-W5l" userLabel="Show Options Menu">
             <items>
@@ -870,6 +879,8 @@ CA
     <resources>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSFontPanel" width="32" height="32"/>
+        <image name="NSIconViewTemplate" width="10" height="10"/>
+        <image name="NSListViewTemplate" width="14" height="10"/>
         <image name="NSQuickLookTemplate" width="19" height="12"/>
         <image name="NSRevealFreestandingTemplate" width="14" height="14"/>
         <image name="NewFolder" width="22" height="16"/>

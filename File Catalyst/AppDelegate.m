@@ -1065,8 +1065,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (void) updateFocus:(id)sender {
     if (sender == myLeftView || sender == myRightView) {
-        _selectedView = sender;
-        [self adjustSideInformation:sender];
+        if (_selectedView != sender) {
+            _selectedView = sender;
+            [self adjustSideInformation:sender];
+        }
     }
     else {
         NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
@@ -1075,8 +1077,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (void) contextualFocus:(id)sender {
-    if (sender == myLeftView || sender == myRightView)
+    if (sender == myLeftView || sender == myRightView) {
         _contextualFocus = sender;
+    }
     else {
         NSLog(@"AppDelegate.updateSelected: - Case not expected. Unknown View");
         assert(false);
@@ -1373,6 +1376,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView adjustSubviews];
     [self.ContentSplitView displayIfNeeded];
+}
+
+- (IBAction)viewTypeChanged:(id)sender {
+    if ([self.selectedView isKindOfClass:[BrowserController class]]) {
+        NSInteger newType = [(NSSegmentedControl*)sender selectedSegment ];
+        [(BrowserController*)self.selectedView setViewType:newType];
+    }
 }
 
 
@@ -1961,6 +1971,12 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         [self.buttonMoveTo setEnabled:NO];
         [self.buttonCopyTo setTitle: @"Copy"];
         [self.buttonMoveTo setTitle: @"Move"];
+    }
+
+    // Update the View Type
+    if ([sender isKindOfClass:[BrowserController class]]) {
+        EnumBrowserViewType type = [(BrowserController*)sender viewType];
+        [self.toolbarViewTypeSelect setSelected:YES forSegment:type];
     }
 }
 

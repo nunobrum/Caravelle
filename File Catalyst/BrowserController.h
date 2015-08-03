@@ -39,7 +39,6 @@
 
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 
-@property (strong) IBOutlet NSSegmentedControl *myViewSelectorButton;
 
 @property (strong) IBOutlet NSSplitView *mySplitView;
 @property (strong) IBOutlet NSSegmentedControl *viewOptionsSwitches;
@@ -89,9 +88,9 @@
 - (IBAction) PathSelect:(id)sender;
 - (IBAction) FilterChange:(id)sender;
 - (IBAction) ChooseDirectory:(id)sender;
-//- (IBAction) filenameDidChange:(id)sender;
+
 - (IBAction) optionsSwitchSelect:(id)sender;
-- (IBAction) viewTypeSelection:(id)sender;
+
 - (IBAction) mruBackForwardAction:(id)sender;
 - (IBAction)filenameDidChange:(id)sender;
 /*

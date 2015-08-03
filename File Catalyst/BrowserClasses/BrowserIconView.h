@@ -10,11 +10,11 @@
 #import "IconViewBox.h"
 
 @interface BrowserIconView : NSCollectionView {
-    IconViewBox * _lastClick;
+    IconViewBox * _lastClicked;
 }
 
 -(IconViewBox*) iconForEvent:(NSEvent*) theEvent;
--(IconViewBox*) lastClick;
+-(IconViewBox*) lastClicked;
 
 - (void)keyDown:(NSEvent *)theEvent;
 - (IBAction)mouseDown:(NSEvent *)theEvent;

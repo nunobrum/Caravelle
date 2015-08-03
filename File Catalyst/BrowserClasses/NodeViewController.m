@@ -241,7 +241,7 @@
 }
 
 -(IBAction) menuGroupingSelector:(id) sender {
-    NSLog(@"menuGroupingSelector %@",[sender title]);
+    NSLog(@"NodeViewController.menuGroupingSelector %@",[sender title]);
     BOOL activate_grouping = toggleMenuState((NSMenuItem *)sender);
 
     // Find the identifier
@@ -268,6 +268,20 @@
     }
     [self makeSortOnFieldID:identifier ascending:ascending grouping:activate_grouping];
     [self refreshKeepingSelections];
+}
+
+-(IBAction) menuColumnSelector:(id) sender {
+    // Find the identifier
+    NSDictionary *colDict = nil;
+    NSString *identifier;
+    for (NSString *ident in [columnInfo() keyEnumerator]) {
+        colDict = [columnInfo() objectForKey:ident];
+        if ([[sender title] isEqualToString:colDict[COL_TITLE_KEY]]) {
+            identifier = ident;
+            break;
+        }
+    }
+    [self addColumn:identifier]; // This function is already removing if it already exists
 }
 
 -(NSMutableArray*) itemsToDisplay {
@@ -469,6 +483,14 @@
 -(NSArray*) columns {
     // Overrided in Table View. Ignored in other views
     return nil;
+}
+
+-(void) addColumn:(NSString*) fieldID {
+    // Overrided in Table View. Ignored in other views
+}
+
+-(void) removeColumn:(NSString*) fieldID {
+    // Overrided in Table View. Ignored in other views
 }
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences {

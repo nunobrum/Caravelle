@@ -220,7 +220,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
     // Use this notfication to set the select state of the button
-    [self.viewOptionsSwitches setSelected:![self treeViewCollapsed] forSegment:0];
+    [self.viewOptionsSwitches setSelected:![self treeViewCollapsed] forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
     //NSLog(@"View:%@ splitViewDidResizeSubiews",_viewName);
 }
 
@@ -516,40 +516,76 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) menuNeedsUpdate:(NSMenu *)menu {
     //menu = [[NSMenu alloc] initWithTitle:@"Groupings Menu"];
     // Check if menu was updated
-    if ([[menu itemArray] count]==1) {
-//        NSMenuItem *groupingTitle = [[NSMenuItem alloc] init];
-//        [groupingTitle setImage:[NSImage imageNamed:@"GrouppingOSX"]];
-//        [groupingTitle setTitle:@""];
-//        [menu addItem:groupingTitle];
-        int tagCount = 0;
-        for (NSString *colID in sortedColumnNames() ) {
-            NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-            // Restrict to fields that have grouping setting
+    if ([[menu title] isEqualToString:@"GroupingMenu"]) {
+        
+        if ([[menu itemArray] count]==1) {
+            int tagCount = 0;
+            for (NSString *colID in sortedColumnNames() ) {
+                NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+                // Restrict to fields that have grouping setting
+                id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
+                if (grouping) {
+                    NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
+                    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
+                    [menuItem setEnabled:YES];
+                    [menuItem setState:NSOffState];
+                    [menuItem setTag:tagCount++];
+                    //[menuItem setAction:@selector(menuGroupingSelector:)];
+                    [menuItem setTarget:self.detailedViewController];
+                    [menu addItem:menuItem];
+                }
+            }
+        }
+        // If the menu was already created, then it will just update the groupings
+        
+        int i = 1; // Starts with the first visible Menu Item
+        for (NSString *fieldID in sortedColumnNames() ) {
+            NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
             id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
             if (grouping) {
-                NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
-                NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
-                [menuItem setEnabled:YES];
-                [menuItem setState:NSOffState];
-                [menuItem setTag:tagCount++];
-                [menuItem setAction:@selector(menuGroupingSelector:)];
-                [menuItem setTarget:self.detailedViewController];
-                [menu addItem:menuItem];
+                NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
+                                   ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+                                       BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj field] isEqualToString:fieldID];
+                                       *stop = OK;
+                                       return OK;
+                                   }];
+                if (idx!=nil && [idx count]!=0) {
+                    [[menu itemAtIndex:i] setState:NSOnState];
+                }
+                else {
+                    [[menu itemAtIndex:i] setState:NSOffState];
+                }
+                i+=1;
             }
         }
     }
-    // If the menu was already created, then it will just update the groupings
-
-    int i = 1; // Starts with the first visible Menu Item
-    for (NSString *colID in sortedColumnNames() ) {
-        NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-        id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
-        if (grouping) {
-            NSDictionary *colInfo = [columnInfo() objectForKey:colID];
-            NSString *key = colInfo[COL_ACCESSOR_KEY];
-            NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
+    else {  // Columns Menu
+        NSArray *columns = [self.detailedViewController columns];
+        
+        if ([[menu itemArray] count]==1) {
+            int tagCount = 0;
+            
+            for (NSString *fieldID in sortedColumnNames() ) {
+                NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
+                // Restrict to fields that have grouping setting
+                    NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
+                    NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuColumnSelector:) keyEquivalent:@""];
+                    [menuItem setEnabled:YES];
+                    [menuItem setState:NSOffState];
+                    [menuItem setTag:tagCount++];
+                    [menuItem setTarget:self.detailedViewController];
+                    [menu addItem:menuItem];
+                
+            }
+        }
+        // If the menu was already created, then it will just update the groupings
+        
+        int i = 1; // Starts with the first visible Menu Item
+        for (NSString *fieldID in sortedColumnNames() ) {
+            
+            NSIndexSet *idx = [columns indexesOfObjectsPassingTest:
                                ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                                   BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj key] isEqualToString:key];
+                                   BOOL OK = [obj isEqualToString:fieldID];
                                    *stop = OK;
                                    return OK;
                                }];
@@ -891,15 +927,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSAssert(NO, @"Invalid Segment Number");
 }
 
-- (IBAction)viewTypeSelection:(id)sender {
-    NSInteger newType = [(NSSegmentedControl*)sender selectedSegment ];
-    [self setViewType:newType];
-    [self.detailedViewController setDisplayFilesInSubdirs:
-     [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS]
-     ];
-    [self.detailedViewController setCurrentNode:_treeNodeSelected];
-    [self.detailedViewController refresh];
-}
 
 - (IBAction)mruBackForwardAction:(id)sender {
     NSInteger backOrForward = [(NSSegmentedControl*)sender selectedSegment];
@@ -1196,7 +1223,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
         else if ([key isEqualToString:@"\x19"]) {
-            if ((self.focusedView == [self.detailedViewController containerView]) && ([self.viewOptionsSwitches isSelectedForSegment:0])) {
+            if ((self.focusedView == [self.detailedViewController containerView]) && ([self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_TREE_ENABLE])) {
                 [self focusOnFirstView];
             }
             else {
@@ -1222,7 +1249,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* This routine is serving as after load initialization */
 
 -(void) focusOnFirstView {
-    if ([self.viewOptionsSwitches isSelectedForSegment:0]) {
+    if ([self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_TREE_ENABLE]) {
         // The Tree Outline View is selected
         if ([[_myOutlineView selectedRowIndexes] count]==0) {
             [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
@@ -1248,7 +1275,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) focusOnPreviousView:(id)sender {
-    if (sender == _myOutlineView || [self.viewOptionsSwitches isSelectedForSegment:0]==NO) {
+    if (sender == _myOutlineView || [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_TREE_ENABLE]==NO) {
         [self.parentController focusOnPreviousView:self];
     }
     else {
@@ -1351,13 +1378,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     // Changing User Defaults
     self->_viewType = viewType;
-    [self.myViewSelectorButton setSelectedSegment:viewType];
+    
     // Load Preferences
     if (didLoadPreferences==NO) {
         [self loadPreferences];
     }
     // Update Current View Type Preference
     [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
+    [self.detailedViewController setDisplayFilesInSubdirs:
+     [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS]
+     ];
+    [self.detailedViewController setCurrentNode:_treeNodeSelected];
+    [self.detailedViewController refresh];
     
 }
 
