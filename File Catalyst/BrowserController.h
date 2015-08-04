@@ -36,6 +36,7 @@
 @property (strong) IBOutlet NSPopUpButton *myPathPopDownButton;
 @property (strong) IBOutlet NSMenu *myPathPopDownMenu;
 @property (strong) IBOutlet NSPopUpButton *myGroupingPopDpwnButton;
+@property (strong) IBOutlet NSPopUpButton *myColumnsPopDpwnButton;
 
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 

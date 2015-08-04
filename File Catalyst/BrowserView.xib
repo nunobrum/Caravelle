@@ -9,6 +9,7 @@
             <connections>
                 <outlet property="contextualMenu" destination="q8e-qr-VOA" id="5Gn-F0-kWw"/>
                 <outlet property="mruBackForwardControl" destination="Wu7-Ak-lRK" id="IXM-1P-Zra"/>
+                <outlet property="myColumnsPopDpwnButton" destination="pYl-r6-ME0" id="p7V-fF-GVm"/>
                 <outlet property="myFilterText" destination="Lo2-4t-2Jl" id="ijU-KQ-eWf"/>
                 <outlet property="myGroupingPopDpwnButton" destination="H1P-9o-Im5" id="wbY-Ka-PDC"/>
                 <outlet property="myOutlineProgressIndicator" destination="6Ay-z1-oxB" id="Mxj-3o-FRc"/>
@@ -300,7 +301,7 @@
                     </connections>
                 </segmentedControl>
                 <popUpButton hidden="YES" toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
-                    <rect key="frame" x="197" y="566" width="51" height="26"/>
+                    <rect key="frame" x="196" y="566" width="51" height="26"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" selectedItem="bjr-ZP-631" id="cCu-Xv-3GO">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
@@ -314,17 +315,14 @@
                         </menu>
                     </popUpButtonCell>
                 </popUpButton>
-                <popUpButton toolTip="Add or Remove Columns" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYl-r6-ME0">
-                    <rect key="frame" x="143" y="566" width="52" height="26"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="46" id="glg-na-q68"/>
-                    </constraints>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="1mz-BD-L0f">
+                <popUpButton hidden="YES" toolTip="Add or Remove Columns" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYl-r6-ME0">
+                    <rect key="frame" x="143" y="566" width="51" height="26"/>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="0rz-9z-QcB" id="1mz-BD-L0f">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" title="ColumnsMenu" id="abJ-t3-3Td">
                             <items>
-                                <menuItem state="on" image="NSAddTemplate" hidden="YES" id="0rz-9z-QcB"/>
+                                <menuItem state="on" image="Columns" hidden="YES" id="0rz-9z-QcB"/>
                             </items>
                             <connections>
                                 <outlet property="delegate" destination="-2" id="wFe-Oa-EM9"/>
@@ -439,11 +437,11 @@
         <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
     </objects>
     <resources>
+        <image name="Columns" width="15" height="16"/>
         <image name="GenericFolderIcon" width="512" height="512"/>
         <image name="GrouppingOSX" width="15" height="16"/>
         <image name="IconTreeView20" width="20" height="20"/>
         <image name="NSActionTemplate" width="14" height="14"/>
-        <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
         <image name="NSPathTemplate" width="16" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="12"/>

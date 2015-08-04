@@ -1336,6 +1336,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
             newController = tableViewController;
             [self.myGroupingPopDpwnButton setHidden:NO];
+            [self.myColumnsPopDpwnButton  setHidden:NO];
             break;
         case BViewTypeBrowser:
             break;
@@ -1349,6 +1350,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
             newController = iconViewController;
             [self.myGroupingPopDpwnButton setHidden:YES];
+            [self.myColumnsPopDpwnButton  setHidden:YES];
             break;
         default:
             break;

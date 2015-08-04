@@ -30,7 +30,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="505" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <value key="minSize" type="size" width="505" height="270"/>
             <value key="maxSize" type="size" width="505" height="270"/>
             <view key="contentView" id="EiT-Mj-1SZ">
@@ -148,10 +148,10 @@ DQ
                                             </buttonCell>
                                         </button>
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rSc-X1-VaG">
-                                            <rect key="frame" x="36" y="14" width="221" height="18"/>
+                                            <rect key="frame" x="36" y="14" width="98" height="18"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="51" height="18"/>
-                                            <size key="intercellSpacing" width="4" height="2"/>
+                                            <size key="cellSize" width="49" height="18"/>
+                                            <size key="intercellSpacing" width="0.0" height="2"/>
                                             <buttonCell key="prototype" type="radio" title="Created" imagePosition="left" alignment="left" inset="2" id="TSK-SA-LF0">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -164,7 +164,7 @@ DQ
                                                     </buttonCell>
                                                 </column>
                                                 <column>
-                                                    <buttonCell type="radio" title="MD5" imagePosition="left" alignment="left" inset="2" id="A6z-zr-dDH">
+                                                    <buttonCell type="radio" title="Fast" imagePosition="left" alignment="left" inset="2" id="A6z-zr-dDH">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
@@ -240,7 +240,6 @@ DQ
                                         <constraint firstItem="SyL-or-fyH" firstAttribute="leading" secondItem="6YP-aF-WXK" secondAttribute="leading" constant="17" id="c93-vT-YnH"/>
                                         <constraint firstAttribute="trailing" secondItem="X53-fW-uEU" secondAttribute="trailing" constant="63" id="nDO-Kb-rWS"/>
                                         <constraint firstItem="WUj-X9-Dj9" firstAttribute="leading" secondItem="SyL-or-fyH" secondAttribute="leading" id="qrP-9Z-pTA"/>
-                                        <constraint firstAttribute="trailing" secondItem="rSc-X1-VaG" secondAttribute="trailing" constant="-40" id="rxg-cI-hem"/>
                                         <constraint firstItem="rSc-X1-VaG" firstAttribute="top" secondItem="nKn-Lb-n9x" secondAttribute="bottom" constant="4" id="sxd-SM-sZb"/>
                                         <constraint firstItem="SyL-or-fyH" firstAttribute="top" secondItem="WUj-X9-Dj9" secondAttribute="bottom" constant="6" symbolic="YES" id="vDu-W9-fYW"/>
                                         <constraint firstItem="Qwg-rO-vKG" firstAttribute="top" secondItem="X53-fW-uEU" secondAttribute="bottom" constant="3" id="zDA-G3-EYr"/>

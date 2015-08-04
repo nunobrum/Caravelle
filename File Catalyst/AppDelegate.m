@@ -1276,6 +1276,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     if (applicationMode==ApplicationModeDuplicate && mode != applicationMode) {
         [myLeftView setViewMode:BViewBrowserMode];
         [myRightView setViewMode:BViewBrowserMode];
+        [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
         
         NSArray *roots = [myLeftView roots];
         if ([roots count]>=1) {
@@ -2325,6 +2326,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
     }
+    // Disables the Icon View
+    [self.toolbarViewTypeSelect setEnabled:NO forSegment:BViewTypeIcon];
 }
 // -------------------------------------------------------------------------------
 //	anyThread_handleLoadedImages:note
