@@ -302,7 +302,7 @@
                 </segmentedControl>
                 <popUpButton hidden="YES" toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
                     <rect key="frame" x="196" y="566" width="51" height="26"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" selectedItem="bjr-ZP-631" id="cCu-Xv-3GO">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" id="cCu-Xv-3GO">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" title="GroupingMenu" id="b4D-Sz-aUO">
@@ -317,7 +317,7 @@
                 </popUpButton>
                 <popUpButton hidden="YES" toolTip="Add or Remove Columns" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYl-r6-ME0">
                     <rect key="frame" x="143" y="566" width="51" height="26"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" selectedItem="0rz-9z-QcB" id="1mz-BD-L0f">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="1mz-BD-L0f">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" title="ColumnsMenu" id="abJ-t3-3Td">
@@ -356,7 +356,7 @@
                 <constraint firstAttribute="trailing" secondItem="5Fc-gb-5JC" secondAttribute="trailing" constant="12" id="sVa-ZO-XHS"/>
             </constraints>
         </customView>
-        <menu showsStateColumn="NO" id="q8e-qr-VOA" userLabel="fileContextMenu">
+        <menu title="ContextualMenu" showsStateColumn="NO" id="q8e-qr-VOA" userLabel="fileContextMenu">
             <items>
                 <menuItem title="Get Info" tag="1" keyEquivalent="" id="3VP-FH-tZh">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -387,16 +387,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
-                        <binding destination="-2" name="enabled" keyPath="self.contextualToMenusEnabled" id="YNc-fF-Xal"/>
-                        <binding destination="-2" name="title" keyPath="self.titleCopyTo" id="HYw-8b-d9W"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
-                        <binding destination="-2" name="enabled" keyPath="self.contextualToMenusEnabled" id="JyN-cl-gvm"/>
-                        <binding destination="-2" name="title" keyPath="self.titleMoveTo" id="CZG-6S-oid"/>
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
@@ -430,9 +426,9 @@
                 </menuItem>
             </items>
             <connections>
-                <outlet property="delegate" destination="-2" id="KxG-bb-Ocm"/>
+                <outlet property="delegate" destination="-2" id="lzs-1D-yLY"/>
             </connections>
-            <point key="canvasLocation" x="480" y="123.5"/>
+            <point key="canvasLocation" x="738.5" y="354.5"/>
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
     </objects>

@@ -38,7 +38,7 @@
 @end
 
 
-@interface NodeViewController : NSViewController <MYViewProtocol> {
+@interface NodeViewController : NSViewController <MYViewProtocol, NSMenuDelegate> {
     TreeItem   *_validatedDropDestination;
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
@@ -59,7 +59,7 @@
 - (void) setCurrentNode:(TreeBranch*)branch;
 - (TreeBranch*) currentNode;
 - (void) setName:(NSString*)viewName twinName:(NSString*)twinName;
-
+- (NSString*)twinName;
 
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;

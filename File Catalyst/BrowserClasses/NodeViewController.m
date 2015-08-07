@@ -41,6 +41,10 @@
     self->_twinName = twinName;
 }
 
+- (NSString*)twinName {
+    return _twinName;
+}
+
 - (void) initController {
     self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
@@ -113,6 +117,22 @@
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
     }
     [_observedVisibleItems removeAllObjects];
+}
+
+#pragma mark - Menu Support 
+
+//// TODO: 1.4 Make a Full programatic menu
+-(void) menuNeedsUpdate:(NSMenu*) menu {
+    NSLog(@"NodeViewController.menuNeedsUpdate");
+    if (self.twinName==nil) {
+        [[menu itemAtIndex:5] setTitle: @"Copy to..."];
+        [[menu itemAtIndex:6] setTitle: @"Move to..."];
+    }
+    else {
+        [[menu itemAtIndex:5] setTitle:[NSString stringWithFormat:@"Copy %@",[self twinName]]];
+        [[menu itemAtIndex:6] setTitle:[NSString stringWithFormat:@"Move %@",[self twinName]]];
+    }
+
 }
 
 -(void) reloadItem:(id)object {

@@ -513,6 +513,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (BOOL) menu:(NSMenu *)menu updateItem:(NSMenuItem *)item atIndex:(NSInteger)index shouldCancel:(BOOL)shouldCancel {
 
 }*/
+
+//- (void)menuWillOpen:(NSMenu *)menu {
+//    NSLog(@"AppDelegate.menuWillOpen");
+//}
+//
+//- (void)menuWillClose:(NSMenu *)menu {
+//    NSLog(@"AppDelegate.menuWillClose");
+//}
+
 -(void) menuNeedsUpdate:(NSMenu *)menu {
     //menu = [[NSMenu alloc] initWithTitle:@"Groupings Menu"];
     // Check if menu was updated
@@ -559,7 +568,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             }
         }
     }
-    else {  // Columns Menu
+    else if ([[menu title] isEqualToString:@"ColumnsMenu"]) {  // Columns Menu
         NSArray *columns = [self.detailedViewController columns];
         
         if ([[menu itemArray] count]==1) {
@@ -598,6 +607,12 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             i+=1;
         }
     }
+    else if ([[menu title] isEqualToString:@"ContextualMenu"]) {
+        [self.detailedViewController menuNeedsUpdate:menu];
+    }
+    else {
+        NSLog(@"BrowserController.menuNeedsUpdate: Unknown Menu");
+    }
 }
 
 // TODO:!! Use this selector for making key bindings.
@@ -614,46 +629,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /*
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
     SEL theAction = [anItem action];
+    BOOL allow = NO;
     if (theAction == @selector(menuGroupingSelector:))
-        return YES;
-    return NO;
-}
- */
-
--(NSNumber*) validateContextualCopyTo {
-    // I have to write this function because the binding actually overrides the automatic Menu Validation.
-    BOOL allow;
-    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
-    if ((itemsSelected==nil) || ([itemsSelected count]==0))  // no selection, go for the selected view
-        allow = NO;
-    else
         allow = YES;
+    NSLog(@"BrowserViewController.validateUserInterfaceItem: %s  %hhd", sel_getName(theAction), allow);
+    return allow;
     
     return [NSNumber numberWithBool:allow];
 }
-
--(NSNumber*) validateContextualMoveTo {
-    // I have to write this function because the binding actually overrides the automatic Menu Validation.
-    BOOL allow = YES;
-    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
-    if (itemsSelected==nil) {
-        // If nothing was returned is selected then don't allow anything
-        allow = NO;
-    }
-    else if ([itemsSelected count]==0) { // no selection, go for the selected view
-        allow = NO;
-    }
-    else {
-        // The file has to be read/write
-        for (TreeItem *item in itemsSelected) {
-            if ([item hasTags:tagTreeItemReadOnly]) {
-                allow = NO;
-                break;
-            }
-        }
-    }
-    return [NSNumber numberWithBool:allow];
-}
+ */
 
 
 #pragma mark - Path Bar Handling
@@ -1291,6 +1275,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [self savePreferences];
         
         self->_viewName = viewName;
+        [self.detailedViewController setName:viewName twinName:twinName];
         // Setting the AutoSave Settings
         
         NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
@@ -1301,18 +1286,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     
     self->_twinName = twinName;
     
-    if (twinName==nil) { // there is no twin view
-        self.contextualToMenusEnabled = [NSNumber numberWithBool:NO];
-        self.titleCopyTo = @"Copy to...";
-        self.titleMoveTo = @"Move to...";
-        // TODO:!!!! Make the copy To Dialog such like in Total Commander
-    }
-    else {
-        self.contextualToMenusEnabled = [NSNumber numberWithBool:YES];
-        self.titleCopyTo = [NSString stringWithFormat:@"Copy %@", twinName];
-        self.titleMoveTo = [NSString stringWithFormat:@"Move %@", twinName];
-
-    }
 }
 
 -(void) setViewType:(EnumBrowserViewType)viewType {

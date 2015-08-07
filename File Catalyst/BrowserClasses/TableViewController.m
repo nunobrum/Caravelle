@@ -731,6 +731,11 @@
     return opDone;
 }
 
+// This selector is implemented in the super class
+//-(void) menuNeedsUpdate:(NSMenu*) menu {
+//    [super menu:menu updateItem:item atIndex:index shouldCancel:shouldCancel];
+//}
+
 #pragma mark - NSControlTextDelegate Protocol
 
 - (void)keyDown:(NSEvent *)theEvent {

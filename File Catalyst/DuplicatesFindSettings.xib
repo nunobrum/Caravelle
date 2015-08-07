@@ -147,10 +147,10 @@ DQ
                                                 <font key="font" metaFont="system"/>
                                             </buttonCell>
                                         </button>
-                                        <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rSc-X1-VaG">
-                                            <rect key="frame" x="36" y="14" width="98" height="18"/>
+                                        <matrix verticalHuggingPriority="750" misplaced="YES" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rSc-X1-VaG">
+                                            <rect key="frame" x="36" y="14" width="118" height="18"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="49" height="18"/>
+                                            <size key="cellSize" width="59" height="18"/>
                                             <size key="intercellSpacing" width="0.0" height="2"/>
                                             <buttonCell key="prototype" type="radio" title="Created" imagePosition="left" alignment="left" inset="2" id="TSK-SA-LF0">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>

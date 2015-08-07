@@ -1518,14 +1518,31 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             }
             // No other conditions. This is supposed to be a folder, no need to test this condition
         }
+        else if ((applicationMode != ApplicationMode2Views) && (
+                 theAction == @selector(contextualCopyTo:) ||
+                 theAction == @selector(contextualMoveTo:) ||
+                 theAction == @selector(toolbarCopyTo:) ||
+                 theAction == @selector(toolbarMoveTo:)
+                 )) {
+            allow = NO;
+        }
         else {
             allow = NO;
         }
     }
     else {
         for (TreeItem *item in itemsSelected) {
+            // Actions depending on the application mode
+            if ((applicationMode != ApplicationMode2Views) &&
+                     (theAction == @selector(contextualCopyTo:) ||
+                      theAction == @selector(contextualMoveTo:) ||
+                      theAction == @selector(toolbarCopyTo:) ||
+                      theAction == @selector(toolbarMoveTo:)
+                      )) {
+                         allow = NO;
+            }
             // Actions that can always be made
-            if (theAction == @selector(contextualCopy:) ||
+            else if (theAction == @selector(contextualCopy:) ||
                 theAction == @selector(contextualCopyName:) ||
                 theAction == @selector(contextualCopyTo:) ||
                 theAction == @selector(contextualInformation:) ||
@@ -1592,7 +1609,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
                 break;
         }
     }
-    //NSLog(@"%ld  %hhd", (long)[anItem tag], allow);
+    //NSLog(@"%s  %hhd", sel_getName(theAction), allow);
     return allow; //[super validateUserInterfaceItem:anItem];
 }
 

@@ -55,9 +55,6 @@
 @property (strong) NodeViewController *detailedViewController;
 
 
-@property NSString *titleCopyTo;
-@property NSString *titleMoveTo;
-@property NSNumber *contextualToMenusEnabled;
 @property NSString *viewName;
 @property NSMutableDictionary *preferences;
 
@@ -161,7 +158,5 @@
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
 
--(NSNumber*) validateContextualCopyTo;
--(NSNumber*) validateContextualMoveTo;
 
 @end
