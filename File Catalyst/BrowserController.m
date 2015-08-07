@@ -1317,7 +1317,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setViewType:(EnumBrowserViewType)viewType {
     NodeViewController *newController = nil;
-    BOOL didLoadPreferences = NO;
+    BOOL didLoadPreferences = YES;
     
     if (viewType==BViewTypeVoid) {
         viewType = [[self.preferences objectForKey:USER_DEF_PANEL_VIEW_TYPE] integerValue];

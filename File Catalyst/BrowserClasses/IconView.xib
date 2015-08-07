@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <development version="5000" identifier="xcode"/>
@@ -109,7 +109,7 @@
             <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
+                <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
                     <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
                     <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" id="0CJ-Gt-kCE">
                         <rect key="frame" x="1" y="1" width="248" height="158"/>
@@ -132,11 +132,11 @@
                     <constraints>
                         <constraint firstAttribute="width" priority="100" constant="433" id="j15-94-kuo"/>
                     </constraints>
-                    <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="7">
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="7">
                         <rect key="frame" x="1" y="143" width="248" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="6">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="6">
                         <rect key="frame" x="233" y="1" width="16" height="158"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>

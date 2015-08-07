@@ -1271,108 +1271,117 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 - (IBAction)appModeChanged:(id)sender {
     NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
-    NSUInteger panelCount = [[self.ContentSplitView subviews] count];
     
-    if (applicationMode==ApplicationModeDuplicate && mode != applicationMode) {
-        [myLeftView setViewMode:BViewBrowserMode];
-        [myRightView setViewMode:BViewBrowserMode];
-        [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
-        
-        NSArray *roots = [myLeftView roots];
-        if ([roots count]>=1) {
-    
-            [self prepareView:myLeftView withItem:roots[0]];
-            if (myRightView!=nil) {
-                if ([roots count]>=2)
-                    [self prepareView:myRightView withItem:roots[1]];
-                else
-                    [self goHome:myRightView];
-            }
-        }
-        else {
-            [self goHome:myLeftView];
-            [self goHome:myRightView];
-        }
-    }
-    if (mode == ApplicationMode1View) {
-        if (myRightView!=nil && panelCount == 2) {
-            [myRightView.view removeFromSuperview];
-            //myRightView.view = nil;
-        }
-        [myLeftView setName:@"Single" TwinName:nil];
-        [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
+    if (mode != applicationMode) {
+        EnumApplicationMode old_mode = applicationMode;
         applicationMode = mode;
-    }
-    else if (mode == ApplicationMode2Views) {
-        if (panelCount==1) {
-            if (myRightView == nil) {
-                myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-                [myRightView setParentController:self];
-                [myRightView setName:@"Right" TwinName:@"Left"];
-                [_ContentSplitView addSubview:myRightView.view];
-                [self goHome:myRightView];
-            }
-            else if (myRightView.view==nil) {
-                NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
-                return;
+        
+        NSUInteger panelCount = [[self.ContentSplitView subviews] count];
+        
+        // Cancelation of the previous mode of operation
+        if (old_mode==ApplicationModeDuplicate) {
+            NSArray *roots = [[myLeftView roots] copy]; // Save the roots first
+            
+            [myLeftView setViewMode:BViewBrowserMode];
+            [myRightView setViewMode:BViewBrowserMode];
+            [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
+            
+            if ([roots count]>=1) {
+                
+                [self prepareView:myLeftView withItem:roots[0]];
+                if (myRightView!=nil) {
+                    if ([roots count]>=2)
+                        [self prepareView:myRightView withItem:roots[1]];
+                    else
+                        [self goHome:myRightView];
+                }
             }
             else {
-                [myRightView setName:@"Right" TwinName:@"Left"];
-                [_ContentSplitView addSubview:myRightView.view];
-                [myRightView refresh]; // Just Refreshes
+                [self goHome:myLeftView];
+                [self goHome:myRightView];
             }
         }
-        else {
-            //if (applicationMode==ApplicationModeDuplicate)
-                // This is handled above
+        
+        else if (old_mode == ApplicationModePreview) {
+            // TODO:1.4 code here for Application Mode Preview
+            // Delete the current preview view
+            // and add myRightView
+        }
+        else if (old_mode == ApplicationModeSync){
+            // TODO:1.4 develop this if needed
+        }
+        
+        // Initialization of the new Mode
+        if (applicationMode == ApplicationMode1View) {
+            if (myRightView!=nil && panelCount == 2) {
+                [myRightView.view removeFromSuperview];
+                //myRightView.view = nil;
+            }
+            [myLeftView setName:@"Single" TwinName:nil];
+            [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
+        }
+        else if (applicationMode == ApplicationMode2Views) {
+            if (panelCount==1) {
+                if (myRightView == nil) {
+                    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+                    [myRightView setParentController:self];
+                    [myRightView setName:@"Right" TwinName:@"Left"];
+                    [_ContentSplitView addSubview:myRightView.view];
+                    [self goHome:myRightView];
+                }
+                else if (myRightView.view==nil) {
+                    NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
+                    return;
+                }
+                else {
+                    [_ContentSplitView addSubview:myRightView.view];
+                }
+            }
+            else {
+                
+                [myRightView refresh]; // Refreshes just in case
+            }
+            [myLeftView  setName:@"Left"  TwinName:@"Right"];
+            [myRightView setName:@"Right" TwinName:@"Left"];
             
-            if (applicationMode == ApplicationModePreview) {
-                // TODO:1.4 code here for Application Mode Preview
-                // Delete the current preview view
-                // and add myRightView
-            }
-            else if (applicationMode == ApplicationModeSync){
-                // TODO:1.4 develop this if needed
-            }
-            [myRightView refresh]; // Refreshes just in case
+            [myLeftView  refresh];  // Needs to always refresh the left view since preferences may have changed
+            [myRightView refresh];
+            
         }
-        [myLeftView setName:@"Left" TwinName:@"Right"];
-        [myLeftView refresh];  // Needs to always refresh the left view since preferences may have changed
-        applicationMode = mode;
-    }
-    else if (mode == ApplicationModePreview) {
-        // TODO:1.4 Preview Mode
-        NSLog(@"AppDelegate.appModeChanged: Preview Mode");
-        // Now displaying an NSAlert with the information that this will be available in a next version
-        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Preview Pane"
-                                                      defaultButton:@"OK"
-                                                    alternateButton:nil
-                                                        otherButton:nil
-                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
-        [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
-        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-        // Reposition last mode
-        [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
-        
-    }
-    else if (mode == ApplicationModeSync) {
-        // TODO:1.4 Sync Mode
-        NSLog(@"AppDelegate.appModeChanged: Sync Mode");// TODO: !!! Preview Mode
-        // Now displaying an NSAlert with the information that this will be available in a next version
-        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Directory Compare & Synchronization"
-                                                      defaultButton:@"OK"
-                                                    alternateButton:nil
-                                                        otherButton:nil
-                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
-        [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
-        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
-        // Reposition last mode
-        [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
-        
-    }
-    else if (mode == ApplicationModeDuplicate) {
-        [self FindDuplicates:sender];
-        return;
+        else if (mode == ApplicationModePreview) {
+            // TODO:1.4 Preview Mode
+            NSLog(@"AppDelegate.appModeChanged: Preview Mode");
+            // Now displaying an NSAlert with the information that this will be available in a next version
+            NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Preview Pane"
+                                                          defaultButton:@"OK"
+                                                        alternateButton:nil
+                                                            otherButton:nil
+                                              informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+            [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
+            [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            // Reposition last mode
+            [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
+            
+        }
+        else if (mode == ApplicationModeSync) {
+            // TODO:1.4 Sync Mode
+            NSLog(@"AppDelegate.appModeChanged: Sync Mode");// TODO: !!! Preview Mode
+            // Now displaying an NSAlert with the information that this will be available in a next version
+            NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Directory Compare & Synchronization"
+                                                          defaultButton:@"OK"
+                                                        alternateButton:nil
+                                                            otherButton:nil
+                                              informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+            [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
+            [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            // Reposition last mode
+            [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
+            
+        }
+        else if (mode == ApplicationModeDuplicate) {
+            [self FindDuplicates:sender];
+            return;
+        }
     }
     [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView adjustSubviews];
@@ -1393,28 +1402,32 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_BROWSE_APPS];
     [self->myLeftView refresh];
-    if (self->myRightView!=nil)
+    [self->myLeftView.treeNodeSelected setTag:tagTreeItemDirty];
+    if (self->myRightView!=nil) {
         [self->myRightView refresh];
+        [self->myRightView.treeNodeSelected setTag:tagTreeItemDirty];
+    }
 }
 
 - (IBAction)orderShowHiddenFiles:(id)sender {
     BOOL state = toggleMenuState(sender);
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_SEE_HIDDEN_FILES];
+    [self->myLeftView.treeNodeSelected setTag:tagTreeItemDirty];
     [self->myLeftView refresh];
-    if (self->myRightView!=nil)
+    if (self->myRightView!=nil) {
+        [self->myRightView.treeNodeSelected setTag:tagTreeItemDirty];
         [self->myRightView refresh];
+    }
 }
 
 - (IBAction)orderCalculateFolderSizes:(id)sender {
     BOOL state = toggleMenuState(sender);
 
     [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_CALCULATE_SIZES];
-    if (state==YES) {
-        [self->myLeftView refresh];
-        if (self->myRightView!=nil)
-            [self->myRightView refresh];
-    }
+    [self->myLeftView refresh];
+    if (self->myRightView!=nil)
+        [self->myRightView refresh];
 }
 
 
