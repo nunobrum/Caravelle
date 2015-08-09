@@ -86,11 +86,6 @@ TreeManager *appTreeManager;
                 // If the path is a parent, then inherently it should be a Branch
                 answer = (TreeBranch*)[self sandboxTreeItemFromURL:url askIfNeeded:askIfNeeded];
                 if (answer!=nil) {
-                    enumPathCompare comparison1 = url_relation([answer url], url);
-                    if (comparison1 == pathIsChild) {
-                        //NSLog(@"A"); // If in the case that the user selected a parent of the desired URL
-                    }
-                    
                     BOOL OK = [self addTreeItem:item To:(TreeBranch*)answer];
                     if (OK) {
                         // answer can now replace item in iArray.
@@ -101,6 +96,9 @@ TreeManager *appTreeManager;
                             [self->iArray setObject:answer atIndexedSubscript:index];
                         }
                     }
+                }
+                else {
+                    return nil; // The user refused, or authorization doesn't exist. Exiting. no use to continue
                 }
                 index++; // Since the item was replaced, move on to the next
             }
@@ -384,7 +382,8 @@ TreeManager *appTreeManager;
     [alert addButtonWithTitle:@"Proceed"];
     [alert addButtonWithTitle:@"Cancel"];
     
-    NSString *title = [NSString stringWithFormat:@"Caravelle will ask access to Folder\n%@", pathFriendly(url)];
+    NSString *friendlyTitle = pathFriendly(url);
+    NSString *title = [NSString stringWithFormat:@"Caravelle was requested to access to Folder\n%@", friendlyTitle];
     
     [alert setMessageText:title];
     [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated. Accesses can be revoked in the preferences panel."];
@@ -392,11 +391,11 @@ TreeManager *appTreeManager;
     [alert setAlertStyle:NSWarningAlertStyle];
     NSModalResponse reponse = [alert runModal];
     if (reponse == NSAlertFirstButtonReturn) {
-        title = [NSString stringWithFormat:@"Please grant access to Folder %@", pathFriendly(url)];
+        title = [NSString stringWithFormat:@"Please grant access to Folder %@", friendlyTitle];
         url_allowed = [self powerboxOpenFolderWithTitle:title];
     }
 #else
-    NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", pathFriendly(url)];
+    NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", friendlyTitle];
     url_allowed = [self powerboxOpenFolderWithTitle:title];
 #endif
 #if (AFTER_POWERBOX_INFORMATION==1)
