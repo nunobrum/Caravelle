@@ -859,7 +859,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) fileSize {
     if (self->size_files == -1) {
         long long total=0;
-        NSNumber *size = @0; // Initializing as zero. If the directory is empty
+        NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -873,6 +873,10 @@ NSArray* treesContaining(NSArray* treeItems) {
                 }
             }
         }
+        else if (_tag & tagTreeItemScanned)
+            size = @0; // Initializing as zero. If the directory is empty
+        else
+            size = nil;
         // if the allocated size is calculated and the size not, use the allocated size
         if (size != nil) {
             // Successfully found the size of the Folder
@@ -889,7 +893,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) allocatedSize {
     if (self->size_allocated==-1) {
         long long total=0;
-        NSNumber *size = @0; // Initializing as zero. If the directory is empty
+        NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -903,6 +907,11 @@ NSArray* treesContaining(NSArray* treeItems) {
                 }
             }
         }
+        else if (_tag & tagTreeItemScanned)
+            size = @0; // Initializing as zero. If the directory is empty
+        else
+            size = nil;
+        
         // if the allocated size is calculated and the size not, use the allocated size
         if (size != nil) {
             // Successfully found the size of the Folder
@@ -919,7 +928,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) totalSize {
     if (self->size_total==-1) {
         long long total=0;
-        NSNumber *size = @0; // Initializing as zero. If the directory is empty
+        NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -933,6 +942,11 @@ NSArray* treesContaining(NSArray* treeItems) {
                 }
             }
         }
+        else if (_tag & tagTreeItemScanned)
+            size = @0; // Initializing as zero. If the directory is empty
+        else
+            size = nil;
+        
         // if the allocated size is calculated and the size not, use the allocated size
         if (size != nil) {
             // Successfully found the size of the Folder
@@ -949,7 +963,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 -(NSNumber*) totalAllocatedSize {
     if (self->size_total_allocated==-1) {
         long long total=0;
-        NSNumber *size = @0; // Initializing as zero. If the directory is empty
+        NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
@@ -963,6 +977,11 @@ NSArray* treesContaining(NSArray* treeItems) {
                 }
             }
         }
+        else if (_tag & tagTreeItemScanned)
+            size = @0; // Initializing as zero. If the directory is empty
+        else
+            size = nil;
+        
         // if the allocated size is calculated and the size not, use the allocated size
         if (size != nil) {
             // Successfully found the size of the Folder
