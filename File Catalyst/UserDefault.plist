@@ -33,6 +33,14 @@
 	<false/>
 	<key>CalculateFolderSizes</key>
 	<false/>
+	<key>DisplayParentDirectory</key>
+	<true/>
+	<key>HideFoldersWhenTreeDisplayed</key>
+	<false/>
+	<key>DisplayFoldersFirst</key>
+	<true/>
+	<key>TableAlternateRowBackground</key>
+	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
 	<key>StoreAllowedURLs</key>

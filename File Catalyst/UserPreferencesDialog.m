@@ -36,7 +36,12 @@
                                 isLeaf, @"leaf",
                                 nil] ] ;
 
-
+    [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
+                                @"Browser Options", @"description",
+                                self.browserOptionsView, @"view",
+                                isLeaf, @"leaf",
+                                nil] ] ;
+    
     [self.prefsTree commitEditing];
 
     [self.prefsTree setSelectionIndexPath:[NSIndexPath indexPathWithIndex:0]];

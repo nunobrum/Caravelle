@@ -34,10 +34,6 @@
 @property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
 @property (weak) IBOutlet NSView *FunctionBar;
 
-// Menus
-@property (weak) IBOutlet NSMenuItem *menuShowHiddenFilesMenu;
-@property (weak) IBOutlet NSMenuItem *menuBrowseApplicationsMenu;
-@property (weak) IBOutlet NSMenuItem *menuCalculateFolderSizes;
 
 /*
  * Toolbar outlets
@@ -86,10 +82,6 @@
 - (IBAction)operationCancel:(id)sender;
 
 - (IBAction)orderPreferencePanel:(id)sender;
-- (IBAction)orderBrowseApps:(id)sender;
-- (IBAction)orderShowHiddenFiles:(id)sender;
-- (IBAction)orderCalculateFolderSizes:(id)sender;
-
 
 - (IBAction)cut:(id)sender;
 - (IBAction)copy:(id)sender;

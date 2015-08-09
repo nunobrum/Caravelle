@@ -9,6 +9,7 @@
 #import "NodeViewController.h"
 #import "PasteboardUtils.h"
 #import "CustomTableHeaderView.h"
+#import "DummyBranch.h"
 
 
 @interface NodeViewController () {
@@ -52,6 +53,21 @@
     self->_observedVisibleItems = [[NSMutableArray new] init];
     self.sortAndGroupDescriptors = nil;
     [self startBusyAnimations];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_DISPLAY_FOLDERS_FIRST
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_DISPLAY_PARENT_DIRECTORY
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+    
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_HIDE_FOLDERS_WHEN_TREE
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
 }
 
 - (void)dealloc {
@@ -75,9 +91,12 @@
 
 - (void) setCurrentNode:(TreeBranch*)branch {
     [self unobserveItem:self.currentNode];
+
     self->_currentNode = branch;
-    if (branch!=nil)
+    if (branch!=nil) {
         [self observeItem:self.currentNode];
+        [branch refreshContents];
+    }
 }
 
 - (TreeBranch*) currentNode {
@@ -93,6 +112,12 @@
     }
     else if ([keyPath isEqualToString:kvoTreeBranchPropertySize]) {
         [self performSelectorOnMainThread:@selector(reloadSize:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+    }
+    else if ([keyPath isEqualToString:USER_DEF_DISPLAY_FOLDERS_FIRST] ||
+             [keyPath isEqualToString:USER_DEF_DISPLAY_PARENT_DIRECTORY] ||
+             [keyPath isEqualToString:USER_DEF_HIDE_FOLDERS_WHEN_TREE]) {
+        //NSLog(@"NodeViewController.observeValueForKeyPath: %@", keyPath);
+        [self refreshKeepingSelections];
     }
 }
 
@@ -407,6 +432,11 @@
                 }
                 [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
             }
+        }
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
+            DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
+            if (dummyParent != nil)
+                [tableData insertObject:dummyParent atIndex:0];
         }
     }
     self->_displayedItems = tableData;

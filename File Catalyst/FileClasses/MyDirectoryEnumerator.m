@@ -33,7 +33,8 @@ NSArray *urlKeyFieldsToStore() {
         dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants;
 
     } else if (viewMode == BViewDuplicateMode){
-        dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+        // TODO:!!!! Add warning that Packages will be included and this may have adverse effects.
+        dirEnumOptions = 0; //NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
     // Checks whether to browse packages or if to treat them as folders
     if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS]) {

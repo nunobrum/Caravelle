@@ -324,9 +324,6 @@ CA
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
                 <outlet property="buttonCopyTo" destination="71S-Xk-3oe" id="A6v-Zj-6F8"/>
                 <outlet property="buttonMoveTo" destination="JaY-la-eFg" id="AlP-vS-8nF"/>
-                <outlet property="menuBrowseApplicationsMenu" destination="xiL-tV-PWI" id="W3W-Ll-S9j"/>
-                <outlet property="menuCalculateFolderSizes" destination="iir-jd-vLL" id="pqJ-P2-C1p"/>
-                <outlet property="menuShowHiddenFilesMenu" destination="4Ev-lh-twG" id="a3T-Wp-afy"/>
                 <outlet property="myWindow" destination="2037" id="79B-an-Rm2"/>
                 <outlet property="myWindowView" destination="2038" id="8OQ-w6-z7Q"/>
                 <outlet property="statusCancelButton" destination="bPg-b7-DdD" id="LV4-qj-bJT"/>
@@ -414,8 +411,8 @@ CA
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
-                                <rect key="frame" x="134" y="3" width="82" height="19"/>
+                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
+                                <rect key="frame" x="133" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Rename" alternateTitle="Rename" bezelStyle="roundedRect" image="NSFontPanel" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -454,8 +451,8 @@ CA
                                     <action selector="toolbarCopyTo:" target="-1" id="D2V-Ze-9rH"/>
                                 </connections>
                             </button>
-                            <button toolTip="Move to the side" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="540" y="3" width="82" height="19"/>
+                            <button toolTip="Move to the side" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
+                                <rect key="frame" x="539" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Move" alternateTitle="Move" bezelStyle="roundedRect" image="manmove32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -482,8 +479,8 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lLM-DO-IvQ">
-                                <rect key="frame" x="119" y="8" width="16" height="11"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lLM-DO-IvQ">
+                                <rect key="frame" x="118" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F2" id="mSM-fn-Xw1">
                                     <font key="font" metaFont="miniSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -506,7 +503,7 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="twh-j1-43J">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="twh-j1-43J">
                                 <rect key="frame" x="423" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F5" id="aJg-MJ-qpM">
                                     <font key="font" metaFont="miniSystem"/>
@@ -530,8 +527,8 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q3S-UC-RWi">
-                                <rect key="frame" x="728" y="8" width="16" height="11"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Q3S-UC-RWi">
+                                <rect key="frame" x="727" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F8" id="5dk-vB-CiF">
                                     <font key="font" metaFont="miniSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -710,18 +707,33 @@ CA
                             </segmentedControl>
                             <popUpButton toolTip="View Options" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="urp-yc-gQO">
                                 <rect key="frame" x="472" y="5" width="55" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="rI1-hz-veL">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" selectedItem="iir-jd-vLL" id="rI1-hz-veL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="0XE-01-CZ6">
                                         <items>
-                                            <menuItem state="on" image="NSQuickLookTemplate" hidden="YES" id="Ebb-cn-RnD"/>
+                                            <menuItem image="NSQuickLookTemplate" hidden="YES" id="Ebb-cn-RnD"/>
+                                            <menuItem title="Show Hidden Files" toolTip="Show Hidden Files" id="4Ev-lh-twG">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <connections>
+                                                    <binding destination="652" name="value" keyPath="values.BrowseHiddenFiles" id="Fbe-dm-heU"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem title="Browse Applications" tag="1" id="xiL-tV-PWI">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <connections>
+                                                    <binding destination="652" name="value" keyPath="values.BrowseAppsAsFolder" id="oVX-5V-yMp"/>
+                                                </connections>
+                                            </menuItem>
+                                            <menuItem title="Calculate Folder Sizes" tag="2" id="iir-jd-vLL">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                                <connections>
+                                                    <binding destination="652" name="value" keyPath="values.CalculateFolderSizes" id="905-EQ-s1G"/>
+                                                </connections>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
-                                <connections>
-                                    <outlet property="menu" destination="twM-Bq-W5l" id="j4G-Xr-ZY8"/>
-                                </connections>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uVR-In-oSw">
                                 <rect key="frame" x="181" y="6" width="65" height="24"/>
@@ -791,32 +803,6 @@ CA
             </view>
             <point key="canvasLocation" x="211" y="630"/>
         </window>
-        <menu title="ShowOptions" autoenablesItems="NO" id="twM-Bq-W5l" userLabel="Show Options Menu">
-            <items>
-                <menuItem image="NSQuickLookTemplate" tag="-1" id="aIQ-wp-Q7Y">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                </menuItem>
-                <menuItem title="Show Hidden Files" toolTip="Show Hidden Files" id="4Ev-lh-twG">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="orderShowHiddenFiles:" target="494" id="e1F-gi-Z9n"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Browse Applications" tag="1" id="xiL-tV-PWI">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="orderBrowseApps:" target="494" id="5Kh-Xk-Bao"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Calculate Folder Sizes" tag="2" id="iir-jd-vLL">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="orderCalculateFolderSizes:" target="494" id="66x-Mg-jsx"/>
-                    </connections>
-                </menuItem>
-            </items>
-            <point key="canvasLocation" x="117" y="-293.5"/>
-        </menu>
         <menu showsStateColumn="NO" id="KYS-Gr-c21" userLabel="fileContextMenu">
             <items>
                 <menuItem image="NSActionTemplate" id="Itb-M2-GIs">

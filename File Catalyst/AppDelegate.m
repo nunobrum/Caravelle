@@ -339,17 +339,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self.toolbarFunctionBarSelect setSelected:displayFunctionBar forSegment:0];
     [self toolbarToggleFunctionKeys:self.toolbarFunctionBarSelect];
     
-    // Setting the Menu with the correct state
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
-        [self.menuShowHiddenFilesMenu setState:NSOnState];
-
-    // Setting the Menu with the correct state
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS])
-        [self.menuBrowseApplicationsMenu setState:NSOnState];
-
-    // Setting the Menu with the correct state
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES])
-        [self.menuCalculateFolderSizes setState:NSOnState];
     
     // TODO:!!! Implement the modes preview and Sync
     if (applicationMode == ApplicationModeDuplicate ||
@@ -707,7 +696,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 -(void) refreshAllViews:(NSNotification*) theNotification {
     [(id<MYViewProtocol>)myLeftView refresh];
-    [(id<MYViewProtocol>)myRightView refresh];
+    if (myRightView!=nil) {
+        [(id<MYViewProtocol>)myRightView refresh];
+    }
 }
 
 /* Receives the notification from the BrowserView to reload the Tree */
@@ -1178,7 +1169,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
 }
 
-- (IBAction)toolbarToggleFunctionKeys:(id)sender {
+- (IBAction)toolbarToggleFunctionKeys:(id)sender { // TODO: !!!!!! Replace this with bindings to User Defaults
     CGFloat constant;
     BOOL setting = [sender isSelectedForSegment:0];
     if (setting) {
@@ -1394,44 +1385,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         [(BrowserController*)self.selectedView setViewType:newType];
     }
 }
-
-
-
-- (IBAction)orderBrowseApps:(id)sender {
-    BOOL state = toggleMenuState(sender);
-
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_BROWSE_APPS];
-    [self->myLeftView refresh];
-    [self->myLeftView.treeNodeSelected setTag:tagTreeItemDirty];
-    if (self->myRightView!=nil) {
-        [self->myRightView refresh];
-        [self->myRightView.treeNodeSelected setTag:tagTreeItemDirty];
-    }
-}
-
-- (IBAction)orderShowHiddenFiles:(id)sender {
-    BOOL state = toggleMenuState(sender);
-
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_SEE_HIDDEN_FILES];
-    [self->myLeftView.treeNodeSelected setTag:tagTreeItemDirty];
-    [self->myLeftView refresh];
-    if (self->myRightView!=nil) {
-        [self->myRightView.treeNodeSelected setTag:tagTreeItemDirty];
-        [self->myRightView refresh];
-    }
-}
-
-- (IBAction)orderCalculateFolderSizes:(id)sender {
-    BOOL state = toggleMenuState(sender);
-
-    [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:state] forKey:USER_DEF_CALCULATE_SIZES];
-    [self->myLeftView refresh];
-    if (self->myRightView!=nil)
-        [self->myRightView refresh];
-}
-
-
-
 
 #pragma mark Menu Validation
 

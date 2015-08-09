@@ -24,7 +24,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemNew       = (1UL << 8),
     tagTreeItemHidden    = (1UL << 9),
     tagTreeSizeCalcReq   = (1UL << 10), // Used to avoid multiple orders to size calculation
-    //tagTreeSizeCalcDone  = (1UL << 11),
+    tagTreeHiddenPresent = (1UL << 11), // Used to check whether the Branches need update after a hidden configuration changed.
     tagTreeItemAll       = NSUIntegerMax
 };
 

@@ -79,13 +79,10 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
-#define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
-#define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
 #define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used.
 #define USER_DEF_APP_BEHAVIOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
-#define USER_DEF_CALCULATE_SIZES @"CalculateFolderSizes"
 
 // View Preferences
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
@@ -96,6 +93,14 @@ extern const CFStringRef kTreeItemDropUTI;
 
 #define USER_DEF_DUPLICATE_CLASSIC_VIEW @"DuplicateClassicView"
 
+ // Browser Options
+#define USER_DEF_BROWSE_APPS @"BrowseAppsAsFolder"
+#define USER_DEF_SEE_HIDDEN_FILES @"BrowseHiddenFiles"
+#define USER_DEF_CALCULATE_SIZES @"CalculateFolderSizes"
+#define USER_DEF_DISPLAY_PARENT_DIRECTORY @"DisplayParentDirectory"
+#define USER_DEF_HIDE_FOLDERS_WHEN_TREE @"HideFoldersWhenTreeDisplayed"
+#define USER_DEF_DISPLAY_FOLDERS_FIRST @"DisplayFoldersFirst"
+#define USER_DEF_TABLE_ALTERNATE_ROW @"TableAlternateRowBackground"
 
 
 #define SHOW_OPTION_HIDDEN_FILES_NO  0

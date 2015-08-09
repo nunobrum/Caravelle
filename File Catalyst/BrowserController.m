@@ -87,7 +87,22 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSButtonCell *searchCell = [self.myFilterText.selectedCell searchButtonCell];
         NSImage *filterImage = [NSImage imageNamed:@"FilterIcon16"];
         [searchCell setImage:filterImage];
+        
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:USER_DEF_SEE_HIDDEN_FILES
+                                                   options:NSKeyValueObservingOptionNew
+                                                   context:NULL];
 
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:USER_DEF_CALCULATE_SIZES
+                                                   options:NSKeyValueObservingOptionNew
+                                                   context:NULL];
+        
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:USER_DEF_BROWSE_APPS
+                                                   options:NSKeyValueObservingOptionNew
+                                                   context:NULL];
+        
         self->_awakeFromNibConfigDone = YES;
     }
 }
@@ -257,9 +272,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([ret itemType] == ItemTypeBranch) {
         // Use KVO to observe for changes of its children Array
         [self observeItem:ret];
-        if ([(TreeBranch*)ret needsRefresh]) {
-            [(TreeBranch*)ret refreshContents];
-        }
+        [(TreeBranch*)ret refreshContents];
     }
     return ret;
 }
@@ -330,8 +343,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [[cellView imageView] setImage:icon];
             [[cellView textField] setStringValue:[item name]];
 
-            if ([item hasTags:tagTreeItemDropped+tagTreeItemDirty]) {
-                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+            if ([item hasTags:tagTreeItemDropped]) {
+                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped
             }
             else {
                 [cellView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
@@ -1079,8 +1092,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else {
             NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
             assert(nameView!=nil);
-            if ([object hasTags:tagTreeItemDirty+tagTreeItemDropped]) {
-                [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+            if ([object hasTags:tagTreeItemDirty]) {
+                [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped
             }
             else {
                 [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
@@ -1148,6 +1161,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
         [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+    }
+    else if ([keyPath isEqualToString:USER_DEF_SEE_HIDDEN_FILES] ||
+             [keyPath isEqualToString:USER_DEF_BROWSE_APPS] ||
+             [keyPath isEqualToString:USER_DEF_CALCULATE_SIZES]) {
+        NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
+        [self startAllBusyAnimations];
+        [self.treeNodeSelected refreshContents];
+        [self refresh];
     }
 }
 

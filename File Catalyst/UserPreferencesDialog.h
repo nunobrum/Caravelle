@@ -14,6 +14,7 @@
 @property (strong) IBOutlet NSView *placeholderView;
 @property (strong) IBOutlet NSView *authorizedURLsView;
 @property (strong) IBOutlet NSView *behaviourView;
+@property (strong) IBOutlet NSView *browserOptionsView;
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 

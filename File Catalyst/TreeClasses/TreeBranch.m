@@ -341,22 +341,35 @@ NSArray* treesContaining(NSArray* treeItems) {
 #pragma mark Refreshing contents
 
 -(BOOL) needsRefresh {
-    BOOL answer;
+
     TreeItemTagEnum tag;
     // TODO:!!!? Verify Atomicity and get rid of synchronized clause if OK
     @synchronized(self) {
          tag = [self tag];
     }
-    answer = (((tag & tagTreeItemUpdating)==0) &&
-             (((tag & tagTreeItemDirty   )!=0) || (tag & tagTreeItemScanned)==0));
-
-    return answer;
+    
+    // If its not already updating or already released
+    if ((tag & (tagTreeItemUpdating+tagTreeItemRelease))==0) {
+        
+        // if was signaled as invalid
+        if ((tag & tagTreeItemDirty   )!=0)
+            return YES;
+    
+        // Still will check if display mode was changed
+         if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES] == ((tag & tagTreeHiddenPresent)==0))
+             return YES;
+        
+        // if it was never scanned at least one time
+        if ((tag & tagTreeItemScanned)==0)
+            return YES;
+    }
+    return NO;
 }
 
 - (void) refreshContents {
-    NSLog(@"TreeBranch.refreshContents:(%@)", [self path]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
+        //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
         [browserQueue addOperationWithBlock:^(void) { 
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
@@ -413,6 +426,13 @@ NSArray* treesContaining(NSArray* treeItems) {
                 [self _releaseReleasedChildren];
                 [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
                 [self setTag: tagTreeItemScanned];
+                
+                // Sets the flag accordingly to the status of 
+                if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
+                    [self setTag:tagTreeHiddenPresent];
+                else
+                    [self resetTag:tagTreeHiddenPresent];
+                
             } // synchronized
             [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
         }];

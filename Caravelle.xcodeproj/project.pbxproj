@@ -74,6 +74,7 @@
 		3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
+		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
 		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
@@ -219,6 +220,8 @@
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileUtils.h; sourceTree = "<group>"; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
+		BC08C9AA1B764B9F00D12486 /* DummyBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyBranch.h; sourceTree = "<group>"; };
+		BC08C9AB1B764B9F00D12486 /* DummyBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyBranch.m; sourceTree = "<group>"; };
 		BC27BFE51B5C13F9001AE181 /* CalcFolderSizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalcFolderSizes.h; sourceTree = "<group>"; };
 		BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcFolderSizes.m; sourceTree = "<group>"; };
 		BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandFolders.h; sourceTree = "<group>"; };
@@ -508,6 +511,8 @@
 				3C29463818F9B86A002B633C /* TreeRoot.m */,
 				3C87646C1B13764E001B79BD /* TreePackage.h */,
 				3C87646D1B13764E001B79BD /* TreePackage.m */,
+				BC08C9AA1B764B9F00D12486 /* DummyBranch.h */,
+				BC08C9AB1B764B9F00D12486 /* DummyBranch.m */,
 			);
 			name = Branches;
 			sourceTree = "<group>";
@@ -732,6 +737,7 @@
 				3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */,
 				BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
+				BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3C15E93E1AF3D13C006DF095 /* SizeGrouping.m in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
