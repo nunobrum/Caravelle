@@ -33,11 +33,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do view setup here.
-
+    [self.myTableView setUsesAlternatingRowBackgroundColors:[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_TABLE_ALTERNATE_ROW]];
 }
 
 - (void)awakeFromNib
 {
+    [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:USER_DEF_TABLE_ALTERNATE_ROW options:NSKeyValueObservingOptionNew context:NULL];
     
 }
 
@@ -75,6 +76,14 @@
  return [tableData objectAtIndex:index];
  }
 */
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+     if ([keyPath isEqualToString:USER_DEF_TABLE_ALTERNATE_ROW]) {
+        [self.myTableView setUsesAlternatingRowBackgroundColors:[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_TABLE_ALTERNATE_ROW]];
+    }
+    else
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+}
 
 #pragma mark - TableView Datasource Protocol
 
@@ -358,6 +367,7 @@
     if (columns) {
         [self setupColumns:columns];
     }
+    //[self.myTableView setUsesAlternatingRowBackgroundColors:[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_TABLE_ALTERNATE_ROW]];
 }
 
 -(void) addColumn:(NSString*) fieldID {
