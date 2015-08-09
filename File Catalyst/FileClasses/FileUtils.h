@@ -57,6 +57,7 @@ BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error);
 
 extern NSDictionary *getDiskInformation(NSURL *diskPath);
 extern NSString *mediaNameFromURL(NSURL *rootURL);
+extern NSString *pathFriendly(NSURL*url);
 
 /*
  * MD5 Calculation

@@ -50,7 +50,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
     TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
 }
 
-@property (weak) TreeItem           *parent;
 @property NSString *nameCache; // This is to lower memory allocation calls, for each name call, a new CFString was being allocated
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
@@ -61,6 +60,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 +(id)treeItemForURL:(NSURL *)url parent:(id)parent;
 +(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
 - (TreeItem*) root;
+- (TreeItem*) parent;
+-(void) setParent:(TreeItem*)parent;
 
 -(void) notifyChange;
 

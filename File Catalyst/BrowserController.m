@@ -958,7 +958,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             if (_viewMode==BViewBrowserMode) {
                 /* Will get a new node from shared tree Manager and add it to the root */
                 /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
-                node = [appTreeManager addTreeItemWithURL:newURL];
+                node = [appTreeManager addTreeItemWithURL:newURL askIfNeeded:YES];
                 if (node) { // sanity check
                     [self removeRootWithIndex:0];
                     [self addTreeRoot:node];
@@ -1677,7 +1677,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (item==nil) {
         if (_viewMode == BViewBrowserMode) {
             // Replaces current root
-            item = [appTreeManager addTreeItemWithURL:theURL];
+            item = [appTreeManager addTreeItemWithURL:theURL askIfNeeded:YES];
             if (item != nil) {
                 [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
                 //[item setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
@@ -1826,8 +1826,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 #pragma mark - MYViewProtocol
 -(NSString *) title {
-    NSURL *root_url = [_rootNodeSelected url];
-    return [root_url lastPathComponent];
+    NSURL *url;
+    if ([self treeViewCollapsed]) {
+        url = [self->_treeNodeSelected url];
+    }
+    else {
+        url = [self->_rootNodeSelected url];
+    }
+    if ([[url pathComponents] count]==1)
+        return pathFriendly(url);
+    return [url lastPathComponent];
 }
 
 

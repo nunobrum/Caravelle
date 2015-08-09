@@ -15,7 +15,7 @@ extern NSString *const kvoTreeBranchPropertySize;
 //extern NSString *const kvoTreeBranchReleased;
 
 extern NSString* commonPathFromItems(NSArray* itemArray);
-extern NSArray* treesContaining(NSArray* treeItems);
+//extern NSArray* treesContaining(NSArray* treeItems);
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
 
@@ -27,8 +27,8 @@ extern NSArray* treesContaining(NSArray* treeItems);
     long long size_total_allocated;
 }
 
--(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
--(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
+-(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent;
+-(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
 
 
 -(NSInteger) numberOfLeafsInNode;

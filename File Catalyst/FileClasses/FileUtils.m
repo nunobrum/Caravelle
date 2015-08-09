@@ -439,6 +439,14 @@ NSString *mediaNameFromURL(NSURL *rootURL) {
     return diskInfo[@"DAVolumeName"];
 }
 
+NSString *pathFriendly(NSURL*url) {
+    if ([[url pathComponents] count]==1) {
+        return mediaNameFromURL(url);
+    }
+    else {
+        return [url path];
+    }
+}
 
 /* 
  * MD5 Calculation

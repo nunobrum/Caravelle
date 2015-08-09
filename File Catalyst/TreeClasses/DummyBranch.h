@@ -10,6 +10,8 @@
 
 @interface DummyBranch : TreeBranch
 
+@property (weak) TreeItem *target;
+
 +(instancetype) parentFor:(TreeItem*) item;
 
 @end

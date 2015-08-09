@@ -51,7 +51,7 @@ TreeManager *appTreeManager;
 }
 
 
--(TreeBranch*) addTreeItemWithURL:(NSURL*)url {
+-(TreeBranch*) addTreeItemWithURL:(NSURL*)url askIfNeeded:(BOOL)askIfNeeded {
     NSUInteger index=0;
     TreeBranch *answer=nil;
 
@@ -84,7 +84,7 @@ TreeManager *appTreeManager;
                 // creates the new node and replaces the existing one.
                 // It will inclose the former in itself.
                 // If the path is a parent, then inherently it should be a Branch
-                answer = (TreeBranch*)[self sandboxTreeItemFromURL:url];
+                answer = (TreeBranch*)[self sandboxTreeItemFromURL:url askIfNeeded:askIfNeeded];
                 if (answer!=nil) {
                     enumPathCompare comparison1 = url_relation([answer url], url);
                     if (comparison1 == pathIsChild) {
@@ -127,7 +127,7 @@ TreeManager *appTreeManager;
 
     }
     if (answer==nil) { // If not found in existing trees will create it
-        answer = (TreeBranch*)[self sandboxTreeItemFromURL:url];
+        answer = (TreeBranch*)[self sandboxTreeItemFromURL:url askIfNeeded:askIfNeeded];
         if (answer) {
             @synchronized(self) {
                 [self->iArray addObject:answer]; // Adds the Security Scope Element
@@ -377,50 +377,52 @@ TreeManager *appTreeManager;
 }
 
 -(NSURL*) validateURSecurity:(NSURL*) url {
-    NSURL *url_allowed =[self secScopeContainer:url];
-    // checks if part of the allowed urls
-    if (url_allowed==nil) {
+    NSURL *url_allowed;
 #if (BEFORE_POWERBOX_ALERT==1)
-        // if fails then will open it with a Powerbox
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert addButtonWithTitle:@"Proceed"];
-        [alert addButtonWithTitle:@"Cancel"];
-
-        NSString *title = [NSString stringWithFormat:@"Caravelle will ask access to Folder\n%@", [url path]];
-
-        [alert setMessageText:title];
-        [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated. Accesses can be revoked in the preferences panel."];
-
-        [alert setAlertStyle:NSWarningAlertStyle];
-        NSModalResponse reponse = [alert runModal];
-        if (reponse == NSAlertFirstButtonReturn) {
-            title = [NSString stringWithFormat:@"Please grant access to Folder %@", [url path]];
-            url_allowed = [self powerboxOpenFolderWithTitle:title];
-        }
-#else
-        NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", [url path]];
+    // if fails then will open it with a Powerbox
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"Proceed"];
+    [alert addButtonWithTitle:@"Cancel"];
+    
+    NSString *title = [NSString stringWithFormat:@"Caravelle will ask access to Folder\n%@", pathFriendly(url)];
+    
+    [alert setMessageText:title];
+    [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated. Accesses can be revoked in the preferences panel."];
+    
+    [alert setAlertStyle:NSWarningAlertStyle];
+    NSModalResponse reponse = [alert runModal];
+    if (reponse == NSAlertFirstButtonReturn) {
+        title = [NSString stringWithFormat:@"Please grant access to Folder %@", pathFriendly(url)];
         url_allowed = [self powerboxOpenFolderWithTitle:title];
+    }
+#else
+    NSString *title = [NSString stringWithFormat:@"Please grant access to Folder %@", pathFriendly(url)];
+    url_allowed = [self powerboxOpenFolderWithTitle:title];
 #endif
 #if (AFTER_POWERBOX_INFORMATION==1)
-        // TODO:!! Make this a information with a checkbox to skip future messages
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert addButtonWithTitle:@"OK"];
-
-        [alert setMessageText:@"Information"];
-        [alert setInformativeText:@"Authorizations given to Caravelle can be revoked in the User Preferences Menu."];
-        [alert setAlertStyle:NSInformationalAlertStyle];
-        [alert runModal];
-
+    // TODO:!! Make this a information with a checkbox to skip future messages
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"OK"];
+    
+    [alert setMessageText:@"Information"];
+    [alert setInformativeText:@"Authorizations given to Caravelle can be revoked in the User Preferences Menu."];
+    [alert setAlertStyle:NSInformationalAlertStyle];
+    [alert runModal];
+    
 #endif
-    }
+    
     return url_allowed;
 }
 
-- (TreeItem*) sandboxTreeItemFromURL:(NSURL*) url {
+- (TreeItem*) sandboxTreeItemFromURL:(NSURL*) url askIfNeeded:(BOOL)askIfNeeded {
     TreeItem *answer = nil;
     NSURL *url_allowed;
 #if (APP_IS_SANDBOXED==1)
-    url_allowed =[self validateURSecurity:url];
+    url_allowed =[self secScopeContainer:url];
+    // checks if part of the allowed urls
+    if (url_allowed==nil && askIfNeeded) {
+        url_allowed =[self validateURSecurity:url];
+    }
 #else
     url_allowed = url;
 #endif

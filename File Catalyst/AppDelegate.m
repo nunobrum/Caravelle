@@ -218,7 +218,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
             // and this homepath is authorized
             if (url_allowed!=nil) {
-                id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed];
+                id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed askIfNeeded:YES];
                 [self prepareView:view withItem:item];
                 return;
             }
@@ -804,7 +804,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
         NSURL *url = [appTreeManager powerboxOpenFolderWithTitle:dialogTitle];
         if (url != nil) {
-            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+            id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url askIfNeeded:YES];
             if (item != nil) {
                 // Add to the Browser View
                 [(BrowserController*)view removeAll];
@@ -1626,13 +1626,14 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             else if ([node itemType] == ItemTypeBranch && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View
                 /* This also sets the node for Table Display and path bar */
-                [(BrowserController*)self.selectedView selectFolderByItem:node];
+                [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
                 oneFolder = NO; /* Only one Folder can be Opened */
             }
             else
                 NSLog(@"AppDelegate.startOperationHandler: - Unknown Class '%@'", [node className]);
 
         }
+        [self statusUpdate:note]; // Forwards the message to the status update so that status can be updated in open
     }
     else if (([operation isEqualTo:opCopyOperation]) ||
         ([operation isEqualTo:opMoveOperation]) ||

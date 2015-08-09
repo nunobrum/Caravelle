@@ -11,11 +11,17 @@
 
 @implementation DummyBranch
 
+-(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
+    self = [super initWithURL:url parent:parent];
+    self.target = nil;
+    return self;
+}
+
 +(instancetype) parentFor:(TreeItem*) item {
     NSURL *url;
-    id parent;
+    TreeItem *target;
     if (item.parent) {
-        parent = item.parent.parent;
+        target = item.parent;
         url = item.parent.url;
     }
     else {
@@ -23,34 +29,57 @@
             return nil;
         }
         url = [item.url URLByDeletingLastPathComponent];
-
+        target = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
     }
-
-    DummyBranch *answer = [[DummyBranch alloc] initWithURL:url parent:parent];
+    
+    DummyBranch *answer = [[DummyBranch alloc] initWithURL:url parent:(TreeBranch*)target.parent];
+    if (target) {
+        answer.target = target;
+    }
+    else
+        NSLog(@"DummyBranch.parentFor: couldnt find the target %@", url);
     [answer setNameCache:@".."];
     return answer;
 }
 
 -(TreeItemTagEnum) tag {
-    return _tag | tagTreeItemReadOnly;
+    return self.target.tag | tagTreeItemReadOnly;
 }
 
 -(BOOL) hasTags:(TreeItemTagEnum) tag {
-    return ((_tag  | tagTreeItemReadOnly) & tag)!=0 ? YES : NO;
+    return ((self.target.tag  | tagTreeItemReadOnly) & tag)!=0 ? YES : NO;
 }
 
 -(NSString*) name {
     return self.nameCache;
 }
 
--(TreeItem*) parent {
-    if (super.parent != nil) {
-        return super.parent;
+
+// TODO:1.3 Add a badge to the image
+
+
+-(id) valueForKey:(NSString *)key {
+    //NSLog(@"getting value for key: %@", key);
+    
+    // priority to redefined methods
+    if ([key isEqualToString:@"target"] ||
+        [key isEqualToString:@"name"] ||
+        [key isEqualToString:@"tag"] ||
+        [key isEqualToString:@"hasTags"]
+        ) {
+        return [super valueForKey:key];
     }
+    
+    // The rest is passed to the target
+    else if (self.target != nil) {
+        //NSLog(@"DummyBranch.valueForKey:%@  on target", key);
+        return [self.target valueForKey:key];
+    }
+    // if the target doesn't exist
     else {
-        return [appTreeManager getNodeWithURL:[self.url URLByDeletingLastPathComponent]];
+        NSLog(@"DummyBranch.valueForKey:%@  NO target", key);
+        return [super valueForKey:key];
     }
 }
-// TODO:1.3 Add a badge to the image
 
 @end

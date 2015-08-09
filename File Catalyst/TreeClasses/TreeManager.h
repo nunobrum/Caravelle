@@ -21,9 +21,9 @@ extern NSString *notificationRefreshViews;
 
 -(TreeManager*) init;
 
--(TreeBranch*) addTreeItemWithURL:(NSURL*)url;
+-(TreeBranch*) addTreeItemWithURL:(NSURL*)url askIfNeeded:(BOOL)askIfNeeded;
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
--(TreeItem*) getNodeWithPath:(NSString*)path;
+//-(TreeItem*) getNodeWithPath:(NSString*)path;
 
 -(void) fileSystemChangePath:(NSNotification *)note;
 

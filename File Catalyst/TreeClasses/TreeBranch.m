@@ -79,47 +79,47 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 
 }
-NSArray* treesContaining(NSArray* treeItems) {
-    //TODO:Optimization Create a Class to manage arrays of Branches. This is useful for the Browser Controller
-    NSMutableArray *treeRoots = [[NSMutableArray alloc] init];
-    
-    for (TreeItem *item in treeItems) {
-        BOOL found = NO;
-        // Check if existing Tree Roots
-        for (TreeBranch *parent in treeRoots) {
-            if ([parent canContainURL:item.url]) {
-                found = YES;
-                break; // The parent was found, no need to add anything
-            }
-        }
-        // If not found.
-        if (!found) {
-            //Check if there is a parent
-            TreeBranch *newBranch=(TreeBranch*)item.parent;
-            // If not creates it
-            if (newBranch==nil) {
-                NSURL *parentURL = [item.url URLByDeletingLastPathComponent];
-                newBranch = (TreeBranch*)[appTreeManager addTreeItemWithURL:parentURL];
-                //NSAssert(newBranch!=nil, @"treesContaining. Failed to get the parent");
-                assert(newBranch);
-            }
-            // Now will check it it contains one of the existing
-            NSUInteger i = 0;
-            while (i < [treeRoots count] ) {
-                if ([newBranch canContainURL: [(TreeBranch*)treeRoots[i] url]]) {
-                    [treeRoots removeObjectAtIndex:i];
-                }
-                else
-                    i++;
-            }
-            // Then adds the new root
-            [treeRoots addObject:newBranch];
-        }
-        // If yes, just add it to its children
-        // else ask one from the Tree Manager and add it to the treeRoots
-    }
-    return treeRoots;
-}
+//NSArray* treesContaining(NSArray* treeItems) {
+//    //TODO:Optimization Create a Class to manage arrays of Branches. This is useful for the Browser Controller
+//    NSMutableArray *treeRoots = [[NSMutableArray alloc] init];
+//    
+//    for (TreeItem *item in treeItems) {
+//        BOOL found = NO;
+//        // Check if existing Tree Roots
+//        for (TreeBranch *parent in treeRoots) {
+//            if ([parent canContainURL:item.url]) {
+//                found = YES;
+//                break; // The parent was found, no need to add anything
+//            }
+//        }
+//        // If not found.
+//        if (!found) {
+//            //Check if there is a parent
+//            TreeBranch *newBranch=(TreeBranch*)item.parent;
+//            // If not creates it
+//            if (newBranch==nil) {
+//                NSURL *parentURL = [item.url URLByDeletingLastPathComponent];
+//                newBranch = (TreeBranch*)[appTreeManager addTreeItemWithURL:parentURL askIfNeeded:YES];
+//                //NSAssert(newBranch!=nil, @"treesContaining. Failed to get the parent");
+//                assert(newBranch);
+//            }
+//            // Now will check it it contains one of the existing
+//            NSUInteger i = 0;
+//            while (i < [treeRoots count] ) {
+//                if ([newBranch canContainURL: [(TreeBranch*)treeRoots[i] url]]) {
+//                    [treeRoots removeObjectAtIndex:i];
+//                }
+//                else
+//                    i++;
+//            }
+//            // Then adds the new root
+//            [treeRoots addObject:newBranch];
+//        }
+//        // If yes, just add it to its children
+//        // else ask one from the Tree Manager and add it to the treeRoots
+//    }
+//    return treeRoots;
+//}
 
 
 @implementation TreeBranch
@@ -130,7 +130,7 @@ NSArray* treesContaining(NSArray* treeItems) {
 
 
 #pragma mark Initializers
--(TreeBranch*) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
+-(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
     self->size_files = -1; // Attribute used to store the value of the computed folder size
@@ -140,7 +140,7 @@ NSArray* treesContaining(NSArray* treeItems) {
     return self;
 }
 
--(TreeBranch*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
+-(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     self = [super initWithMDItem:mdItem parent:parent];
     self->_children = nil;
     return self;

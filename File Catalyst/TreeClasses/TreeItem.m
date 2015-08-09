@@ -9,6 +9,7 @@
 #import "TreeItem.h"
 #import "TreeBranch.h"
 #import "TreePackage.h"
+#import "TreeManager.h"
 #import "FileUtils.h"
 #import "DuplicateInformation.h"
 
@@ -174,6 +175,22 @@
                           nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
+}
+
+-(TreeItem*) parent {
+    if (_parent != nil) {
+        return _parent;
+    }
+    else {
+        if ([[self.url pathComponents] count]==1)
+            return nil;
+        else
+            return [appTreeManager addTreeItemWithURL:[self.url URLByDeletingLastPathComponent]
+                                          askIfNeeded:NO];
+    }
+}
+-(void) setParent:(TreeItem*)parent {
+    _parent = parent;
 }
 
 -(NSDate*) date_modified {
