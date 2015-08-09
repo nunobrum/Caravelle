@@ -413,6 +413,15 @@
             }
         }
 
+        // Adding the Folders First Sort
+        // TODO: This is silly to be done all the time, but at leat it assures that its not
+        // overriden by other sorts. Find another way to do this
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_FOLDERS_FIRST]) {
+            [self makeSortOnFieldID:SORT_FOLDERS_FIRST_FIELD_ID ascending:YES grouping:NO];
+        }
+        else
+            [self removeSortOnField:SORT_FOLDERS_FIRST_FIELD_ID];
+        
         // Sort Data
         if ((self.sortAndGroupDescriptors!=nil) && ([self.sortAndGroupDescriptors count] > 0)) {
             NSArray *sortedArray = [tableData sortedArrayUsingDescriptors:self.sortAndGroupDescriptors];
@@ -433,6 +442,8 @@
                 [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
             }
         }
+        
+        // Adding the parent directory as .. if requested
         if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
             DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
             if (dummyParent != nil)
@@ -444,7 +455,7 @@
 }
 
 - (void) removeSortOnField:(NSString*)field {
-    for (NodeSortDescriptor *i in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor<MySortDescriptorProtocol> *i in self.sortAndGroupDescriptors) {
         if ([i.field isEqualToString:field] ) {
             [self.sortAndGroupDescriptors removeObject:i];
             return;
@@ -452,9 +463,9 @@
     }
 }
 
--(NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID {
+-(NSSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID {
     NSString * key = keyForFieldID(fieldID);
-    for (NodeSortDescriptor* desc in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor* desc in self.sortAndGroupDescriptors) {
         if ([desc.key isEqualToString:key]) {
             return desc;
         }
@@ -468,7 +479,12 @@
         self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
 
-    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending grouping:grouping];
+    NSSortDescriptor<MySortDescriptorProtocol> *sortDesc;
+    if ([fieldID isEqualToString:SORT_FOLDERS_FIRST_FIELD_ID])
+        sortDesc = [[FoldersFirstSortDescriptor alloc] init];
+    else
+        sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending grouping:grouping];
+
     // Removes the key if it was already existing in the remaining of the array
     [self removeSortOnField:fieldID];
 
@@ -476,7 +492,7 @@
     if (grouping==NO) {
         // Will insert after the first non grouping descriptor
         while (i < [self.sortAndGroupDescriptors count]) {
-            if (![(NodeSortDescriptor*)self.sortAndGroupDescriptors[i] isGrouping])
+            if (![(id<MySortDescriptorProtocol>)self.sortAndGroupDescriptors[i] isGrouping])
                 break;
             i++;
         }
@@ -484,7 +500,7 @@
     else {
         // First Remove all  groupings
         while ([self.sortAndGroupDescriptors count]!=0) {
-            if ([(NodeSortDescriptor*)self.sortAndGroupDescriptors[i] isGrouping])
+            if ([(id<MySortDescriptorProtocol>)self.sortAndGroupDescriptors[i] isGrouping])
                 [self.sortAndGroupDescriptors removeObjectAtIndex:0];
             else
                 break;
@@ -561,13 +577,16 @@
     // Needs to be called from subclasses
     NSMutableArray *sortElements = [[NSMutableArray alloc] initWithCapacity:[self.sortAndGroupDescriptors count]];
     
-    for (NodeSortDescriptor* desc in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor<MySortDescriptorProtocol>* desc in self.sortAndGroupDescriptors) {
         NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
-        [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-                                 desc.field, @"field",
-                                 [NSNumber numberWithBool:desc.ascending], @"ascending",
-                                 [NSNumber numberWithBool:desc.isGrouping], @"grouping",
-                                 nil]];
+        if ([desc.field isKindOfClass:[NodeSortDescriptor class]]) {
+            // This assures that the FoldersFirst sort descriptor is not saved
+            [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                     desc.field, @"field",
+                                     [NSNumber numberWithBool:desc.ascending], @"ascending",
+                                     [NSNumber numberWithBool:desc.isGrouping], @"grouping",
+                                     nil]];
+        }
     }
     
      [preferences setObject:sortElements forKey: USER_DEF_SORT_KEYS];

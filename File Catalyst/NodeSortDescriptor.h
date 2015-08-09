@@ -10,12 +10,25 @@
 
 #import "BaseGrouping.h"
 
+#define SORT_FOLDERS_FIRST_FIELD_ID @"FoldersFirst"
 
-@interface AlphabetGroupping : BaseGrouping
+@protocol MySortDescriptorProtocol <NSObject>
+
+-(BOOL) isGrouping;
+-(NSString*) field;
+
+@end
+
+// This sort descriptor is only to implement the Folders First
+// The isGrouping is set for compatibility with the NodeSortDescriptor
+@interface FoldersFirstSortDescriptor : NSSortDescriptor<MySortDescriptorProtocol>
+
+
+
 @end
 
 
-@interface NodeSortDescriptor : NSSortDescriptor {
+@interface NodeSortDescriptor : NSSortDescriptor<MySortDescriptorProtocol> {
     BOOL _grouping;
     NSString *_field;
     BaseGrouping *_groupObject;

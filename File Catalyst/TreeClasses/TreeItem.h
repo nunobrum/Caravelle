@@ -31,9 +31,9 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 
 typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeNone = 0,
-    ItemTypeLeaf = 1,
     ItemTypeBranch,
-    ItemTypeFilter
+    ItemTypeFilter,
+    ItemTypeLeaf = 10 // This is to assure that on ascending order the folders stay on top
 };
 
 

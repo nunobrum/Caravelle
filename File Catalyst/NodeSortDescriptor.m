@@ -13,16 +13,28 @@
 #import "NumberGrouping.h"
 #include "Definitions.h"
 #import "CustomTableHeaderView.h"
+#import "TreeItem.h"
 
 /*
  * Grouping of elements
  */
 
 
-@implementation AlphabetGroupping
+@implementation FoldersFirstSortDescriptor
 // Distribute Alphabet
 
+-(instancetype) init {
+    self = [super initWithKey:@"itemType" ascending:YES ];
+    return self;
+}
 
+-(BOOL) isGrouping {
+    return NO;
+}
+
+-(NSString*) field {
+    return SORT_FOLDERS_FIRST_FIELD_ID;
+}
 
 @end
 
