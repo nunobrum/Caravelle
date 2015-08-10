@@ -589,6 +589,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // closes the window if the application is OK to terminate
     NSApplicationTerminateReply answer = [self shouldTerminate:sender];
     if (answer==NSTerminateNow) {
+        [self->userPreferenceWindow close]; // close the preferences menu when closing main window
         return YES;
     }
     else if (answer == NSTerminateLater) {
