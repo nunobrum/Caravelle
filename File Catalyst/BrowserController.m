@@ -39,6 +39,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     TreeItem *_validatedDestinationItem;
     BOOL _didRegisterDraggedTypes;
     BOOL _awakeFromNibConfigDone;
+    BOOL _treeCollapseDetector;
     TreeBranch *_draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
@@ -103,10 +104,18 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                                                    options:NSKeyValueObservingOptionNew
                                                    context:NULL];
         
+        [[NSUserDefaults standardUserDefaults] addObserver:self
+                                                forKeyPath:USER_DEF_HIDE_FOLDERS_WHEN_TREE
+                                                   options:NSKeyValueObservingOptionNew
+                                                   context:NULL];
+        
         self->_awakeFromNibConfigDone = YES;
     }
 }
 
+-(void)viewDidLoad {
+    self->_treeCollapseDetector = [self treeViewCollapsed];
+}
 
 - (void)dealloc {
     //  Stop any observations that we may have
@@ -235,8 +244,21 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
     // Use this notfication to set the select state of the button
-    [self.viewOptionsSwitches setSelected:![self treeViewCollapsed] forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
-    //NSLog(@"View:%@ splitViewDidResizeSubiews",_viewName);
+    BOOL treeCollapsed = [self treeViewCollapsed];
+    if (treeCollapsed != self->_treeCollapseDetector) {
+        [self.viewOptionsSwitches setSelected:!treeCollapsed forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
+        self->_treeCollapseDetector = treeCollapsed;
+        NSLog(@"View:%@ splitViewDidResizeSubiews; tree collapsed.",_viewName);
+        [self.detailedViewController setFoldersDisplayed: self.foldersDisplayedMacro];
+        [self.detailedViewController refreshKeepingSelections];
+    }
+}
+
+
+-(BOOL) foldersDisplayedMacro {
+    
+    return ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_HIDE_FOLDERS_WHEN_TREE] == NO) ||
+    ([self treeViewCollapsed] == YES);
 }
 
 #pragma mark - Tree Outline DataSource Protocol
@@ -870,7 +892,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     else {
         // TODO:!!!! get the value from USER Defaults
-        foldersDisplayed = YES;
+        foldersDisplayed = [self foldersDisplayedMacro];
         
         // if COL_LOCATION grouping, cancel
         [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
@@ -1170,6 +1192,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         [self.treeNodeSelected refreshContents];
         [self refresh];
     }
+    else if ([keyPath isEqualToString:USER_DEF_HIDE_FOLDERS_WHEN_TREE]) {
+        [self.detailedViewController setFoldersDisplayed: self.foldersDisplayedMacro];
+        [self.detailedViewController refreshKeepingSelections];
+    }
 }
 
 -(void) observeItem:(TreeItem*)item {
@@ -1364,12 +1390,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
         [self.mySplitView displayIfNeeded];
         
-        // TODO: !!! make the bindings to UserDefaults
-        [newController setFoldersDisplayed:YES];
         didLoadPreferences = NO;
-
         [newController registerDraggedTypes];
         self.detailedViewController = newController;
+        [self.detailedViewController setFoldersDisplayed: self.foldersDisplayedMacro];
     }
 
     // Changing User Defaults

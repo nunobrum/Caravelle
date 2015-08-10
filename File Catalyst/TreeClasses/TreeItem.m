@@ -170,27 +170,11 @@
                           items, kDFOFilesKey,
                           operation, kDFOOperationKey,
                           newName, kDFORenameFileKey,
-                          self.parent, kDFODestinationKey,
+                          self->_parent, kDFODestinationKey,
                           //self, kFromObjectKey,
                           nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
-}
-
--(TreeItem*) parent {
-    if (_parent != nil) {
-        return _parent;
-    }
-    else {
-        if ([[self.url pathComponents] count]==1)
-            return nil;
-        else
-            return [appTreeManager addTreeItemWithURL:[self.url URLByDeletingLastPathComponent]
-                                          askIfNeeded:NO];
-    }
-}
--(void) setParent:(TreeItem*)parent {
-    _parent = parent;
 }
 
 -(NSDate*) date_modified {
@@ -334,8 +318,8 @@
 }
 
 -(void) notifyChange {
-    if (self.parent!=nil) {
-        [(TreeBranch*) self.parent notifyDidChangeTreeBranchPropertyChildren];
+    if (self->_parent!=nil) {
+        [(TreeBranch*) self->_parent notifyDidChangeTreeBranchPropertyChildren];
     }
 }
 

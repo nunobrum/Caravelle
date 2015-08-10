@@ -203,7 +203,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     TreeItem *cursor = self;
     do {
         [cursor didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        cursor = cursor.parent;
+        cursor = cursor->_parent;
     } while (cursor!=nil);
 }
 
@@ -537,7 +537,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             }
         }
         else {
-            [self performSelector:@selector(_computeAllocatedSize)];
+            [self _computeAllocatedSize];
         }
     }
 }

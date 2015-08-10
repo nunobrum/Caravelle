@@ -17,12 +17,16 @@
     return self;
 }
 
+-(ItemType) itemType {
+    return ItemTypeDummyBranch; // This is done to avoid being requested for size calculations
+}
+
 +(instancetype) parentFor:(TreeItem*) item {
     NSURL *url;
     TreeItem *target;
-    if (item.parent) {
-        target = item.parent;
-        url = item.parent.url;
+    if (item->_parent) {
+        target = item->_parent;
+        url = item->_parent.url;
     }
     else {
         if ([[item.url pathComponents] count]==1) {
@@ -32,7 +36,7 @@
         target = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
     }
     
-    DummyBranch *answer = [[DummyBranch alloc] initWithURL:url parent:(TreeBranch*)target.parent];
+    DummyBranch *answer = [[DummyBranch alloc] initWithURL:url parent:nil];
     if (target) {
         answer.target = target;
     }
@@ -65,7 +69,8 @@
     if ([key isEqualToString:@"target"] ||
         [key isEqualToString:@"name"] ||
         [key isEqualToString:@"tag"] ||
-        [key isEqualToString:@"hasTags"]
+        [key isEqualToString:@"hasTags"] ||
+        [key isEqualToString:@"itemType"]
         ) {
         return [super valueForKey:key];
     }

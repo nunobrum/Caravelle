@@ -64,10 +64,7 @@
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
     
-    [[NSUserDefaults standardUserDefaults] addObserver:self
-                                            forKeyPath:USER_DEF_HIDE_FOLDERS_WHEN_TREE
-                                               options:NSKeyValueObservingOptionNew
-                                               context:NULL];
+
 }
 
 - (void)dealloc {
@@ -114,8 +111,7 @@
         [self performSelectorOnMainThread:@selector(reloadSize:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
     }
     else if ([keyPath isEqualToString:USER_DEF_DISPLAY_FOLDERS_FIRST] ||
-             [keyPath isEqualToString:USER_DEF_DISPLAY_PARENT_DIRECTORY] ||
-             [keyPath isEqualToString:USER_DEF_HIDE_FOLDERS_WHEN_TREE]) {
+             [keyPath isEqualToString:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
         //NSLog(@"NodeViewController.observeValueForKeyPath: %@", keyPath);
         [self refreshKeepingSelections];
     }
@@ -444,7 +440,7 @@
         }
         
         // Adding the parent directory as .. if requested
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] && self.foldersInTable==YES) {
             DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
             if (dummyParent != nil)
                 [tableData insertObject:dummyParent atIndex:0];
