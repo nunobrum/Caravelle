@@ -75,6 +75,8 @@
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
 		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
+		BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
+		BC08C9B01B79571000D12486 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC08C9AF1B79571000D12486 /* StoreKit.framework */; };
 		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
 		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
@@ -222,6 +224,8 @@
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileUtils.m; sourceTree = "<group>"; };
 		BC08C9AA1B764B9F00D12486 /* DummyBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyBranch.h; sourceTree = "<group>"; };
 		BC08C9AB1B764B9F00D12486 /* DummyBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DummyBranch.m; sourceTree = "<group>"; };
+		BC08C9AD1B79535C00D12486 /* payplugins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = payplugins.plist; sourceTree = "<group>"; };
+		BC08C9AF1B79571000D12486 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BC27BFE51B5C13F9001AE181 /* CalcFolderSizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalcFolderSizes.h; sourceTree = "<group>"; };
 		BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcFolderSizes.m; sourceTree = "<group>"; };
 		BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandFolders.h; sourceTree = "<group>"; };
@@ -248,6 +252,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC08C9B01B79571000D12486 /* StoreKit.framework in Frameworks */,
 				3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */,
 				3CEA674318F87C2F0080C4FC /* Cocoa.framework in Frameworks */,
 			);
@@ -366,6 +371,7 @@
 		3CEA674118F87C2F0080C4FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BC08C9AF1B79571000D12486 /* StoreKit.framework */,
 				3C20FCC719CB7FAE00826246 /* Automator.framework */,
 				3CEA674218F87C2F0080C4FC /* Cocoa.framework */,
 				3CEA676118F87C2F0080C4FC /* XCTest.framework */,
@@ -424,6 +430,7 @@
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
 				3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */,
+				BC08C9AD1B79535C00D12486 /* payplugins.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -616,7 +623,7 @@
 						DevelopmentTeam = 8VR93E5FNL;
 						SystemCapabilities = {
 							com.apple.InAppPurchase = {
-								enabled = 0;
+								enabled = 1;
 							};
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -674,6 +681,7 @@
 				BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */,
 				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
 				3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */,
+				BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

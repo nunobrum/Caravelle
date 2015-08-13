@@ -10,7 +10,7 @@
 #import "Definitions.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, NSTextFieldDelegate, ParentProtocol, NSMenuDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, ParentProtocol, NSMenuDelegate> {
     BrowserController *myLeftView;
     BrowserController *myRightView;
     id<MYViewProtocol> _selectedView;

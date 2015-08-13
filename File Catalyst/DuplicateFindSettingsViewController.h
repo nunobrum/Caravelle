@@ -16,7 +16,6 @@ extern NSString *notificationStartDuplicateFind;
  * General Pane
  */
 
-@property (strong) IBOutlet NSTableView *folderList;
 
 @property (strong) IBOutlet NSButton *cbFileName;
 @property (strong) IBOutlet NSButton *cbFileSize;
