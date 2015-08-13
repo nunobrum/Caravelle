@@ -7,14 +7,19 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "AppStoreManager.h"
 
-@interface UserPreferencesDialog : NSWindowController <NSOutlineViewDelegate> {
+@interface UserPreferencesDialog : NSWindowController <NSOutlineViewDelegate, SKProductsRequestDelegate> {
 }
 @property (strong) IBOutlet NSOutlineView *outlineView;
 @property (strong) IBOutlet NSView *placeholderView;
 @property (strong) IBOutlet NSView *authorizedURLsView;
 @property (strong) IBOutlet NSView *behaviourView;
 @property (strong) IBOutlet NSView *browserOptionsView;
+@property (strong) IBOutlet NSView *paymentsView;
+@property (strong) IBOutlet NSArrayController *pluginInformationController;
+
+
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification;
 
@@ -24,5 +29,6 @@
 @property (strong) IBOutlet NSTableView *tableAuthorizations;
 
 - (IBAction)revokeRequest:(id)sender;
+- (IBAction)buyAppIn:(id)sender;
 
 @end
