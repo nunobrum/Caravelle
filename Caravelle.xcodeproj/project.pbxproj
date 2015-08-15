@@ -53,7 +53,7 @@
 		3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E91ACFCE7400E09A85 /* TableViewController.m */; };
 		3CEB61EF1ACFD09D00E09A85 /* NodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */; };
 		3CEF0AAE1B11A3FA00FB4F7A /* SizeTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */; };
-		3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */; };
+		3CEF82D91A4EDAB20089F42A /* UserPreferencesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */; };
 		3CEF82DA1A4EDAB20089F42A /* UserPreferencesDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */; };
 		3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
 		3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
@@ -89,6 +89,7 @@
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 		BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
 		BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
+		BCE350C61B7E5AD7002B387B /* getGUID.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE350C51B7E5AD7002B387B /* getGUID.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -187,8 +188,8 @@
 		3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeViewController.m; path = BrowserClasses/NodeViewController.m; sourceTree = "<group>"; };
 		3CEF0AAC1B11A3FA00FB4F7A /* SizeTableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SizeTableCellView.h; sourceTree = "<group>"; };
 		3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SizeTableCellView.m; sourceTree = "<group>"; };
-		3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesDialog.h; sourceTree = "<group>"; };
-		3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesDialog.m; sourceTree = "<group>"; };
+		3CEF82D61A4EDAB20089F42A /* UserPreferencesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesManager.h; sourceTree = "<group>"; };
+		3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesManager.m; sourceTree = "<group>"; };
 		3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserPreferencesDialog.xib; sourceTree = "<group>"; };
 		3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileExistsChoice.xib; path = "File Catalyst/OperationClasses/FileExistsChoice.xib"; sourceTree = SOURCE_ROOT; };
 		3CF17D211A18C9E50082A9B0 /* FileExistsChoice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileExistsChoice.h; path = "File Catalyst/OperationClasses/FileExistsChoice.h"; sourceTree = SOURCE_ROOT; };
@@ -245,6 +246,8 @@
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
 		BCADC24C1B426AC100245F1D /* DuplicateInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateInformation.h; sourceTree = "<group>"; };
 		BCADC24D1B426AC100245F1D /* DuplicateInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateInformation.m; sourceTree = "<group>"; };
+		BCE350C51B7E5AD7002B387B /* getGUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = getGUID.m; path = "File CatalystTests/getGUID.m"; sourceTree = SOURCE_ROOT; };
+		BCE350C71B7E5AF7002B387B /* getGUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = getGUID.h; path = "File CatalystTests/getGUID.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -407,8 +410,8 @@
 				3CEA674918F87C2F0080C4FC /* Supporting Files */,
 				3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */,
 				3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */,
-				3CEF82D61A4EDAB20089F42A /* UserPreferencesDialog.h */,
-				3CEF82D71A4EDAB20089F42A /* UserPreferencesDialog.m */,
+				3CEF82D61A4EDAB20089F42A /* UserPreferencesManager.h */,
+				3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */,
 				3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */,
 				3CF5DA8A1A65D09800786D64 /* RenameFileDialog.h */,
 				3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */,
@@ -416,6 +419,8 @@
 				BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */,
 				BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */,
 				BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */,
+				BCE350C51B7E5AD7002B387B /* getGUID.m */,
+				BCE350C71B7E5AF7002B387B /* getGUID.h */,
 			);
 			path = "File Catalyst";
 			sourceTree = "<group>";
@@ -724,10 +729,11 @@
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,
-				3CEF82D91A4EDAB20089F42A /* UserPreferencesDialog.m in Sources */,
+				3CEF82D91A4EDAB20089F42A /* UserPreferencesManager.m in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */,
 				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
+				BCE350C61B7E5AD7002B387B /* getGUID.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CDD42F81AF60C0C0018D24D /* ByteCounterUtils.c in Sources */,
 				BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */,

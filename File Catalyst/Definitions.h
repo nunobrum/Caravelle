@@ -102,6 +102,9 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_DISPLAY_FOLDERS_FIRST @"DisplayFoldersFirst"
 #define USER_DEF_TABLE_ALTERNATE_ROW @"TableAlternateRowBackground"
 
+// App-In products
+#define USER_DEF_APPIN_PRODUCTS @"AppStoreValidProducts"
+
 
 #define SHOW_OPTION_HIDDEN_FILES_NO  0
 #define SHOW_OPTION_BROWSE_APP_NO   1
@@ -172,7 +175,9 @@ typedef NS_ENUM(unichar, CommandKeys) {
 };
 extern NSString *kOptionsKey;
 
-BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
+extern BOOL AppInManageDuplicates;
+
+extern BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
 
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;

@@ -21,7 +21,7 @@
 #import "FileExistsChoice.h"
 
 #import "DuplicateFindSettingsViewController.h"
-#import "UserPreferencesDialog.h"
+#import "UserPreferencesManager.h"
 #import "RenameFileDialog.h"
 #import "PasteboardUtils.h"
 
@@ -112,7 +112,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSNumber *treeUpdateOperationID;
     DuplicateModeStartWindow *duplicateStartupScreenCtrl; // Duplicates Dialog
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
-    UserPreferencesDialog *userPreferenceWindow;
+    UserPreferencesManager *userPreferenceManager;
     RenameFileDialog *renameFilePanel;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
@@ -138,7 +138,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     {
         self->duplicateSettingsWindow = nil;
         self->duplicateStartupScreenCtrl = nil;
-        self->userPreferenceWindow = nil;
+        self->userPreferenceManager = nil;
         self->renameFilePanel = nil;
         self->fileExistsWindow = nil;
         
@@ -289,7 +289,6 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 
-
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     /* Setting up user defaults */
@@ -320,6 +319,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
     // register self as the the Delegate for the main window
     [_myWindow setDelegate:self];
+
+    userPreferenceManager =[[UserPreferencesManager alloc] initWithWindowNibName:@"UserPreferencesDialog"];
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:userPreferenceManager];
 
     /* Registering for receiving services */
     NSArray *sendTypes = [NSArray arrayWithObjects:NSURLPboardType,
@@ -589,7 +591,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // closes the window if the application is OK to terminate
     NSApplicationTerminateReply answer = [self shouldTerminate:sender];
     if (answer==NSTerminateNow) {
-        [self->userPreferenceWindow close]; // close the preferences menu when closing main window
+        [self->userPreferenceManager close]; // close the preferences menu when closing main window
         return YES;
     }
     else if (answer == NSTerminateLater) {
@@ -1190,9 +1192,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 
 - (IBAction)orderPreferencePanel:(id)sender {
-    if (userPreferenceWindow==nil)
-        userPreferenceWindow =[[UserPreferencesDialog alloc] initWithWindowNibName:@"UserPreferencesDialog"];
-    [userPreferenceWindow showWindow:self];
+    [userPreferenceManager showWindow:self];
 
 }
 
