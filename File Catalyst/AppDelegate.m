@@ -1244,7 +1244,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             // and if it is will simply use it to open the items on the clipboard.
 
         //}
-        if ([item itemType]==ItemTypeLeaf) { // If its a leaf, will use the parent instead
+        if ([item isLeaf]) { // If its a leaf, will use the parent instead
             item = [item parent];
         }
         [self executePaste:(TreeBranch*)item];
@@ -1521,7 +1521,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             else if (theAction == @selector(paste:) ||
                      theAction == @selector(contextualPaste:)
                 ) {
-                if ([item itemType] != ItemTypeBranch) {
+                if (![item isFolder]) {
                     allow = NO;
                 }
                 // Check if paste board has valid data
@@ -1534,7 +1534,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             // actions that require one folder with Right access
             else if (theAction == @selector(toolbarNewFolder:) ||
                      theAction == @selector(contextualNewFolder:)) {
-                if ([item itemType] != ItemTypeBranch) {
+                if (![item isFolder]) {
                     allow = NO;
                 }
 //                else if ([item hasTags:tagTreeItemReadOnly]) {
@@ -1621,10 +1621,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         BOOL oneFolder=YES;
         for (TreeItem *node in receivedItems) {
             /* Do something here */
-            if ([node itemType] == ItemTypeLeaf) { // It is a file : Open the File
+            if ([node isLeaf]) { // It is a file : Open the File
                 [node openFile]; // TODO:!!! Register this folder as one of the MRU
             }
-            else if ([node itemType] == ItemTypeBranch && oneFolder==YES) { // It is a directory
+            else if ([node isFolder] && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View
                 /* This also sets the node for Table Display and path bar */
                 [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
@@ -2046,10 +2046,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             }
             NSString *type;
             ItemType iType = [item itemType];
-            if (iType == ItemTypeLeaf) {
+            if (iType >= ItemTypeLeaf) {
                 type = @"File";
             }
-            else if (iType == ItemTypeBranch){
+            else if (iType < ItemTypeLeaf){ // It's a folder
                 type = @"Folder";
             }
             else {
@@ -2061,11 +2061,11 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         else {
             for (TreeItem *item in selectedFiles ) {
-                if ([item itemType] == ItemTypeLeaf) {
+                if ([item isLeaf]) {
                     num_files++;
                     files_size += [[(TreeLeaf*)item fileSize] longLongValue];
                 }
-                else if ([item itemType] == ItemTypeBranch) {
+                else if ([item isFolder]) {
                     num_directories++;
                     folders_size += [[(TreeBranch*)item fileSize] longLongValue];
                 }

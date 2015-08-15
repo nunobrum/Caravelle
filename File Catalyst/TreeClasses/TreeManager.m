@@ -442,7 +442,7 @@ TreeManager *appTreeManager;
                 if (ti==nil) // didn't find, will have to create it
                     ti = (TreeBranch*)[aux addURL:url];
                 // sanity check before assigning
-                if (ti!=nil && [ti itemType] == ItemTypeBranch)
+                if (ti!=nil && [ti isFolder])
                     answer = (TreeBranch*) ti;
             }*/
     }

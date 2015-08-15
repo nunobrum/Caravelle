@@ -113,7 +113,7 @@
                         NSURL *parentURL;
                         id destObj = [_taskInfo objectForKey:kDFODestinationKey];
                         if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
-                            if ([destObj itemType] == ItemTypeBranch)
+                            if ([destObj isFolder])
                                 parentURL = [(TreeBranch*)destObj url];
                             else if ([destObj isKindOfClass:[NSURL class]])
                                 parentURL = destObj;
@@ -159,7 +159,7 @@
                 NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
 
                 if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
-                    if ([destObj itemType] == ItemTypeBranch) {
+                    if ([destObj isFolder]) {
                         TreeBranch *dest = destObj;
 
                         // Assuming all will go well, and revert to No if anything happens

@@ -34,7 +34,11 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeBranch,
     ItemTypeFilter,
     ItemTypeDummyBranch, // This is done to avoid being requested for size calculations
-    ItemTypeLeaf = 10 // This is to assure that on ascending order the folders stay on top
+    //===================== Below this value there are only folders
+    ItemTypeLeaf = 10, // All types of files will be above this number
+    ItemTypeAudio = 100,
+    ItemTypeImage = 200,
+    ItemTypeVideo = 300
 };
 
 
@@ -69,6 +73,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSArray *) treeComponentsToParent:(id)parent;
 
 -(ItemType)  itemType;
+-(BOOL) isLeaf;
+-(BOOL) isFolder;
 -(NSString*) name;
 -(void) setName:(NSString*)newName;
 -(NSDate*)   date_modified;

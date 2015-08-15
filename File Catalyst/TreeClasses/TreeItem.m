@@ -22,6 +22,14 @@
     return ItemTypeNone;
 }
 
+-(BOOL) isLeaf {
+    return [self itemType] >= ItemTypeLeaf;
+}
+
+-(BOOL) isFolder {
+    return [self itemType] < ItemTypeLeaf;
+}
+
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
@@ -236,7 +244,7 @@
     
     // First get the image
     if ([self hasTags:tagTreeItemNew] || self.url==nil) {
-        if ([self itemType] == ItemTypeBranch)
+        if ([self isFolder])
             iconImage = [NSImage imageNamed:@"GenericFolderIcon"];
         else
             iconImage = [NSImage imageNamed:@"GenericDocumentIcon"];

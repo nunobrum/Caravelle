@@ -44,10 +44,10 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
 
 
     /* Limit the Operations depending on the Destination Item Class*/
-    if ([destItem itemType] == ItemTypeBranch) {
+    if ([destItem isFolder]) {
         sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
     }
-    else if ([destItem itemType] == ItemTypeLeaf) {
+    else if ([destItem isLeaf]) {
         sourceDragMask &= (NSDragOperationGeneric);
     }
     else {
@@ -103,12 +103,12 @@ BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation 
     NSPasteboard *pboard = [info draggingPasteboard];
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
 
-    if ([destItem itemType] == ItemTypeLeaf) {
+    if ([destItem isLeaf]) {
         // TODO: !! Dropping Application on top of file or File on top of Application
         NSLog(@"BrowserController.acceptDrop: - Not impplemented Drop on Files");
         // TODO:! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
     }
-    else if ([destItem itemType] == ItemTypeBranch) {
+    else if ([destItem isFolder]) {
         if (operation == NSDragOperationCopy) {
             strOperation = opCopyOperation;
             fireNotfication = YES;

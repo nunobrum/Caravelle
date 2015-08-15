@@ -332,7 +332,7 @@
     NSInteger iDepth = NSIntegerMax;
     NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
 
-    if ([self.currentNode itemType] == ItemTypeBranch){
+    if ([self.currentNode isFolder]){
         /* if the filter is empty, doesn't filter anything */
         if (_filterText!=nil && [_filterText length]!=0) {
             NSPredicate *predicate;

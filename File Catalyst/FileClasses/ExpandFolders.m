@@ -72,7 +72,7 @@
                                 [cursor initChildren];
                             }
                             [cursor.children addObject:child];
-                            if ([child itemType] == ItemTypeBranch)
+                            if ([child isFolder])
                             {
                                 cursor = (TreeBranch*)child;
                                 [cursor initChildren];

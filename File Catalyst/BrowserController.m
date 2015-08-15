@@ -291,7 +291,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         else
             ret = [item branchAtIndex:index];
     }
-    if ([ret itemType] == ItemTypeBranch) {
+    if ([ret isFolder]) {
         // Use KVO to observe for changes of its children Array
         [self observeItem:ret];
         [(TreeBranch*)ret refreshContents];
@@ -303,7 +303,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     BOOL answer=NO;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
-    else if ([item itemType] == ItemTypeBranch) {
+    else if ([item isFolder]) {
         if (applicationMode==ApplicationModeDuplicate)
             answer = [item numberOfDuplicatesInNode] > 1 ? YES : NO;
         else
@@ -320,10 +320,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     NSTableCellView *cellView=nil;
 
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-        if ([item itemType] == ItemTypeLeaf) {//if it is a file
+        if ([item isLeaf]) {//if it is a file
             // This is not needed now since the Tree View is not displaying files in this application
         }
-        else if ([item itemType] == ItemTypeBranch) { // it is a directory
+        else if ([item isFolder]) { // it is a directory
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 NSString *sizeString;
@@ -405,10 +405,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 //- (void)outlineView:(NSOutlineView *)outlineView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn item:(id)item {
 //    if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-//        if ([item itemType] == ItemTypeLeaf) {//if it is a file
+//        if ([item isLeaf]) {//if it is a file
 //            // This is not needed now since the Tree View is not displaying files in this application
 //        }
-//        else if ([item itemType] == ItemTypeBranch && // it is a directory
+//        else if ([item isFolder] && // it is a directory
 //                 [cell isKindOfClass:[FolderCellView class]]) { // It is a Image Preview Class
 //            // Display the directory name followed by the number of files inside
 //            NSString *path = [(TreeBranch*)item path];
@@ -687,7 +687,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             return;
         }
         TreeBranch *node;
-        if ([branch itemType] == ItemTypeBranch) {
+        if ([branch isFolder]) {
             node = (TreeBranch*)branch;
         }
         else {
@@ -834,7 +834,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (rowsSelected!=nil && [rowsSelected count]>0) {
         NSUInteger index = [rowsSelected firstIndex];
         id node = [_myOutlineView itemAtRow:index];
-        if ([node itemType] == ItemTypeBranch) { // It is a Folder : Will make it a root
+        if ([node isFolder]) { // It is a Folder : Will make it a root
             index = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
             BaseDirectoriesArray[index] = node;
 
@@ -1200,7 +1200,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) observeItem:(TreeItem*)item {
     // Use KVO to observe for changes of its children Array
-    if ([item itemType] == ItemTypeBranch) {
+    if ([item isFolder]) {
         if (![_observedVisibleItems containsObject:item]) {
             [item addObserver:self forKeyPath:kvoTreeBranchPropertyChildren options:0 context:NULL];
             [_observedVisibleItems addObject:item];
@@ -1211,7 +1211,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) unobserveItem:(TreeItem*)item {
     // Use KVO to observe for changes of its children Array
-    if ([item itemType] == ItemTypeBranch) {
+    if ([item isFolder]) {
         if ([_observedVisibleItems containsObject:item]) {
             [item removeObserver:self forKeyPath:kvoTreeBranchPropertyChildren];
             [_observedVisibleItems removeObject:item];
@@ -1675,7 +1675,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 TreeBranch *lastBranch = nil;
                 NSArray *treeComps= [treeNode treeComponentsToParent:root];
                 for (TreeItem *node in treeComps) {
-                    if ([node itemType] == ItemTypeBranch)
+                    if ([node isFolder])
                     {
                         [_myOutlineView expandItem:node];
                         [_myOutlineView reloadData];
