@@ -89,11 +89,15 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                         NSDate *fileDate = dateModified(theURL);
                         if ([startDateFilter laterDate:fileDate] && [endDateFilter earlierDate:fileDate]) {
                             TreeLeaf *fi = [TreeLeaf treeItemForURL:theURL parent:nil];
-                            if (namePredicate==nil || [namePredicate evaluateWithObject:fi]) {
-                                [fileArray addObject:fi];
-                                 //NSLog(@"accepted %@",theURL);
+                            if (fi) {
+                                if (namePredicate==nil || [namePredicate evaluateWithObject:fi]) {
+                                    [fileArray addObject:fi];
+                                    //NSLog(@"accepted %@",theURL);
+                                }
+                                //else { NSLog(@"rejected %@",theURL); }
                             }
-                            //else { NSLog(@"rejected %@",theURL); }
+                            else
+                                NSLog(@"DuplicateFindOperation.main: Problem adding URL %@", theURL);
                         }
                         if ([self isCancelled])
                             break;

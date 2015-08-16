@@ -141,6 +141,8 @@
 		<string>integer</string>
 		<key>grouping</key>
 		<string>integer</string>
+		<key>app_mode</key>
+		<integer>16</integer>
 	</dict>
 </dict>
 </plist>

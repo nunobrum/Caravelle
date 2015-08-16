@@ -98,6 +98,58 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     return st == NSOnState;
 }
 
+
+NSUInteger segmentForApplicationMode(EnumApplicationMode mode) {
+    NSUInteger segment;
+    switch (mode) {
+        case ApplicationMode1View:
+            segment = 0;
+            break;
+        case ApplicationMode2Views:
+            segment = 1;
+            break;
+        case ApplicationModeDuplicate:
+            segment = 2; // This must be updated
+            break;
+        case ApplicationModeSync:
+            segment = 0;
+            break;
+        case ApplicationModePreview:
+            segment = 0;
+            break;
+        default:
+            segment = 0;
+            break;
+    }
+    return segment;
+}
+
+EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
+    EnumApplicationMode mode;
+    switch (segment) {
+        case 0:
+            mode = ApplicationMode1View;
+            break;
+        case 1:
+            mode = ApplicationMode2Views;
+            break;
+        case 2:
+            mode = ApplicationModeDuplicate; // TODO:1.5: replace this with ApplicationModePreview
+            break;
+        case 3:
+            mode = ApplicationModeSync;
+            break;
+        case 4:
+            mode = ApplicationModeDuplicate;
+            break;
+            
+        default:
+            mode = ApplicationMode1View;
+            break;
+    }
+    return mode;
+}
+
 @interface AppDelegate (Privates)
 
 - (void)  refreshAllViews:(NSNotification*)theNotification;
@@ -258,16 +310,18 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 -(BOOL) savePreferences {
     NSLog(@"AppDelegate.savePreferences:");
     if (applicationMode != ApplicationModeDuplicate) {
+        [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithLong:applicationMode] forKey:USER_DEF_APP_VIEW_MODE];
         NSString *homepath = [[myLeftView treeNodeSelected] path];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
-    }
-    [myLeftView savePreferences];
-    if (myRightView) {
-        if (applicationMode != ApplicationModeDuplicate) {
-            NSString *homepath = [[myRightView treeNodeSelected] path];
-            [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+        
+        [myLeftView savePreferences];
+        if (myRightView) {
+            if (applicationMode != ApplicationModeDuplicate) {
+                NSString *homepath = [[myRightView treeNodeSelected] path];
+                [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
+            }
+            [myRightView savePreferences];
         }
-        [myRightView savePreferences];
     }
     BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
     if (!OK)
@@ -342,14 +396,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     [self toolbarToggleFunctionKeys:self.toolbarFunctionBarSelect];
     
     
-    // TODO:!!! Implement the modes preview and Sync
-    if (applicationMode == ApplicationModeDuplicate ||
-        applicationMode == ApplicationModeSync ||
-        applicationMode == ApplicationModePreview) {
+    // TODO:1.4 Implement the modes preview and Sync
+    if (applicationMode != ApplicationMode2Views ) {
         // For now just defaults to one Pane Mode
         applicationMode = ApplicationMode1View;
-        [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationMode1View];
+
     }
+    [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(applicationMode)];
 
     if (applicationMode == ApplicationMode2Views) {
         myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -772,6 +825,21 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 #pragma mark execution of Actions
 
+-(BOOL) checkAppInDuplicateBlocking {
+    if (applicationMode == ApplicationModeDuplicate) {
+        if ([self->userPreferenceManager duplicatesAuthorized]==NO) {
+            NSAlert *buyAppInInfo =  [NSAlert alertWithMessageText:@"Locked Feature"
+                                                     defaultButton:@"OK"
+                                                   alternateButton:nil // TODO:1.4 Buy Button to open direcly the referred window
+                                                       otherButton:nil
+                                         informativeTextWithFormat:@"App-In 'Duplicates Manager' needed to proceed.\nThis App-In can be bought direcly on menu Caravelle-Preferences... App-Ins section"];
+            [buyAppInInfo setAlertStyle:NSWarningAlertStyle];
+            [buyAppInInfo beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];            return NO;
+        }
+    }
+    return YES;
+}
+
 - (void) executeInformation:(NSArray*) selectedFiles {
     NSUInteger numberOfFiles = [selectedFiles count];
 
@@ -824,6 +892,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (void) executeRename:(NSArray*) selectedFiles {
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
+    
+
     NSUInteger numberOfFiles = [selectedFiles count];
     // TODO: ! Option for the rename, on the table or on a dedicated dialog
     if (numberOfFiles == 1) {
@@ -898,6 +970,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(void) executeCopyTo:(NSArray*) selectedFiles {
+    
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
+    
     if ([self selectedView] == myLeftView) {
         [self copyItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
     }
@@ -907,6 +983,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 -(void) executeMoveTo:(NSArray*) selectedFiles {
+    
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
+    
     if ([self selectedView] == myLeftView) {
         [self moveItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
     }
@@ -922,6 +1002,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (void) executeNewFolder:(TreeBranch*)selectedBranch {
+    // Safety check : This should have been already blocked in the validation of the menu
+    if (applicationMode == ApplicationModeDuplicate) return;
+    
     NSURL *newURL = [[selectedBranch url] URLByAppendingPathComponent:@"New Folder"];
     TreeBranch *newFolder = [[TreeBranch alloc] initWithURL:newURL parent:selectedBranch];
     [newFolder setTag:tagTreeItemNew];
@@ -932,6 +1015,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 
 - (void)executeCut:(NSArray*) selectedFiles {
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
+
     // The cut: is identical to the copy: but the isCutPending is activated.
     // Its on the paste operation that the a decision is taken whether the cut
     // Can be done, if the application still maintains ownership of the pasteboard
@@ -947,6 +1033,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 
 - (void)executeCopy:(NSArray*) selectedFiles onlyNames:(BOOL)onlyNames {
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
 
 
     // Will create name list for text application paste
@@ -1003,6 +1091,8 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (void) executePaste:(TreeBranch*) destinationBranch {
+    // Safety check : This should have already been blocked in the menu validation
+    if (applicationMode == ApplicationModeDuplicate) return;
 
     NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
     NSArray *files = get_clipboard_files(clipboard);
@@ -1046,6 +1136,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
 
 -(void) executeDelete:(NSArray*) selectedFiles {
+    // Checking first if the operation is not blocked.
+    if ([self checkAppInDuplicateBlocking]==NO) return;
+
     NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                               opSendRecycleBinOperation, kDFOOperationKey,
                               selectedFiles, kDFOFilesKey,
@@ -1172,7 +1265,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     }
 }
 
-- (IBAction)toolbarToggleFunctionKeys:(id)sender { // TODO: !!!!!! Replace this with bindings to User Defaults
+- (IBAction)toolbarToggleFunctionKeys:(id)sender { // TODO:??? Replace this with bindings to User Defaults
     CGFloat constant;
     BOOL setting = [sender isSelectedForSegment:0];
     if (setting) {
@@ -1283,8 +1376,10 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 - (IBAction)appModeChanged:(id)sender {
-    NSInteger mode = [(NSSegmentedControl*)sender selectedSegment];
+    NSInteger segment = [(NSSegmentedControl*)sender selectedSegment];
     
+    EnumApplicationMode mode = applicationModeForSegment(segment);
+
     if (mode != applicationMode) {
         EnumApplicationMode old_mode = applicationMode;
         applicationMode = mode;
@@ -1299,7 +1394,9 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             [myRightView setViewMode:BViewBrowserMode];
             [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
             
-            if ([roots count]>=1) {
+            if (([roots count] >= 1) &&
+                ([roots[0] isKindOfClass:[TreeRoot class]]==NO)) // This conditions check whether is not the classic view
+            {
                 
                 [self prepareView:myLeftView withItem:roots[0]];
                 if (myRightView!=nil) {
@@ -1325,7 +1422,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         }
         
         // Initialization of the new Mode
-        if (applicationMode == ApplicationMode1View) {
+        if (mode == ApplicationMode1View) {
             if (myRightView!=nil && panelCount == 2) {
                 [myRightView.view removeFromSuperview];
                 //myRightView.view = nil;
@@ -1333,7 +1430,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             [myLeftView setName:@"Single" TwinName:nil];
             [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
         }
-        else if (applicationMode == ApplicationMode2Views) {
+        else if (mode == ApplicationMode2Views) {
             if (panelCount==1) {
                 if (myRightView == nil) {
                     myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -1373,12 +1470,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
             [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             // Reposition last mode
-            [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
+            applicationMode = old_mode;
+            [(NSSegmentedControl*)sender setSelectedSegment:old_mode];
             
         }
         else if (mode == ApplicationModeSync) {
             // TODO:1.4 Sync Mode
-            NSLog(@"AppDelegate.appModeChanged: Sync Mode");// TODO: !!! Preview Mode
+            NSLog(@"AppDelegate.appModeChanged: Sync Mode");
             // Now displaying an NSAlert with the information that this will be available in a next version
             NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Directory Compare & Synchronization"
                                                           defaultButton:@"OK"
@@ -1388,10 +1486,13 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
             [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             // Reposition last mode
-            [(NSSegmentedControl*)sender setSelectedSegment:applicationMode];
+            applicationMode = old_mode;
+            [(NSSegmentedControl*)sender setSelectedSegment:old_mode];
             
         }
         else if (mode == ApplicationModeDuplicate) {
+            applicationMode = old_mode; // Reposition back the mode, so if the operation is cancelled.
+                                        // Couldn't be done otherwise, since the application code being exec
             [self FindDuplicates:sender];
             return;
         }
@@ -1434,6 +1535,16 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 
     /* This is done like this so that not more than one folder is selected */
     NSArray *itemsSelected=nil;
+    
+    // Actions that are restricted on the operation Mode
+    if (applicationMode==ApplicationModeDuplicate) {
+        if (theAction == @selector(toolbarNewFolder:) ||
+            theAction == @selector(contextualNewFolder:) ||
+            theAction == @selector(paste:) ||
+            theAction == @selector(contextualPaste:)) {
+            return NO;
+        }
+    }
 
     // Actions that can always be done
     if (theAction == @selector(toolbarHome:) ||
@@ -2145,7 +2256,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     NSDictionary *notifInfo = [theNotification userInfo];
     if (notifInfo==nil) {
         // Reverts back to the previous view . Nothing is changed
-        [self.toolbarAppModeSelect setSelected:YES forSegment:applicationMode];
+        [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(applicationMode)];
     }
     else {
         
@@ -2153,7 +2264,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
             [myRightView startAllBusyAnimations];
         [myLeftView startAllBusyAnimations];
         
-        [self.toolbarAppModeSelect setSelected:YES forSegment:ApplicationModeDuplicate];
+        [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(ApplicationModeDuplicate)];
         
         duplicates = [[FileCollection alloc] init];
         NSDictionary *notifInfo = [theNotification userInfo];
@@ -2187,7 +2298,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     // Check if operation was not aborted
     if (!OK || ([duplicatedFileArray count]==0)) {
         // Reverts back to the previous view . Nothing is changed
-        [self.toolbarAppModeSelect setSelected:YES forSegment:applicationMode];
+        [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(applicationMode)];
         [myLeftView stopBusyAnimations];
         [myRightView stopBusyAnimations];
         
@@ -2300,7 +2411,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         // Make the FlatView and Group by Location
         [myLeftView setFlatView:YES];
         // TODO:!!!! use the [view setName:twinName:] To change to a "Dup Left" and "Dup Right"
-        // TODO:!!! Mode Duplicate should cancel all operations, except if plugin is activated
+        
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];

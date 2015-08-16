@@ -10,14 +10,26 @@
 #import "Definitions.h"
 #include "getGUID.h"
 
-BOOL AppInManageDuplicates;
 
-@interface UserPreferencesManager ()
+typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
+    AppInsNotRead         = 0,
+    AppInsValidated       = 1 << 0,
+    AppInDuplicateManager = 1 << 1
+
+};
+
+@interface UserPreferencesManager () {
+    EnumAppIns authorizedAppIns;
+}
 @property (strong) IBOutlet NSTreeController *prefsTree;
+
 
 @end
 
-@implementation UserPreferencesManager
+
+@implementation UserPreferencesManager {
+
+}
 
 
 - (instancetype)initWithWindowNibName:(NSString*)window {
@@ -25,7 +37,7 @@ BOOL AppInManageDuplicates;
     // inialization here
     self->_requestPending = @0;
     self->_products = nil;
-    self->_activeAppIns = nil;
+    self->authorizedAppIns = AppInsNotRead;
     
     // Try to get products from UserDefaults
     
@@ -107,10 +119,12 @@ BOOL AppInManageDuplicates;
     SKMutablePayment *payment = [SKMutablePayment paymentWithProduct:product];
     payment.quantity = 1;
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+    self->authorizedAppIns = AppInsNotRead; // Need to later update the authorizedAppIns
 }
 
 -(void) restoreAcquiredAppIns {
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
+    self->authorizedAppIns = AppInsNotRead; // Need to later update the authorizedAppIns
 }
 
 #pragma mark - PaymentTransactionObserver Protocol
@@ -252,7 +266,7 @@ BOOL AppInManageDuplicates;
 }
 
 -(void) validateAppIns {
-    AppInManageDuplicates = NO;
+    self->authorizedAppIns = AppInsNotRead;
 #ifdef USE_ICLOUD_STORAGE
     NSUbiquitousKeyValueStore *storage = [NSUbiquitousKeyValueStore defaultStore];
 #else
@@ -263,10 +277,11 @@ BOOL AppInManageDuplicates;
         for (NSArray *transactionRecord in savedReceipts) {
             // TODO:!!!! XOR with GUID
             if ([[transactionRecord firstObject] isEqualToString:@"com.cascode.duplicates"]) {
-                AppInManageDuplicates = YES;
+                authorizedAppIns |= AppInDuplicateManager;
             }
         }
     }
+    self->authorizedAppIns |= AppInsValidated; // Signals that the authorized AddIns were read
 }
 
 // This function will make all the diligences to request an update of the pluginInformation
@@ -360,7 +375,7 @@ BOOL AppInManageDuplicates;
                                 nil] ] ;
     
     [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-                                @"Plugins", @"description",
+                                @"App-Ins", @"description",
                                 self.paymentsView, @"view",
                                 isLeaf, @"leaf",
                                 nil] ] ;
@@ -407,5 +422,11 @@ BOOL AppInManageDuplicates;
     [self restoreAcquiredAppIns];
 }
 
+-(BOOL) duplicatesAuthorized {
+    if ((self->authorizedAppIns & AppInsValidated) == 0) {
+        [self validateAppIns];
+    }
+    return (self->authorizedAppIns & AppInDuplicateManager) != 0;
+}
 
 @end

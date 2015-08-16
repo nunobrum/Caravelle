@@ -439,6 +439,14 @@
 // This selector is invoked when the file was renamed or a New File was created
 - (IBAction)filenameDidChange:(id)sender {
     NSInteger row = [_myTableView rowForView:sender];
+    NSInteger column = [_myTableView columnForView:sender];
+    
+    if (column != [self.myTableView columnWithIdentifier:COL_FILENAME])
+        // This was not supposed to happen. Best to undo any changes.
+        [self.myTableView reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:row]
+                                    columnIndexes:[NSIndexSet indexSetWithIndex:column]];
+        return;
+
     if (row != -1) {
         TreeItem *item = [self->_displayedItems objectAtIndex:row];
         NSString const *operation=nil;
@@ -862,18 +870,20 @@
 -(BOOL) startEditItemName:(TreeItem*)item  {
     NSUInteger row = [self->_displayedItems indexOfObject:item];
     if (row!=NSNotFound) {
-        NSUInteger column = [_myTableView columnWithIdentifier:COL_FILENAME]; // TODO:!!!!! Need to check how this behaves when the COL_PATH is chosen
-        [_myTableView editColumn:column row:row withEvent:nil select:YES];
-        // Obtain the NSTextField from the view
-        NSTextField *textField = [[_myTableView viewAtColumn:column row:row makeIfNecessary:NO] textField];
-        assert(textField!=nil);
-        // Recuperate the old filename
-        NSString *oldFilename = [textField stringValue];
-        // Select the part up to the extension
-        NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
-        NSRange selectRange = {0, head_size};
-        [[textField currentEditor] setSelectedRange:selectRange];
-        return YES;
+        NSInteger column = [_myTableView columnWithIdentifier:COL_FILENAME];
+        if (column != -1 ) {
+            [_myTableView editColumn:column row:row withEvent:nil select:YES];
+            // Obtain the NSTextField from the view
+            NSTextField *textField = [[_myTableView viewAtColumn:column row:row makeIfNecessary:NO] textField];
+            assert(textField!=nil);
+            // Recuperate the old filename
+            NSString *oldFilename = [textField stringValue];
+            // Select the part up to the extension
+            NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
+            NSRange selectRange = {0, head_size};
+            [[textField currentEditor] setSelectedRange:selectRange];
+            return YES;
+        }
     }
     return NO;
 }

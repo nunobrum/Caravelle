@@ -665,9 +665,26 @@
                         </connections>
                     </buttonCell>
                 </button>
+                <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xxd-zX-3rb">
+                    <rect key="frame" x="45" y="172" width="231" height="19"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Waiting for AppStore response" id="YII-bd-ygv">
+                        <font key="font" metaFont="system" size="16"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="hidden" keyPath="self.requestPending" id="tpp-tq-woE">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </textField>
             </subviews>
             <constraints>
+                <constraint firstItem="xxd-zX-3rb" firstAttribute="centerX" secondItem="K3C-pH-CZQ" secondAttribute="centerX" id="0wr-yP-dlu"/>
                 <constraint firstItem="K3C-pH-CZQ" firstAttribute="centerY" secondItem="MQD-SE-Zbo" secondAttribute="centerY" constant="-8" id="3DP-BG-XXN"/>
+                <constraint firstItem="xxd-zX-3rb" firstAttribute="centerY" secondItem="K3C-pH-CZQ" secondAttribute="centerY" constant="-18" id="4zw-cB-AWF"/>
                 <constraint firstAttribute="trailing" secondItem="rwx-eY-ws0" secondAttribute="trailing" id="CQR-cp-b3g"/>
                 <constraint firstItem="K3C-pH-CZQ" firstAttribute="leading" secondItem="bDp-10-pZr" secondAttribute="leading" id="H1H-Tb-MIe"/>
                 <constraint firstItem="rwx-eY-ws0" firstAttribute="leading" secondItem="bDp-10-pZr" secondAttribute="leading" id="Ly6-PE-F7s"/>

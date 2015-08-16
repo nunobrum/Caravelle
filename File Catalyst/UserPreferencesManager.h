@@ -39,5 +39,7 @@
 - (IBAction)buyAppIn:(id)sender;
 - (IBAction)restoreProducts:(id)sender;
 
+-(BOOL) duplicatesAuthorized;
+
 
 @end

@@ -175,6 +175,13 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
     // Creates the Columns Menu
     for (NSString *colID in sortedColumnNames() ) {
         NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+        
+        // Restraining columns that do not belong in this mode
+        NSNumber *app_mode = [colInfo objectForKey:COL_APP_MODE];
+        if (app_mode != nil) {
+            if (([app_mode longValue] & applicationMode) == 0)
+            continue; // This blocks Columns that are not to be displayed in the current mode.
+        }
         NSString *desc = [colInfo objectForKey:COL_TITLE_KEY];
         NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:desc action:@selector(columnSelect:) keyEquivalent:@""];
         if ([[self tableView] columnWithIdentifier:colID]!=-1) { // is present in tableColumns

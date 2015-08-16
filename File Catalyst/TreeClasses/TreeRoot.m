@@ -48,6 +48,13 @@
             // Now going to release the disappeard items
             [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
             [self setTag: tagTreeItemScanned];
+            
+            // Change the bit to be consistent with the mode. Like the TreeBranch does.
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
+                [self setTag:tagTreeHiddenPresent];
+            else
+                [self resetTag:tagTreeHiddenPresent];
+            
         } // synchronized
         [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
         

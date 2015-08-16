@@ -69,6 +69,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define COL_TRANS_KEY @"transformer" 
 #define COL_GROUPING_KEY @"grouping"
 #define COL_COL_ID_KEY @"col_id"
+#define COL_APP_MODE @"app_mode"
 
 
 // User Definitions
@@ -147,12 +148,12 @@ typedef NS_ENUM(NSInteger, EnumBrowserViewMode) {
 };
 
 
-typedef NS_ENUM(NSInteger, EnumApplicationMode) {
-    ApplicationMode1View = 0,
-    ApplicationMode2Views, /* Each View is independent of the other */
-    ApplicationModePreview,
-    ApplicationModeSync,
-    ApplicationModeDuplicate,
+typedef NS_OPTIONS(NSUInteger, EnumApplicationMode) {
+    ApplicationMode1View = 1,
+    ApplicationMode2Views = 2, /* Each View is independent of the other */
+    ApplicationModePreview = 4,
+    ApplicationModeSync = 8,
+    ApplicationModeDuplicate = 16 // Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes.
 
 };
 
@@ -174,8 +175,6 @@ typedef NS_ENUM(unichar, CommandKeys) {
     KeyCodeRight
 };
 extern NSString *kOptionsKey;
-
-extern BOOL AppInManageDuplicates;
 
 extern BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
 

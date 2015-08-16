@@ -566,6 +566,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             int tagCount = 0;
             for (NSString *colID in sortedColumnNames() ) {
                 NSDictionary *colInfo = [columnInfo() objectForKey:colID];
+                
+                // Do not display columns that are not to be displayed in this mode.
+                NSNumber *app_mode = [colInfo objectForKey:COL_APP_MODE];
+                if (app_mode != nil) {
+                    if (([app_mode longValue] & applicationMode) == 0)
+                        continue; // This blocks Columns that are not to be displayed in the current mode.
+                }
+                
                 // Restrict to fields that have grouping setting
                 id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
                 if (grouping) {
@@ -585,6 +593,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         int i = 1; // Starts with the first visible Menu Item
         for (NSString *fieldID in sortedColumnNames() ) {
             NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
+            
+            // Do not display columns that are not to be displayed in this mode.
+            NSNumber *app_mode = [colInfo objectForKey:COL_APP_MODE];
+            if (app_mode != nil) {
+                if (([app_mode longValue] & applicationMode) == 0)
+                    continue; // This blocks Columns that are not to be displayed in the current mode.
+            }
+            
             id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
             if (grouping) {
                 NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
@@ -611,6 +627,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             
             for (NSString *fieldID in sortedColumnNames() ) {
                 NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
+                
+                // Do not display columns that are not to be displayed in this mode.
+                NSNumber *app_mode = [colInfo objectForKey:COL_APP_MODE];
+                if (app_mode != nil) {
+                    if (([app_mode longValue] & applicationMode) == 0)
+                        continue; // This blocks Columns that are not to be displayed in the current mode.
+                }
+                
                 // Restrict to fields that have grouping setting
                     NSString *menuTitle = [colInfo objectForKey:COL_TITLE_KEY];
                     NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuColumnSelector:) keyEquivalent:@""];
@@ -622,10 +646,19 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 
             }
         }
-        // If the menu was already created, then it will just update the groupings
+        // If the menu was already created, then it will just update the columns
         
         int i = 1; // Starts with the first visible Menu Item
         for (NSString *fieldID in sortedColumnNames() ) {
+            NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
+            
+            // Do not display columns that are not to be displayed in this mode.
+            NSNumber *app_mode = [colInfo objectForKey:COL_APP_MODE];
+            if (app_mode != nil) {
+                if (([app_mode longValue] & applicationMode) == 0)
+                    continue; // This blocks Columns that are not to be displayed in the current mode.
+            }
+            
             
             NSIndexSet *idx = [columns indexesOfObjectsPassingTest:
                                ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
@@ -891,7 +924,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
     }
     else {
-        // TODO:!!!! get the value from USER Defaults
         foldersDisplayed = [self foldersDisplayedMacro];
         
         // if COL_LOCATION grouping, cancel
@@ -1441,6 +1473,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) savePreferences {
     NSLog(@"BrowserController.savePreferences %@", self->_viewName);
+    
+    if (self->_viewName == nil) // Sanity Check
+        return;
+    
     if (self->iconViewController) {
          [self->iconViewController savePreferences: self.preferences];
     }
@@ -1456,6 +1492,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) loadPreferences {
     NSLog(@"BrowserController.loadPreferences %@", self->_viewName);
+    if (self->_viewName == nil) // Sanity Check
+        return;
+    
     [self.detailedViewController loadPreferencesFrom:self.preferences ];
     [self setTreeViewCollapsed: NO==[[self.preferences objectForKey: USER_DEF_TREE_VISIBLE ] boolValue]];
 }
