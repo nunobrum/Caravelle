@@ -2364,7 +2364,7 @@ BOOL toggleMenuState(NSMenuItem *menui) {
         NSURL* sourceURL = note[0];
         NSURL* destinationURL = note[1];
         NSError *error = note[2];
-        //TODO:!!!!! This can be dangerous with Localizations
+        //TODO:2.0 This can be dangerous with Localizations
         NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
 
         NSDictionary *info = [theNotification userInfo];

@@ -1357,6 +1357,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             newController = tableViewController;
             [self.myGroupingPopDpwnButton setHidden:NO];
             [self.myColumnsPopDpwnButton  setHidden:NO];
+            [self.viewOptionsSwitches setEnabled:YES forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
             break;
         case BViewTypeBrowser:
             break;
@@ -1371,17 +1372,26 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             newController = iconViewController;
             [self.myGroupingPopDpwnButton setHidden:YES];
             [self.myColumnsPopDpwnButton  setHidden:YES];
+            // Block Flat view and remove groupings
+            [self.viewOptionsSwitches setEnabled:NO forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
+            [self.viewOptionsSwitches setSelected:NO forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
+            [newController setDisplayFilesInSubdirs:NO];
+            [newController removeGroupings];
             break;
         default:
             break;
     }
 
     if (self.detailedViewController != newController && newController != nil)  {
+        // Saving the treeCollapsed, so that it can be recovered when the new view is loaded
+        BOOL treeVisble = ![self treeViewCollapsed];
+        [self.preferences setObject:[NSNumber numberWithBool:treeVisble] forKey: USER_DEF_TREE_VISIBLE ];
+         
         [self.detailedViewController unregisterDraggedTypes];
-
+        
         NSView *newView = [newController view];
 
-        if ([[self.mySplitView subviews] count]==2) { // This is the first time
+        if ([[self.mySplitView subviews] count]==2) { // Two views already being displayed
             NSView *oldView = [[self.mySplitView subviews] objectAtIndex:1];
             [self.mySplitView replaceSubview:oldView with:newView];
         }

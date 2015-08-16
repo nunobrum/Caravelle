@@ -40,8 +40,8 @@
     if (target) {
         answer.target = target;
     }
-    else
-        NSLog(@"DummyBranch.parentFor: couldnt find the target %@", url);
+    //else
+    //    NSLog(@"DummyBranch.parentFor: couldnt find the target %@", url);
     [answer setNameCache:@".."];
     return answer;
 }
@@ -82,7 +82,7 @@
     }
     // if the target doesn't exist
     else {
-        NSLog(@"DummyBranch.valueForKey:%@  NO target", key);
+        //NSLog(@"DummyBranch.valueForKey:%@  NO target", key);
         return [super valueForKey:key];
     }
 }

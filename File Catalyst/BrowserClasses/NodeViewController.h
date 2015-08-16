@@ -80,6 +80,7 @@
 - (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
 - (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
 - (void) removeSortOnField:(NSString*)key;
+- (void) removeGroupings;
 
 -(NSArray*) getTableViewSelectedURLs;
 -(void) setTableViewSelectedURLs:(NSArray*) urls;

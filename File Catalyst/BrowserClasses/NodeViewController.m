@@ -506,6 +506,18 @@
     [self.sortAndGroupDescriptors insertObject:sortDesc atIndex:i];
 }
 
+-(void) removeGroupings {
+    NSUInteger i = 0;
+    while (i < [self.sortAndGroupDescriptors count]) {
+        NSSortDescriptor<MySortDescriptorProtocol> *sortDesc = [self.sortAndGroupDescriptors objectAtIndex:i];
+        if ([sortDesc isGrouping] ) {
+            [self.sortAndGroupDescriptors removeObjectAtIndex:i];
+        }
+        else {
+            i++;
+        }
+    }
+}
 
 -(NSArray*) getTableViewSelectedURLs {
    NSLog(@"NodeViewController.getTableViewSelectedURLs: should be overriden");
