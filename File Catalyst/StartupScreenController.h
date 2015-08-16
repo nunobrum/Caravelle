@@ -13,4 +13,8 @@
 @property (strong) IBOutlet NSWindow *window;
 @property (weak) IBOutlet NSButton *chkDontShowThisAgain;
 
+- (instancetype)initWithWindowNibName:(NSString *)windowNibName;
+
+-(void) hideDontShowThisAgainButton;
+
 @end

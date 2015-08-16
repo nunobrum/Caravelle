@@ -300,11 +300,29 @@ CA
                 </menuItem>
                 <menuItem title="Help" id="490">
                     <modifierMask key="keyEquivalentModifierMask"/>
-                    <menu key="submenu" title="Help" systemMenu="help" id="491">
+                    <menu key="submenu" title="Help" systemMenu="help" showsStateColumn="NO" autoenablesItems="NO" id="491">
                         <items>
                             <menuItem title="Caravelle Help" keyEquivalent="?" id="492">
                                 <connections>
                                     <action selector="showHelp:" target="-1" id="493"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Startup Screen" id="Xqs-0F-heW">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderStartupScreen:" target="494" id="RXN-Xr-bYm"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Caravelle website" id="rxM-Tk-oka">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderWebsite:" target="494" id="bNI-D9-uuf"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Send Feedback" id="QsY-X2-ocB">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="orderSendFeedback:" target="494" id="Oge-td-Gf0"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -402,7 +420,7 @@ CA
                         <rect key="frame" x="0.0" y="25" width="856" height="26"/>
                         <subviews>
                             <button toolTip="Send to Recycle Bin" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
-                                <rect key="frame" x="743" y="3" width="82" height="19"/>
+                                <rect key="frame" x="742" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Delete" alternateTitle="Trash" bezelStyle="roundedRect" image="trashcanman32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -412,7 +430,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
-                                <rect key="frame" x="133" y="3" width="82" height="19"/>
+                                <rect key="frame" x="133" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Rename" alternateTitle="Rename" bezelStyle="roundedRect" image="NSFontPanel" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -422,7 +440,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Comming Soon (Under Construction)" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ewn-wA-GNa">
-                                <rect key="frame" x="235" y="3" width="82" height="19"/>
+                                <rect key="frame" x="235" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="View" alternateTitle="Search" bezelStyle="roundedRect" image="NSRevealFreestandingTemplate" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="qGk-Mv-gjM">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -432,7 +450,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Add a new Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iTH-8p-hwY">
-                                <rect key="frame" x="641" y="3" width="82" height="19"/>
+                                <rect key="frame" x="641" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Folder+" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sKC-gj-gWy">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -442,7 +460,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Copy to the side" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="71S-Xk-3oe">
-                                <rect key="frame" x="438" y="3" width="82" height="19"/>
+                                <rect key="frame" x="438" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Copy" alternateTitle="Copy" bezelStyle="roundedRect" image="mancopy32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pw6-2D-mJD">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -452,7 +470,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Move to the side" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JaY-la-eFg">
-                                <rect key="frame" x="539" y="3" width="82" height="19"/>
+                                <rect key="frame" x="539" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Move" alternateTitle="Move" bezelStyle="roundedRect" image="manmove32" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rbt-Le-DCB">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -462,7 +480,7 @@ CA
                                 </connections>
                             </button>
                             <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
-                                <rect key="frame" x="336" y="3" width="82" height="19"/>
+                                <rect key="frame" x="336" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Open" bezelStyle="roundedRect" image="NSQuickLookTemplate" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
@@ -512,7 +530,7 @@ CA
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="j0g-ZO-QjL">
-                                <rect key="frame" x="525" y="8" width="16" height="11"/>
+                                <rect key="frame" x="524" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F6" id="csw-Qb-bcB">
                                     <font key="font" metaFont="miniSystem"/>
                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -536,7 +554,7 @@ CA
                                 </textFieldCell>
                             </textField>
                             <button toolTip="File Information" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="1b1-sW-OtC">
-                                <rect key="frame" x="32" y="3" width="82" height="19"/>
+                                <rect key="frame" x="32" y="3" width="81.5" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Info" alternateTitle="View" bezelStyle="roundedRect" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zKd-wy-Twh">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>

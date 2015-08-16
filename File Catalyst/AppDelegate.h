@@ -81,7 +81,11 @@
 
 - (IBAction)operationCancel:(id)sender;
 
+- (IBAction)orderStartupScreen:(id)sender;
+- (IBAction)orderWebsite:(id)sender;
+- (IBAction)orderSendFeedback:(id)sender;
 - (IBAction)orderPreferencePanel:(id)sender;
+- (IBAction)showHelp:(id)sender;
 
 - (IBAction)cut:(id)sender;
 - (IBAction)copy:(id)sender;

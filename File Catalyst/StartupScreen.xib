@@ -28,10 +28,10 @@
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="topLeft" imageScaling="axesIndependently" image="Caravelle" id="quT-zK-o0a"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OMw-Tt-pY3">
-                        <rect key="frame" x="224" y="110" width="315" height="204"/>
+                        <rect key="frame" x="224" y="246" width="315" height="68"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="H3V-WI-xn4">
                             <font key="font" metaFont="system"/>
-                            <string key="title">I'm honored that you decided to try Caravelle. This application is still making its first steps and thus still far from what is envisioned. For now, offering free download of this application, hoping that it will serve you well. In return, your feedback is very important for me and will help improve the product. Will be delighted to receive your suggestions or complains to: caravelle@nunobrum.com  Copyright (c) 2015 Nuno Brum.   All rights reserved.</string>
+                            <string key="title">I'm honored that you decided to try Caravelle. This application is still making its first steps and will evolve with time. For information of its roadmap, consult:</string>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -70,6 +70,25 @@
                             <action selector="close:" target="-2" id="PHm-Hg-kYW"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ayJ-Ze-KBb">
+                        <rect key="frame" x="338" y="243" width="199" height="19"/>
+                        <buttonCell key="cell" type="recessed" title="www.nunobrum.com/roadmap" bezelStyle="recessed" alignment="center" borderStyle="border" inset="2" id="Rrk-9e-iS7">
+                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="systemBold" size="12"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="launchWebsite:" target="-2" id="Yem-Di-9YG"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cxj-67-EOb">
+                        <rect key="frame" x="224" y="118" width="315" height="120"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="Cu8-me-c7O">
+                            <font key="font" metaFont="system"/>
+                            <string key="title">For now, offering free download of this application, hoping that it will serve you well.  Will be delighted to receive your suggestions or complains to: caravelle@nunobrum.com  Copyright (c) 2015 Nuno Brum.   All rights reserved.</string>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
             <connections>

@@ -191,7 +191,7 @@
                 // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
                 // TODO: Change the code below to use the col_id field instead. This one is working fine. It's just for
                 // when another field is added.
-                if (([theFile isFolder]) && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                if (([theFile itemType]==ItemTypeBranch) && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                     [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
                     [self->observedTreeItemsForSizeCalculation addObject:theFile];
                     cellView.textField.objectValue = @"";

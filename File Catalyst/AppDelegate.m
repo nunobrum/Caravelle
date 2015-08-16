@@ -1191,9 +1191,30 @@ BOOL toggleMenuState(NSMenuItem *menui) {
 }
 
 
+-(IBAction)orderStartupScreen:(id)sender {
+    StartupScreenController *startupScreenCtrl = [[StartupScreenController alloc] initWithWindowNibName:@"StartupScreen"];
+    [startupScreenCtrl hideDontShowThisAgainButton];
+    [NSApp runModalForWindow:startupScreenCtrl.window];
+}
+
+- (IBAction)orderWebsite:(id)sender {
+    NSURL *url = [NSURL URLWithString:@"http://www.nunobrum.com/roadmap.html"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
+- (IBAction)orderSendFeedback:(id)sender {
+    NSURL *url = [NSURL URLWithString:@"mailto:caravelle@nunobrum.com"];
+    // ?subject=Feedback on Caravelle 1v3&body=Hi Nuno,\n\n<put your recommendations or complains here>
+    [[NSWorkspace sharedWorkspace] openURL:url];
+}
+
 - (IBAction)orderPreferencePanel:(id)sender {
     [userPreferenceManager showWindow:self];
+}
 
+- (IBAction)showHelp:(id)sender {
+    NSURL *url = [NSURL URLWithString:@"http://www.nunobrum.com/help.html"];
+    [[NSWorkspace sharedWorkspace] openURL:url];
 }
 
 - (IBAction)operationCancel:(id)sender {
