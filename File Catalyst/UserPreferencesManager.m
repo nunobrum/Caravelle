@@ -146,7 +146,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
                 //[self showTransactionAsInProgress:transaction deferred:YES];
                 break;
             case SKPaymentTransactionStateFailed:
-                NSLog(@"PaymentTransactionObserver: Failed !!!%@",transaction.payment.productIdentifier);
+                NSLog(@"PaymentTransactionObserver: Failed!%@",transaction.payment.productIdentifier);
                 newStatus = @"Failed";
                 [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 
@@ -173,7 +173,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
                     newStatus = @"Restored";
                 }
                 @catch (NSException *exception) {
-                    NSLog(@"Unable to store the transaction");
+                    NSLog(@"PaymentTransactionObserver: Unable to store the transaction");
                     newStatus = @"Failed";
                 }
                 @finally {

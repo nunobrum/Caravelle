@@ -248,7 +248,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (treeCollapsed != self->_treeCollapseDetector) {
         [self.viewOptionsSwitches setSelected:!treeCollapsed forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
         self->_treeCollapseDetector = treeCollapsed;
-        NSLog(@"View:%@ splitViewDidResizeSubiews; tree collapsed.",_viewName);
+        //NSLog(@"View:%@ splitViewDidResizeSubiews; tree collapsed.",_viewName);
         [self.detailedViewController setFoldersDisplayed: self.foldersDisplayedMacro];
         [self.detailedViewController refreshKeepingSelections];
     }
@@ -509,9 +509,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // TODO: ! Beep something
 }
 
-- (void) updateStatus:(NSDictionary *)status {
-    [self.parentController updateStatus:status];
-}
 
 #pragma mark - Service Menu Handling
 /* These functions are used for the Services Menu */
@@ -1219,7 +1216,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     else if ([keyPath isEqualToString:USER_DEF_SEE_HIDDEN_FILES] ||
              [keyPath isEqualToString:USER_DEF_BROWSE_APPS] ||
              [keyPath isEqualToString:USER_DEF_CALCULATE_SIZES]) {
-        NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
+        //NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
         [self startAllBusyAnimations];
         [self.treeNodeSelected refreshContents];
         [self refresh];

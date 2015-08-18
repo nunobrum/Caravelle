@@ -86,7 +86,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(BOOL) needsRefresh;
 -(void) refreshContents;
 -(void) forceRefreshOnBranch;
--(void) calculateSize;
+-(BOOL) calculateSize;
 -(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;
 -(void) sizeCalculationCancelled;
 

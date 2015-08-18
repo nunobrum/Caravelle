@@ -495,7 +495,7 @@
  */
 -(void) setValue:(id)value forUndefinedKey:(NSString *)key {
 
-    NSLog(@"Trying to set value for Key %@", key);
+    NSLog(@"TreeItem.setValue:forUndefinedKey: Trying to set value for Key %@", key);
 }
 
 /* 

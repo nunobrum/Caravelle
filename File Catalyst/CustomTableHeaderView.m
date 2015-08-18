@@ -49,7 +49,7 @@ id fieldOnItem(id object, NSString *fieldID) {
         prop = [object valueForKey:prop_name];
     }
     @catch (NSException *exception) {
-        NSLog(@"Property '%@' not found", prop_name);
+        NSLog(@"CustomTableHeaderView.fieldOnItem() Property '%@' not found", prop_name);
     }
     return prop;
 }
@@ -63,13 +63,13 @@ NSString *transformerOnField(id field, NSString *fieldID) {
             if (text)
                 return text;
             else
-                NSLog(@"error transforming value");
+                NSLog(@"CustomTableHeaderView.transformerOnField() error transforming value");
         }
         else
-            NSLog(@"invalid transformer");
+            NSLog(@"CustomTableHeaderView.transformerOnField() invalid transformer");
     }
     else
-        NSLog(@"no transformer found");
+        NSLog(@"CustomTableHeaderView.transformerOnField() no transformer found");
     return nil;
 }
 

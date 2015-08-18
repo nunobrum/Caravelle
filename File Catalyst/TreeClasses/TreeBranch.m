@@ -417,7 +417,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                             [item setParent:self];
                         }
                         else {
-                            NSLog(@"Failed to create item for URL %@", theURL);
+                            NSLog(@"TreeBranch.refreshContents: Failed to create item for URL %@", theURL);
                         }
                     }
                 } // for
@@ -523,7 +523,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     [lowPriorityQueue addOperation:op];
 }
 
--(void) calculateSize {
+-(BOOL) calculateSize {
     if ([self hasTags:tagTreeSizeCalcReq]==0) {
         [self setTag:tagTreeSizeCalcReq];
         if (self->_children!= nil) {
@@ -539,7 +539,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         else {
             [self _computeAllocatedSize];
         }
+        return YES;
     }
+    else
+        return NO;
 }
 //
 //-(void) _expandTree {

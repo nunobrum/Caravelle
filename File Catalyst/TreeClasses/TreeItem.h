@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     ItemTypeNone = 0,
     ItemTypeBranch,
     ItemTypeFilter,
-    ItemTypeDummyBranch, // This is done to avoid being requested for size calculations
+    ItemTypeDummyBranch, // All items below this one are considered for size calculations (this one excluded)
     //===================== Below this value there are only folders
     ItemTypeLeaf = 10, // All types of files will be above this number
     ItemTypeAudio = 100,

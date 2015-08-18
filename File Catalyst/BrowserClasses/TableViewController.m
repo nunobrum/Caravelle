@@ -162,7 +162,7 @@
                 prop = [objectValue valueForKey:prop_name];
             }
             @catch (NSException *exception) {
-                NSLog(@"BrowserController.tableView:viewForTableColumn:row - Property '%@' not found", prop_name);
+                //NSLog(@"BrowserController.tableView:viewForTableColumn:row - Property '%@' not found", prop_name);
             }
             
             if (prop){
@@ -191,16 +191,20 @@
                 // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
                 // TODO: Change the code below to use the col_id field instead. This one is working fine. It's just for
                 // when another field is added.
-                if (([theFile itemType]==ItemTypeBranch) && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
-                    [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
-                    [self->observedTreeItemsForSizeCalculation addObject:theFile];
+                if (([theFile itemType] < ItemTypeDummyBranch) && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                    
+                    [(TreeBranch*)theFile calculateSize]; // only if the calculation was started successfully
                     cellView.textField.objectValue = @"";
                     [((SizeTableCellView*)cellView)  startAnimation];
-                    [(TreeBranch*)theFile calculateSize];
+                    
+                    // Adds to the the observed list
+                    if ([self->observedTreeItemsForSizeCalculation containsObject:theFile]== NO) {
+                        [theFile addObserver:self forKeyPath:kvoTreeBranchPropertySize options:0 context:nil];
+                        [self->observedTreeItemsForSizeCalculation addObject:theFile];
+                    }
                 }
                 else
                     cellView.textField.objectValue = @"--";
-                
             }
         }
         else {

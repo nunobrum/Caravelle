@@ -144,7 +144,7 @@
 
 //// TODO: 1.4 Make a Full programatic menu
 -(void) menuNeedsUpdate:(NSMenu*) menu {
-    NSLog(@"NodeViewController.menuNeedsUpdate");
+    //NSLog(@"NodeViewController.menuNeedsUpdate");
     if (self.twinName==nil) {
         [[menu itemAtIndex:5] setTitle: @"Copy to..."];
         [[menu itemAtIndex:6] setTitle: @"Move to..."];

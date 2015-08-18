@@ -30,7 +30,7 @@
             break;
         }
         
-        NSLog(@"Expanding path %@", item.path);
+        NSLog(@"ExpandingFolders.main: path %@", item.path);
         MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:[item url] WithMode:BViewCatalystMode];
         
         @synchronized(item) {

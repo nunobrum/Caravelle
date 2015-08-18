@@ -1921,7 +1921,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                     statusText = nil; // Cancel any existing text
             }
             else {
-                NSLog(@"Unkown operation"); // Unknown operation
+                NSLog(@"AppDelegate._operationsInfoFired: Unkown operation"); // Unknown operation
             }
 
             if (!OK) {
@@ -2096,10 +2096,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         EnumBrowserViewType type = [(BrowserController*)sender viewType];
         [self.toolbarViewTypeSelect setSelected:YES forSegment:type];
     }
-}
-
--(void) updateStatus:(NSDictionary *)status {
-    NSLog(@"Status Update missing");
 }
 
 - (void) statusUpdate:(NSNotification*)theNotification {

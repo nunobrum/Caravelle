@@ -212,7 +212,6 @@ extern EnumApplicationMode applicationMode;
 - (void) focusOnPreviousView:(id)sender;
 - (void) updateFocus:(id)sender;
 - (void) contextualFocus:(id)sender;
-- (void) updateStatus:(NSDictionary*)status;
 
 @end
 

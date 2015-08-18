@@ -79,15 +79,15 @@
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
             if (cursor==nil)
-                NSLog(@"Deleted Duplicate %@",finfo.url);
+                NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
             else {
-            while (cursor!=finfo) {
-                if ([cursor duplicateRefreshCount]!=dCount) {
-                    [newCollection addFile:cursor];
-                    [cursor setDuplicateRefreshCount: dCount];
+                while (cursor!=finfo) {
+                    if ([cursor duplicateRefreshCount]!=dCount) {
+                        [newCollection addFile:cursor];
+                        [cursor setDuplicateRefreshCount: dCount];
+                    }
+                    cursor = [cursor nextDuplicate];
                 }
-                cursor = [cursor nextDuplicate];
-            }
             }
         }
     }

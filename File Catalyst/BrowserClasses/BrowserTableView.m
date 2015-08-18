@@ -41,7 +41,7 @@
     _rightClickedRow = [self rowAtPoint:local_point];
     if (_rightClickedRow != -1) {
         NSString *identifier = [[self viewAtColumn:0 row:_rightClickedRow makeIfNecessary:YES] identifier];
-        NSLog(@"Identifier %@", identifier);
+        //NSLog(@"Identifier %@", identifier);
         if ([identifier isEqualToString:ROW_GROUP]) {
             
             // Load the menu
