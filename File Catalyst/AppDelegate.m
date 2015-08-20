@@ -270,7 +270,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
             // and this homepath is authorized
             if (url_allowed!=nil) {
-                id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url_allowed askIfNeeded:YES];
+                id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url askIfNeeded:YES];
                 [self prepareView:view withItem:item];
                 return;
             }

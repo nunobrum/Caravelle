@@ -330,7 +330,7 @@
     /* Always uses the self.currentNode property to manage the Table View */
     // Get the depth configuration
     NSInteger iDepth = NSIntegerMax;
-    NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
+    //NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
 
     if ([self.currentNode isFolder]){
         /* if the filter is empty, doesn't filter anything */
@@ -576,7 +576,7 @@
         BOOL ascending = [[dict objectForKey:@"ascending"] boolValue];
         BOOL grouping  = [[dict objectForKey:@"grouping"] boolValue];
         NodeSortDescriptor *desc = [[NodeSortDescriptor alloc] initWithField:field ascending:ascending grouping:grouping];
-        NSLog(@"Loading preferences: Field:%@ ascending:%d grouping:%d", field, ascending, grouping);
+        //NSLog(@"Loading preferences: Field:%@ ascending:%d grouping:%d", field, ascending, grouping);
         [self.sortAndGroupDescriptors addObject:desc];
     }
 }
@@ -586,7 +586,7 @@
     NSMutableArray *sortElements = [[NSMutableArray alloc] initWithCapacity:[self.sortAndGroupDescriptors count]];
     
     for (NSSortDescriptor<MySortDescriptorProtocol>* desc in self.sortAndGroupDescriptors) {
-        NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
+        //NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
         if ([desc.field isKindOfClass:[NodeSortDescriptor class]]) {
             // This assures that the FoldersFirst sort descriptor is not saved
             [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:

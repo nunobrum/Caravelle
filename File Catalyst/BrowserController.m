@@ -1469,7 +1469,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) savePreferences {
-    NSLog(@"BrowserController.savePreferences %@", self->_viewName);
+    //NSLog(@"BrowserController.savePreferences %@", self->_viewName);
     
     if (self->_viewName == nil) // Sanity Check
         return;
@@ -1488,7 +1488,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(void) loadPreferences {
-    NSLog(@"BrowserController.loadPreferences %@", self->_viewName);
+    //NSLog(@"BrowserController.loadPreferences %@", self->_viewName);
     if (self->_viewName == nil) // Sanity Check
         return;
     

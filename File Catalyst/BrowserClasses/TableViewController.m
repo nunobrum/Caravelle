@@ -445,17 +445,28 @@
     NSInteger row = [_myTableView rowForView:sender];
     NSInteger column = [_myTableView columnForView:sender];
     
-    if (column != [self.myTableView columnWithIdentifier:COL_FILENAME])
+    if (column != [self.myTableView columnWithIdentifier:COL_FILENAME]) {
         // This was not supposed to happen. Best to undo any changes.
         [self.myTableView reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:row]
                                     columnIndexes:[NSIndexSet indexSetWithIndex:column]];
         return;
-
+    }
     if (row != -1) {
         TreeItem *item = [self->_displayedItems objectAtIndex:row];
         NSString const *operation=nil;
         if ([item hasTags:tagTreeItemNew]) {
             operation = opNewFolder;
+            NSArray *items = [NSArray arrayWithObject:item];
+            // [self orderOperation:] selector can't be used because it misses the kDFORenameFileKey
+            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                  items, kDFOFilesKey,
+                                  operation, kDFOOperationKey,
+                                  [sender stringValue], kDFORenameFileKey,
+                                  self.currentNode, kDFODestinationKey,
+                                  //self, kFromObjectKey,
+                                  nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+
         }
         else {
             // If the name did change. Do rename.

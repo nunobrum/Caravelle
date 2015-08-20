@@ -707,10 +707,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     unsigned long leaf_level = [pcomps count]-1;
     if (level < leaf_level) {
         NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        child = [TreeItem treeItemForURL:theURL parent:self];
+        child = [TreeItem treeItemForURL:pathURL parent:self];
         [self addChild:child];
         if ([child isFolder]) {
-            return [(TreeBranch*)child addURL:pathURL];
+            return [(TreeBranch*)child addURL:theURL];
         }
     }
     else if (level == leaf_level) {
