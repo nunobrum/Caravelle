@@ -308,7 +308,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 }
 
 -(BOOL) savePreferences {
-    NSLog(@"AppDelegate.savePreferences:");
+    //NSLog(@"AppDelegate.savePreferences:");
     if (applicationMode != ApplicationModeDuplicate) {
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithLong:applicationMode] forKey:USER_DEF_APP_VIEW_MODE];
         NSString *homepath = [[myLeftView treeNodeSelected] path];
@@ -2301,8 +2301,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         if (OK) { // The operation was not cancelled.
             // closing the window if it was opened
             if (self->duplicateStartupScreenCtrl!=nil) {
-                [self->duplicateStartupScreenCtrl.message setStringValue:@"No duplicate files were found. Auto closing..."];
-                [self performSelector:@selector(closeDuplicatesStartUpWindow) withObject:nil afterDelay:3.0];
+                [self->duplicateStartupScreenCtrl setWarningMessage:@"No duplicate files were found. Auto closing..."];
+                [self performSelector:@selector(closeDuplicatesStartUpWindow) withObject:nil afterDelay:5.0];
             }
             else {
                 // Display information that no duplicates were found

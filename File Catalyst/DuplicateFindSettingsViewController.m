@@ -118,8 +118,8 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         NSString *title = [[_rbGroupDates selectedCell] title];
         if ([title isEqualToString:@"Modified"])
             options |= DupCompareDateModified;
-        else if ([title isEqualToString:@"Added"])
-            options |= DupCompareDateAdded;
+        else if ([title isEqualToString:@"Accessed"])
+            options |= DupCompareDateAccessed;
         else if ([title isEqualToString:@"Created"])
             options |= DupCompareDateCreated;
     }

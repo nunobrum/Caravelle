@@ -21,23 +21,6 @@
     self->_answer = 0;
 }
 
-- (IBAction)organizationChanged:(id)sender {
-    NSInteger choice = [(NSMatrix*)sender selectedColumn];
-    // Changing the image according to selection
-    NSImage *show;
-    switch (choice) {
-        case 0:
-            show = [NSImage imageNamed:@"DuplicateShowClassic"];
-            break;
-        case 1:
-            show = [NSImage imageNamed:@"DuplicateShow"];
-            break;
-        default:
-            break;
-    }
-    [self.exampleImage setImage:show];
-}
-
 
 - (IBAction)close:(id)sender {
     self->_answer = DupDialogMaskOKPressed;
@@ -55,6 +38,15 @@
         [NSApp stopModal];
     
     [self.window close];
+}
+
+-(void) setWarningMessage:(NSString *)message {
+    if (message != nil && [message isEqualToString:@""] == NO) {
+        [self.message setStringValue:message];
+        [self.message setHidden:NO];
+    }
+    else
+        [self.message setHidden:YES];
 }
 
 @end

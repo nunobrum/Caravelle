@@ -29,7 +29,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="505" height="270"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <value key="minSize" type="size" width="505" height="270"/>
             <value key="maxSize" type="size" width="505" height="270"/>
             <view key="contentView" id="EiT-Mj-1SZ">
@@ -68,6 +68,7 @@
                                     </tableColumns>
                                     <connections>
                                         <binding destination="Hj2-tu-aZ1" name="content" keyPath="arrangedObjects" id="eBW-0Z-5hT"/>
+                                        <binding destination="Hj2-tu-aZ1" name="selectionIndexes" keyPath="selectionIndexes" previousBinding="eBW-0Z-5hT" id="h2A-Up-cJm"/>
                                     </connections>
                                 </tableView>
                             </subviews>
@@ -127,7 +128,7 @@ DQ
                         <rect key="frame" x="255" y="36" width="237" height="220"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
-                            <tabViewItem label="General" identifier="1" id="cV2-yb-Enb">
+                            <tabViewItem label="Criteria" identifier="1" id="cV2-yb-Enb">
                                 <view key="view" id="6YP-aF-WXK">
                                     <rect key="frame" x="10" y="33" width="217" height="174"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -176,7 +177,7 @@ DQ
                                         <matrix verticalHuggingPriority="750" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Qwg-rO-vKG">
                                             <rect key="frame" x="36" y="56" width="130" height="58"/>
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                            <size key="cellSize" width="76" height="18"/>
+                                            <size key="cellSize" width="83" height="18"/>
                                             <size key="intercellSpacing" width="4" height="2"/>
                                             <buttonCell key="prototype" type="radio" title="Created" imagePosition="left" alignment="left" inset="2" id="RsM-Hs-M7b">
                                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -192,7 +193,7 @@ DQ
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                     </buttonCell>
-                                                    <buttonCell type="radio" title="Added" imagePosition="left" alignment="left" inset="2" id="tne-JN-kld">
+                                                    <buttonCell type="radio" title="Accessed" imagePosition="left" alignment="left" inset="2" id="tne-JN-kld">
                                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                                         <font key="font" metaFont="system"/>
                                                         <connections>
@@ -293,7 +294,7 @@ DQ
                                         </textField>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LOg-eM-cSB">
                                             <rect key="frame" x="12" y="-2" width="129" height="17"/>
-                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="* Last File Access" id="yFw-cL-FDr">
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="* Modification Date" id="yFw-cL-FDr">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

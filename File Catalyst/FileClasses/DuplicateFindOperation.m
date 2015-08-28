@@ -145,7 +145,13 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                                 duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                             }
                         }
+                        if (duplicate==TRUE && (options & DupCompareDateAccessed) && [FileA.date_accessed isEqualToDate:FileB.date_accessed]==FALSE) {
+                            duplicate = FALSE;
+                        }
                         if (duplicate==TRUE && (options & DupCompareDateModified) && [FileA.date_modified isEqualToDate:FileB.date_modified]==FALSE) {
+                            duplicate = FALSE;
+                        }
+                        if (duplicate==TRUE && (options & DupCompareDateCreated) && [FileA.date_created isEqualToDate:FileB.date_created]==FALSE) {
                             duplicate = FALSE;
                         }
                         if (duplicate==TRUE && (options & (DupCompareContentsMD5|DupCompareContentsFull))) {

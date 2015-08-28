@@ -23,8 +23,8 @@ typedef NS_OPTIONS(NSUInteger, EnumDupStartDialogAnswer) {
 @property (weak) IBOutlet NSTextField *message;
 @property (readonly) NSUInteger answer;
 
-- (IBAction)organizationChanged:(id)sender;
-
 - (IBAction)close:(id)sender;
+
+-(void) setWarningMessage:(NSString*) message;
 
 @end

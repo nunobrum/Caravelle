@@ -1412,10 +1412,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 
     if (self.detailedViewController != newController && newController != nil)  {
-        // Saving the treeCollapsed, so that it can be recovered when the new view is loaded
-        BOOL treeVisble = ![self treeViewCollapsed];
-        [self.preferences setObject:[NSNumber numberWithBool:treeVisble] forKey: USER_DEF_TREE_VISIBLE ];
-         
+        if (self.detailedViewController != nil) {
+            // Saving the treeCollapsed, so that it can be recovered when the new view is loaded
+            BOOL treeVisble = ![self treeViewCollapsed];
+            [self.preferences setObject:[NSNumber numberWithBool:treeVisble] forKey: USER_DEF_TREE_VISIBLE ];
+        }
         [self.detailedViewController unregisterDraggedTypes];
         
         NSView *newView = [newController view];

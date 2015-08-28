@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -19,32 +19,22 @@
         <window title="Duplicate Display Option" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="920" height="649"/>
+            <rect key="contentRect" x="196" y="240" width="779" height="683"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="920" height="649"/>
+                <rect key="frame" x="0.0" y="0.0" width="779" height="683"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cea-K6-fSc">
-                        <rect key="frame" x="17" y="35" width="886" height="556"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="550" id="DF4-mM-ZQb"/>
-                            <constraint firstAttribute="width" constant="880" id="gmZ-pO-XO6"/>
-                        </constraints>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="DuplicateShow" id="iVs-Y7-Tgi"/>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cea-K6-fSc" userLabel="ClassicView">
+                        <rect key="frame" x="109" y="346" width="420" height="320"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="DuplicatesClassicView" id="iVs-Y7-Tgi"/>
                     </imageView>
-                    <button translatesAutoresizingMaskIntoConstraints="NO" id="fxT-Xe-pbB">
-                        <rect key="frame" x="18" y="10" width="145" height="18"/>
-                        <buttonCell key="cell" type="check" title="Don't ask this again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="bNa-8m-7D7">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
-                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ReU-RE-TA4">
-                        <rect key="frame" x="778" y="11" width="122" height="19"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="122" id="OFJ-Fb-P1i"/>
-                        </constraints>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QOn-1u-21h" userLabel="CaravelleView">
+                        <rect key="frame" x="112" y="20" width="647" height="320"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DuplicatesCaravelleView" id="umB-S9-QC2"/>
+                    </imageView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ReU-RE-TA4">
+                        <rect key="frame" x="547" y="384" width="208" height="19"/>
                         <buttonCell key="cell" type="roundRect" title="OK" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SAs-tl-NU0">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
@@ -53,10 +43,10 @@
                             <action selector="close:" target="-2" id="wwX-e6-2jG"/>
                         </connections>
                     </button>
-                    <matrix verticalHuggingPriority="750" tag="1" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIR-Cw-j6z">
-                        <rect key="frame" x="20" y="596" width="880" height="18"/>
+                    <matrix verticalHuggingPriority="750" fixedFrame="YES" tag="1" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIR-Cw-j6z">
+                        <rect key="frame" x="20" y="19" width="85" height="644"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        <size key="cellSize" width="113" height="18"/>
+                        <size key="cellSize" width="85" height="321"/>
                         <size key="intercellSpacing" width="4" height="2"/>
                         <buttonCell key="prototype" type="radio" title="Radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="d4X-no-h0P">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -64,70 +54,57 @@
                         </buttonCell>
                         <cells>
                             <column>
-                                <buttonCell type="radio" title="Classic View" imagePosition="left" alignment="left" tag="1" inset="2" id="v9j-6w-uZi">
+                                <buttonCell type="radio" title="Classic" imagePosition="left" alignment="left" tag="1" inset="2" id="v9j-6w-uZi">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
-                            </column>
-                            <column>
-                                <buttonCell type="radio" title="Caravelle View" imagePosition="left" alignment="left" state="on" inset="2" id="06g-rU-j9o">
+                                <buttonCell type="radio" title="Caravelle" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4vD-hH-MGt">
                                     <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                             </column>
                         </cells>
-                        <connections>
-                            <action selector="organizationChanged:" target="-2" id="Ukm-Ro-VR1"/>
-                        </connections>
                     </matrix>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Day-Fb-YYc">
-                        <rect key="frame" x="18" y="619" width="884" height="18"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="The duplicate has started, take a moment to select how files are going to be presented." id="4bA-ew-jI0">
-                            <font key="font" metaFont="system" size="15"/>
-                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                    <box verticalHuggingPriority="750" fixedFrame="YES" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8xI-jb-uoQ">
+                        <rect key="frame" x="12" y="342" width="776" height="5"/>
+                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <font key="titleFont" metaFont="system"/>
+                    </box>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh" userLabel="Message">
+                        <rect key="frame" x="20" y="322" width="705" height="39"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" placeholderString="Message from Caravelle" drawsBackground="YES" id="bu8-b1-BPF">
+                            <font key="font" metaFont="system" size="32"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlLightHighlightColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Jr-OU-B7Z">
+                        <rect key="frame" x="545" y="459" width="211" height="204"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="kAU-y4-PWy">
+                            <font key="font" metaFont="system"/>
+                            <mutableString key="title">The duplicate has started, take a moment to select how files are going to be presented.  Classic View groups duplicated files by their matching peers.  Caravelle proposes a view where duplicates are grouped by their location on disk. This way is easier to select and delete duplicates in a given location.</mutableString>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh">
-                        <rect key="frame" x="18" y="309" width="884" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="32" id="BNn-gP-y1a"/>
-                        </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="bu8-b1-BPF">
-                            <font key="font" metaFont="system" size="32"/>
-                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxT-Xe-pbB">
+                        <rect key="frame" x="545" y="361" width="145" height="18"/>
+                        <buttonCell key="cell" type="check" title="Don't ask this again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="bNa-8m-7D7">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                 </subviews>
-                <constraints>
-                    <constraint firstItem="cea-K6-fSc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="11T-bA-d2V"/>
-                    <constraint firstAttribute="centerX" secondItem="tLE-co-WRh" secondAttribute="centerX" id="6cr-wD-15i"/>
-                    <constraint firstItem="bIR-Cw-j6z" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="6dh-Ri-7gn"/>
-                    <constraint firstAttribute="trailing" secondItem="Day-Fb-YYc" secondAttribute="trailing" constant="20" symbolic="YES" id="BK6-Za-6Dr"/>
-                    <constraint firstAttribute="trailing" secondItem="tLE-co-WRh" secondAttribute="trailing" constant="20" symbolic="YES" id="DMk-Ep-axL"/>
-                    <constraint firstItem="fxT-Xe-pbB" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="KCB-pk-7th"/>
-                    <constraint firstItem="Day-Fb-YYc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="KKb-T1-aYX"/>
-                    <constraint firstItem="ReU-RE-TA4" firstAttribute="top" secondItem="cea-K6-fSc" secondAttribute="bottom" constant="8" id="Kx3-pp-QLI"/>
-                    <constraint firstAttribute="trailing" secondItem="bIR-Cw-j6z" secondAttribute="trailing" constant="20" symbolic="YES" id="LdC-30-Kpx"/>
-                    <constraint firstAttribute="bottom" secondItem="ReU-RE-TA4" secondAttribute="bottom" constant="12" id="T1e-8o-Eqr"/>
-                    <constraint firstItem="Day-Fb-YYc" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="12" id="UKG-Z2-aNE"/>
-                    <constraint firstAttribute="trailing" secondItem="cea-K6-fSc" secondAttribute="trailing" constant="20" symbolic="YES" id="XdP-Ss-AcZ"/>
-                    <constraint firstItem="cea-K6-fSc" firstAttribute="top" secondItem="bIR-Cw-j6z" secondAttribute="bottom" constant="8" symbolic="YES" id="eKE-zB-wFs"/>
-                    <constraint firstAttribute="centerY" secondItem="tLE-co-WRh" secondAttribute="centerY" id="iSC-Ja-Cq0"/>
-                    <constraint firstAttribute="trailing" secondItem="ReU-RE-TA4" secondAttribute="trailing" constant="20" symbolic="YES" id="n29-7U-mrO"/>
-                    <constraint firstItem="tLE-co-WRh" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="p1V-mL-klZ"/>
-                    <constraint firstAttribute="bottom" secondItem="fxT-Xe-pbB" secondAttribute="bottom" constant="12" id="s97-Bx-fZ1"/>
-                    <constraint firstItem="bIR-Cw-j6z" firstAttribute="top" secondItem="Day-Fb-YYc" secondAttribute="bottom" constant="5" id="tWg-FY-kPV"/>
-                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="313" y="220.5"/>
+            <point key="canvasLocation" x="76.5" y="242.5"/>
         </window>
     </objects>
     <resources>
-        <image name="DuplicateShow" width="858.5" height="508.5"/>
+        <image name="DuplicatesCaravelleView" width="647" height="320"/>
+        <image name="DuplicatesClassicView" width="420" height="320"/>
     </resources>
 </document>

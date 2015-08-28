@@ -161,7 +161,7 @@ typedef NS_OPTIONS(NSUInteger, EnumDuplicateOptions) {
     DupCompareNone         = 0,
     DupCompareName         = 1 << 0,
     DupCompareSize         = 1 << 1,
-    DupCompareDateAdded    = 1 << 2,
+    DupCompareDateAccessed = 1 << 2,
     DupCompareDateCreated  = 1 << 3,
     DupCompareDateModified = 1 << 4,
     DupCompareContentsFull = 1 << 5,

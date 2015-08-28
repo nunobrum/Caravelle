@@ -24,7 +24,7 @@
 }
 
 - (void) refreshContents {
-    NSLog(@"TreeRoot.refreshContents:(%@)", [self name]);
+    //NSLog(@"TreeRoot.refreshContents:(%@)", [self name]);
     if ([self needsRefresh]) {
         [self setTag: tagTreeItemUpdating];
         [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
