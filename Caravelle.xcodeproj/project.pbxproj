@@ -89,6 +89,7 @@
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 		BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
 		BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
+		BCD7C0A61B90B49D00938D95 /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BCD7C0A51B90B49D00938D95 /* Receipts.m */; };
 		BCE350C61B7E5AD7002B387B /* getGUID.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE350C51B7E5AD7002B387B /* getGUID.m */; };
 /* End PBXBuildFile section */
 
@@ -113,8 +114,8 @@
 		3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SizeGrouping.m; path = BrowserClasses/Groupings/SizeGrouping.m; sourceTree = "<group>"; };
 		3C15E93F1AF3E2AF006DF095 /* DateGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateGrouping.h; path = BrowserClasses/Groupings/DateGrouping.h; sourceTree = "<group>"; };
 		3C15E9401AF3E2AF006DF095 /* DateGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DateGrouping.m; path = BrowserClasses/Groupings/DateGrouping.m; sourceTree = "<group>"; };
-		3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeSortDescriptor.h; sourceTree = "<group>"; };
-		3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NodeSortDescriptor.m; sourceTree = "<group>"; };
+		3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeSortDescriptor.h; path = BrowserClasses/Groupings/NodeSortDescriptor.h; sourceTree = "<group>"; };
+		3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeSortDescriptor.m; path = BrowserClasses/Groupings/NodeSortDescriptor.m; sourceTree = "<group>"; };
 		3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myValueTransformers.h; sourceTree = "<group>"; };
 		3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = myValueTransformers.m; sourceTree = "<group>"; };
 		3C20FCC719CB7FAE00826246 /* Automator.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Automator.framework; path = System/Library/Frameworks/Automator.framework; sourceTree = SDKROOT; };
@@ -134,15 +135,15 @@
 		3C29464818F9B87C002B633C /* ImagePreviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePreviewCell.h; sourceTree = "<group>"; };
 		3C29465418FD8ABE002B633C /* MyDirectoryEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyDirectoryEnumerator.h; sourceTree = "<group>"; };
 		3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyDirectoryEnumerator.m; sourceTree = "<group>"; };
-		3C717C05198D54720025E28A /* BrowserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BrowserView.xib; sourceTree = "<group>"; };
-		3C717C07198D5B200025E28A /* BrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowserController.h; sourceTree = "<group>"; };
-		3C717C08198D5B200025E28A /* BrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowserController.m; sourceTree = "<group>"; };
+		3C717C05198D54720025E28A /* BrowserView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BrowserView.xib; path = BrowserClasses/BrowserView.xib; sourceTree = "<group>"; };
+		3C717C07198D5B200025E28A /* BrowserController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserController.h; path = BrowserClasses/BrowserController.h; sourceTree = "<group>"; };
+		3C717C08198D5B200025E28A /* BrowserController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserController.m; path = BrowserClasses/BrowserController.m; sourceTree = "<group>"; };
 		3C717C0A198FB95F0025E28A /* Definitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Definitions.h; sourceTree = "<group>"; };
 		3C84EFE01A05254A00ED6392 /* FileAttributesController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAttributesController.h; path = BrowserClasses/FileAttributesController.h; sourceTree = "<group>"; };
 		3C84EFE11A05254A00ED6392 /* FileAttributesController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileAttributesController.m; path = BrowserClasses/FileAttributesController.m; sourceTree = "<group>"; };
 		3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileAttributesController.xib; path = BrowserClasses/FileAttributesController.xib; sourceTree = "<group>"; };
-		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomTableHeaderView.h; sourceTree = "<group>"; };
-		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomTableHeaderView.m; sourceTree = "<group>"; };
+		3C84EFE51A06C99400ED6392 /* CustomTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomTableHeaderView.h; path = BrowserClasses/CustomTableHeaderView.h; sourceTree = "<group>"; };
+		3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CustomTableHeaderView.m; path = BrowserClasses/CustomTableHeaderView.m; sourceTree = "<group>"; };
 		3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AvailableColumns.plist; sourceTree = "<group>"; };
 		3C87646C1B13764E001B79BD /* TreePackage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreePackage.h; sourceTree = "<group>"; };
 		3C87646D1B13764E001B79BD /* TreePackage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreePackage.m; sourceTree = "<group>"; };
@@ -186,8 +187,8 @@
 		3CEB61EA1ACFCE7400E09A85 /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TableViewController.h; path = BrowserClasses/TableViewController.h; sourceTree = "<group>"; };
 		3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeViewController.h; path = BrowserClasses/NodeViewController.h; sourceTree = "<group>"; };
 		3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeViewController.m; path = BrowserClasses/NodeViewController.m; sourceTree = "<group>"; };
-		3CEF0AAC1B11A3FA00FB4F7A /* SizeTableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SizeTableCellView.h; sourceTree = "<group>"; };
-		3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SizeTableCellView.m; sourceTree = "<group>"; };
+		3CEF0AAC1B11A3FA00FB4F7A /* SizeTableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizeTableCellView.h; path = BrowserClasses/SizeTableCellView.h; sourceTree = "<group>"; };
+		3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SizeTableCellView.m; path = BrowserClasses/SizeTableCellView.m; sourceTree = "<group>"; };
 		3CEF82D61A4EDAB20089F42A /* UserPreferencesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserPreferencesManager.h; sourceTree = "<group>"; };
 		3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserPreferencesManager.m; sourceTree = "<group>"; };
 		3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = UserPreferencesDialog.xib; sourceTree = "<group>"; };
@@ -205,9 +206,9 @@
 		3CF5DA8A1A65D09800786D64 /* RenameFileDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenameFileDialog.h; sourceTree = "<group>"; };
 		3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RenameFileDialog.m; sourceTree = "<group>"; };
 		3CF5DA8C1A65D09800786D64 /* RenameFileDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RenameFileDialog.xib; sourceTree = "<group>"; };
-		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicatesFindSettings.xib; sourceTree = "<group>"; };
-		3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateFindSettingsViewController.h; sourceTree = "<group>"; };
-		3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateFindSettingsViewController.m; sourceTree = "<group>"; };
+		3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DuplicatesFindSettings.xib; path = Duplicates/DuplicatesFindSettings.xib; sourceTree = "<group>"; };
+		3CF645BC19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateFindSettingsViewController.h; path = Duplicates/DuplicateFindSettingsViewController.h; sourceTree = "<group>"; };
+		3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateFindSettingsViewController.m; path = Duplicates/DuplicateFindSettingsViewController.m; sourceTree = "<group>"; };
 		3CF6C8D719ACA4D100968765 /* DuplicateFindOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateFindOperation.h; sourceTree = "<group>"; };
 		3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateFindOperation.m; sourceTree = "<group>"; };
 		3CF8466319EB21FB008C691E /* searchTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = searchTree.h; sourceTree = "<group>"; };
@@ -236,9 +237,9 @@
 		BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartupScreen.xib; sourceTree = "<group>"; };
 		BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartupScreenController.h; sourceTree = "<group>"; };
 		BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartupScreenController.m; sourceTree = "<group>"; };
-		BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateModeStartWindow.h; sourceTree = "<group>"; };
-		BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateModeStartWindow.m; sourceTree = "<group>"; };
-		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
+		BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateModeStartWindow.h; path = Duplicates/DuplicateModeStartWindow.h; sourceTree = "<group>"; };
+		BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateModeStartWindow.m; path = Duplicates/DuplicateModeStartWindow.m; sourceTree = "<group>"; };
+		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DuplicateModeStartWindow.xib; path = Duplicates/DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
 		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
@@ -246,6 +247,8 @@
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
 		BCADC24C1B426AC100245F1D /* DuplicateInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateInformation.h; sourceTree = "<group>"; };
 		BCADC24D1B426AC100245F1D /* DuplicateInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateInformation.m; sourceTree = "<group>"; };
+		BCD7C0A51B90B49D00938D95 /* Receipts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Receipts.m; path = ../Security/Receipts.m; sourceTree = "<group>"; };
+		BCD7C0A71B90B4D000938D95 /* Receipts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Receipts.h; path = ../Security/Receipts.h; sourceTree = "<group>"; };
 		BCE350C51B7E5AD7002B387B /* getGUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = getGUID.m; path = "File CatalystTests/getGUID.m"; sourceTree = SOURCE_ROOT; };
 		BCE350C71B7E5AF7002B387B /* getGUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = getGUID.h; path = "File CatalystTests/getGUID.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -419,8 +422,6 @@
 				BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */,
 				BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */,
 				BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */,
-				BCE350C51B7E5AD7002B387B /* getGUID.m */,
-				BCE350C71B7E5AF7002B387B /* getGUID.h */,
 			);
 			path = "File Catalyst";
 			sourceTree = "<group>";
@@ -428,6 +429,7 @@
 		3CEA674918F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BCD7C0521B90AE3A00938D95 /* Security */,
 				3CEA674A18F87C2F0080C4FC /* Caravelle-Info.plist */,
 				3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */,
 				3CEA674E18F87C2F0080C4FC /* main.m */,
@@ -577,6 +579,18 @@
 			name = DuplicatedFindClasses;
 			sourceTree = "<group>";
 		};
+		BCD7C0521B90AE3A00938D95 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				BCE350C51B7E5AD7002B387B /* getGUID.m */,
+				BCE350C71B7E5AF7002B387B /* getGUID.h */,
+				BCD7C0A51B90B49D00938D95 /* Receipts.m */,
+				BCD7C0A71B90B4D000938D95 /* Receipts.h */,
+			);
+			name = Security;
+			path = IconResources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -715,6 +729,7 @@
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
+				BCD7C0A61B90B49D00938D95 /* Receipts.m in Sources */,
 				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */,
