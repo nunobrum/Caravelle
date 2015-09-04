@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14E46" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -363,7 +363,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="95" y="99" width="856" height="660"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -429,7 +429,7 @@ CA
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
                                 </connections>
                             </button>
-                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
+                            <button toolTip="Rename a File or a Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FfT-nd-Mhm">
                                 <rect key="frame" x="133" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Rename" alternateTitle="Rename" bezelStyle="roundedRect" image="NSFontPanel" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Nkt-zE-5IS">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -479,7 +479,7 @@ CA
                                     <action selector="toolbarMoveTo:" target="-1" id="Zjc-NR-NHQ"/>
                                 </connections>
                             </button>
-                            <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
+                            <button toolTip="Open a Document or a Folder" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CDW-lv-RO9">
                                 <rect key="frame" x="336" y="3" width="82" height="19"/>
                                 <buttonCell key="cell" type="roundRect" title="Open" bezelStyle="roundedRect" image="NSQuickLookTemplate" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kAN-Mv-24S">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -497,7 +497,7 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="lLM-DO-IvQ">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lLM-DO-IvQ">
                                 <rect key="frame" x="118" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F2" id="mSM-fn-Xw1">
                                     <font key="font" metaFont="miniSystem"/>
@@ -513,7 +513,7 @@ CA
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-oh-KH9">
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZOe-oh-KH9">
                                 <rect key="frame" x="321" y="8" width="16" height="11"/>
                                 <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="F4" id="D3W-cm-n4y">
                                     <font key="font" metaFont="miniSystem"/>
@@ -627,7 +627,7 @@ CA
                                 <font key="titleFont" metaFont="system"/>
                             </box>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
-                                <rect key="frame" x="18" y="6" width="95" height="24"/>
+                                <rect key="frame" x="18" y="6" width="65" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -635,9 +635,6 @@ CA
                                             <nil key="label"/>
                                         </segment>
                                         <segment toolTip="Dual Pane Mode" image="dualPane" width="29" tag="1">
-                                            <nil key="label"/>
-                                        </segment>
-                                        <segment toolTip="Duplicate File Finder" image="duplicatesIcon" width="29">
                                             <nil key="label"/>
                                         </segment>
                                     </segments>
@@ -652,7 +649,7 @@ CA
                                 </segmentedCell>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S4e-Ro-5Lx">
-                                <rect key="frame" x="236" y="6" width="63" height="24"/>
+                                <rect key="frame" x="206" y="6" width="63" height="24"/>
                                 <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="tYy-rB-lbq">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -677,7 +674,7 @@ CA
                                 </searchFieldCell>
                             </searchField>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bii-Yd-WT4">
-                                <rect key="frame" x="194" y="6" width="38" height="24"/>
+                                <rect key="frame" x="164" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="wx1-RO-MFB">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -689,7 +686,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="Grouping" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsd-Du-IYs">
-                                <rect key="frame" x="352" y="5" width="50" height="26"/>
+                                <rect key="frame" x="322" y="5" width="50" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" id="Qc6-E4-OxL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -704,7 +701,7 @@ CA
                                 </connections>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u5A-Di-okM">
-                                <rect key="frame" x="303" y="6" width="38" height="24"/>
+                                <rect key="frame" x="273" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="6Rs-Kf-Pcm">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -718,7 +715,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="View Options" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="urp-yc-gQO">
-                                <rect key="frame" x="412" y="5" width="55" height="26"/>
+                                <rect key="frame" x="382" y="5" width="55" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="rI1-hz-veL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -748,7 +745,7 @@ CA
                                 </popUpButtonCell>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uVR-In-oSw">
-                                <rect key="frame" x="121" y="6" width="65" height="24"/>
+                                <rect key="frame" x="91" y="6" width="65" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="ksp-w8-Ak1">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -885,7 +882,6 @@ CA
         <image name="StopButton" width="11" height="11"/>
         <image name="UnderConstruction20" width="20" height="18"/>
         <image name="dualPane" width="19" height="16"/>
-        <image name="duplicatesIcon" width="128" height="128"/>
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>
         <image name="redo16" width="16" height="16"/>

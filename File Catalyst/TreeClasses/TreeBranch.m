@@ -516,33 +516,30 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) _computeAllocatedSize {
-    CalcFolderSizes * op = [[CalcFolderSizes alloc] init];
-    [op setItem:self];
-    [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-    [op setThreadPriority:0.5];
-    [lowPriorityQueue addOperation:op];
-}
-
--(BOOL) calculateSize {
     if ([self hasTags:tagTreeSizeCalcReq]==0) {
         [self setTag:tagTreeSizeCalcReq];
-        if (self->_children!= nil) {
-            @synchronized(self) {
-                for (TreeItem *item in self->_children) {
-                    // NOTE: isKindOfClass is preferred over itemType.
-                    if ([item isKindOfClass:[TreeBranch class]]) {
-                        [(TreeBranch*)item calculateSize];
-                    }
+        CalcFolderSizes * op = [[CalcFolderSizes alloc] init];
+        [op setItem:self];
+        [op setQueuePriority:NSOperationQueuePriorityVeryLow];
+        [op setThreadPriority:0.5];
+        [lowPriorityQueue addOperation:op];
+    }
+}
+
+-(void) calculateSize {
+    if (self->_children!= nil) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                // NOTE: isKindOfClass is preferred over itemType.
+                if ([item isKindOfClass:[TreeBranch class]]) {
+                    [(TreeBranch*)item calculateSize];
                 }
             }
         }
-        else {
-            [self _computeAllocatedSize];
-        }
-        return YES;
     }
-    else
-        return NO;
+    else {
+        [self _computeAllocatedSize];
+    }
 }
 //
 //-(void) _expandTree {

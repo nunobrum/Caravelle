@@ -89,8 +89,6 @@
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 		BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
 		BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
-		BCD7C0A61B90B49D00938D95 /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BCD7C0A51B90B49D00938D95 /* Receipts.m */; };
-		BCE350C61B7E5AD7002B387B /* getGUID.m in Sources */ = {isa = PBXBuildFile; fileRef = BCE350C51B7E5AD7002B387B /* getGUID.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -247,10 +245,6 @@
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
 		BCADC24C1B426AC100245F1D /* DuplicateInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateInformation.h; sourceTree = "<group>"; };
 		BCADC24D1B426AC100245F1D /* DuplicateInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateInformation.m; sourceTree = "<group>"; };
-		BCD7C0A51B90B49D00938D95 /* Receipts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Receipts.m; path = ../Security/Receipts.m; sourceTree = "<group>"; };
-		BCD7C0A71B90B4D000938D95 /* Receipts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Receipts.h; path = ../Security/Receipts.h; sourceTree = "<group>"; };
-		BCE350C51B7E5AD7002B387B /* getGUID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = getGUID.m; path = "File CatalystTests/getGUID.m"; sourceTree = SOURCE_ROOT; };
-		BCE350C71B7E5AF7002B387B /* getGUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = getGUID.h; path = "File CatalystTests/getGUID.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -429,7 +423,6 @@
 		3CEA674918F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				BCD7C0521B90AE3A00938D95 /* Security */,
 				3CEA674A18F87C2F0080C4FC /* Caravelle-Info.plist */,
 				3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */,
 				3CEA674E18F87C2F0080C4FC /* main.m */,
@@ -579,18 +572,6 @@
 			name = DuplicatedFindClasses;
 			sourceTree = "<group>";
 		};
-		BCD7C0521B90AE3A00938D95 /* Security */ = {
-			isa = PBXGroup;
-			children = (
-				BCE350C51B7E5AD7002B387B /* getGUID.m */,
-				BCE350C71B7E5AF7002B387B /* getGUID.h */,
-				BCD7C0A51B90B49D00938D95 /* Receipts.m */,
-				BCD7C0A71B90B4D000938D95 /* Receipts.h */,
-			);
-			name = Security;
-			path = IconResources;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -729,7 +710,6 @@
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
-				BCD7C0A61B90B49D00938D95 /* Receipts.m in Sources */,
 				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */,
@@ -748,7 +728,6 @@
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */,
 				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
-				BCE350C61B7E5AD7002B387B /* getGUID.m in Sources */,
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CDD42F81AF60C0C0018D24D /* ByteCounterUtils.c in Sources */,
 				BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */,
@@ -910,6 +889,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"/Users/nuno/Google Drive/XCode/Caravelle/SeparateTableViewController/File Catalyst/Security/openssl/crypto/include\"",
+				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = Caravelle;
@@ -928,6 +912,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"\"/Users/nuno/Google Drive/XCode/Caravelle/SeparateTableViewController/File Catalyst/Security/openssl/crypto/include\"",
+				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = Caravelle;

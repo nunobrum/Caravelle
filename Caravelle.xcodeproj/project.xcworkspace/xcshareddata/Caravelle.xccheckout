@@ -12,6 +12,8 @@
 	<dict>
 		<key>098D66124A5400E5AD83FA4A9527CFDC52D9E691</key>
 		<string>https://bitbucket.org/cascode-admin/caravelle.git</string>
+		<key>55A7FB660E25DAD7EFF279C9F437500B47348AC7</key>
+		<string>https://github.com/openssl/openssl</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>Caravelle.xcodeproj</string>
@@ -19,6 +21,8 @@
 	<dict>
 		<key>098D66124A5400E5AD83FA4A9527CFDC52D9E691</key>
 		<string>../..</string>
+		<key>55A7FB660E25DAD7EFF279C9F437500B47348AC7</key>
+		<string>../../File%20Catalyst/Security/openssl</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://bitbucket.org/cascode-admin/caravelle.git</string>
@@ -28,6 +32,14 @@
 	<string>098D66124A5400E5AD83FA4A9527CFDC52D9E691</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>55A7FB660E25DAD7EFF279C9F437500B47348AC7</string>
+			<key>IDESourceControlWCCName</key>
+			<string>openssl</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

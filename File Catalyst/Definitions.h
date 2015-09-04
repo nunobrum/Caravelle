@@ -46,6 +46,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define OwnUTITypes
 #endif
 
+#define APP_STORE @1 // Used to validate Receipts
 
 #define APP_IS_SANDBOXED 1
 

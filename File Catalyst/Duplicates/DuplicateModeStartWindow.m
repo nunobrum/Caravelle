@@ -28,7 +28,7 @@
     if ([self.chkDontDisplayAgain integerValue] != 0)
         self->_answer |= DupDialogMaskChkDontDisplayAgain;
     
-    if ([self.duplicateOrganization selectedColumn]==0)
+    if ([self.duplicateOrganization selectedRow]==0)
         self->_answer |= DupDialogMaskClassicView;
     else
         self->_answer |= DupDialogMaskCaravelleView;
