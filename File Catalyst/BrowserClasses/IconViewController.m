@@ -349,6 +349,30 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
         // The Return key will open the file
         [self doubleClick:theEvent];
     }
+    else if ([key isEqualToString:@"\r"] && behave == APP_BEHAVIOUR_NATIVE) {
+        // The return Key Edits the Name
+        NSArray *itemsSelected = [self.iconArrayController selectedObjects];
+        if (itemsSelected != nil) {
+            // TODO:1.4 implement here the option for rename in window
+            if ([itemsSelected count] == 1) {
+                // if only one object selected
+                [self startEditItemName:[itemsSelected firstObject]];
+            }
+            else {
+                // Multiple rename
+                //[NSApp performSelector:@selector(executeRename:) withObject:itemsSelected];
+                // TODO:1.4 implement in future versions
+                // For now just displaying an alert
+                NSAlert *alert = [NSAlert alertWithMessageText:@"Multiple files selected!"
+                                                 defaultButton:@"OK"
+                                               alternateButton:nil
+                                                   otherButton:nil
+                                     informativeTextWithFormat:@"Multi-Rename of files will be enabled in a future version."];
+                [alert setAlertStyle:NSWarningAlertStyle];
+                [alert beginSheetModalForWindow:self.view.window completionHandler:NULL];
+            }
+        }
+    }
     else if ([keyWM isEqualToString:@"\t"]) {
         // the tab key will switch Panes
         [[self parentController] focusOnNextView:self];

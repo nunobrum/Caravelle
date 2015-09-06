@@ -18,7 +18,7 @@
     long long totalallocated = 0;
     
     if (![self isCancelled]) {
-        NSLog(@"Start Calculation on %@", self.item.url);
+        //NSLog(@"Start Calculation on %@", self.item.url);
         NSFileManager *localFileManager = [NSFileManager defaultManager];
         NSArray *fieldsToGet = [NSArray arrayWithObjects:NSURLFileSizeKey,
                                 NSURLFileAllocatedSizeKey,
@@ -45,15 +45,15 @@
         }
     }
     else {
-        NSLog(@"Canceled Start Calculation on %@", self.item.url);
+        //NSLog(@"Canceled Start Calculation on %@", self.item.url);
     }
     if (self.isCancelled) {
         [self.item sizeCalculationCancelled];
-        NSLog(@"Canceled Calculation on %@", self.item.url);
+        //NSLog(@"Canceled Calculation on %@", self.item.url);
     }
     else {
         [self.item setSizes:files allocated:allocated total:total totalAllocated:totalallocated];
-        NSLog(@"Calculation done on %@", self.item.url);
+        //NSLog(@"Calculation done on %@", self.item.url);
     }
     
 }

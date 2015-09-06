@@ -933,12 +933,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // TODO:!! Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
         // For the time being this is an invalid condition. Need to notify user.
-        NSAlert *alert = [NSAlert alertWithMessageText:@"Invalid Selection !"
+        NSAlert *alert = [NSAlert alertWithMessageText:@"Multiple Files Selected"
                                          defaultButton:@"OK"
                                        alternateButton:nil
                                            otherButton:nil
-                             informativeTextWithFormat:@"Select only one Folder"];
-        [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+                             informativeTextWithFormat:@"Rename of multiple files will be available in a future version."];
+        [alert beginSheetModalForWindow:[self myWindow] completionHandler:^(NSModalResponse returnCode) {}];
 
     }
 }
@@ -1551,8 +1551,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
         theAction == @selector(toolbarGotoFolder:) ||
-        theAction == @selector(orderPreferencePanel:) ||
-        theAction == @selector(FindDuplicates:)
+        theAction == @selector(orderPreferencePanel:) //||
+        //theAction == @selector(FindDuplicates:) TODO:1.3.2
         ) {
         return YES;
     }

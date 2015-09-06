@@ -91,9 +91,10 @@
          [key isEqualToString:@"\x19"] || // Shift-Tab will also switch Panes
          [key isEqualToString:@" "])) ||   // The space will mark the file
         (behave == APP_BEHAVIOUR_NATIVE &&
-             ([key isEqualToString:@" "] || // The Space will open the file
-              [key isEqualToString:@"\x19"] || // Shift-Tab will move to previous file
-              [key isEqualToString:@"\t"]))) { // the tab key will move to next file
+         ([key isEqualToString:@"\r"] || // The Return key will rename the file
+          [key isEqualToString:@" "] || // The Space will open the file
+          [key isEqualToString:@"\x19"] || // Shift-Tab will move to previous file
+          [key isEqualToString:@"\t"]))) { // the tab key will move to next file
                  [[self delegate ] performSelector:@selector(keyDown:) withObject:theEvent];
              }
     /* if (([theEvent modifierFlags] & NSCommandKeyMask) &&
