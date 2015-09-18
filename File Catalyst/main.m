@@ -7,8 +7,13 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "Receipts.h"
 
 int main(int argc, const char * argv[])
 {
+    int res = validateAppReceipt();
+    if (res!=0) {
+        return res;
+    }
     return NSApplicationMain(argc, argv);
 }

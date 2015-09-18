@@ -9,6 +9,8 @@
 #ifndef Caravelle_Receipts_h
 #define Caravelle_Receipts_h
 
-NSInteger validateAppReceipt ();
+
+int validateAppReceipt ();
+
 
 #endif
