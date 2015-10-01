@@ -374,11 +374,11 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
                                 isLeaf, @"leaf",
                                 nil] ] ;
     
-//    [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-//                                @"App-Ins", @"description",
-//                                self.paymentsView, @"view",
-//                                isLeaf, @"leaf",
-//                                nil] ] ;
+    [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
+                                @"App-Ins", @"description",
+                                self.paymentsView, @"view",
+                                isLeaf, @"leaf",
+                                nil] ] ;
     
     [self.prefsTree commitEditing];
 
@@ -387,7 +387,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
     
     // TODO:!!!!! Get the information from User Defaults :USER_DEF_APPIN_PRODUCTS;
     // Get the App-In information from App Store
-    //[self updateItemList];
+    [self updateItemList];
     
 }
 

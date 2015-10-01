@@ -26,8 +26,8 @@
 -(NSMutableArray*) children;
 -(void) initChildren;
 
--(void) _releaseReleasedChildren;
--(void) releaseChildren;
+-(NSInteger) _releaseReleasedChildren;
+-(void) _releaseChildren;
 
 @end
 

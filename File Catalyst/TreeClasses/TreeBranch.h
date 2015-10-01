@@ -104,6 +104,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(BOOL) removeChild:(TreeItem*)item;
 //-(BOOL) moveChild:(TreeItem*)item;
 
+-(NSInteger) releaseReleasedChildren;
+-(void) releaseChildren;
+
 /*
  * Tag manipulation
  */

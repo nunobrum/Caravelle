@@ -20,7 +20,11 @@
 }
 
 -(void) setFileCollection:(FileCollection*)collection {
-    _children = collection.fileArray;
+    self->_fileCollection = collection;
+    [self releaseChildren];
+    for (TreeItem *finfo in collection.fileArray) {
+        [self addTreeItem:finfo];
+    }
 }
 
 - (void) refreshContents {

@@ -143,11 +143,25 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     self = [super initWithMDItem:mdItem parent:parent];
     self->_children = nil;
+    self->size_files = -1; // Attribute used to store the value of the computed folder size
+    self->size_allocated = -1;
+    self->size_total = -1;
+    self->size_total_allocated = -1;
     return self;
 }
 
 // TODO:!??? Maybe this method is not really needed, since ARC handles this.
 // Think this is even causing problems
+-(void) _releaseChildren {
+    for (TreeItem *item in _children) {
+        // NOTE: isKindOfClass is preferred over itemType.
+        if ([item isKindOfClass:[TreeBranch class]]) {
+            [(TreeBranch*)item _releaseChildren];
+        }
+    }
+    [_children removeAllObjects];
+}
+
 -(void) releaseChildren {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self ) {
@@ -157,8 +171,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 [(TreeBranch*)item releaseChildren];
             }
         }
-        _children=nil;
     }
+    [_children removeAllObjects];
+    
     [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
 }
 
@@ -261,28 +276,38 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return YES;
 }
 
--(void) _releaseReleasedChildren {
-    //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    //@synchronized(self) {
-        NSUInteger index = 0;
-        while (index < [_children count]) {
-            TreeItem *item = [_children objectAtIndex:index];
-            if ([item hasTags:tagTreeItemRelease]) {
-                // NOTE: isKindOfClass is preferred over itemType.
-                if ([item isKindOfClass:[TreeBranch class]]) {
-                    [(TreeBranch*)item releaseChildren];
-                }
-                else if ([item isKindOfClass:[TreeLeaf class]]) {
-                    [(TreeLeaf*)item removeFromDuplicateRing]; // Removing itself from the duplicate lists
-                }
-                //NSLog(@"Removing %@", [item path]);
-                [_children removeObjectAtIndex:index];
+-(NSInteger) _releaseReleasedChildren {
+    NSInteger released = 0;
+    NSUInteger index = 0;
+
+    while (index < [_children count]) {
+        TreeItem *item = [_children objectAtIndex:index];
+        if ([item hasTags:tagTreeItemRelease]) {
+            // NOTE: isKindOfClass is preferred over itemType.
+            if ([item isKindOfClass:[TreeBranch class]]) {
+                [(TreeBranch*)item _releaseChildren]; // This branch will be completely deleted
             }
-            else
-                index++;
+            else if ([item isKindOfClass:[TreeLeaf class]]) {
+                [(TreeLeaf*)item removeFromDuplicateRing]; // Removing itself from the duplicate lists
+            }
+            //NSLog(@"Removing %@", [item path]);
+            [_children removeObjectAtIndex:index];
+            released++;
         }
-    //}
-    //[self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+        else
+            index++;
+    }
+    return released;
+}
+
+-(NSInteger) releaseReleasedChildren {
+    NSInteger released = 0;
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        released += [self _releaseReleasedChildren];
+    }
+    [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+    return released;
 }
 
 #pragma mark -
