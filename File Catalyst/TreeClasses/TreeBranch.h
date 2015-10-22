@@ -59,14 +59,14 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 
 // Duplicate Support
--(NSInteger)       numberOfDuplicatesInNode;
--(NSInteger)       numberOfDuplicatesInBranch;
--(NSInteger)       numberOfBranchesWithDuplicatesInNode;
--(long long)       duplicateSize;
--(TreeLeaf*)       duplicateAtIndex:(NSUInteger) index;
--(TreeBranch*)     duplicateBranchAtIndex:(NSUInteger) index;
--(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth;
--(NSMutableArray*) duplicatesInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
+//-(NSInteger)       numberOfDuplicatesInNode;
+//-(NSInteger)       numberOfDuplicatesInBranch;
+//-(NSInteger)       numberOfBranchesWithDuplicatesInNode;
+//-(long long)       duplicateSize;
+//-(TreeLeaf*)       duplicateAtIndex:(NSUInteger) index;
+//-(TreeBranch*)     duplicateBranchAtIndex:(NSUInteger) index;
+//-(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth;
+//-(NSMutableArray*) duplicatesInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 -(void)            prepareForDuplicates;
 
 -(BOOL) isExpandable;
@@ -83,6 +83,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 +(instancetype) treeFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
 
+-(void) tagRefreshStart;
+-(void) tagRefreshFinished;
 -(BOOL) needsRefresh;
 -(void) refreshContents;
 -(void) forceRefreshOnBranch;

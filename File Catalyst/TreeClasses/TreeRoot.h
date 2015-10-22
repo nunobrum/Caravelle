@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "FileCollection.h"
-#import "TreeBranch.h"
+#import "TreeBranchCatalyst.h"
 
 
-@interface TreeRoot : TreeBranch <TreeProtocol> {
+@interface TreeRoot : TreeBranchCatalyst {
     FileCollection* _fileCollection;
     NSString* _name;
 }

@@ -133,20 +133,15 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
     self->_children = nil;
-    self->size_files = -1; // Attribute used to store the value of the computed folder size
-    self->size_allocated = -1;
-    self->size_total = -1;
-    self->size_total_allocated = -1;
+    [self _invalidateSizes]; // Attribute used to store the value of the computed folder size
+    
     return self;
 }
 
 -(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     self = [super initWithMDItem:mdItem parent:parent];
     self->_children = nil;
-    self->size_files = -1; // Attribute used to store the value of the computed folder size
-    self->size_allocated = -1;
-    self->size_total = -1;
-    self->size_total_allocated = -1;
+    [self _invalidateSizes]; // Attribute used to store the value of the computed folder size
     return self;
 }
 
@@ -365,6 +360,21 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark -
 #pragma mark Refreshing contents
 
+-(void) tagRefreshStart {
+    [self setTag: tagTreeItemUpdating];
+}
+
+-(void) tagRefreshFinished {
+    [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
+    [self setTag: tagTreeItemScanned];
+    
+    // Sets the flag accordingly to the status of
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
+        [self setTag:tagTreeHiddenPresent];
+    else
+        [self resetTag:tagTreeHiddenPresent];
+}
+
 -(BOOL) needsRefresh {
 
     TreeItemTagEnum tag;
@@ -393,8 +403,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 - (void) refreshContents {
     if ([self needsRefresh]) {
-        [self setTag: tagTreeItemUpdating];
-        //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
+        [self tagRefreshStart];
+        NSLog(@"TreeBranch.refreshContents:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
         [browserQueue addOperationWithBlock:^(void) { 
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
@@ -431,10 +441,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                             // NOTE: isKindOfClass is preferred over itemType.
                             if ([item isKindOfClass:[TreeBranch class]]) {
                                 [self setTag: tagTreeItemDirty]; // When it is created it invalidates it
-                                ((TreeBranch*)item)->size_files = -1;
-                                ((TreeBranch*)item)->size_allocated = -1;
-                                ((TreeBranch*)item)->size_total = -1;
-                                ((TreeBranch*)item)->size_total_allocated = -1;
+                                [((TreeBranch*)item) _invalidateSizes];
                             }
                             if (self->_children==nil)
                                 self->_children = [[NSMutableArray alloc] init];
@@ -449,15 +456,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
                 // Now going to release the disappeard items
                 [self _releaseReleasedChildren];
-                [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
-                [self setTag: tagTreeItemScanned];
-                
-                // Sets the flag accordingly to the status of 
-                if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
-                    [self setTag:tagTreeHiddenPresent];
-                else
-                    [self resetTag:tagTreeHiddenPresent];
-                
+                [self tagRefreshFinished];
             } // synchronized
             [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
         }];
@@ -482,6 +481,15 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 */
+
+#pragma mark - Size related methods.
+
+-(void) _invalidateSizes {
+    self->size_files = -1;
+    self->size_total = -1;
+    self->size_allocated = -1;
+    self->size_total_allocated = -1;
+}
 
 -(void) _propagateSize {
     BOOL all_sizes_available = YES; // Starts with an invalidated number
@@ -527,10 +535,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(void) sizeCalculationCancelled {
     if ([self hasTags:tagTreeSizeCalcReq]) {
         [self willChangeValueForKey:kvoTreeBranchPropertySize];
-        self->size_files           = -1;
-        self->size_allocated       = -1;
-        self->size_total           = -1;
-        self->size_total_allocated = -1;
+        [self _invalidateSizes];
         [self resetTag:tagTreeSizeCalcReq];
         [self didChangeValueForKey:kvoTreeBranchPropertySize];
         // and propagates to parent
@@ -749,67 +754,67 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 
 /* Private Method : This is so that we don't have Manual KVO clauses inside. All calling methods should have it */
--(TreeItem*) _addURLnoRecurr:(NSURL*)theURL {
-    /* Check first if base path is common */
-    //NSRange result;
-    if (theURL==nil) {
-        NSLog(@"TreeBranch._addURLnoRecurr: - The received URL is null");
-        assert(NO);
-        return nil;
-    }
-   
-    @synchronized(self) {
-        if (self->_children == nil)
-            self->_children = [[NSMutableArray alloc] init];
-    }
-    TreeBranch *cursor = self;
-    NSArray *pcomps = [theURL pathComponents];
-    unsigned long level = [[_url pathComponents] count];
-    unsigned long leaf_level = [pcomps count]-1;
-    while (level < leaf_level) {
-        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        TreeItem *child = [cursor childContainingURL:pathURL];
-        if (child==nil) {/* Doesnt exist or if existing is not branch*/
-            /* This is a new Branch Item that will contain the URL*/
-            child = [TreeItem treeItemForURL:pathURL parent:self];
-            if (child!=nil) {
-                @synchronized(cursor) {
-                    [cursor->_children addObject:child];
-                }
-            }
-            else {
-                NSLog(@"TreeBranch._addURLnoRecurr: Couldn't create path %@",pathURL);
-            }
-        }
-        if ([child isFolder])
-        {
-            cursor = (TreeBranch*)child;
-            if (cursor->_children==nil) {
-                cursor->_children = [[NSMutableArray alloc] init];
-            }
-        }
-        else {
-            // Will ignore this child
-            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", theURL, pathURL);
-            return nil;
-        }
-        level++;
-    }
-    // Checks if it exists ; The base class is provided TreeItem so that it can match anything
-    TreeItem *newObj = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeItem class]];
-    if  (newObj==nil) { // It doesn't exist
-        newObj = [TreeItem treeItemForURL:theURL parent:cursor];
-        if (newObj!=nil) {
-            @synchronized(cursor) {
-                [cursor->_children addObject:newObj];
-            }
-        }
-        else {
-            NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
-        }
-    }
-    return newObj; /* Stops here Nothing More to Add */
-}
+//-(TreeItem*) _addURLnoRecurr:(NSURL*)theURL {
+//    /* Check first if base path is common */
+//    //NSRange result;
+//    if (theURL==nil) {
+//        NSLog(@"TreeBranch._addURLnoRecurr: - The received URL is null");
+//        assert(NO);
+//        return nil;
+//    }
+//   
+//    @synchronized(self) {
+//        if (self->_children == nil)
+//            self->_children = [[NSMutableArray alloc] init];
+//    }
+//    TreeBranch *cursor = self;
+//    NSArray *pcomps = [theURL pathComponents];
+//    unsigned long level = [[_url pathComponents] count];
+//    unsigned long leaf_level = [pcomps count]-1;
+//    while (level < leaf_level) {
+//        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
+//        TreeItem *child = [cursor childContainingURL:pathURL];
+//        if (child==nil) {/* Doesnt exist or if existing is not branch*/
+//            /* This is a new Branch Item that will contain the URL*/
+//            child = [TreeItem treeItemForURL:pathURL parent:self];
+//            if (child!=nil) {
+//                @synchronized(cursor) {
+//                    [cursor->_children addObject:child];
+//                }
+//            }
+//            else {
+//                NSLog(@"TreeBranch._addURLnoRecurr: Couldn't create path %@",pathURL);
+//            }
+//        }
+//        if ([child isFolder])
+//        {
+//            cursor = (TreeBranch*)child;
+//            if (cursor->_children==nil) {
+//                cursor->_children = [[NSMutableArray alloc] init];
+//            }
+//        }
+//        else {
+//            // Will ignore this child
+//            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", theURL, pathURL);
+//            return nil;
+//        }
+//        level++;
+//    }
+//    // Checks if it exists ; The base class is provided TreeItem so that it can match anything
+//    TreeItem *newObj = [cursor childWithName:[pcomps objectAtIndex:level] class:[TreeItem class]];
+//    if  (newObj==nil) { // It doesn't exist
+//        newObj = [TreeItem treeItemForURL:theURL parent:cursor];
+//        if (newObj!=nil) {
+//            @synchronized(cursor) {
+//                [cursor->_children addObject:newObj];
+//            }
+//        }
+//        else {
+//            NSLog(@"TreeBranch._addURLnoRecurr: - Couldn't create item %@",theURL);
+//        }
+//    }
+//    return newObj; /* Stops here Nothing More to Add */
+//}
 
 -(BOOL) addTreeItem:(TreeItem*) newItem {
     @synchronized(self) {
@@ -825,7 +830,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         TreeItem *child = [cursor childContainingURL:pathURL];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
-            child = [TreeItem treeItemForURL:pathURL parent:self];
+            child = [TreeItem treeItemForURL:pathURL parent:cursor];
             if (child!=nil) {
                 @synchronized(cursor) {
                     [cursor->_children addObject:child];
@@ -1269,7 +1274,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 /* 
  * Duplicate Support
  */
-#pragma mark - Duplicate support
+/*#pragma mark - Duplicate support
 
 -(BOOL) hasDuplicates {
     @synchronized(self) {
@@ -1324,10 +1329,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
     return total;
-}
+}*/
 
 /* Computes the total size of all the duplicate files  in all subdirectories */
--(long long) duplicateSize {
+/*-(long long) duplicateSize {
     long long total=0;
     if (self->_children!=nil) {
         @synchronized(self) {
@@ -1372,6 +1377,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
     return nil;
 }
+*/
+/*
 
 -(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth {
     NSMutableArray *answer = [[NSMutableArray new] init];
@@ -1388,7 +1395,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     [self _harvestLeafsInBranch:answer depth:depth  filter:composedFilter];
     return answer;
 }
-
+*/
 -(void) prepareForDuplicates {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {

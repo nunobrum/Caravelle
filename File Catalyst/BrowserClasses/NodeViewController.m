@@ -361,7 +361,7 @@
                     predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
                                    attributeName, self.filterText];
             }
-            if (applicationMode == ApplicationModeDuplicate) {
+            /*if (applicationMode == ApplicationModeDuplicateDual) {
                 if (self.filesInSubdirsDisplayed==YES) {
                     tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:iDepth];
                 }
@@ -369,7 +369,10 @@
                     tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:1];
                 }
             }
-            else {
+            else if (applicationMode == ApplicationModeDuplicateSingle) {
+                // TODO:!!!!! Delete this / * * /commented code
+            }
+            else */{
                 if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
                     tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
                 }
@@ -385,7 +388,7 @@
             }
         }
         else {
-            if (applicationMode == ApplicationModeDuplicate) {
+            /*if (applicationMode == ApplicationModeDuplicateDual) {
                 if (self.filesInSubdirsDisplayed==YES) {
                     tableData = [self.currentNode duplicatesInBranchTillDepth:iDepth];
                 }
@@ -393,7 +396,10 @@
                     tableData = [self.currentNode duplicatesInBranchTillDepth:1];
                 }
             }
-            else {
+            else if (applicationMode == ApplicationModeDuplicateSingle) {
+                // TODO:!!!! Delete this / * * / commented code
+            }
+            else */{
                 if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
                     tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
                 }

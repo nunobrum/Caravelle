@@ -87,6 +87,7 @@
 		BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
 		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
 		BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
+		BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
 		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
@@ -270,6 +271,8 @@
 		BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateModeStartWindow.h; path = Duplicates/DuplicateModeStartWindow.h; sourceTree = "<group>"; };
 		BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateModeStartWindow.m; path = Duplicates/DuplicateModeStartWindow.m; sourceTree = "<group>"; };
 		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DuplicateModeStartWindow.xib; path = Duplicates/DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
+		BC766D721BBED721004AA9BC /* TreeBranchCatalyst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeBranchCatalyst.h; sourceTree = "<group>"; };
+		BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeBranchCatalyst.m; sourceTree = "<group>"; };
 		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
@@ -608,6 +611,8 @@
 				3C29463318F9B86A002B633C /* TreeBranch.h */,
 				3C29463418F9B86A002B633C /* TreeBranch.m */,
 				3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */,
+				BC766D721BBED721004AA9BC /* TreeBranchCatalyst.h */,
+				BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */,
 				3C29463718F9B86A002B633C /* TreeRoot.h */,
 				3C29463818F9B86A002B633C /* TreeRoot.m */,
 				3C87646C1B13764E001B79BD /* TreePackage.h */,
@@ -898,6 +903,7 @@
 				BCEB37201BA940AD00B1DAA9 /* ber_tlv_length.c in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
+				BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				BCEB37281BA940AD00B1DAA9 /* INTEGER.c in Sources */,
 				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,

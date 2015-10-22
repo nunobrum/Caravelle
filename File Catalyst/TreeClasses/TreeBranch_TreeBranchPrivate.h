@@ -20,6 +20,7 @@
 -(void) refreshTreeFromURLs;
 -(void) _setChildren:(NSMutableArray*) children;
 -(void) _computeAllocatedSize;
+-(void) _invalidateSizes;
 
 -(void) harverstUndeveloppedFolders:(NSMutableArray*)collector;
 

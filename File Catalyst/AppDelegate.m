@@ -108,17 +108,20 @@ NSUInteger segmentForApplicationMode(EnumApplicationMode mode) {
         case ApplicationMode2Views:
             segment = 1;
             break;
-        case ApplicationModeDuplicate:
-            segment = 2; // This must be updated
+        case ApplicationModeDuplicateSingle:
+            segment = 0;
+            break;
+        case ApplicationModeDuplicateDual:
+            segment = 1; // This must be updated
             break;
         case ApplicationModeSync:
-            segment = 0;
+            segment = 1;
             break;
         case ApplicationModePreview:
-            segment = 0;
+            segment = 2;
             break;
         default:
-            segment = 0;
+            segment = 1;
             break;
     }
     return segment;
@@ -128,27 +131,27 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     EnumApplicationMode mode;
     switch (segment) {
         case 0:
-            mode = ApplicationMode1View;
+            if (applicationMode == ApplicationModeDuplicateDual)
+                mode = ApplicationModeDuplicateSingle;
+            else
+                mode = ApplicationMode1View;
             break;
         case 1:
-            mode = ApplicationMode2Views;
+            if (applicationMode == ApplicationModeDuplicateSingle)
+                mode = ApplicationModeDuplicateDual;
+            else
+                mode = ApplicationMode2Views;
             break;
-        case 2:
-            mode = ApplicationModeDuplicate; // TODO:1.5: replace this with ApplicationModePreview
-            break;
-        case 3:
-            mode = ApplicationModeSync;
-            break;
-        case 4:
-            mode = ApplicationModeDuplicate;
-            break;
-            
+        /*case 2: // TODO:1.5:
+            mode = ApplicationModePreview;
+            break;*/
         default:
             mode = ApplicationMode1View;
             break;
     }
     return mode;
 }
+
 
 @interface AppDelegate (Privates)
 
@@ -309,14 +312,14 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 -(BOOL) savePreferences {
     //NSLog(@"AppDelegate.savePreferences:");
-    if (applicationMode != ApplicationModeDuplicate) {
+    if (applicationMode <= ApplicationMode2Views) { // Only records simple Single and Dual Pane Views
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithLong:applicationMode] forKey:USER_DEF_APP_VIEW_MODE];
         NSString *homepath = [[myLeftView treeNodeSelected] path];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
         
         [myLeftView savePreferences];
         if (myRightView) {
-            if (applicationMode != ApplicationModeDuplicate) {
+            if (applicationMode <= ApplicationMode2Views) {
                 NSString *homepath = [[myRightView treeNodeSelected] path];
                 [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
             }
@@ -826,7 +829,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 #pragma mark execution of Actions
 
 -(BOOL) checkAppInDuplicateBlocking {
-    if (applicationMode == ApplicationModeDuplicate) {
+    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
         if ([self->userPreferenceManager duplicatesAuthorized]==NO) {
             NSAlert *buyAppInInfo =  [NSAlert alertWithMessageText:@"Locked Feature"
                                                      defaultButton:@"OK"
@@ -834,7 +837,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                                                        otherButton:nil
                                          informativeTextWithFormat:@"App-In 'Duplicates Manager' needed to proceed.\nThis App-In can be bought direcly on menu Caravelle-Preferences... App-Ins section"];
             [buyAppInInfo setAlertStyle:NSWarningAlertStyle];
-            [buyAppInInfo beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];            return NO;
+            [buyAppInInfo beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            return NO;
         }
     }
     return YES;
@@ -1003,7 +1007,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 - (void) executeNewFolder:(TreeBranch*)selectedBranch {
     // Safety check : This should have been already blocked in the validation of the menu
-    if (applicationMode == ApplicationModeDuplicate) return;
+    if (applicationMode & (ApplicationModeDuplicateDual | ApplicationModeDuplicateSingle)) return;
     
     NSURL *newURL = [[selectedBranch url] URLByAppendingPathComponent:@"New Folder"];
     TreeBranch *newFolder = [[TreeBranch alloc] initWithURL:newURL parent:selectedBranch];
@@ -1092,7 +1096,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 - (void) executePaste:(TreeBranch*) destinationBranch {
     // Safety check : This should have already been blocked in the menu validation
-    if (applicationMode == ApplicationModeDuplicate) return;
+    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) return;
 
     NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
     NSArray *files = get_clipboard_files(clipboard);
@@ -1379,84 +1383,77 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSInteger segment = [(NSSegmentedControl*)sender selectedSegment];
     
     EnumApplicationMode mode = applicationModeForSegment(segment);
-
+    
     if (mode != applicationMode) {
         EnumApplicationMode old_mode = applicationMode;
         applicationMode = mode;
         
         NSUInteger panelCount = [[self.ContentSplitView subviews] count];
         
-        // Cancelation of the previous mode of operation
-        if (old_mode==ApplicationModeDuplicate) {
-            NSArray *roots = [[myLeftView roots] copy]; // Save the roots first
-            
-            [myLeftView setViewMode:BViewBrowserMode];
-            [myRightView setViewMode:BViewBrowserMode];
-            [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
-            
-            if (([roots count] >= 1) &&
-                ([roots[0] isKindOfClass:[TreeRoot class]]==NO)) // This conditions check whether is not the classic view
-            {
+        if (mode & (ApplicationMode1View | ApplicationMode2Views)) {
+            // Cancelation of the previous mode of operation
+            if (old_mode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
+                NSArray *roots = [[myLeftView roots] copy]; // Save the roots first
                 
-                [self prepareView:myLeftView withItem:roots[0]];
-                if (myRightView!=nil) {
-                    if ([roots count]>=2)
-                        [self prepareView:myRightView withItem:roots[1]];
-                    else
-                        [self goHome:myRightView];
-                }
-            }
-            else {
-                [self goHome:myLeftView];
-                [self goHome:myRightView];
-            }
-        }
-        
-        else if (old_mode == ApplicationModePreview) {
-            // TODO:1.4 code here for Application Mode Preview
-            // Delete the current preview view
-            // and add myRightView
-        }
-        else if (old_mode == ApplicationModeSync){
-            // TODO:1.4 develop this if needed
-        }
-        
-        // Initialization of the new Mode
-        if (mode == ApplicationMode1View) {
-            if (myRightView!=nil && panelCount == 2) {
-                [myRightView.view removeFromSuperview];
-                //myRightView.view = nil;
-            }
-            [myLeftView setName:@"Single" TwinName:nil];
-            [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
-        }
-        else if (mode == ApplicationMode2Views) {
-            if (panelCount==1) {
-                if (myRightView == nil) {
-                    myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
-                    [myRightView setParentController:self];
-                    [myRightView setName:@"Right" TwinName:@"Left"];
-                    [_ContentSplitView addSubview:myRightView.view];
-                    [self goHome:myRightView];
-                }
-                else if (myRightView.view==nil) {
-                    NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
-                    return;
+                [myLeftView setViewMode:BViewBrowserMode];
+                [myRightView setViewMode:BViewBrowserMode];
+                [self.toolbarViewTypeSelect setEnabled:YES forSegment:BViewTypeIcon];
+                
+                if (([roots count] >= 1) &&
+                    ([roots[0] isKindOfClass:[TreeRoot class]]==NO)) // This conditions check whether is not the classic view
+                {
+                    
+                    [self prepareView:myLeftView withItem:roots[0]];
+                    if (myRightView!=nil) {
+                        if ([roots count]>=2)
+                            [self prepareView:myRightView withItem:roots[1]];
+                        else
+                            [self goHome:myRightView];
+                    }
                 }
                 else {
-                    [_ContentSplitView addSubview:myRightView.view];
+                    [self goHome:myLeftView];
+                    [self goHome:myRightView];
                 }
             }
-            else {
-                
-                [myRightView refresh]; // Refreshes just in case
+            
+            // Initialization of the new Mode
+            if (mode == ApplicationMode1View) {
+                if (myRightView!=nil && panelCount == 2) {
+                    [myRightView.view removeFromSuperview];
+                    //myRightView.view = nil;
+                }
+                [myLeftView setName:@"Single" TwinName:nil];
+                [myLeftView refresh];  // Needs to force a refresh since the preferences were updated
             }
-            [myLeftView  setName:@"Left"  TwinName:@"Right"];
-            [myRightView setName:@"Right" TwinName:@"Left"];
-            
-            [myLeftView  refresh];  // Needs to always refresh the left view since preferences may have changed
-            [myRightView refresh];
-            
+            else if (mode == ApplicationMode2Views) {
+                if (panelCount==1) {
+                    if (myRightView == nil) {
+                        myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
+                        [myRightView setParentController:self];
+                        [myRightView setName:@"Right" TwinName:@"Left"];
+                        [_ContentSplitView addSubview:myRightView.view];
+                        [self goHome:myRightView];
+                    }
+                    else if (myRightView.view==nil) {
+                        NSLog(@"AppDelegate.appModeChanged: No valid View in the myRightView Object");
+                        return;
+                    }
+                    else {
+                        [_ContentSplitView addSubview:myRightView.view];
+                    }
+                }
+                else {
+                    
+                    [myRightView refresh]; // Refreshes just in case
+                }
+                [myLeftView  setName:@"Left"  TwinName:@"Right"];
+                [myRightView setName:@"Right" TwinName:@"Left"];
+                
+                [myLeftView  refresh];  // Needs to always refresh the left view since preferences may have changed
+                [myRightView refresh];
+                
+            }
         }
         else if (mode == ApplicationModePreview) {
             // TODO:1.4 Preview Mode
@@ -1471,7 +1468,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             // Reposition last mode
             applicationMode = old_mode;
-            [(NSSegmentedControl*)sender setSelectedSegment:old_mode];
+            [(NSSegmentedControl*)sender setSelectedSegment: segmentForApplicationMode(old_mode)];
             
         }
         else if (mode == ApplicationModeSync) {
@@ -1487,10 +1484,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
             // Reposition last mode
             applicationMode = old_mode;
-            [(NSSegmentedControl*)sender setSelectedSegment:old_mode];
+            [(NSSegmentedControl*)sender setSelectedSegment: segmentForApplicationMode(old_mode)];
             
         }
-        else if (mode == ApplicationModeDuplicate) {
+        else if (mode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
             applicationMode = old_mode; // Reposition back the mode, so if the operation is cancelled.
                                         // Couldn't be done otherwise, since the application code being exec
             [self FindDuplicates:sender];
@@ -1537,7 +1534,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSArray *itemsSelected=nil;
     
     // Actions that are restricted on the operation Mode
-    if (applicationMode==ApplicationModeDuplicate) {
+    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
         if (theAction == @selector(toolbarNewFolder:) ||
             theAction == @selector(contextualNewFolder:) ||
             theAction == @selector(paste:) ||
@@ -1551,8 +1548,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         theAction == @selector(toolbarRefresh:) ||
         theAction == @selector(toolbarSearch:) ||
         theAction == @selector(toolbarGotoFolder:) ||
-        theAction == @selector(orderPreferencePanel:) //||
-        //theAction == @selector(FindDuplicates:) TODO:1.3.2
+        theAction == @selector(orderPreferencePanel:) ||
+        theAction == @selector(FindDuplicates:)
         ) {
         return YES;
     }
@@ -1704,9 +1701,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 - (void)focusOnNextView:(id)sender {
     id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views ||
-            applicationMode == ApplicationModeSync ||
-            applicationMode == ApplicationModeDuplicate) {
+        if (applicationMode &
+            (ApplicationMode2Views |
+             ApplicationModeSync |
+             ApplicationModePreview |
+             ApplicationModeDuplicateDual)) {
             focused_view = myRightView;
         }
         else {
@@ -1724,9 +1723,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 - (void) focusOnPreviousView:(id)sender {
     id<MYViewProtocol> focused_view;
     if (sender == myLeftView) {
-        if (applicationMode == ApplicationMode2Views ||
-            applicationMode == ApplicationModeSync ||
-            applicationMode == ApplicationModeDuplicate) {
+        if (applicationMode &
+            (ApplicationMode2Views |
+             ApplicationModeSync |
+             ApplicationModePreview |
+             ApplicationModeDuplicateDual)) {
             focused_view = myRightView;
         }
         else {
@@ -2061,7 +2062,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         }
 
     }
-    [self statusUpdate:nil];
+    [self statusUpdate:theNotification];
 }
 
 - (void) anyThread_operationFinished:(NSNotification*) theNotification {
@@ -2111,7 +2112,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         case ApplicationModePreview:
             leftTitle = [myLeftView title];
             break;
-        case ApplicationModeDuplicate:
+        case ApplicationModeDuplicateSingle:
+        case ApplicationModeDuplicateDual:
             leftTitle = @"Duplicate Find";
             break;
         default:
@@ -2130,19 +2132,23 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
     //if ([selView isKindOfClass:[BrowserController class]]) {
 
-    if (applicationMode==ApplicationModeDuplicate) {
+    if (applicationMode & ApplicationModeDuplicateDual) {
         id selView = [theNotification object];
         //Check first if the object sending the
         if (selView==nil) { // Sent by Operation Finished
-            //Defaults to the LeftView
-            selView = myLeftView;
+            // Tries to retrieve the object from "FromObjectKey"
+            selView = [[theNotification userInfo] objectForKey:kDFOFromViewKey];
+            if (selView==nil || NO==[selView isKindOfClass:[BrowserController class]]) {
+                //Defaults to the LeftView
+                selView = myLeftView;
+            }
         }
         if (selView==myLeftView || selView ==myLeftView.detailedViewController) {
             selectedFiles = [selView getSelectedItems];
             dupShow++;
             FileCollection *selectedDuplicates = [[FileCollection alloc] init];
             for (TreeItem *item in selectedFiles ) {
-                FileCollection *itemDups = [duplicates duplicatesInPath:[item path] dCounter:dupShow];
+                FileCollection *itemDups = [duplicates duplicatesOfPath:[item path] dCounter:dupShow];
                 [selectedDuplicates concatenateFileCollection: itemDups];
             }
             /* will now populate the Right View with Duplicates*/
@@ -2260,7 +2266,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [myRightView startAllBusyAnimations];
         [myLeftView startAllBusyAnimations];
         
-        [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(ApplicationModeDuplicate)];
+        //[self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(ApplicationModeDuplicate)];
         
         duplicates = [[FileCollection alloc] init];
         NSDictionary *notifInfo = [theNotification userInfo];
@@ -2350,12 +2356,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         use_classic_view = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DUPLICATE_CLASSIC_VIEW];
     }
     
-    applicationMode = ApplicationModeDuplicate;
+    
     
     // ___________________________________
     // Prepare the view for Duplicate View
     // -----------------------------------
     if (use_classic_view) {
+        applicationMode = ApplicationModeDuplicateSingle;
         // Reduce to single panel view
         if ([[self.ContentSplitView subviews] count]==2) { // in dual mode view
             [[[self.ContentSplitView subviews] objectAtIndex:1] removeFromSuperview];
@@ -2384,6 +2391,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
     }
     else {
+        applicationMode = ApplicationModeDuplicateDual;
          // Create right window if needed
         if (myRightView == nil) {
             myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];

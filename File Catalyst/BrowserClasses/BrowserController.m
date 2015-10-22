@@ -274,10 +274,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
     else {
         // Returns the total number of leafs
-        if (applicationMode==ApplicationModeDuplicate)
-            return [item numberOfBranchesWithDuplicatesInNode];
-        else
-            return [item numberOfBranchesInNode];
+        return [item numberOfBranchesInNode];
     }
 }
 
@@ -286,9 +283,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
         ret = [BaseDirectoriesArray objectAtIndex:index];
     else {
-        if (applicationMode==ApplicationModeDuplicate)
-            ret = [item duplicateBranchAtIndex:index];
-        else
+        //if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual))
+        //    ret = [item duplicateBranchAtIndex:index];
+        //else
             ret = [item branchAtIndex:index];
     }
     if ([ret isFolder]) {
@@ -304,10 +301,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
     else if ([item isFolder]) {
-        if (applicationMode==ApplicationModeDuplicate)
-            answer = [item numberOfDuplicatesInNode] > 1 ? YES : NO;
-        else
-            answer = ([(TreeBranch*)item isExpandable]);
+        answer = ([(TreeBranch*)item isExpandable]);
     }
     return answer;
 }
@@ -327,16 +321,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 NSString *sizeString;
-                long long sizeOfFilesInBranch;
-                long fileCount;
-                if (applicationMode == ApplicationModeDuplicate) {
-                    fileCount = [(TreeBranch*)item numberOfDuplicatesInBranch];
-                    sizeOfFilesInBranch = [(TreeBranch*)item duplicateSize];
-                }
-                else {
-                    fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
-                    sizeOfFilesInBranch = [[(TreeBranch*)item fileSize] longLongValue];
-                }
+                long fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
+                long long sizeOfFilesInBranch = [[(TreeBranch*)item fileSize] longLongValue];
                 if (sizeOfFilesInBranch==-1) // Undefined
                     sizeString = @"--";
                 else {
@@ -1613,8 +1599,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (self.focusedView==_myOutlineView) {
         /* This is done like this so that not more than one folder is selected */
         NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
-        if ([rowsSelected count]) {
-            answer = [NSArray arrayWithObject:[_myOutlineView itemAtRow:[rowsSelected firstIndex]]];
+        if (rowsSelected != nil && [rowsSelected count]!=0) {
+            // TODO:? When more than one folder can be selected on the Tree, this code must be changed.
+            id firstObject = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            NSAssert(firstObject!=nil, @"BrowserController.getSelectedItems. Received NIL object");
+            answer = [NSArray arrayWithObject:firstObject];
         }
         else {
             answer = [[NSArray alloc] init]; // will send an empty array

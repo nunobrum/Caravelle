@@ -22,47 +22,18 @@
 -(void) setFileCollection:(FileCollection*)collection {
     self->_fileCollection = collection;
     [self releaseChildren];
+    
+    NSString *patH = commonPathFromItems(collection.fileArray);
+    NSURL *rootURL = [NSURL fileURLWithPath:patH isDirectory:YES];
+    if (rootURL==nil) {
+        NSLog(@"TreeRoot.treeWithFileCollection: - Error: The NSURL wasnt sucessfully created after commonPath");
+        return;
+    }
+    self.url = rootURL;
     for (TreeItem *finfo in collection.fileArray) {
         [self addTreeItem:finfo];
     }
 }
 
-- (void) refreshContents {
-    //NSLog(@"TreeRoot.refreshContents:(%@)", [self name]);
-    if ([self needsRefresh]) {
-        [self setTag: tagTreeItemUpdating];
-        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-        
-        @synchronized(self) {
-            // Set all items as candidates for release
-            NSUInteger index = 0 ;
-            while ( index < [_children count]) {
-                TreeItem *item = self->_children[index];
-                if ([item hasTags:tagTreeItemRelease]!=0)
-                    [self->_children removeObjectAtIndex:index];
-                     // at this point the files should be marked as released
-                else if (fileExistsOnPath([item path])==NO) // Safefy check
-                    [self->_children removeObjectAtIndex:index];
-                else
-                    index++;
-            }
-            self->size_files = -1; // Invalidates the previous calculated size
-            
-            
-            // Now going to release the disappeard items
-            [self resetTag:(tagTreeItemUpdating+tagTreeItemDirty) ]; // Resets updating and dirty
-            [self setTag: tagTreeItemScanned];
-            
-            // Change the bit to be consistent with the mode. Like the TreeBranch does.
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES])
-                [self setTag:tagTreeHiddenPresent];
-            else
-                [self resetTag:tagTreeHiddenPresent];
-            
-        } // synchronized
-        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
-        
-    }
-}
 
 @end

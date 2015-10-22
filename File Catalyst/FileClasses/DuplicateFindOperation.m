@@ -11,7 +11,7 @@
 #import "MyDirectoryEnumerator.h"
 #import "FileCollection.h"
 #import "FileUtils.h"
-#import "TreeManager.h"
+#import "TreeBranchCatalyst.h"
 
 NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 NSString *kDuplicateList = @"DuplicateList";
@@ -196,7 +196,8 @@ NSString *kEndDateFilter   = @"EndDateFilter";
             for (NSURL *url in urls) {
                 // Will distribute the duplicates on the tree received
                 // 1. Will ask the Tree Manager for this URL,
-                TreeBranch *workBranch = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
+                TreeBranchCatalyst *workBranch = [[TreeBranchCatalyst alloc] initWithURL:url parent:nil];
+                                    
                 [workBranch prepareForDuplicates];
                 [roots addObject:workBranch];
             }

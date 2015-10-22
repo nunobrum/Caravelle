@@ -154,7 +154,8 @@ typedef NS_OPTIONS(NSUInteger, EnumApplicationMode) {
     ApplicationMode2Views = 2, /* Each View is independent of the other */
     ApplicationModePreview = 4,
     ApplicationModeSync = 8,
-    ApplicationModeDuplicate = 16 // Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes.
+    ApplicationModeDuplicateSingle = 16,
+    ApplicationModeDuplicateDual = 32// Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes.
 
 };
 
