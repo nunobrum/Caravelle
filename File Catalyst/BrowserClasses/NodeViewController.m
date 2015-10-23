@@ -361,60 +361,36 @@
                     predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
                                    attributeName, self.filterText];
             }
-            /*if (applicationMode == ApplicationModeDuplicateDual) {
-                if (self.filesInSubdirsDisplayed==YES) {
-                    tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:iDepth];
-                }
-                else {
-                    tableData = [self.currentNode duplicatesInBranchWithPredicate:predicate depth:1];
-                }
+            
+            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
             }
-            else if (applicationMode == ApplicationModeDuplicateSingle) {
-                // TODO:!!!!! Delete this / * * /commented code
+            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
             }
-            else */{
-                if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                    tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
-                }
-                else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
-                    tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
-                }
-                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                    tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
-                }
-                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                    tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
-                }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
             }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
+            }
+            
         }
         else {
-            /*if (applicationMode == ApplicationModeDuplicateDual) {
-                if (self.filesInSubdirsDisplayed==YES) {
-                    tableData = [self.currentNode duplicatesInBranchTillDepth:iDepth];
-                }
-                else  {
-                    tableData = [self.currentNode duplicatesInBranchTillDepth:1];
-                }
+            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
             }
-            else if (applicationMode == ApplicationModeDuplicateSingle) {
-                // TODO:!!!! Delete this / * * / commented code
+            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
             }
-            else */{
-                if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                    tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
-                }
-                else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
-                    tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
-                }
-                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                    tableData = [self.currentNode itemsInNode];
-                }
-                else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                    tableData = [self.currentNode leafsInNode];
-                }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+                tableData = [self.currentNode itemsInNode];
+            }
+            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+                tableData = [self.currentNode leafsInNode];
             }
         }
-
+        
         // Adding the Folders First Sort
         // TODO: This is silly to be done all the time, but at leat it assures that its not
         // overriden by other sorts. Find another way to do this

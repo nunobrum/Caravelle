@@ -11,6 +11,7 @@
 #import "StringGrouping.h"
 #import "DateGrouping.h"
 #import "NumberGrouping.h"
+#import "DuplicateGrouping.h"
 #include "Definitions.h"
 #import "CustomTableHeaderView.h"
 #import "TreeItem.h"
@@ -70,6 +71,8 @@
                 self->_groupObject = [[StringGrouping alloc] initWithAscending:self.ascending];
             else if ([groupingSelector isEqualToString:@"integer"])
                 self->_groupObject = [[NumberGrouping alloc] initWithAscending:self.ascending];
+            else if ([groupingSelector isEqualToString:@"duplicate_id"])
+                self->_groupObject = [[DuplicateGrouping alloc] initWithAscending:self.ascending];
             else {
                 NSLog(@"NodeSortDescriptor.setGrouping:using:  Not supported");
                 self->_grouping = NO;

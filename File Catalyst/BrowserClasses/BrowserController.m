@@ -283,10 +283,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
         ret = [BaseDirectoriesArray objectAtIndex:index];
     else {
-        //if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual))
-        //    ret = [item duplicateBranchAtIndex:index];
-        //else
-            ret = [item branchAtIndex:index];
+        ret = [item branchAtIndex:index];
     }
     if ([ret isFolder]) {
         // Use KVO to observe for changes of its children Array

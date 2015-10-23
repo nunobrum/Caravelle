@@ -138,9 +138,9 @@
 		<key>accessor</key>
 		<string>duplicateGroup</string>
 		<key>transformer</key>
-		<string>integer</string>
+		<string>duplicate_id</string>
 		<key>grouping</key>
-		<string>integer</string>
+		<string>duplicate_id</string>
 		<key>app_mode</key>
 		<integer>16</integer>
 	</dict>

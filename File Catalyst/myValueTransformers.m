@@ -171,3 +171,25 @@ DateToStringTransformer *DateToDayTransformer() {
     return [NSColor controlTextColor];
 }
 @end
+
+@implementation DuplicateIDToStringTransformer
+
+
++ (Class)transformedValueClass {
+    return [NSString class];
+}
+
++ (BOOL)allowsReverseTransformation {
+    return NO;
+}
+
+- (id)transformedValue:(id)value {
+    if ([value isKindOfClass:[NSNumber class] ]) {
+        long long v = [(NSNumber*) value longLongValue];
+        return [NSString stringWithFormat:@"Dup#%lld",v];
+    }
+    return nil;
+}
+
+
+@end

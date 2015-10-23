@@ -108,10 +108,10 @@ NSUInteger segmentForApplicationMode(EnumApplicationMode mode) {
         case ApplicationMode2Views:
             segment = 1;
             break;
-        case ApplicationModeDuplicateSingle:
+        case ApplicationModeDupSingle:
             segment = 0;
             break;
-        case ApplicationModeDuplicateDual:
+        case ApplicationModeDupDual:
             segment = 1; // This must be updated
             break;
         case ApplicationModeSync:
@@ -129,25 +129,31 @@ NSUInteger segmentForApplicationMode(EnumApplicationMode mode) {
 
 EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     EnumApplicationMode mode;
-    switch (segment) {
-        case 0:
-            if (applicationMode == ApplicationModeDuplicateDual)
-                mode = ApplicationModeDuplicateSingle;
-            else
+    if (applicationMode & ApplicationModeDupBrowser) {
+        switch (segment) {
+            case 0:
+                mode = ApplicationModeDupSingle;
+                break;
+            default:
+                mode = ApplicationModeDupDual;
+                break;
+        }
+    }
+    else {
+        switch (segment) {
+            case 0:
                 mode = ApplicationMode1View;
-            break;
-        case 1:
-            if (applicationMode == ApplicationModeDuplicateSingle)
-                mode = ApplicationModeDuplicateDual;
-            else
+                break;
+            case 1:
                 mode = ApplicationMode2Views;
-            break;
-        /*case 2: // TODO:1.5:
-            mode = ApplicationModePreview;
-            break;*/
-        default:
-            mode = ApplicationMode1View;
-            break;
+                break;
+                /*case 2: // TODO:1.5:
+                 mode = ApplicationModePreview;
+                 break;*/
+            default:
+                mode = ApplicationMode1View;
+                break;
+        }
     }
     return mode;
 }
@@ -220,6 +226,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [NSValueTransformer setValueTransformer:size_transformer forName:@"size"];
         IntegerToStringTransformer *integer_transformer = [[IntegerToStringTransformer alloc] init];
         [NSValueTransformer setValueTransformer:integer_transformer forName:@"integer"];
+        DuplicateIDToStringTransformer *duplicateID_transformer = [[DuplicateIDToStringTransformer alloc] init];
+        [NSValueTransformer setValueTransformer:duplicateID_transformer forName:@"duplicate_id"];
         
         isCutPending = NO; // used for the Cut to Clipboard operations.
         isApplicationTerminating = NO; // to inform that the application should quit after all processes are finished.
@@ -829,7 +837,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 #pragma mark execution of Actions
 
 -(BOOL) checkAppInDuplicateBlocking {
-    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
+    if (applicationMode & ApplicationModeDupBrowser) {
         if ([self->userPreferenceManager duplicatesAuthorized]==NO) {
             NSAlert *buyAppInInfo =  [NSAlert alertWithMessageText:@"Locked Feature"
                                                      defaultButton:@"OK"
@@ -1007,7 +1015,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 - (void) executeNewFolder:(TreeBranch*)selectedBranch {
     // Safety check : This should have been already blocked in the validation of the menu
-    if (applicationMode & (ApplicationModeDuplicateDual | ApplicationModeDuplicateSingle)) return;
+    if (applicationMode & ApplicationModeDupBrowser) return;
     
     NSURL *newURL = [[selectedBranch url] URLByAppendingPathComponent:@"New Folder"];
     TreeBranch *newFolder = [[TreeBranch alloc] initWithURL:newURL parent:selectedBranch];
@@ -1096,7 +1104,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 - (void) executePaste:(TreeBranch*) destinationBranch {
     // Safety check : This should have already been blocked in the menu validation
-    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) return;
+    if (applicationMode & ApplicationModeDupBrowser) return;
 
     NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
     NSArray *files = get_clipboard_files(clipboard);
@@ -1392,7 +1400,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
         if (mode & (ApplicationMode1View | ApplicationMode2Views)) {
             // Cancelation of the previous mode of operation
-            if (old_mode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
+            if (old_mode & ApplicationModeDupBrowser) {
                 NSArray *roots = [[myLeftView roots] copy]; // Save the roots first
                 
                 [myLeftView setViewMode:BViewBrowserMode];
@@ -1487,7 +1495,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [(NSSegmentedControl*)sender setSelectedSegment: segmentForApplicationMode(old_mode)];
             
         }
-        else if (mode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
+        else if (mode & ApplicationModeDupBrowser) {
             applicationMode = old_mode; // Reposition back the mode, so if the operation is cancelled.
                                         // Couldn't be done otherwise, since the application code being exec
             [self FindDuplicates:sender];
@@ -1534,7 +1542,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSArray *itemsSelected=nil;
     
     // Actions that are restricted on the operation Mode
-    if (applicationMode & (ApplicationModeDuplicateSingle | ApplicationModeDuplicateDual)) {
+    if (applicationMode & ApplicationModeDupBrowser) {
         if (theAction == @selector(toolbarNewFolder:) ||
             theAction == @selector(contextualNewFolder:) ||
             theAction == @selector(paste:) ||
@@ -1703,9 +1711,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if (sender == myLeftView) {
         if (applicationMode &
             (ApplicationMode2Views |
-             ApplicationModeSync |
-             ApplicationModePreview |
-             ApplicationModeDuplicateDual)) {
+             ApplicationModePreview )) {
             focused_view = myRightView;
         }
         else {
@@ -1725,9 +1731,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if (sender == myLeftView) {
         if (applicationMode &
             (ApplicationMode2Views |
-             ApplicationModeSync |
-             ApplicationModePreview |
-             ApplicationModeDuplicateDual)) {
+             ApplicationModePreview)) {
             focused_view = myRightView;
         }
         else {
@@ -2112,8 +2116,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         case ApplicationModePreview:
             leftTitle = [myLeftView title];
             break;
-        case ApplicationModeDuplicateSingle:
-        case ApplicationModeDuplicateDual:
+        case ApplicationModeDupSingle:
+        case ApplicationModeDupDual:
             leftTitle = @"Duplicate Find";
             break;
         default:
@@ -2132,7 +2136,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
     //if ([selView isKindOfClass:[BrowserController class]]) {
 
-    if (applicationMode & ApplicationModeDuplicateDual) {
+    if (applicationMode & ApplicationModeDupDual) {
         id selView = [theNotification object];
         //Check first if the object sending the
         if (selView==nil) { // Sent by Operation Finished
@@ -2362,7 +2366,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     // Prepare the view for Duplicate View
     // -----------------------------------
     if (use_classic_view) {
-        applicationMode = ApplicationModeDuplicateSingle;
+        applicationMode = ApplicationModeDupSingle;
         // Reduce to single panel view
         if ([[self.ContentSplitView subviews] count]==2) { // in dual mode view
             [[[self.ContentSplitView subviews] objectAtIndex:1] removeFromSuperview];
@@ -2391,7 +2395,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
     }
     else {
-        applicationMode = ApplicationModeDuplicateDual;
+        applicationMode = ApplicationModeDupDual;
          // Create right window if needed
         if (myRightView == nil) {
             myRightView = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];

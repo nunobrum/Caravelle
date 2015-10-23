@@ -153,10 +153,11 @@ typedef NS_OPTIONS(NSUInteger, EnumApplicationMode) {
     ApplicationMode1View = 1,
     ApplicationMode2Views = 2, /* Each View is independent of the other */
     ApplicationModePreview = 4,
-    ApplicationModeSync = 8,
-    ApplicationModeDuplicateSingle = 16,
-    ApplicationModeDuplicateDual = 32// Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes.
-
+    ApplicationModeSyncBrowser = 8,
+    ApplicationModeSync = 10,   // = SyncBrowser + 2Views
+    ApplicationModeDupBrowser = 16, // Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes
+    ApplicationModeDupSingle = 17, // = DupBrowser + ApplicationMode1View
+    ApplicationModeDupDual = 18 // = ApplicationModeDupBrowser + ApplicationMode2Views
 };
 
 typedef NS_OPTIONS(NSUInteger, EnumDuplicateOptions) {
