@@ -41,7 +41,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
 -(TreeLeaf*) leafAtIndex:(NSUInteger)index;
--(NSInteger) indexOfChild:(TreeItem*)item;
+-(NSInteger) indexOfItem:(TreeItem*)item;
+-(TreeItem*) itemAtIndex:(NSUInteger)index;
 
 -(long long) sizeOfNode;
 
@@ -52,6 +53,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(NSMutableArray*) leafsInNode;
 -(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) branchesInNode;
+
+-(NSEnumerator*) itemsInNodeEnumerator;
+
 
 -(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate*)filter;
 -(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate*)filter;
@@ -78,6 +82,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(TreeItem*) getNodeWithPath:(NSString*)path;
 -(TreeItem*) addURL:(NSURL*)theURL;
 -(BOOL)      addTreeItem:(TreeItem*) item;
+
+-(BOOL) replaceItem:(TreeItem*)original with:(TreeItem*)replacement;
+-(BOOL) removeItemAtIndex:(NSUInteger)index;
 
 
 -(instancetype) initFromEnumerator:(NSEnumerator*) dirEnum URL:(NSURL*)rootURL parent:(TreeBranch*)parent cancelBlock:(BOOL(^)())cancelBlock;
@@ -119,4 +126,13 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 //-(void) performSelector:(SEL)selector inTreeItemsWithTag:(TreeItemTagEnum)tags;
 //-(void) performSelector:(SEL)selector withObject:(id)param inTreeItemsWithTag:(TreeItemTagEnum)tags;
 //-(void) purgeDirtyItems;
+@end
+
+
+@interface ItemEnumerator : NSEnumerator {
+    NSUInteger index;
+    TreeBranch *parent;
+}
+-(instancetype) initWithParent:(TreeBranch*)parent;
+
 @end

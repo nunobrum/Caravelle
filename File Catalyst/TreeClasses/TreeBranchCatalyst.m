@@ -53,11 +53,20 @@
         level++;
     }
     // Checks if it exists ; The base class is provided TreeItem so that it can match anything
-    TreeItem *replacedChild = [self childWithName:[newItem name] class:[TreeLeaf class]];
+    TreeItem *replacedChild = [cursor childWithName:[newItem name] class:[TreeItem class]];
     @synchronized(cursor) {
-        if (replacedChild)
-            [cursor->_children removeObject:replacedChild];
-        [cursor->_children addObject:newItem];
+        if (replacedChild) {
+            if (replacedChild != newItem) {
+                // Replaces
+                NSInteger idx = [cursor->_children indexOfObject:replacedChild];
+                assert(idx != NSNotFound);
+                [cursor->_children replaceObjectAtIndex:idx withObject:newItem];
+            }
+            //else:  is the same, no need to do anything
+        }
+        else {
+            [cursor->_children addObject:newItem];
+        }
     }
     [newItem setParent:cursor];
     return YES; /* Stops here Nothing More to Add */

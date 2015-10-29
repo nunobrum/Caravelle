@@ -73,9 +73,11 @@ TreeManager *appTreeManager;
                     return (TreeBranch*)[aux parent];
                 }
                 else {
-                    NSLog(@"TreeManager.addTreeItemWithURL: - Error: The URL was not created");
-                    assert(NO);
+                    NSAssert(NO, @"TreeManager.addTreeItemWithURL: - Error: Invalid Class ""%@""", [aux class]);
                 }
+            }
+            else {
+                NSAssert(NO, @"TreeManager.addTreeItemWithURL: - Error: The URL was not created");
             }
             break;
         }

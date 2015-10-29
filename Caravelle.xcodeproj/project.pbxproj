@@ -94,6 +94,7 @@
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
 		BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
 		BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
+		BCDCA49C1BDAE47D00D7D09C /* TreeCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */; };
 		BCEB36DF1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */; };
 		BCEB371D1BA940AD00B1DAA9 /* asn_codecs_prim.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */; };
 		BCEB371E1BA940AD00B1DAA9 /* asn_SET_OF.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EE1BA940AD00B1DAA9 /* asn_SET_OF.c */; };
@@ -283,6 +284,8 @@
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
 		BCADC24C1B426AC100245F1D /* DuplicateInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateInformation.h; sourceTree = "<group>"; };
 		BCADC24D1B426AC100245F1D /* DuplicateInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateInformation.m; sourceTree = "<group>"; };
+		BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeCollection.m; sourceTree = "<group>"; };
+		BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeCollection.h; sourceTree = "<group>"; };
 		BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		BCEB36E61BA8ACFF00B1DAA9 /* libheimdal-asn1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libheimdal-asn1.dylib"; path = "usr/lib/libheimdal-asn1.dylib"; sourceTree = SDKROOT; };
 		BCEB36E91BA940AD00B1DAA9 /* asn_application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asn_application.h; path = ASN1C/asn_application.h; sourceTree = "<group>"; };
@@ -613,6 +616,8 @@
 		3CF32B9919FCEDF800B14A85 /* Branches */ = {
 			isa = PBXGroup;
 			children = (
+				BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */,
+				BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */,
 				3C29463318F9B86A002B633C /* TreeBranch.h */,
 				3C29463418F9B86A002B633C /* TreeBranch.m */,
 				3CA7DFBF19B22A6A00600F41 /* TreeBranch_TreeBranchPrivate.h */,
@@ -897,6 +902,7 @@
 				BCEB37241BA940AD00B1DAA9 /* constr_SET_OF.c in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
 				BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */,
+				BCDCA49C1BDAE47D00D7D09C /* TreeCollection.m in Sources */,
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
 				BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */,

@@ -10,7 +10,7 @@
 #import "NodeViewController.h"
 #import "BrowserTableView.h"
 #import "BrowserOutlineView.h"
-//#import "TreeRoot.h"
+#import "TreeCollection.h"
 #include "Definitions.h"
 
 
@@ -22,7 +22,8 @@
 @interface BrowserController : NSViewController <BrowserParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
     NSSize iconSize;
     //NSString *_filterText;
-    NSMutableArray *BaseDirectoriesArray;
+    //NSMutableArray *BaseDirectoriesArray;
+    TreeCollection *BaseDirectories;
     EnumBrowserViewMode _viewMode;
     EnumBrowserViewType _viewType;
     NSString * _twinName;
@@ -132,12 +133,12 @@
 -(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) setRoots:(NSArray*) baseDirectories;
--(NSMutableArray*) roots;
--(void) removeRootWithIndex:(NSInteger)index;
+-(NSArray*) roots;
+//-(void) removeRootWithIndex:(NSInteger)index;
 //-(void) removeRoot: (TreeRoot*) rootPath;
 //-(void) removeSelectedDirectory;
 -(void) removeAll;
-//-(BOOL) canAddRoot: (NSString*) rootPath;
+
 -(TreeBranch*) selectFirstRoot;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;
 -(BOOL) selectFolderByURL:(NSURL*)theURL;

@@ -357,6 +357,36 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
+-(NSInteger) indexOfItem:(TreeItem*)item {
+    return [_children indexOfObject:item];
+}
+
+-(TreeItem*) itemAtIndex:(NSUInteger)index {
+    return [self->_children objectAtIndex:index];
+}
+
+-(BOOL) removeItemAtIndex:(NSUInteger)index {
+    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    @synchronized(self) {
+        // Leaving this code here as it may come later to clean up the class
+        //if ([item isFolder]) {
+        //    [item dealloc];
+        //}
+        [self->_children removeObjectAtIndex:index];
+    }
+    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
+    return YES;
+}
+
+-(BOOL) replaceItem:(TreeItem*)original with:(TreeItem*)replacement {
+    NSInteger index = [self->_children indexOfObject:original];
+    if (index != NSNotFound) {
+        [self->_children setObject:replacement atIndexedSubscript:index];
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark -
 #pragma mark Refreshing contents
 
@@ -855,11 +885,20 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         level++;
     }
     // Checks if it exists ; The base class is provided TreeItem so that it can match anything
-    TreeItem *replacedChild = [self childWithName:[newItem name] class:[TreeLeaf class]];
+    TreeItem *replacedChild = [cursor childWithName:[newItem name] class:[TreeItem class]];
     @synchronized(cursor) {
-        if (replacedChild)
-            [cursor->_children removeObject:replacedChild];
-        [cursor->_children addObject:newItem];
+        if (replacedChild) {
+            if (replacedChild != newItem) {
+                // Replaces
+                NSInteger idx = [cursor->_children indexOfObject:replacedChild];
+                assert(idx != NSNotFound);
+                [cursor->_children replaceObjectAtIndex:idx withObject:newItem];
+            }
+            //else:  is the same, no need to do anything
+        }
+        else {
+            [cursor->_children addObject:newItem];
+        }
     }
     [newItem setParent:cursor];
     return YES; /* Stops here Nothing More to Add */
@@ -1084,11 +1123,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  Note that if the _children is not populated it is assumed that the
  node is expandable. It is preferable to assume as yes and later correct. */
 -(BOOL) isExpandable {
-    @synchronized(self) {
-        if ((self->_children!=nil) && ([self numberOfBranchesInNode]!=0))
-            return YES;
-    }
+    if ((self->_children!=nil) && ([self numberOfBranchesInNode]!=0))
+        return YES;
     return NO;
+}
+
+-(NSEnumerator*) itemsInNodeEnumerator {
+    return [[ItemEnumerator alloc] initWithParent:self];
 }
 
 
@@ -1151,9 +1192,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return nil;
 }
 
--(NSInteger) indexOfChild:(TreeItem*)item {
-    return [_children indexOfObject:item];
-}
 #pragma mark -
 #pragma mark collector methods
 
@@ -1539,5 +1577,23 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    return answer;
 //}
 
+
+@end
+
+
+@implementation ItemEnumerator
+
+-(instancetype) initWithParent:(TreeBranch*)parentA {
+    self->index = 0;
+    self->parent = parentA;
+    return self;
+}
+
+-(id) nextObject {
+    if (index < [self->parent numberOfItemsInNode]) {
+        return [self->parent itemAtIndex:index++];
+    }
+    return nil;
+}
 
 @end

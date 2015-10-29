@@ -56,7 +56,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    self->BaseDirectoriesArray = [[NSMutableArray new] init];
+    self->BaseDirectories = [[TreeCollection new] initWithURL:nil parent:nil];
     self->extendedSelection = nil; // Used in the extended selection mode
     self->_focusedView = nil;
     self->_viewMode = BViewModeVoid; // This is an invalid view mode. This forces the App to change it.
@@ -270,7 +270,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if(item==nil) {
-        return [BaseDirectoriesArray count];
+        return [BaseDirectories numberOfBranchesInNode];
     }
     else {
         // Returns the total number of leafs
@@ -281,7 +281,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     id ret;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
-        ret = [BaseDirectoriesArray objectAtIndex:index];
+        ret = [BaseDirectories branchAtIndex:index];
     else {
         ret = [item branchAtIndex:index];
     }
@@ -848,15 +848,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         NSUInteger index = [rowsSelected firstIndex];
         id node = [_myOutlineView itemAtRow:index];
         if ([node isFolder]) { // It is a Folder : Will make it a root
-            index = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
-            BaseDirectoriesArray[index] = node;
-
-            /* This is needed to force the update of the path bar on setPathBarToItem.
-             other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange, 
-             that was called prior to this method will update _treeNodeSelected. */
-            _treeNodeSelected = nil;
-            [self selectFolderByItem:node];
-            [self.detailedViewController refresh];
+            if ([BaseDirectories replaceItem:_rootNodeSelected with:node]) {
+                /* This is needed to force the update of the path bar on setPathBarToItem.
+                 other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange,
+                 that was called prior to this method will update _treeNodeSelected. */
+                _treeNodeSelected = nil;
+                [self selectFolderByItem:node];
+                [self.detailedViewController refresh];
+            }
+            else
+                NSLog(@"BrowserController.OutlineDoubleClickEvent: - Root not found '%@'", [node className]);
         }
         else // When other types are allowed in the tree view this needs to be completed
             NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
@@ -994,11 +995,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
                 /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
                 node = [appTreeManager addTreeItemWithURL:newURL askIfNeeded:YES];
                 if (node) { // sanity check
-                    [self removeRootWithIndex:0];
+                    [BaseDirectories removeItemAtIndex:0];
                     [self addTreeRoot:node];
                 }
                 else { // if it doesn't exist then put it back as it was
-                    node = [BaseDirectoriesArray objectAtIndex:0];
+                    node = [BaseDirectories branchAtIndex:0];
                 }
             }
         }
@@ -1089,7 +1090,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             NSUInteger level = [_myOutlineView levelForRow:row];
 
             if (level==0) { // Its on the root
-                [BaseDirectoriesArray removeObject:object];
+                [BaseDirectories removeChild:object];
 
             }
 
@@ -1113,7 +1114,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //            else {
 //                // Calculate index
 //                TreeBranch *parent = [_myOutlineView parentForItem:object];
-//                NSInteger index = [parent indexOfChild:object];
+//                NSInteger index = [parent indexOfItem:object];
 //                [_myOutlineView removeItemsAtIndexes:[NSIndexSet indexSetWithIndex:index]
 //                                            inParent:parent
 //                                       withAnimation:NSTableViewAnimationEffectFade];
@@ -1157,11 +1158,14 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             else {
                 // parent not found. Detect if the root has disappeard
                 if ([_rootNodeSelected hasTags:tagTreeItemRelease]) {
-                    NSUInteger idx = [BaseDirectoriesArray indexOfObject:_rootNodeSelected];
-                    [BaseDirectoriesArray removeObjectAtIndex:idx];
-                    if ([BaseDirectoriesArray count]>0) {
-                        idx = (idx>0) ? 0 : idx-1;
-                        [self selectFolderByItem:[BaseDirectoriesArray objectAtIndex:idx]];
+                    NSUInteger idx = [BaseDirectories indexOfItem:_rootNodeSelected];
+                    [BaseDirectories removeItemAtIndex:idx];
+                    if ([BaseDirectories numberOfItemsInNode]>0) {
+                        if (idx>0)
+                            idx--;
+                        else
+                            idx=0;
+                        [self selectFolderByItem:[BaseDirectories itemAtIndex:idx]];
                     }
                     else {
                         // Nothing else to do. Just clear the View
@@ -1488,10 +1492,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(void) refresh {
     // Refresh first the Roots, deletes the ones tagged for deletion
     NSUInteger idx=0;
-    while (idx < [BaseDirectoriesArray count]) {
-        TreeBranch *tree = [BaseDirectoriesArray objectAtIndex:idx];
+    while (idx < [BaseDirectories numberOfBranchesInNode]) {
+        TreeBranch *tree = [BaseDirectories branchAtIndex:idx];
         if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
-            [BaseDirectoriesArray removeObjectAtIndex:idx];
+            [BaseDirectories removeItemAtIndex:idx];
         }
         else { // Refreshes all the others
             // [tree setTag:tagTreeItemDirty];  // Only treeManager and operations should make items dirty
@@ -1502,15 +1506,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // Then the observed items
     for (TreeBranch *tree in _observedVisibleItems) {
         // But avoiding repeating the refreshes already done
-        if ([BaseDirectoriesArray indexOfObject:tree ]==NSNotFound) {
+        if ([BaseDirectories indexOfItem:tree ]==NSNotFound) {
             // [tree setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
             [tree refreshContents];
         }
     }
 
-    if ([BaseDirectoriesArray count]==1) {
+    if ([BaseDirectories numberOfBranchesInNode]==1) {
         // Expand the Root Node
-        [_myOutlineView expandItem:BaseDirectoriesArray[0]];
+        [_myOutlineView expandItem:[BaseDirectories branchAtIndex:0]];
     }
     [self stopBusyAnimations];
     [_myOutlineView reloadData];
@@ -1519,10 +1523,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) addTreeRoot:(TreeBranch*)theRoot {
     if (theRoot!=nil) {
-        BOOL answer = [self canAddRoot:[theRoot path]];
-        if (answer == YES) {
-            [BaseDirectoriesArray addObject: theRoot];
-        }
+        [BaseDirectories addTreeItem: theRoot];
+        
         /* Refresh the Trees so that the trees are displayed */
         //[self refreshTrees];
         /* Make the Root as selected */
@@ -1532,31 +1534,32 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 -(void) setRoots:(NSArray*) baseDirectories {
     //TODO: Optimization Create a Class to manage arrays of Branches
-    [BaseDirectoriesArray removeAllObjects];
-    [BaseDirectoriesArray addObjectsFromArray:baseDirectories];
-}
-
--(NSMutableArray*) roots {
-    return BaseDirectoriesArray;
-}
-
--(void) removeRootWithIndex:(NSInteger)index {
-    if (index < [BaseDirectoriesArray count]) {
-        [BaseDirectoriesArray removeObjectAtIndex:index];
+    [BaseDirectories releaseChildren];
+    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+    TreeItem* item;
+    while (item = [enumerator nextObject]) {
+        [BaseDirectories addTreeItem:item];
     }
-    //[self refreshTrees];
 }
+
+-(NSArray*) roots {
+    return [BaseDirectories branchesInNode];
+}
+
+//-(void) removeRootWithIndex:(NSInteger)index {
+//    [BaseDirectories removeItemAtIndex:index];
+//}
 
 -(void) removeRoot: (TreeBranch*) root {
-    [BaseDirectoriesArray removeObjectIdenticalTo:root];
+    [BaseDirectories removeChild:root];
 }
 
 -(void) removeAll {
-    if (BaseDirectoriesArray==nil)
-        BaseDirectoriesArray = [[NSMutableArray alloc] init]; /* Garbage collection will release everything */
+    if (BaseDirectories==nil)
+        BaseDirectories = [[TreeCollection alloc] initWithURL:nil parent:nil];
     else {
         [self unobserveAll];
-        [BaseDirectoriesArray removeAllObjects];
+        [BaseDirectories releaseChildren];
     }
     if (self.detailedViewController!=nil)
         [self.detailedViewController setCurrentNode:nil]; // This cleans the view
@@ -1564,16 +1567,6 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 
-// This method checks if a root can be added to existing set.
--(BOOL) canAddRoot: (NSString*) rootPath {
-    enumPathCompare answer = pathsHaveNoRelation;
-    for(TreeBranch *root in BaseDirectoriesArray) {
-        /* Checks if rootPath in root */
-        answer =[root relationToPath: rootPath];
-        if (answer!=pathsHaveNoRelation) break;
-    }
-    return answer==pathsHaveNoRelation;
-}
 
 
 -(NSURL*) getTreeViewSelectedURL {
@@ -1688,8 +1681,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 
 -(TreeBranch*) selectFirstRoot {
-    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1) {
-        TreeBranch *root = BaseDirectoriesArray[0];
+    if (BaseDirectories!=nil && [BaseDirectories numberOfBranchesInNode]>=1) {
+        TreeBranch *root = [BaseDirectories branchAtIndex:0];
         _rootNodeSelected = root;
         [self selectFolderByItem:root];
         [self stopBusyAnimations];
@@ -1700,9 +1693,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 }
 
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
-    if (BaseDirectoriesArray!=nil && [BaseDirectoriesArray count]>=1 && treeNode!=nil) {
-
-        for (TreeBranch *root in BaseDirectoriesArray) {
+    if (BaseDirectories!=nil && [BaseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
+        NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+        TreeBranch* root;
+        while (root = [enumerator nextObject]) {
             if ([root canContainURL:[treeNode url]]){ // Search for Root Node
                 _rootNodeSelected = root;
                 TreeBranch *lastBranch = nil;
@@ -1736,8 +1730,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // Replaces current root
             item = [appTreeManager addTreeItemWithURL:theURL askIfNeeded:YES];
             if (item != nil) {
-                [BaseDirectoriesArray setObject:item atIndexedSubscript:0];
-                //[item setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
+                [BaseDirectories addTreeItem:item];
                 return [self selectFolderByItem:item];
             }
         }
@@ -1751,7 +1744,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(TreeBranch*) getRootWithURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
-    for(TreeBranch *root in BaseDirectoriesArray) {
+    
+    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+    TreeBranch* root;
+    while (root = [enumerator nextObject]) {
         /* Checks if rootPath in root */
         if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */
@@ -1765,7 +1761,9 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 -(TreeItem*) getItemByURL:(NSURL*)theURL {
     if (theURL==nil)
         return NULL;
-    for(TreeBranch *root in BaseDirectoriesArray) {
+    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+    TreeBranch* root;
+    while (root = [enumerator nextObject]) {
         /* Checks if rootPath in root */
         if ([root canContainURL:theURL]) {
             /* The URL is already contained in this tree */
