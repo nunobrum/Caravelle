@@ -12,13 +12,11 @@
 
 
 @interface TreeCollection : TreeBranchCatalyst {
-    FileCollection* _fileCollection;
-    NSString* _name;
+
 }
 
--(void) setName:(NSString*)name;
--(NSString*) name;
 
--(void) setFileCollection:(FileCollection*)collection;
+
+-(void) addFileCollection:(FileCollection*)collection;
 
 @end

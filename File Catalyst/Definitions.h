@@ -36,6 +36,8 @@ extern NSString const *opDuplicateFind;
 extern NSString const *opFlatOperation;
 
 extern NSString *notificationStatusUpdate;
+extern NSString *notificationViewChanged;
+extern NSString *kViewChangedWhatKey;
 
 //#define USE_UTI
 #ifdef USE_UTI
@@ -157,7 +159,8 @@ typedef NS_OPTIONS(NSUInteger, EnumApplicationMode) {
     ApplicationModeSync = 10,   // = SyncBrowser + 2Views
     ApplicationModeDupBrowser = 16, // Atention. This value is linked to the available Columns, so that Duplicate ID is not displayed in other modes
     ApplicationModeDupSingle = 17, // = DupBrowser + ApplicationMode1View
-    ApplicationModeDupDual = 18 // = ApplicationModeDupBrowser + ApplicationMode2Views
+    ApplicationModeDupDual = 18, // = ApplicationModeDupBrowser + ApplicationMode2Views
+    ApplicationModeDupStarted = 32,
 };
 
 typedef NS_OPTIONS(NSUInteger, EnumDuplicateOptions) {
@@ -185,7 +188,9 @@ extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;
 extern NSOperationQueue *browserQueue;
 extern NSOperationQueue *lowPriorityQueue;
-extern EnumApplicationMode applicationMode;
+
+extern inline EnumApplicationMode application_mode();
+#define applicationMode application_mode()
 
 
 @protocol MYViewProtocol <NSObject>

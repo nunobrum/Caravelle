@@ -186,7 +186,10 @@ DateToStringTransformer *DateToDayTransformer() {
 - (id)transformedValue:(id)value {
     if ([value isKindOfClass:[NSNumber class] ]) {
         long long v = [(NSNumber*) value longLongValue];
-        return [NSString stringWithFormat:@"Dup#%lld",v];
+        if (v == 0)
+            return @"";
+        else
+            return [NSString stringWithFormat:@"Dup#%lld",v];
     }
     return nil;
 }

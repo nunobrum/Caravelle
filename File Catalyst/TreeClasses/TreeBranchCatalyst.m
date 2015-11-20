@@ -14,6 +14,11 @@
 
 @implementation TreeBranchCatalyst
 
+-(void) setName:(NSString*)name {
+    self.nameCache = name;
+}
+
+
 -(BOOL) addTreeItem:(TreeItem*) newItem {
     @synchronized(self) {
         if (self->_children == nil)
@@ -72,41 +77,12 @@
     return YES; /* Stops here Nothing More to Add */
 }
 
--(void) _coreRefreshContents {
-    BOOL is_dirty = NO;
-    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    @synchronized(self) {
-        // Set all items as candidates for release
-        NSUInteger index = 0 ;
-        while ( index < [_children count]) {
-            TreeItem *item = self->_children[index];
-            if ([item hasTags:tagTreeItemRelease]!=0) {
-                [self->_children removeObjectAtIndex:index];
-                is_dirty = YES;
-            }
-            // at this point the files should be marked as released
-            else if (fileExistsOnPath([item path])==NO) { // Safefy check
-                [self->_children removeObjectAtIndex:index];
-                is_dirty = YES;
-            }
-            else {
-                if ([item itemType]==ItemTypeBranch) {
-                    // TODO:!!!! Recurse the refresh Contents folder ?????
-                    // Maybe it sufices to mark it as dirty, it will be automatically done on the browser
-                    // But the size calculators must be changed accordingly
-                }
-                index++;
-            }
-        }
-        if (is_dirty) {
-            [self _invalidateSizes]; // Invalidates the previous calculated size
-        }
-        [self tagRefreshFinished];
-        
-    } // synchronized
-    [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
-   
+-(BOOL) needsRefresh {
+    // Always consider that it was scanned.
+    [self setTag:tagTreeItemScanned];
+    return [super needsRefresh];
 }
+
 
 -(void) refreshContents {
     NSLog(@"TreeBranchCatalyst.refreshContents (%@)", [self path]);
@@ -115,11 +91,44 @@
         //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
         
         [browserQueue addOperationWithBlock:^(void) {
-            [self _coreRefreshContents];
+            BOOL is_dirty = NO;
+            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+            @synchronized(self) {
+                // Set all items as candidates for release
+                NSUInteger index = 0 ;
+                while ( index < [_children count]) {
+                    TreeItem *item = self->_children[index];
+                    if ([item hasTags:tagTreeItemRelease]!=0) {
+                        [self->_children removeObjectAtIndex:index];
+                        is_dirty = YES;
+                    }
+                    // at this point the files should be marked as released
+                    else if (fileExistsOnPath([item path])==NO) { // Safefy check
+                        [self->_children removeObjectAtIndex:index];
+                        is_dirty = YES;
+                    }
+                    else {
+                        if ([item itemType]==ItemTypeBranch) {
+                            // TODO:!!!! Recurse the refresh Contents folder ?????
+                            // Maybe it sufices to mark it as dirty, it will be automatically done on the browser
+                            // But the size calculators must be changed accordingly
+                        }
+                        index++;
+                    }
+                }
+                if (is_dirty) {
+                    [self _invalidateSizes]; // Invalidates the previous calculated size
+                }
+                [self tagRefreshFinished];
+                
+            } // synchronized
+            [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
          }];
     }
 }
 
-
+-(NSString*) debugDescription {
+    return [NSString stringWithFormat:@"TreeBranchCatalyst(name%@) files:%li", self.nameCache, [self->_children count]];
+}
 
 @end

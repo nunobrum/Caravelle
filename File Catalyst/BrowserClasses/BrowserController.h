@@ -16,7 +16,7 @@
 
 
 
-//extern NSString *notificationCatalystRootUpdate;
+extern NSString *kViewChanged_TreeCollapsed;
 
 
 @interface BrowserController : NSViewController <BrowserParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {
@@ -132,6 +132,7 @@
 -(void) reloadItem:(id) item;
 -(void) refresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
+-(void) addFileCollection:(FileCollection*) collection;
 -(void) setRoots:(NSArray*) baseDirectories;
 -(NSArray*) roots;
 //-(void) removeRootWithIndex:(NSInteger)index;

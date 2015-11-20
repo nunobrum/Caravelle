@@ -27,6 +27,8 @@
 const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;
 
+NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
+
 
 @interface BrowserController () {
     id _focusedView; // Contains the currently selected view
@@ -366,7 +368,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 //
 //}
 
-// TODO:!! This doesn't seem to be used, but it's needed.
+// This doesn't seem to be used, but it's needed for debug. trapping the KVO setting
 - (void)outlineView:(NSOutlineView *)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn *)tableColumn byItem:(id)item {
     NSLog(@"BrowserController.outlineView:setObjectValue:forTableColumn:byItem - Not implemented");
     NSLog(@"setObjectValue Object Class %@ Table Column %@ Item %@",[(NSObject*)object class], tableColumn.identifier, [item name]);
@@ -479,6 +481,20 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // set the PathBar back to the _treeNode
             [self setPathBarToItem:_treeNodeSelected];
         }
+    }
+    else if (object==self) {
+        // Its on the tree
+        // Gets the index of the current selected Node
+        NSInteger index2select = [self.myOutlineView rowForItem:_treeNodeSelected];
+        if (index2select != -1) {
+            // It was found
+            NSIndexSet *selectedIndexes = [NSIndexSet indexSetWithIndex:index2select];
+            [self.myOutlineView selectRowIndexes:selectedIndexes byExtendingSelection:NO];
+        }
+        else
+            NSAssert(NO, @"BrowserController.selectionDidChangeOn: treeBranch not found in the tree");
+        // set the PathBar back to the _treeNode
+        [self setPathBarToItem:_treeNodeSelected];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:object userInfo:nil];
 }
@@ -874,13 +890,32 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
 }
 
+-(void) adjustViewSelectionAfterTreeViewChange {
+    BOOL treeColapsed = self.treeViewCollapsed;
+    
+    if (treeColapsed) {
+        //  Moves Selection to Table
+        [self focusOnLastView];
+        //Updates the status information
+        [self selectionDidChangeOn:self.detailedViewController];
+    }
+    else
+    {
+        // Moves Selection to Tree
+        [self focusOnFirstView];
+        // Updates the status information based on the contents of the tree
+        [self selectionDidChangeOn:self];
+    }
+}
+
 -(void) setTreeViewCollapsed:(BOOL) collapsed {
     if (collapsed)
+        // TODO:!!!!! Save width in preferences @"TreeWidth"
+        
         [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
     else {
         // TODO:!!!! Get this from user defaults
         CGFloat width = 200.0;
-        // TODO:!!!!! Save this in the preferences
         NSNumber *prefWidth =[self.preferences objectForKey:@"TreeWidth"];
         if (prefWidth != nil) {
             width = [prefWidth floatValue];
@@ -935,6 +970,10 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
             //[self->_myTreeViewEnableButton setSelected:YES forSegment:0];
         }
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_TreeCollapsed forKey:kViewChangedWhatKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
+        
+        [self adjustViewSelectionAfterTreeViewChange];
     }
     else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
         [self setFlatView:isSelected];
@@ -954,6 +993,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
             // refreshes the view
             [self.detailedViewController refreshKeepingSelections];
         }
+        // TODO:!!!!! Add here notificationViewChanged for the FlatView
     }
     else
         NSAssert(NO, @"Invalid Segment Number");
@@ -1126,12 +1166,16 @@ const NSUInteger item0InBrowserPopMenu    = 0;
         }
         else {
             NSTableCellView *nameView = [_myOutlineView viewAtColumn:0 row:row makeIfNecessary:YES];
-            assert(nameView!=nil);
-            if ([object hasTags:tagTreeItemDirty]) {
-                [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped
+            if (nameView!=nil)  {
+                if ([object hasTags:tagTreeItemDirty]) {
+                    [nameView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped
+                }
+                else {
+                    [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+                }
             }
             else {
-                [nameView.textField setTextColor:[NSColor textColor]]; // Set color back to normal
+                NSLog(@"Oh! Shit ! Its happening again");
             }
             [_myOutlineView reloadItem:object reloadChildren:YES];
 
@@ -1296,7 +1340,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 /* This routine is serving as after load initialization */
 
 -(void) focusOnFirstView {
-    if ([self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_TREE_ENABLE]) {
+    if (self.treeViewCollapsed==NO) {
         // The Tree Outline View is selected
         if ([[_myOutlineView selectedRowIndexes] count]==0) {
             [_myOutlineView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
@@ -1493,6 +1537,7 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     // Refresh first the Roots, deletes the ones tagged for deletion
     NSUInteger idx=0;
     while (idx < [BaseDirectories numberOfBranchesInNode]) {
+        // TODO: !!!!! This is to be a function of the TreeCollection. 
         TreeBranch *tree = [BaseDirectories branchAtIndex:idx];
         if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
             [BaseDirectories removeItemAtIndex:idx];
@@ -1514,7 +1559,11 @@ const NSUInteger item0InBrowserPopMenu    = 0;
 
     if ([BaseDirectories numberOfBranchesInNode]==1) {
         // Expand the Root Node
-        [_myOutlineView expandItem:[BaseDirectories branchAtIndex:0]];
+        id itemToExpand = [BaseDirectories branchAtIndex:0];
+        if (itemToExpand)
+            [_myOutlineView expandItem:itemToExpand];
+        else
+            NSLog(@"Sou nulo");
     }
     [self stopBusyAnimations];
     [_myOutlineView reloadData];
@@ -1532,13 +1581,15 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     }
 }
 
--(void) setRoots:(NSArray*) baseDirectories {
+-(void) addFileCollection:(FileCollection*) collection {
+    [BaseDirectories addFileCollection:collection];
+}
+
+-(void) setRoots:(NSArray*) rootDirectories {
     //TODO: Optimization Create a Class to manage arrays of Branches
     [BaseDirectories releaseChildren];
-    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
-    TreeItem* item;
-    while (item = [enumerator nextObject]) {
-        [BaseDirectories addTreeItem:item];
+    for (TreeItem* root in rootDirectories) {
+        [BaseDirectories addTreeItem:root];
     }
 }
 
@@ -1893,6 +1944,8 @@ const NSUInteger item0InBrowserPopMenu    = 0;
     return [url lastPathComponent];
 }
 
-
+-(NSString*) debugDescription {
+    return [NSString stringWithFormat:@"Browser Controller(%@) root:%@ selected:%@", self->_viewName, self->BaseDirectories, self->_treeNodeSelected ];
+}
 
 @end

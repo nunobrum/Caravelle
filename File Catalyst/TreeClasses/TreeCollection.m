@@ -11,13 +11,7 @@
 
 @implementation TreeCollection
 
--(void) setName:(NSString*)name {
-    self->_name = name;
-}
 
--(NSString*) name {
-    return self->_name;
-}
 
 -(BOOL) addTreeItem:(TreeItem*)item {
     NSUInteger index=0;
@@ -78,18 +72,30 @@
         if (OK==NO) { // If not found in existing trees will create it
             if (self->_children==nil)
                 self->_children = [[NSMutableArray alloc] init];
-            [self->_children addObject:item];
+            if ([item isLeaf]) {
+                // Creates the parent
+                NSURL *par_url = [item.url URLByDeletingLastPathComponent];
+                TreeBranchCatalyst *parent = [[TreeBranchCatalyst alloc] initWithURL:par_url parent:self];
+                [parent setName:[parent path]]; // This is needed so that the full path is displayed.
+                
+                NSLog(@"TreeCollection.addTreeItem: Adding %@ and %@", parent.url, item.url);
+                
+                [self->_children addObject:parent];
+                [parent addTreeItem:item];
+            }
+            else {
+                NSLog(@"TreeCollection.addTreeItem: Adding %@", item.url);
+                [self->_children addObject:item];
+            }
             OK = YES;
-            NSLog(@"TreeCollection.addTreeItem: Adding %@", item.url);
         }
     }
     if (OK) [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
     return OK;
 }
 
--(void) setFileCollection:(FileCollection*)collection {
-    self->_fileCollection = collection;
-    [self releaseChildren];
+
+-(void) addFileCollection:(FileCollection*)collection {
     
     for (TreeItem *finfo in collection.fileArray) {
         [self addTreeItem:finfo];

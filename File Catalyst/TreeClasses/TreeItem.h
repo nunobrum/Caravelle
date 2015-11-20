@@ -127,5 +127,11 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) hasDuplicates;
 -(NSNumber*) duplicateGroup;
 
+/*
+ * Debug
+ */
+
+-(NSString*) debugDescription;
+
 
 @end

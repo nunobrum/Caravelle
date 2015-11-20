@@ -510,4 +510,13 @@
     return [NSNumber numberWithInt:0];
 }
 
+
+/*
+ * Debug
+ */
+
+-(NSString*) debugDescription {
+    return [NSString stringWithFormat: @"TreeItem:%@", self.url];
+}
+
 @end

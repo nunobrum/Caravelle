@@ -46,7 +46,6 @@
 
 - (id) selectedView;
 
-- (IBAction)FindDuplicates:(id)sender;
 
 /* Toolbar Actions */
 - (IBAction)toolbarInformation:(id)sender;
@@ -95,9 +94,17 @@
 - (IBAction)copyName:(id)sender ;
 - (IBAction)contextualCopyName:(id)sender ;
 
-- (IBAction)appModeChanged:(id)sender;
+- (IBAction)viewModeChanged:(id)sender;
 - (IBAction)viewTypeChanged:(id)sender;
 
 - (void) adjustSideInformation:(id) sender;
+
+/*
+ * methods for Interface Binding
+ */
+
+@property NSNumber *boolDuplicateModeActive;
+#define BOOL_DUPLICATE_MODE @"boolDuplicateModeActive"
+
 
 @end

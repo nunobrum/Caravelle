@@ -148,12 +148,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 // TODO:!??? Maybe this method is not really needed, since ARC handles this.
 // Think this is even causing problems
 -(void) _releaseChildren {
-    for (TreeItem *item in _children) {
-        // NOTE: isKindOfClass is preferred over itemType.
-        if ([item isKindOfClass:[TreeBranch class]]) {
-            [(TreeBranch*)item _releaseChildren];
-        }
-    }
+//    for (TreeItem *item in _children) {
+//        // NOTE: isKindOfClass is preferred over itemType.
+//        if ([item isKindOfClass:[TreeBranch class]]) {
+//            [(TreeBranch*)item _releaseChildren];
+//        }
+//    }
     [_children removeAllObjects];
 }
 
@@ -1577,6 +1577,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    return answer;
 //}
 
+/*
+ * Debug
+ */
+
+-(NSString*) debugDescription {
+    return [NSString stringWithFormat: @"TreeBranch(%ld files):%@", [self->_children count], self.url];
+}
 
 @end
 
@@ -1595,5 +1602,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
     return nil;
 }
+
 
 @end

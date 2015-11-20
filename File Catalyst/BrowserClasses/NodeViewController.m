@@ -178,6 +178,7 @@
                               orderedItems, kDFOFilesKey,
                               operation, kDFOOperationKey,
                               self.currentNode, kDFODestinationKey,
+                              self, kDFOFromViewKey,
                               nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:userInfo];
 }
