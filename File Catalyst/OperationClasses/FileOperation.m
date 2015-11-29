@@ -1,112 +1,328 @@
 //
 //  FileOperation.m
-//  File Catalyst
+//  Caravelle
 //
-//  Created by Viktoryia Labunets on 02/09/14.
+//  Created by Nuno Brum on 02/09/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
-
+#include "Definitions.h"
 #import "FileOperation.h"
 #import "FileUtils.h"
+#import "TreeBranch.h"
 
-NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
+#define UPDATE_TREE
+
+
 
 @implementation FileOperation
 
 -(void) main {
+    BOOL  OK = NO;  // Assume it will go wrong until proven otherwise
+    BOOL send_notification=YES;
+    NSInteger okCount = 0;
+    NSError *error = nil;
     if (![self isCancelled])
 	{
-        NSArray *items = [_taskInfo objectForKey: kDroppedFilesKey];
-        NSString *op = [_taskInfo objectForKey: kDropOperationKey];
-        int opDone = 0;
+        NSArray *items = [_taskInfo objectForKey: kDFOFilesKey];
+        NSString *op = [_taskInfo objectForKey: kDFOOperationKey];
+        statusCount = 0;
+
 
         if (items==nil || op==nil) {
-            /* Should it be decided to inform */
+            /* Question: send notification or not */
+            send_notification = NO;
         }
         else {
-            if ([op isEqualToString:opSendRecycleBinOperation]) {
-                NSMutableArray *urls = [[NSMutableArray alloc] initWithCapacity:[items count]];
-                for (id item in items) {
-                    if ([item isKindOfClass:[NSURL class]]) {
-                        [urls addObject:item];
-                    }
-                    else if ([item isKindOfClass:[TreeItem class]]) {
-                        [urls addObject:[item url]];
-                    }
-                }
+            if ([op isEqualTo:opSendRecycleBinOperation]) {
                 if (![self isCancelled]) {
-                    [[NSWorkspace sharedWorkspace]
-                     recycleURLs:urls // Using the completion block to send the notification
-                     completionHandler:^(NSDictionary *newurls, NSError *error) {
-                         if (error==nil) {
-                             for (id item in items) {
-                                 if ([item isKindOfClass:[TreeItem class]]) {
-                                     [item removeItem];
-                                 }
-                             }
-                         }
-                         [[NSNotificationCenter defaultCenter]
-                          postNotificationName:notificationFinishedFileOperation
-                          object:nil
-                          userInfo:_taskInfo];
-                     }];
-                }
-            }
-            else {
-                if ([op isEqualToString:opEraseOperation]) {
+
+                    // No need to send notification. It will be sent on the completion handler
+                    OK = YES; // Will change to no if one delete is failed
+                    NSError *loop_error;
                     for (id item in items) {
-                        BOOL ok = NO;
-                        if ([item isKindOfClass:[NSURL class]])
-                            ok = eraseFile(item);
+                        NSURL *url;
+                        if ([item isKindOfClass:[NSURL class]]) {
+                            url = item;
+                        }
                         else if ([item isKindOfClass:[TreeItem class]]) {
-                            ok = eraseFile([item url]);
-                            if (ok) {
+                            url = [item url];
+                        }
+
+                        BOOL blk_OK = [appFileManager trashItemAtURL:url resultingItemURL:nil error:&loop_error];
+                        if (blk_OK) {
+                            okCount++;
+#ifdef UPDATE_TREE
+                            if ([item isKindOfClass:[TreeItem class]]) {
                                 [item removeItem];
                             }
-                            opDone++;
+#endif //UPDATE_TREE
                         }
+                        else {
+                            error = loop_error;
+                            OK = NO; // Memorizes error
+                        }
+                        statusCount++;
                         if ([self isCancelled]) break;
                     }
+                    if (error==nil) { //
+                        error = loop_error;
+                    }
                 }
-                else {
-                    TreeBranch *dest = [_taskInfo objectForKey:kDropDestinationKey];
+            }
+            else if ([op isEqualTo:opEraseOperation]) {
+                for (id item in items) {
+                    if ([item isKindOfClass:[NSURL class]])
+                        OK = eraseFile(item, error);
+                    else if ([item isKindOfClass:[TreeItem class]]) {
+                        OK = eraseFile([item url], error);
+#ifdef UPDATE_TREE
+                        if (OK) {
+                            [item removeItem];
+                        }
+#endif //UPDATE_TREE
+                    }
+                    statusCount++;
+                    if (OK) okCount++;
+                    if ([self isCancelled]) break;
+                }
+            }
 
-                    if (dest!=nil && [dest isKindOfClass:[TreeBranch class]]) {
-                        if ([op isEqualToString:opCopyOperation]) {
+            // Its a rename or a file new
+            else if ([op isEqualTo:opRename] ||
+                     [op isEqualTo:opNewFolder]) {
+
+                // Check whether it is a rename or a New File/Folder. Both required an edit of a name.
+                // To distinguish from the two, if the file/folder exists is a rename, else is a new
+                for (id item in items) {
+                    NSURL *checkURL = NULL;
+                    if ([item isKindOfClass:[NSURL class]]) {
+                        checkURL = item;
+                    }
+                    else if ([item isKindOfClass:[TreeItem class]]) {
+                        checkURL = [item url];
+                    }
+                    else {
+                        assert(NO); // Unknown type
+                    }
+
+                    // Creating a new URL, works for either the new File or a Rename
+                    NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
+                    // create a new Folder.
+
+                    if ([op isEqualTo:opNewFolder]) {
+                        NSURL *parentURL;
+                        id destObj = [_taskInfo objectForKey:kDFODestinationKey];
+                        if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
+                            if ([destObj isFolder])
+                                parentURL = [(TreeBranch*)destObj url];
+                            else if ([destObj isKindOfClass:[NSURL class]])
+                                parentURL = destObj;
+                            OK = createDirectoryAtURL(newName, parentURL, error);
+                        }
+                        // Adjust to the correct operation
+                        [_taskInfo setObject:opNewFolder forKey:kDFOOperationKey];
+                    }
+                    // NOTE: No Files are created with this application, at most it
+                    // could in the future launch applications with a path, so they
+                    // will create it.
+
+                    else { 
+                        // Do a Rename
+                        NSURL *newURL = renameFile(checkURL, newName, error);
+                        if (newURL) {
+                            OK = YES;
+                            //#ifdef UPDATE_TREE  // Always update the tree, as otherwise it will have weird effect on the window
+                            // If OK it will Update the URL so that no funky updates are done in the window
+                            if ([item isKindOfClass:[TreeItem class]]) {
+                                [(TreeItem*)item setUrl:newURL];
+                            }
+                            //#endif // UPDATE_TREE
+                        }
+                        else {
+                            OK = NO;
+                        }
+                        // Adjust to the correct Operation
+                        [_taskInfo setObject:opRename forKey:kDFOOperationKey];
+                    }
+                    statusCount++;
+                    if (OK) {
+                        okCount++;
+                    }
+                    if ([self isCancelled]) break;
+                }
+            }
+
+            // this is the move or copy
+            else {
+                id destObj = [_taskInfo objectForKey:kDFODestinationKey];
+                // Sees if there is a rename associated with the copy
+                NSString *newName = [_taskInfo objectForKey:kDFORenameFileKey];
+
+                if (destObj!=nil && ([destObj isKindOfClass:[TreeItem class]])) {
+                    if ([destObj isFolder]) {
+                        TreeBranch *dest = destObj;
+
+                        // Assuming all will go well, and revert to No if anything happens
+                        OK = YES;
+                        if ([op isEqualTo:opCopyOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
                                 if ([item isKindOfClass:[NSURL class]])
-                                    newURL = copyFileTo(item, [dest url]);
+                                    newURL = copyFileToDirectory(item, [dest url], newName, error);
                                 else if ([item isKindOfClass:[TreeItem class]])
-                                    newURL = copyFileTo([item url], [dest url]);
+                                    newURL = copyFileToDirectory([item url], [dest url], newName, error);
                                 if (newURL) {
-                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
+                                    okCount++;
+#ifdef UPDATE_TREE
+                                    [dest addURL:newURL];
+#endif //UPDATE_TREE
                                 }
-                                else {
-                                    // Just refresh the Folder
-                                    [dest refreshContentsOnQueue:operationsQueue];
-                                }
-                                opDone++;
-                                if ([self isCancelled]) break;
+                                else
+                                    OK = NO;
+
+                                statusCount++;
+                                if ([self isCancelled] || OK==NO) break;
                             }
                         }
-                        else if ([op isEqualToString:opMoveOperation]) {
+                        else if ([op isEqualTo:opMoveOperation]) {
                             for (id item in items) {
                                 NSURL *newURL = NULL;
-                                if ([item isKindOfClass:[NSURL class]])
-                                    newURL = moveFileTo(item, [dest url]);
-                                else if ([item isKindOfClass:[TreeItem class]])
-                                    newURL = moveFileTo([item url], [dest url]);
-                                if (newURL) {
-                                    [dest addItem:[TreeItem treeItemForURL:newURL parent:dest]];
-                                    opDone++;
+                                if ([item isKindOfClass:[NSURL class]]) {
+                                    newURL = moveFileToDirectory(item, [dest url], newName, error);
+                                    if (newURL) {
+                                        okCount++;
+#ifdef UPDATE_TREE
+                                        [dest addURL:newURL];
+#endif //UPDATE_TREE
+                                    }
+                                    else
+                                        OK = NO;
+                                    statusCount++;
                                 }
-                                if ([self isCancelled]) break;
+                                else if ([item isKindOfClass:[TreeItem class]]) {
+                                    newURL = moveFileToDirectory([item url], [dest url], newName, error);
+                                    if (newURL) {
+                                        okCount++;
+#ifdef UPDATE_TREE
+                                        [dest addURL:newURL];
+                                        // Remove itself from the former parent
+                                        [(TreeItem*)item removeItem];
+#endif //UPDATE_TREE
+                                    }
+                                    else
+                                        OK = NO;
+                                    statusCount++;
+                                }
+                                if ([self isCancelled] || OK==NO) break;
+                            }
+                        }
+                        else if ([op isEqualTo:opReplaceOperation]) {
+                            for (id item in items) {
+                                NSURL *newURL = NULL;
+                                if ([item isKindOfClass:[NSURL class]]) {
+                                    newURL = replaceFileWithFile(item, [dest url], newName, error);
+                                    if (newURL) {
+                                        okCount++;
+#ifdef UPDATE_TREE
+                                        [dest addURL:newURL];
+#endif //UPDATE_TREE
+                                    }
+                                    else
+                                        OK = NO;
+                                    statusCount++;
+                                }
+                                else if ([item isKindOfClass:[TreeItem class]]) {
+                                    newURL = replaceFileWithFile([item url], [dest url], newName, error);
+                                    if (newURL) {
+                                        okCount++;
+#ifdef UPDATE_TREE
+                                        [dest addURL:newURL];
+                                        // Remove itself from the former parent
+                                        [(TreeItem*)item removeItem];
+#endif //UPDATE_TREE
+                                    }
+                                    else
+                                        OK = NO;
+                                    statusCount++;
+                                }
+                                if ([self isCancelled] || OK==NO) break;
                             }
                         }
                     }
+                    else {
+                        NSAssert(NO, @"Unexpected Class received. Expected TreeBranch, received %@",[destObj class]);
+                    }
                 }
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedFileOperation object:nil userInfo:_taskInfo];
+                else if (destObj!=nil && [destObj isKindOfClass:[NSURL class]]) {
+                    NSURL *dest = destObj;
+                    // Assuming all will go well, and revert to No if anything happens
+                    OK = YES;
+                    if ([op isEqualTo:opCopyOperation]) {
+                        for (id item in items) {
+                            NSURL *newURL = NULL;
+                            if ([item isKindOfClass:[NSURL class]])
+                                newURL = copyFileToDirectory(item, dest, newName, error);
+                            else if ([item isKindOfClass:[TreeItem class]])
+                                newURL = copyFileToDirectory([item url], dest, newName, error);
+
+                            if (newURL)
+                                okCount++;
+                            else
+                                OK = NO;
+
+                            statusCount++;
+                            if ([self isCancelled] || OK==NO) break;
+                        }
+                    }
+                    else if ([op isEqualTo:opMoveOperation]) {
+                        for (id item in items) {
+                            NSURL *newURL = NULL;
+                            if ([item isKindOfClass:[NSURL class]]) {
+                                newURL = moveFileToDirectory(item, dest, newName, error);
+                            }
+                            else if ([item isKindOfClass:[TreeItem class]]) {
+                                newURL = moveFileToDirectory([item url], dest, newName, error);
+                            }
+
+                            if (newURL)
+                                okCount++;
+                            else
+                                OK = NO;
+                            statusCount++;
+
+                            if ([self isCancelled] || OK==NO) break;
+                        }
+                    }
+
+                    else if ([op isEqualTo:opReplaceOperation]) {
+                        for (id item in items) {
+                            NSURL *newURL = NULL;
+                            if ([item isKindOfClass:[NSURL class]]) {
+                                newURL = replaceFileWithFile(item, dest, newName, error);
+                            }
+                            else if ([item isKindOfClass:[TreeItem class]]) {
+                                newURL = replaceFileWithFile([item url], dest, newName, error);
+                            }
+                            if (newURL)
+                                okCount++;
+                            else
+                                OK = NO;
+                            statusCount++;
+                            if ([self isCancelled] || OK==NO) break;
+                        }
+                    }
+                }
+            }
+
+            // Sending notification to AppDelegate
+            if (send_notification) {
+                NSDictionary *OKError = [NSDictionary dictionaryWithObjectsAndKeys:
+                                         [NSNumber numberWithInteger:okCount], kDFOOkCountKey,
+                                         [NSNumber numberWithInteger:statusCount], kDFOStatusCountKey,
+                                         [NSNumber numberWithBool:OK], kDFOOkKey,
+                                         error, kDFOErrorKey, nil];
+                [_taskInfo addEntriesFromDictionary:OKError];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];
             }
         }
     }
@@ -115,71 +331,3 @@ NSString *notificationFinishedFileOperation = @"FinishedFileOperation";
 
 @end
 
-
-BOOL copyItemsToBranch(NSArray *items, TreeBranch *folder) {
-    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              opCopyOperation, kDropOperationKey,
-                              items, kDroppedFilesKey,
-                              folder, kDropDestinationKey,
-                              nil];
-    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
-    BOOL answer = [operation isReady];
-    [operationsQueue addOperation:operation];
-    return answer;
-}
-
-BOOL moveItemsToBranch(NSArray *items, TreeBranch *folder) {
-    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              opMoveOperation, kDropOperationKey,
-                              items, kDroppedFilesKey,
-                              folder, kDropDestinationKey,
-                              nil];
-    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
-    BOOL answer = [operation isReady];
-    [operationsQueue addOperation:operation];
-    return answer;
-}
-
-BOOL sendItemsToRecycleBin(NSArray *items) {
-    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              opSendRecycleBinOperation, kDropOperationKey,
-                              items, kDroppedFilesKey,
-                              nil];
-    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
-    BOOL answer = [operation isReady];
-    [operationsQueue addOperation:operation];
-    return answer;
-}
-
-BOOL eraseItems(NSArray *items) {
-    NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                              opEraseOperation, kDropOperationKey,
-                              items, kDroppedFilesKey,
-                              nil];
-    FileOperation *operation = [[FileOperation alloc ] initWithInfo:taskinfo];
-    BOOL answer = [operation isReady];
-    [operationsQueue addOperation:operation];
-    return answer;
-}
-
-
-
-BOOL copyItemToBranch(TreeItem *item, TreeBranch *folder) {
-    NSArray *items = [NSArray arrayWithObject:item];
-    return copyItemsToBranch(items, folder);
-}
-
-BOOL moveItemToBranch(TreeItem *item, TreeBranch *folder) {
-    NSArray *items = [NSArray arrayWithObject:item];
-    return moveItemsToBranch(items, folder);
-}
-
-BOOL sendItemToRecycleBin(TreeItem *item) {
-    NSArray *items = [NSArray arrayWithObject:item];
-    return sendItemsToRecycleBin(items);
-}
-
-BOOL eraseItem(TreeItem *item) {
-    NSArray *items = [NSArray arrayWithObject:item];
-    return eraseItems(items);
-}

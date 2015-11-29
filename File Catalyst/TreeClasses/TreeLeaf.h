@@ -1,19 +1,32 @@
 //
 //  TreeLeaf.h
-//  FileCatalyst1
+//  Caravelle
 //
-//  Created by Viktoryia Labunets on 1/22/13.
+//  Created by Nuno Brum on 1/22/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.
 //
 
 #import "TreeItem.h"
-#import "FileInformation.h"
 
 @interface TreeLeaf : TreeItem <TreeProtocol> {
-//    FileInformation *fileInformation;
+    NSMutableDictionary *_store;
 }
-//-(void)       SetFileInformation: (FileInformation *) fileInfo;
--(FileInformation*) getFileInformation;
--(BOOL) isBranch;
+
+-(TreeLeaf*) initWithURL:(NSURL*)url parent:(id)parent;
+
+/*
+ * Dupplicate Support
+ */
+-(BOOL) compareMD5checksum: (TreeLeaf*)otherFile;
+
+-(BOOL) addDuplicate:(TreeLeaf*) duplicateFile group:(NSUInteger)group;
+-(TreeLeaf*) nextDuplicate;
+-(NSUInteger) duplicateCount;
+-(NSMutableArray*) duplicateList;
+-(void) removeFromDuplicateRing;
+-(void) resetDuplicates;
+-(void) setDuplicateRefreshCount:(NSInteger)count;
+-(NSInteger) duplicateRefreshCount;
+
 
 @end

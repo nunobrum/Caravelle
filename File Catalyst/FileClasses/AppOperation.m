@@ -2,10 +2,11 @@
 //  AppOperation.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 02/09/14.
+//  Created by Nuno Brum on 02/09/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
+#include "Definitions.h"
 #import "AppOperation.h"
 
 // key for obtaining the current scan count
@@ -14,12 +15,18 @@ NSString *kOperationCountKey = @"operationCount";
 // key for obtaining the associated TreeRoot
 NSString *kRootPathKey = @"RootPath";
 
-// Key for obtaining the sender of the notification !!! TODO Test if this is really needed. notifications already include sender objects anyway. Maybe just for convinience of resending the Dictionary.
+// Key for obtaining the sender of the notification
+// TODO:!!? Test if this is really needed. notifications already include sender objects anyway. Maybe just for convinience of resending the Dictionary. See assertion in line 692.
 NSString *kSenderKey = @"Sender";
 
 NSString *kModeKey = @"Mode";
 
+NSString *notificationFinishedOperation = @"FinishedOperation";
+
+
 static NSUInteger appOperationCounter = 0;
+
+
 
 @implementation AppOperation
 
@@ -41,4 +48,18 @@ static NSUInteger appOperationCounter = 0;
     return [NSString stringWithFormat:@"%lu Files", statusCount];
 }
 
+-(NSDictionary*) info {
+    return _taskInfo;
+}
+
 @end
+
+
+BOOL putInQueue(AppOperation *operation) {
+    //AppOperation *operation = [[AppOperation alloc ] initWithInfo:taskInfo];
+    BOOL answer = [operation isReady];
+    if (answer==YES)
+        [operationsQueue addOperation:operation];
+    return answer;
+}
+

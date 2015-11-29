@@ -2,40 +2,57 @@
 //  MyDirectoryEnumerator.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 15/04/14.
+//  Created by Nuno Brum on 15/04/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
 #import "MyDirectoryEnumerator.h"
 
+NSArray *urlKeyFieldsToStore() {
+    static NSArray * URL_KEY_FIELDS = nil;
+    if (URL_KEY_FIELDS==nil)
+        URL_KEY_FIELDS = [NSArray arrayWithObjects:
+                          NSURLNameKey,
+                          NSURLIsDirectoryKey,
+                          NSURLContentModificationDateKey,
+                          NSURLFileSizeKey,
+                          NSURLIsWritableKey,
+                          NSURLIsRegularFileKey,
+                          nil];
+    return URL_KEY_FIELDS;
+}
 
 @implementation MyDirectoryEnumerator
 
--(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(BViewMode) viewMode {
+-(MyDirectoryEnumerator *) init:(NSURL*)directoryToScan WithMode:(EnumBrowserViewMode) viewMode {
      NSDirectoryEnumerationOptions dirEnumOptions = 0;
     if (viewMode == BViewCatalystMode) {
-        dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles;
+        dirEnumOptions = 0;
     }
     else if (viewMode == BViewBrowserMode){
-        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants | NSDirectoryEnumerationSkipsHiddenFiles;
+        dirEnumOptions = NSDirectoryEnumerationSkipsSubdirectoryDescendants;
+
     } else if (viewMode == BViewDuplicateMode){
-        dirEnumOptions = NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
+        // TODO:!!!! Add warning that Packages will be included and this may have adverse effects.
+        dirEnumOptions = 0; //NSDirectoryEnumerationSkipsHiddenFiles | NSDirectoryEnumerationSkipsPackageDescendants;
     }
-    if (dirEnumOptions==0)  {
-        NSLog(@"Ooops! This should be happening. No options set in the Enumeration");
+    // Checks whether to browse packages or if to treat them as folders
+    if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_BROWSE_APPS]) {
+        dirEnumOptions |= NSDirectoryEnumerationSkipsPackageDescendants;
     }
-    NSFileManager *localFileManager=[[NSFileManager alloc] init];
+
+    // Checks whether to display hidden files
+    if (NO==[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]) {
+        dirEnumOptions |= NSDirectoryEnumerationSkipsHiddenFiles;
+    }
 
 
+    //NSFileManager *localFileManager=[[NSFileManager alloc] init];
+    NSFileManager *localFileManager = [NSFileManager defaultManager];
 
 
     self = (MyDirectoryEnumerator*)[localFileManager enumeratorAtURL:directoryToScan
-                                                  includingPropertiesForKeys:[NSArray arrayWithObjects:
-                                                                              NSURLNameKey,
-                                                                              NSURLIsDirectoryKey,
-                                                                              NSURLContentModificationDateKey,
-                                                                              NSURLFileSizeKey,
-                                                                              nil]
+                                                  includingPropertiesForKeys:urlKeyFieldsToStore()
                                                                      options:dirEnumOptions
                                                                 errorHandler:nil];
 

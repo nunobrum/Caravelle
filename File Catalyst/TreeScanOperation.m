@@ -2,7 +2,7 @@
 //  TreeScanOperation.m
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 15/08/14.
+//  Created by Nuno Brum on 15/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -32,7 +32,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
         else {
             NSURL *rootURL = [NSURL fileURLWithPath:rootPath isDirectory:YES];
 
-            NSLog(@"From thread ! Scanning directory %@", rootPath);
+            //NSLog(@"From thread ! Scanning directory %@", rootPath);
             MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:rootURL WithMode:[mode integerValue]];
             TreeRoot *rootDir = [TreeRoot treeFromEnumerator:dirEnumerator
                                                          URL:rootURL
@@ -52,7 +52,7 @@ NSString *notificationTreeConstructionFinished = @"TreeFinished";
                 // out there and let whoever might be interested receive it (in our case its MyWindowController).
                 //
                 [_taskInfo addEntriesFromDictionary:info];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationTreeConstructionFinished object:nil userInfo:_taskInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationTreeConstructionFinished object:self userInfo:_taskInfo];
             }
         }
     }

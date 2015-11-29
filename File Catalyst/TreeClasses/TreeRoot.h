@@ -1,27 +1,24 @@
 //
 //  TreeRoot.h
-//  FileCatalyst1
+//  Caravelle
 //
-//  Created by Viktoryia Labunets on 1/16/13.
+//  Created by Nuno Brum on 1/16/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "FileCollection.h"
-#import "TreeBranch.h"
+#import "TreeBranchCatalyst.h"
 
-@interface TreeRoot : TreeBranch <TreeProtocol> {
-    FileCollection *_fileCollection;
-    //NSString *rootDirectory;
+
+@interface TreeRoot : TreeBranchCatalyst {
+    FileCollection* _fileCollection;
+    NSString* _name;
 }
 
-@property bool isCollectionSet;
+-(void) setName:(NSString*)name;
+-(NSString*) name;
 
 -(void) setFileCollection:(FileCollection*)collection;
--(FileCollection *) fileCollection;
--(NSString*) rootPath;
 
-+(TreeRoot*) treeWithFileCollection:(FileCollection *)fileCollection;
-+(TreeRoot*) treeWithURL:(NSURL*) rootURL;
-//+(TreeRoot*) treeFromPath:(NSString*)rootPath;
 @end

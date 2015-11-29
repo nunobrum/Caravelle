@@ -1,47 +1,110 @@
 //
 //  AppDelegate.h
-//  FileCatalyst1
+//  Caravelle
 //
-//  Created by Viktoryia Labunets on 12/28/12.
+//  Created by Nuno Brum on 12/28/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
-#import "FileCollection.h"
+#import "Definitions.h"
 #import "BrowserController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSFileManagerDelegate> {
-    //FileCollection *fileCollection;
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, ParentProtocol, NSMenuDelegate> {
     BrowserController *myLeftView;
     BrowserController *myRightView;
+    id<MYViewProtocol> _selectedView;
+    id<MYViewProtocol> _contextualFocus;
     //__weak LeftDataSource *_RightDataSrc;
-    BOOL firstAppActivation;
 }
-@property (unsafe_unretained) IBOutlet NSWindow *window;
+@property (unsafe_unretained) IBOutlet NSWindow *myWindow;
+
+@property (weak) IBOutlet NSView *myWindowView;
+
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
 @property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
 @property (weak) IBOutlet NSTextField *statusProgressLabel;
+@property (weak) IBOutlet NSButton *buttonCopyTo;
+@property (weak) IBOutlet NSButton *buttonMoveTo;
 
-@property (unsafe_unretained) IBOutlet NSWindow *myWindow;
+@property (weak) IBOutlet NSButton *statusCancelButton;
 
-@property (weak) IBOutlet NSToolbarItem *toolbarDeleteButton;
-@property (weak) IBOutlet NSToolbarItem *toolbarCopyLeftButton;
-@property (weak) IBOutlet NSToolbarItem *toolbarCopyRightButton;
+@property (weak) IBOutlet NSBox *BottomLine;
+@property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
+@property (weak) IBOutlet NSView *FunctionBar;
 
 
-//- (IBAction)LeftRootBrowse:(id)sender; // Add Directories to Left View
-- (IBAction)RemoveSelected:(id)sender; // Remove Selected Items
+/*
+ * Toolbar outlets
+ */
 
-- (IBAction)FindDuplicates:(id)sender;
+@property (weak) IBOutlet NSSegmentedControl *toolbarAppModeSelect;
+@property (weak) IBOutlet NSSegmentedControl *toolbarViewTypeSelect;
+@property (weak) IBOutlet NSSegmentedControl *toolbarFunctionBarSelect;
+
+
+- (id) selectedView;
+
+
+/* Toolbar Actions */
+- (IBAction)toolbarInformation:(id)sender;
+- (IBAction)contextualInformation:(id)sender;
+
+- (IBAction)toolbarRename:(id)sender;
+- (IBAction)contextualRename:(id)sender;
 
 - (IBAction)toolbarDelete:(id)sender;
-- (IBAction)toolbarCatalystSwitch:(id)sender;
-- (IBAction)toolbarCopyRightAction:(id)sender;
-- (IBAction)toolbarCopyLeftAction:(id)sender;
+- (IBAction)contextualDelete:(id)sender;
 
-- (void) statusUpdate:(NSNotification*)theNotification;
-- (void)   rootUpdate:(NSNotification*)theNotification;
+- (IBAction)toolbarCopyTo:(id)sender;
+- (IBAction)contextualCopyTo:(id)sender;
+
+- (IBAction)toolbarMoveTo:(id)sender;
+- (IBAction)contextualMoveTo:(id)sender;
+
+- (IBAction)toolbarOpen:(id)sender;
+- (IBAction)contextualOpen:(id)sender;
+
+- (IBAction)toolbarNewFolder:(id)sender;
+- (IBAction)contextualNewFolder:(id)sender;
+
+- (IBAction)toolbarGotoFolder:(id)sender;
+
+- (IBAction)toolbarSearch:(id)sender;
+- (IBAction)toolbarRefresh:(id)sender;
+- (IBAction)toolbarHome:(id)sender;
+
+
+- (IBAction)toolbarToggleFunctionKeys:(id)sender;
+
+- (IBAction)operationCancel:(id)sender;
+
+- (IBAction)orderStartupScreen:(id)sender;
+- (IBAction)orderWebsite:(id)sender;
+- (IBAction)orderSendFeedback:(id)sender;
+- (IBAction)orderPreferencePanel:(id)sender;
+- (IBAction)showHelp:(id)sender;
+
+- (IBAction)cut:(id)sender;
+- (IBAction)copy:(id)sender;
+- (IBAction)paste:(id)sender;
+- (IBAction)delete:(id)sender;
+
+- (IBAction)copyName:(id)sender ;
+- (IBAction)contextualCopyName:(id)sender ;
+
+- (IBAction)viewModeChanged:(id)sender;
+- (IBAction)viewTypeChanged:(id)sender;
+
+- (void) adjustSideInformation:(id) sender;
+
+/*
+ * methods for Interface Binding
+ */
+
+@property NSNumber *boolDuplicateModeActive;
+#define BOOL_DUPLICATE_MODE @"boolDuplicateModeActive"
 
 
 @end

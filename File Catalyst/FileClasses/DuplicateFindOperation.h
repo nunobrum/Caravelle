@@ -2,7 +2,7 @@
 //  DuplicateFindOperation.h
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 26/08/14.
+//  Created by Nuno Brum on 26/08/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -11,7 +11,13 @@
 
 extern NSString *notificationDuplicateFindFinish;
 extern NSString *kDuplicateList;
+extern NSString *kRootsList;
+extern NSString *kRootUnified;
 
+extern NSString *kFilenameFilter;
+extern NSString *kMinSizeFilter;
+extern NSString *kStartDateFilter;
+extern NSString *kEndDateFilter;
 
 @interface DuplicateFindOperation : AppOperation
 

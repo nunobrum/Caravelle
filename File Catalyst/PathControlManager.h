@@ -9,13 +9,16 @@
 #import <Foundation/Foundation.h>
 #import "Definitions.h"
 
-@interface PathControlManager : NSPathControl {
+@interface PathControlManager : NSObject {
     NSString *_rootPath;
     NSInteger _rootLevel;
 }
+
+-(PathControlManager*) initWithBar:(NSPathControl*)pathBar andButton:(NSPopUpButton*)popButton;
 
 -(void) setRootPath:(NSURL*) rootPath;
 -(void) setURL:(NSURL*)aURL;
 -(NSURL*) URL;
 
 @end
+

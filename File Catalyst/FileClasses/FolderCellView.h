@@ -1,8 +1,8 @@
 //
 //  FolderCellView.h
-//  FileCatalyst1
+//  Caravelle
 //
-//  Created by Viktoryia Labunets on 3/30/13.
+//  Created by Nuno Brum on 3/30/13.
 //  Copyright (c) 2013 Nuno Brum. All rights reserved.
 //
 
@@ -15,7 +15,6 @@ IBOutlet NSTextField *subTitleTextField;
 //IBOutlet ATColorView *colorView;
 //IBOutlet NSProgressIndicator *progessIndicator;
 //IBOutlet NSButton *removeButton;
-BOOL _isSmallSize;
 }
 
 - (NSString *)Title;

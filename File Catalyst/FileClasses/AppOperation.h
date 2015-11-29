@@ -2,7 +2,7 @@
 //  AppOperation.h
 //  File Catalyst
 //
-//  Created by Viktoryia Labunets on 02/09/14.
+//  Created by Nuno Brum on 02/09/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
@@ -12,6 +12,8 @@ extern NSString *kSenderKey;
 extern NSString *kModeKey;
 extern NSString *kOperationCountKey;
 extern NSString *kRootPathKey;
+
+extern NSString *notificationFinishedOperation;
 
 //extern NSUInteger appOperationCounter;
 
@@ -28,5 +30,9 @@ extern NSString *kRootPathKey;
 
 - (id)initWithInfo:(NSDictionary*)info;
 -(NSString*) statusText;
+-(NSDictionary*) info;
 
 @end
+
+
+extern BOOL putInQueue(AppOperation *operation);

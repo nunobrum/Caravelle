@@ -2,7 +2,7 @@
 //  File_CatalystTests.m
 //  File CatalystTests
 //
-//  Created by Viktoryia Labunets on 11/04/14.
+//  Created by Nuno Brum on 11/04/14.
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
