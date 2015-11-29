@@ -189,7 +189,7 @@ extern NSOperationQueue *operationsQueue;
 extern NSOperationQueue *browserQueue;
 extern NSOperationQueue *lowPriorityQueue;
 
-extern inline EnumApplicationMode application_mode();
+extern EnumApplicationMode application_mode();
 #define applicationMode application_mode()
 
 

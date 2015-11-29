@@ -349,7 +349,10 @@
         NSTableColumn *col = self.myTableView.tableColumns[0];
         [self.myTableView removeTableColumn:col];
     }
-
+    
+    // Cancel all sorts
+    [self.sortAndGroupDescriptors removeAllObjects];
+    
     // Cycling throgh the columns to set
     for (NSString *colID in columns) {
         // Needs to insert this new column

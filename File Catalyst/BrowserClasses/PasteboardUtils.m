@@ -15,7 +15,7 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
     NSDragOperation  supportedMask = NSDragOperationNone;
-    NSDragOperation validatedOperation;
+    NSDragOperation validatedOperation = NSDragOperationNone;
     NSArray *ptypes;
     NSUInteger modifiers = [NSEvent modifierFlags];
 
@@ -91,7 +91,7 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
     }
 
     // TODO:!!! Implement the Link Operation
-    if (validatedOperation ==  NSDragOperationLink)
+    if (sourceDragMask &  NSDragOperationLink)
         validatedOperation=  NSDragOperationNone;
 
     return validatedOperation;

@@ -259,8 +259,8 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 -(BOOL) foldersDisplayedMacro {
     
-    return ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_HIDE_FOLDERS_WHEN_TREE] == NO) ||
-    ([self treeViewCollapsed] == YES);
+    return (([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_HIDE_FOLDERS_WHEN_TREE] == NO) ||
+    ([self treeViewCollapsed] == YES)) && [self.detailedViewController foldersDisplayed] ;
 }
 
 #pragma mark - Tree Outline DataSource Protocol
@@ -287,7 +287,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     else {
         ret = [item branchAtIndex:index];
     }
-    if ([ret isFolder]) {
+    if ([item isKindOfClass:[TreeBranch class]] && [ret isFolder]) {
         // Use KVO to observe for changes of its children Array
         [self observeItem:ret];
         [(TreeBranch*)ret refreshContents];
@@ -299,7 +299,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     BOOL answer=NO;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
-    else if ([item isFolder]) {
+    else if ([item isKindOfClass:[TreeBranch class]] && [item isFolder]) {
         answer = ([(TreeBranch*)item isExpandable]);
     }
     return answer;
@@ -313,10 +313,10 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     NSTableCellView *cellView=nil;
 
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-        if ([item isLeaf]) {//if it is a file
+        if ([item isKindOfClass:[TreeItem class]] && [item isLeaf]) {//if it is a file
             // This is not needed now since the Tree View is not displaying files in this application
         }
-        else if ([item isFolder]) { // it is a directory
+        else if ([item isKindOfClass:[TreeBranch class]] && [item isFolder]) { // it is a directory
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 NSString *sizeString;
@@ -863,7 +863,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     if (rowsSelected!=nil && [rowsSelected count]>0) {
         NSUInteger index = [rowsSelected firstIndex];
         id node = [_myOutlineView itemAtRow:index];
-        if ([node isFolder]) { // It is a Folder : Will make it a root
+        if ([node isKindOfClass:[TreeBranch class]] && [node isFolder]) { // It is a Folder : Will make it a root
             if ([BaseDirectories replaceItem:_rootNodeSelected with:node]) {
                 /* This is needed to force the update of the path bar on setPathBarToItem.
                  other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange,

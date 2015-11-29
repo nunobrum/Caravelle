@@ -12,6 +12,7 @@
 extern NSString *notificationDuplicateFindFinish;
 extern NSString *kDuplicateList;
 extern NSString *kRootsList;
+extern NSString *kRootUnified;
 
 extern NSString *kFilenameFilter;
 extern NSString *kMinSizeFilter;

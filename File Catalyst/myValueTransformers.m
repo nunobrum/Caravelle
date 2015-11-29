@@ -18,6 +18,7 @@
 }
 
 -(instancetype) init {
+    self = [super init];
     self->transformer = [[NSDateFormatter alloc] init];
     [self->transformer setTimeStyle:NSDateFormatterMediumStyle];
     [self->transformer setDateStyle:NSDateFormatterMediumStyle];
@@ -25,6 +26,7 @@
 }
 
 -(instancetype) initWithFormat:(NSString*)format {
+    self = [super init];
     self->transformer = [[NSDateFormatter alloc] init];
     [self->transformer setDateFormat:format];
     return self;

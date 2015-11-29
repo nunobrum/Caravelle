@@ -73,7 +73,7 @@
 
 #pragma mark -
 #pragma mark Refreshing contents
-- (void)refreshContentsOnQueue: (NSOperationQueue *) queue {
+- (void)refreshContents {
     // This method is overriden to do nothing. The filterBranch has no implementation for this method.
     // It has no URL
 }
@@ -91,14 +91,9 @@
 
 -(BOOL) addTreeItem:(TreeItem*)treeItem {
     if ([self canContainTreeItem:treeItem]) {
-        NSURL *theURL = [treeItem url];
         @synchronized(self) {
-            /* Will also check if exists before adding */
             for (TreeItem *item in self->_children) {
-                if ([[item url] isEqual:theURL]) {
-                    return YES; // if matches, no need to add just return YES
-                }
-                else if ([item itemType ] == ItemTypeFilter) {
+                if ([item itemType ] == ItemTypeFilter) {
                     if ([(filterBranch*)item addTreeItem:treeItem]) {
                          return YES;
                     }
@@ -109,6 +104,52 @@
         return YES;
     }
     return NO;
+}
+
+-(NSInteger) addItemArray:(NSArray*) items {
+    NSInteger counter = 0;
+    @synchronized(self) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];
+        if (self->_filter==nil) {
+            if (self->_children==nil) {
+                self->_children = [[NSMutableArray alloc] initWithArray:items copyItems:NO];
+            }
+            else {
+                // Will just add the Items
+                [self->_children addObjectsFromArray:items];
+            }
+            counter = [items count];
+        }
+        else {
+            if (self->_children==nil) {
+                self->_children = [[NSMutableArray alloc] initWithCapacity:[items count]];
+            }
+            for (TreeItem* item in items) {
+                BOOL inserted = NO;
+                if ([self canContainTreeItem:item]) {
+                    for (TreeItem *filter in self->_children) {
+                        if ([filter itemType] == ItemTypeFilter) {
+                            if ([(filterBranch*)filter addTreeItem:item]) {
+                                inserted = YES;
+                                break;
+                            }
+                        }
+                        else {
+                            // This is possible optimization if the system ensures that filters are sorted to be the first elements
+                            break;
+                        }
+                    }
+                    if (inserted == NO) {
+                        // Didn't fit in any subfolders. Need to add it to self.
+                        [self->_children addObject:item];
+                    }
+                    counter++;
+                }
+            }
+        }
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];
+    }
+    return counter;
 }
 
 -(TreeItem*) addURL:(NSURL*)theURL {

@@ -9,13 +9,14 @@
 #import "Definitions.h"
 #import "DuplicateFindOperation.h"
 #import "MyDirectoryEnumerator.h"
-#import "FileCollection.h"
 #import "FileUtils.h"
-#import "TreeBranchCatalyst.h"
+#import "TreeCollection.h"
+#import "filterBranch.h"
 
 NSString *notificationDuplicateFindFinish = @"DuplicateFindFinish";
 NSString *kDuplicateList = @"DuplicateList";
 NSString *kRootsList = @"RootsList";
+NSString *kRootUnified = @"UnifiedRoot";
 NSString *kOptionsKey = @"Options";
 NSString *kFilenameFilter  = @"FilenameFilter";
 NSString *kMinSizeFilter   = @"MinSizeFilter";
@@ -45,15 +46,15 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 -(void) main {
     statusCount=1; // Indicates the first Phase
     NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
-    NSMutableArray *roots = [NSMutableArray arrayWithCapacity:[urls count]];
-    NSMutableArray *duplicates = [[NSMutableArray new] init]; 
+    TreeCollection *roots = nil;
+    filterBranch *filterRoot = nil;
+    NSMutableArray *duplicates = [[NSMutableArray new] init];
     
     if (![self isCancelled])
 	{
         NSNumber *Options = [_taskInfo objectForKey: kOptionsKey];
 
         //    // This will eliminate any results from previous searches
-        //    [filecollection resetDuplicateLists];
         //
         long long int minFileSize = [[_taskInfo objectForKey:kMinSizeFilter] longLongValue];
         NSDate *startDateFilter = [_taskInfo objectForKey:kStartDateFilter];
@@ -169,8 +170,10 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                         }
                         if (duplicate) {
                             //NSLog(@"=======================File Duplicated =====================\n%@\n%@", [FileA getPath], [FileB getPath]);
-                            if ([FileA addDuplicate:FileB group:dupGroup])
+                            if ([FileA addDuplicate:FileB group:dupGroup]) {
+                                // group is only incremented if FileB is the first duplicate of FileA
                                 dupGroup++;
+                            }
                             // The cycle will end once one duplicate is found
                             // This simplifies the algorithm, but makes the group IDs more complex
                             j = max_files;
@@ -191,39 +194,37 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         }
         if (![self isCancelled])
         {
+            
             statusCount = 3;
             NSLog(@"DuplicateFindOperation: Creating Tree");
-            for (NSURL *url in urls) {
-                // Will distribute the duplicates on the tree received
-                // 1. Will ask the Tree Manager for this URL,
-                TreeBranchCatalyst *workBranch = [[TreeBranchCatalyst alloc] initWithURL:url parent:nil];
-                                    
-                [workBranch prepareForDuplicates];
-                [roots addObject:workBranch];
-            }
+            
+            roots = [[TreeCollection alloc] initWithURL:nil parent:nil];
             counter = 0;
-            if ([duplicates count]==0) {
-                duplicates = nil;
-            }
-            else {
+            if ([duplicates count]!=0) {
                 // Adding the duplicates to the new Tree
                 for (TreeLeaf *item in duplicates) {
-                    for (TreeBranch *root in roots) {
-                        if ([root canContainURL:item.url]) {
-                            [root addTreeItem:item];
-                            break;
-                        }
-                    }
+                    [roots addTreeItem:item];
                     counter++;
                 }
             }
+            // Preparing single View
+            
+//            NSString *patH = commonPathFromItems(roots.roots);
+//            NSURL *rootURL = [NSURL fileURLWithPath:patH isDirectory:YES];
+//            assert(rootURL!=nil);
+            filterRoot = [[filterBranch alloc] initWithFilter:nil name:@"Duplicates" parent:nil];
+            [filterRoot addItemArray:duplicates];
+//            for (TreeBranch *r in roots.roots) {
+//                [filterRoot addTreeItem:r];
+//            }
         }
     }
     NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                           OK, kDFOOkKey,
-                          roots, kRootsList,
                           duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
+                          roots, kRootsList,
+                          filterRoot, kRootUnified,
                           nil];
     // for the purposes of this sample, we're just going to post the information
     // out there and let whoever might be interested receive it (in our case its MyWindowController).

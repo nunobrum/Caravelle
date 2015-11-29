@@ -85,10 +85,10 @@
 
 
 -(void) refreshContents {
-    NSLog(@"TreeBranchCatalyst.refreshContents (%@)", [self path]);
     if ([self needsRefresh]) {
         [self tagRefreshStart];
         //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
+        NSLog(@"TreeBranchCatalyst.refreshContents (%@)", [self path]);
         
         [browserQueue addOperationWithBlock:^(void) {
             BOOL is_dirty = NO;
@@ -128,7 +128,7 @@
 }
 
 -(NSString*) debugDescription {
-    return [NSString stringWithFormat:@"TreeBranchCatalyst(name%@) files:%li", self.nameCache, [self->_children count]];
+    return [NSString stringWithFormat:@"%@|name:%@", super.debugDescription, self.nameCache];
 }
 
 @end

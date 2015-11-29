@@ -18,6 +18,7 @@ TreeManager *appTreeManager;
 @implementation TreeManager
 
 -(TreeManager*) init {
+    self = [super init];
     self->iArray = [[NSMutableArray alloc] init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileSystemChangePath:) name:notificationDirectoryChange object:nil];
     return self;
@@ -283,6 +284,10 @@ TreeManager *appTreeManager;
             }
             else
             {
+                if (applicationMode & ApplicationModeDupBrowser) {
+                    NSLog(@"Muting refresh on folder (%@)", changedPath);
+                }
+                else {
                 //NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
                 if ([itemToRefresh respondsToSelector:@selector(refreshContents)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
@@ -295,6 +300,7 @@ TreeManager *appTreeManager;
                         [itemParent setTag:tagTreeItemDirty];
                         [itemParent refreshContents];
                     }
+                }
                 }
             }
         }

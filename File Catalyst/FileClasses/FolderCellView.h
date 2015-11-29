@@ -15,7 +15,6 @@ IBOutlet NSTextField *subTitleTextField;
 //IBOutlet ATColorView *colorView;
 //IBOutlet NSProgressIndicator *progessIndicator;
 //IBOutlet NSButton *removeButton;
-BOOL _isSmallSize;
 }
 
 - (NSString *)Title;

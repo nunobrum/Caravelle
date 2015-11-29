@@ -142,7 +142,7 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     {
         TreeLeaf *cursor=self.nextDuplicate;
         NSMutableArray *answer =[[NSMutableArray new]init];
-        while (cursor!=self) {
+        while (cursor!=self && cursor != nil) {
             [answer addObject:cursor];
             cursor = cursor.nextDuplicate;
         }

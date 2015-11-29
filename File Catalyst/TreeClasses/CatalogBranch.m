@@ -25,7 +25,7 @@
             @catch (NSException *exception) {
                 NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch with this name");
                 // then not adds it to itself. Can also create an "others" branch.
-                return [self addTreeItem:treeItem];
+                return [super addTreeItem:treeItem];
             }
         }
 

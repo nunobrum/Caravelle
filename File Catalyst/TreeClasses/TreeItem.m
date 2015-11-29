@@ -516,7 +516,11 @@
  */
 
 -(NSString*) debugDescription {
-    return [NSString stringWithFormat: @"TreeItem:%@", self.url];
+    return [NSString stringWithFormat: @"%@|url:%@", self.className, self.url];
+}
+
+-(NSString*) description {
+    return [NSString stringWithFormat: @"%@|url:%@", self.className, self.url];
 }
 
 @end

@@ -191,8 +191,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSInteger statusFilesMoved,statusFilesCopied,statusFilesDeleted;
     // Duplicate Support
     FileCollection *duplicates;
-    TreeRoot *unifiedDuplicatesRoot;
-    NSArray *rootsWithDuplicates;
+    filterBranch *unifiedDuplicatesRoot;
+    TreeCollection *rootsWithDuplicates;
 }
 
 // -------------------------------------------------------------------------------
@@ -252,6 +252,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 -(void) prepareView:(id<MYViewProtocol>) view withItem:(TreeBranch*)item {
     [(BrowserController*)view removeAll];
+    [(BrowserController*)view refresh];
+    [(BrowserController*)view startAllBusyAnimations];
     [(BrowserController*)view setViewMode:BViewBrowserMode ];
     [(BrowserController*)view setViewType:BViewTypeVoid];
     
@@ -812,39 +814,50 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     if ([senderView isKindOfClass:[BrowserController class]]) {
         if ([notifInfo[kViewChangedWhatKey] isEqualToString:kViewChanged_TreeCollapsed]) {
-            if (applicationMode == ApplicationModeDupDual) {
+            if ((applicationMode == ApplicationModeDupBrowser)!=0) {
                 if (senderView == myRightView) {
-                    
+                    [myRightView removeAll];
+                    [myRightView refresh];
                     if ([(BrowserController*)senderView treeViewCollapsed]) {
-                    
                         // Activate the Flat View
-                        [myRightView setFlatView:YES];
                         // TODO:! This should be retrieved from Default Settings
-                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
+                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP",@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myRightView.detailedViewController setupColumns:dupColumns];
-                        // Group by Location
-                        [myRightView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
+                        [myRightView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:NO];
+                        [myRightView setFlatView:YES];
                         [myRightView selectFirstRoot];
                     
                     }
                     else {
                         // Activate the Flat View
-                        [myRightView setFlatView:NO];
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myRightView.detailedViewController setupColumns:dupColumns];
                         // Group by Location
-                        [myRightView.detailedViewController removeSortOnField:@"COL_DUP_GROUP"];
                         [myRightView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
-                        
+                        [myRightView setFlatView:NO];
+                        [myRightView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
+                    }
+                }
+                else if (senderView==myLeftView) {
+                    /* Do nothing in this situation.
+                     
+                    if (applicationMode == ApplicationModeDupSingle) {
+                         // TODO:! This should be retrieved from Default Settings
+                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
+                        [myLeftView.detailedViewController setupColumns:dupColumns];
+                        // Group by Location
+                        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
+                        [myLeftView setFlatView:YES];
                         // ___________________________
                         // Setting the duplicate Files
                         // ---------------------------
                         
-                        [myLeftView setRoots:rootsWithDuplicates];
+                        [myLeftView setRoots:[NSArray arrayWithObject:unifiedDuplicatesRoot]];
                         [myLeftView stopBusyAnimations];
-                        [self focusOnView:myLeftView]; // Changing selected
+                        [self focusOnView:myLeftView];
                         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
-                    }
+                         */
+                    
                 }
             }
         }
@@ -954,6 +967,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             if (item != nil) {
                 // Add to the Browser View
                 [(BrowserController*)view removeAll];
+                [(BrowserController*)view refresh];
+                [(BrowserController*)view startAllBusyAnimations];
                 [(BrowserController*)view setViewMode:BViewBrowserMode];
                 [(BrowserController*)view setViewType:BViewTypeVoid];
                 [(BrowserController*)view addTreeRoot: item];
@@ -1503,6 +1518,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         _application_mode = old_mode;
     }
     else if (newMode == ApplicationModeDupSingle) {
+        [myLeftView removeAll];
+        [myLeftView refresh];
         [self makeView1:@"DuplicateSingle" view2:nil];
         [myLeftView setViewMode:BViewDuplicateMode];
         [myLeftView setViewType:BViewTypeTable];
@@ -1517,8 +1534,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // ___________________________
         // Setting the duplicate Files
         // ---------------------------
-        
-        [myLeftView setRoots:[NSArray arrayWithObject:unifiedDuplicatesRoot]];
+        [myLeftView addTreeRoot:unifiedDuplicatesRoot];
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView];
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
@@ -1544,17 +1560,17 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // Deactivate the Tree View on the Left
         [myRightView setTreeViewCollapsed:YES]; // This is the default.
         
-        // Activate the Flat View
         [myRightView setFlatView:YES];
         [myRightView.detailedViewController setupColumns:dupColumns];
         // Group by Location
         [myRightView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        // Activate the Flat View
         
         // ___________________________
         // Setting the duplicate Files
         // ---------------------------
         
-        [myLeftView setRoots:rootsWithDuplicates];
+        [myLeftView setRoots:rootsWithDuplicates.roots];
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView]; // Changing selected
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
@@ -2242,6 +2258,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             dupShow++;
             
             /* will now populate the Right View with Duplicates*/
+            [myRightView removeAll];
+            [myRightView refresh];
+            [myRightView startAllBusyAnimations];
             
             if ([myRightView treeViewCollapsed]) {
                 /* Whether it will present one flat view */
@@ -2262,7 +2281,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             }
             else {
                 /* Whether it will present a treeView */
-                [myRightView removeAll];
                 for (TreeItem *item in selectedFiles ) {
                     FileCollection *itemDups = [duplicates duplicatesOfPath:[item path] dCounter:dupShow];
                     [myRightView addFileCollection: itemDups];
@@ -2531,14 +2549,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     
     [duplicates setFiles: duplicatedFileArray];
-    rootsWithDuplicates = [info objectForKey:kRootsList];
     
-    // Preparing single View
-    if (unifiedDuplicatesRoot==nil) {
-        unifiedDuplicatesRoot = [[TreeRoot alloc] init];
-        [unifiedDuplicatesRoot setName:@"Duplicates"];
-    }
-    [unifiedDuplicatesRoot setFileCollection:duplicates];
+    // Dual View
+    rootsWithDuplicates = [info objectForKey:kRootsList];
+    // Single View
+    unifiedDuplicatesRoot = [info objectForKey:kRootUnified];
+    
+
     
     // ___________________________________
     // Prepare the view for Duplicate View

@@ -6,11 +6,10 @@
 //  Copyright (c) 2014 Nuno Brum. All rights reserved.
 //
 
-#import "TreeBranch.h"
+#import "TreeBranchCatalyst.h"
 
-@interface filterBranch : TreeBranch {
+@interface filterBranch : TreeBranchCatalyst {
     NSPredicate *_filter;
-    NSString *_branchName;
 }
 
 -(TreeBranch*) initWithFilter:(NSPredicate*)filt name:(NSString*)name parent:(TreeBranch*)parent;
@@ -20,7 +19,6 @@
 
 #pragma mark overriden methods
 // This method is overriden so that the url attribute can be set with the parents url
--(NSString*) name; // This is needed to return the branchName as Name.
 -(void) setParent:(TreeItem *)parent;
 -(TreeItem*) addURL:(NSURL*)theURL;
 -(BOOL) canContainURL:(NSURL *)url;
@@ -28,6 +26,8 @@
 #pragma mark -
 #pragma mark new methods
 -(BOOL) addTreeItem:(TreeItem*)treeItem;
+-(NSInteger) addItemArray:(NSArray*) items;
+
 -(TreeItem*) addMDItem:(NSMetadataItem*)mdItem;
 -(BOOL) canContainMDItem:(NSMetadataItem *)mdItem;
 -(BOOL) canContainTreeItem:(TreeItem *)treeItem;

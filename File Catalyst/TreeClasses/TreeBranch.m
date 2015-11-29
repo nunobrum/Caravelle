@@ -159,14 +159,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 -(void) releaseChildren {
     [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
-    @synchronized(self ) {
-        for (TreeItem *item in _children) {
-            // NOTE: isKindOfClass is preferred over itemType.
-            if ([item isKindOfClass:[TreeBranch class]]) {
-                [(TreeBranch*)item releaseChildren];
-            }
-        }
-    }
+//    @synchronized(self ) {
+//        for (TreeItem *item in _children) {
+//            // NOTE: isKindOfClass is preferred over itemType.
+//            if ([item isKindOfClass:[TreeBranch class]]) {
+//                [(TreeBranch*)item releaseChildren];
+//            }
+//        }
+//    }
     [_children removeAllObjects];
     
     [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
@@ -1434,6 +1434,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return answer;
 }
 */
+
+// TODO:????? Is this still being used ?
 -(void) prepareForDuplicates {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
@@ -1582,7 +1584,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  */
 
 -(NSString*) debugDescription {
-    return [NSString stringWithFormat: @"TreeBranch(%ld files):%@", [self->_children count], self.url];
+    return [NSString stringWithFormat: @"|%@|(%ld files)", super.debugDescription, [self->_children count]];
 }
 
 @end

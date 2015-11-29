@@ -15,7 +15,7 @@
 
 }
 
-
+-(NSArray*) roots; // Directly returns the children
 
 -(void) addFileCollection:(FileCollection*)collection;
 
