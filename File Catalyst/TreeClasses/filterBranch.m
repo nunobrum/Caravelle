@@ -17,14 +17,14 @@
 }
 
 -(filterBranch*) initWithFilter:(NSPredicate*)filt  name:(NSString*)name  parent:(TreeBranch*)parent {
-    // self = [super initWithURL:nil parent:parent]; Now a nil can't be passed to the initWithURL
+    self = [super initWithURL:nil parent:parent]; //Now a nil can't be passed to the initWithURL
     self->_children = nil;
     [self setParent:parent];    // This routine also sets url to be the same of the parent.
                                 // This is needed for compatibility with other methods
                                 // such as childContainingURL. The filter is supposed to be used on
                                 // filters on the contents of a parent.
     self->_filter = filt;
-    self->_branchName = name;
+    self.nameCache = name;
     return self;
 }
 
@@ -44,9 +44,6 @@
 //    return self;
 //}
 
--(NSString*) name {
-    return _branchName;
-}
 
 -(NSImage*) image {
     return [NSImage imageNamed:@"SearchFolder"];
@@ -67,9 +64,6 @@
     // filters on the contents of a parent.
 }
 
--(NSString*) branchName {
-    return self->_branchName;
-}
 
 #pragma mark -
 #pragma mark Refreshing contents

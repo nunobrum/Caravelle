@@ -21,7 +21,7 @@
 -(instancetype) initWithSearch:(NSString*)searchKey name:(NSString*)name parent:(TreeBranch*)parent {
     self = [super initWithURL:nil parent:parent];
     self->_query = [[NSMetadataQuery alloc] init];
-    self->_branchName = name;
+    self.nameCache = name;
     self->_searchKey = searchKey;
     self->searchContent = NO;
     // To watch results send by the query, add an observer to the NSNotificationCenter
