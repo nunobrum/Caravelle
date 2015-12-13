@@ -14,7 +14,6 @@
 #import "DuplicateGrouping.h"
 #include "Definitions.h"
 #import "CustomTableHeaderView.h"
-#import "TreeItem.h"
 
 /*
  * Grouping of elements

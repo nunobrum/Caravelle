@@ -118,7 +118,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                 BOOL duplicate;
                 NSLog(@"DuplicateFindOperation: Ordering Files");
                 if (options & DupCompareSize) {
-                    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"fileSize" ascending:NO];
+                    NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"exactSize" ascending:NO];
                     [fileArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
                 }
                 NSLog(@"DuplicateFindOperation: File Matching");
@@ -137,12 +137,12 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                             duplicate= FALSE;
                         }
                         else if (options & DupCompareSize) {
-                            NSComparisonResult comp = [FileA.fileSize compare:FileB.fileSize];
-                            if (comp == NSOrderedDescending) { // FileA.fileSize > FileB.fileSize
+                            NSComparisonResult comp = [FileA.exactSize compare:FileB.exactSize];
+                            if (comp == NSOrderedDescending) { // FileA.exactSize > FileB.exactSize
                                 j = max_files; // This will make the inner cycle to end
                                 duplicate = FALSE;
                             }
-                            else if (comp == NSOrderedAscending) { // (FileA.fileSize < FileB.fileSize)
+                            else if (comp == NSOrderedAscending) { // (FileA.exactSize < FileB.exactSize)
                                 duplicate = FALSE; // This in principle will never happen if the files are sorted by size
                             }
                         }

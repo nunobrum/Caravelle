@@ -279,7 +279,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             homepath = [[NSUserDefaults standardUserDefaults] stringForKey:USER_DEF_RIGHT_HOME];
             if (homepath == nil || [homepath isEqualToString:@""]) {
                 // if there is no path assigned, just use the one of the left
-                homepath = [[myLeftView treeNodeSelected] path];
+                homepath = [myLeftView homePath];
             }
         }
 
@@ -334,13 +334,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     //NSLog(@"AppDelegate.savePreferences:");
     if (applicationMode <= ApplicationMode2Views) { // Only records simple Single and Dual Pane Views
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithLong:applicationMode] forKey:USER_DEF_APP_VIEW_MODE];
-        NSString *homepath = [[myLeftView treeNodeSelected] path];
+        NSString *homepath = [myLeftView homePath];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
         
         [myLeftView savePreferences];
         if (myRightView) {
             if (applicationMode <= ApplicationMode2Views) {
-                NSString *homepath = [[myRightView treeNodeSelected] path];
+                NSString *homepath = [myRightView homePath];
                 [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_RIGHT_HOME];
             }
             [myRightView savePreferences];
@@ -531,7 +531,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                 filter = [NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"];
                 [st setFilter:filter];
                 for (int sz=1; sz < 10; sz+=1) {
-                    NSString *pred = [NSString stringWithFormat:@"SELF.filesize < %d", sz*1000000];
+                    NSString *pred = [NSString stringWithFormat:@"SELF.exactSize < %d", sz*1000000];
                     filter = [NSPredicate predicateWithFormat:pred];
                     NSString *predname = [NSString stringWithFormat:@"Less Than %dMB", sz];
                     fb = [[filterBranch alloc] initWithFilter:filter name:predname parent:nil];
@@ -1065,10 +1065,22 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if ([self checkAppInDuplicateBlocking]==NO) return;
     
     if ([self selectedView] == myLeftView) {
-        [self copyItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
+        id node = [myRightView treeNodeSelected];
+        if ([node isKindOfClass:[TreeBranch class]]) {
+            [self copyItems:selectedFiles toBranch: node];
+        }
+        else {
+            // TODO: !! log error
+        }
     }
     else if ([self selectedView] == myRightView) {
-        [self copyItems:selectedFiles toBranch: [myLeftView treeNodeSelected]];
+        id node = [myLeftView treeNodeSelected];
+        if ([node isKindOfClass:[TreeBranch class]]) {
+            [self copyItems:selectedFiles toBranch: node];
+        }
+        else {
+            // TODO: !! log error
+        }
     }
 }
 
@@ -1078,10 +1090,22 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if ([self checkAppInDuplicateBlocking]==NO) return;
     
     if ([self selectedView] == myLeftView) {
-        [self moveItems:selectedFiles toBranch: [myRightView treeNodeSelected]];
+        id node = [myRightView treeNodeSelected];
+        if ([node isKindOfClass:[TreeBranch class]]) {
+            [self copyItems:selectedFiles toBranch: node];
+        }
+        else {
+            // TODO: !! log error
+        }
     }
     else if ([self selectedView] == myRightView) {
-        [self moveItems:selectedFiles toBranch: [myLeftView treeNodeSelected]];
+        id node = [myLeftView treeNodeSelected];
+        if ([node isKindOfClass:[TreeBranch class]]) {
+            [self copyItems:selectedFiles toBranch: node];
+        }
+        else {
+            // TODO: !! log error
+        }
     }
 }
 
@@ -1321,7 +1345,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if (selectionCount!=0) {
         // TODO:! Ask whether to move the files into the new created Folder
     }
-    [self executeNewFolder:[[self selectedView] treeNodeSelected]];
+    id node = [[self selectedView] treeNodeSelected];
+    if ([node isKindOfClass:[TreeBranch class]]) {
+        [self executeNewFolder: node];
+    }
+    else {
+        // TODO: !! log error
+    }
 }
 
 - (IBAction)contextualNewFolder:(id)sender {
@@ -1433,9 +1463,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 
 - (IBAction)paste:(id)sender {
-    TreeBranch *destinationBranch = [[self selectedView] treeNodeSelected];
-    [self executePaste:destinationBranch];
-
+    id  destinationBranch = [[self selectedView] treeNodeSelected];
+    if ([destinationBranch isKindOfClass:[TreeBranch class]]) {
+        [self executePaste:destinationBranch];
+    }
+    else {
+        // TODO:!! Log error
+    }
 }
 
 - (IBAction)contextualPaste:(id)sender {
@@ -2141,7 +2175,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             if (dest) {// a URL arrived here in one of the tests. Placing here an assertion to trap it if it happens again
                 NSAssert([dest isKindOfClass:[TreeBranch class]], @"ERROR. Received an object that isn't a TreeBranch");
                 [dest setTag:tagTreeItemDirty];
-                [dest refreshContents];
+                [dest refresh];
             }
         }
     }
@@ -2304,7 +2338,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         }
         else if ([selectedFiles count] == 1) {
             TreeItem *item = [selectedFiles objectAtIndex:0];
-            long long size = [[item fileSize] longLongValue];
+            long long size = [[item exactSize] longLongValue];
             NSString *sizeText;
             if (size != -1) {
                 sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]];
@@ -2331,11 +2365,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             for (TreeItem *item in selectedFiles ) {
                 if ([item isLeaf]) {
                     num_files++;
-                    files_size += [[(TreeLeaf*)item fileSize] longLongValue];
+                    files_size += [[(TreeLeaf*)item exactSize] longLongValue];
                 }
                 else if ([item isFolder]) {
                     num_directories++;
-                    folders_size += [[(TreeBranch*)item fileSize] longLongValue];
+                    folders_size += [[(TreeBranch*)item exactSize] longLongValue];
                 }
             }
 
@@ -2386,10 +2420,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
         // Setting the current node in the list
         NSMutableArray *selectedNodes;
-        selectedNodes = [NSMutableArray arrayWithObjects:[[myLeftView treeNodeSelected] url], nil]; // Prefering this form since the url can be nil
+        selectedNodes = [NSMutableArray arrayWithObject:[myLeftView homePath]]; // Prefering this form since the url can be nil
         if (applicationMode == ApplicationMode2Views) {
-            if ([[myLeftView treeNodeSelected] compareTo:[myRightView treeNodeSelected]] == pathsHaveNoRelation)
-                [selectedNodes addObject:[[myRightView treeNodeSelected] url]];
+            if (path_relation([myLeftView homePath],[myRightView homePath]) == pathsHaveNoRelation)
+                [selectedNodes addObject:[myRightView homePath]];
         }
         [duplicateSettingsWindow showWindow:self];
         [self->duplicateSettingsWindow setURLs:selectedNodes];

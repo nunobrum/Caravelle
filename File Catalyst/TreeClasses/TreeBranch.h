@@ -93,7 +93,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(void) tagRefreshStart;
 -(void) tagRefreshFinished;
 -(BOOL) needsRefresh;
--(void) refreshContents;
+-(void) refresh;
 -(void) forceRefreshOnBranch;
 -(void) calculateSize;
 -(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;

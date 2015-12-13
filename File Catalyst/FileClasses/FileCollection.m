@@ -11,7 +11,7 @@
 #import "FileCollection.h"
 
 #import "Definitions.h"
-
+#import "TreeLeaf.h"
 
 @implementation FileCollection: NSObject
 

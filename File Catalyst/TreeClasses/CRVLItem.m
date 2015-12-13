@@ -1,12 +1,12 @@
 //
-//  TreeItem.m
+//  CRVLItem.m
 //  Caravelle
 //
 //  Created by Nuno Brum on 12/31/12.
 //  Copyright (c) 2012 Nuno Brum. All rights reserved.
 //
 
-#import "TreeItem.h"
+#import "CRVLItem.h"
 #import "TreeBranch.h"
 #import "TreePackage.h"
 #import "TreeManager.h"
@@ -15,52 +15,204 @@
 
 
 
-@implementation TreeItem
+@implementation CRVLItem
 
--(id) hashObject {
-    return _url;
+
+-(NSInteger)itemCount { return 1; }
+-(BrowserItemPointer)itemAtIndex:(NSUInteger)index { return nil; }
+
+-(NSMutableArray*) itemsInNode {
+    return nil;
 }
 
+-(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate *)filter {
+    return nil;
+}
+
+-(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth {
+    return nil;
+}
+
+-(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+    return nil;
+}
+
+-(NSInteger)nodeCount { return 1; }
+-(BrowserItemPointer)nodeAtIndex:(NSUInteger)index { return nil; }
+-(NSMutableArray*) nodesInNode {
+    return nil;
+}
+
+-(NSInteger) leafCount {
+    return 0;
+}
+
+-(CRVLItem*) leafAtIndex:(NSUInteger) index {
+    return nil;
+}
+
+
+-(NSMutableArray*) leafsInNode {
+    return nil;
+}
+
+// This returns the number of leafs in a branch
+// this function is recursive to all sub branches
+-(NSInteger) numberOfLeafsInBranch {
+    return 0;
+}
+
+-(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate *)filter {
+    return nil;
+}
+
+
+-(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth {
+    return nil;
+}
+
+-(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+    return nil;
+}
+
+
+
+-(BOOL) needsRefresh { return NO; }
+-(void)refresh {}
+
+-(NSString*) name {
+    if (self.nameCache) {
+        return self.nameCache;
+    }
+    NSString *nameStr = [_url lastPathComponent];
+    if ([nameStr isEqualToString:@"/"]) {
+        nameStr = mediaNameFromURL(_url);
+    }
+    self.nameCache = nameStr;
+    return nameStr;
+}
+
+-(void) setName:(NSString*)newName {
+    NSString const *operation=nil;
+    if ([self hasTag:attrViewNew]) {
+        operation = opNewFolder;
+    }
+    else {
+        // If the name didn't change. Do Nothing
+        if ([newName isEqualToString:[self name]]) {
+            return;
+        }
+        operation = opRename;
+    }
+    self.nameCache = newName;
+    NSArray *items = [NSArray arrayWithObject:self];
+    
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          items, kDFOFilesKey,
+                          operation, kDFOOperationKey,
+                          newName, kDFORenameFileKey,
+                          self->_parent, kDFODestinationKey,
+                          //self, kFromObjectKey,
+                          nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+    
+}
+
+
+-(NSImage*) image {
+    NSImage *iconImage;
+    NSImage *image;
+    
+    // First get the image
+    if ([self hasTag:attrViewNew] || self.url==nil) {
+        if ([self isFolder])
+            iconImage = [NSImage imageNamed:@"GenericFolderIcon"];
+        else
+            iconImage = [NSImage imageNamed:@"GenericDocumentIcon"];
+    }
+    else  {
+        iconImage =[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
+    }
+    
+    
+    NSSize imageSize= [iconImage size];
+    //attrViewTagEnum tags = [self tag];
+    image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        [iconImage drawInRect:dstRect];
+        
+        // Then will apply an overlay
+        // The code below only draw one of the badges in the order the code is presented.
+        // TODO: ! Consider making an shifted overlay where all the applicable badges are placed
+        //         in sequence, starting from right to left
+        if ([self hasTag:attrViewHidden]) {
+            [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ private", [self url]);
+        }
+        else if ([self hasTag:attrViewReadOnly]) {
+            [[NSImage imageNamed:@"ReadOnlyFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ read-only", [self url]);
+        }
+        else if ([self hasTag:attrViewDropped]) {
+            [[NSImage imageNamed:@"DropFolderBadgeIcon"] drawInRect:dstRect];
+            //NSLog(@"%@ dropped", [self url]);
+        }
+        return YES;
+    }];
+    return image;
+}
+
+-(NSString*) hint {
+    return [self name];
+}
+
+-(attrViewTagEnum) tag {
+    return _tag;
+}
+
+-(void) setTag:(attrViewTagEnum)tags {
+    _tag |= tags;
+}
+-(void) resetTag:(attrViewTagEnum)tags {
+    _tag &= ~tags;
+}
+
+-(BOOL) hasTag:(attrViewTagEnum) tag {
+    return (_tag & tag)!=0 ? YES : NO;
+}
+
+-(void) toggleTag:(attrViewTagEnum)tags {
+    _tag ^= tags;
+}
+
+
 -(ItemType) itemType {
-    NSAssert(NO, @"This method is supposed to not be called directly. Virtual Method.");
     return ItemTypeNone;
+}
+
+-(BOOL) isExpandable { return NO; }
+-(BOOL) needsSizeCalculation { return NO; }
+-(BOOL) isGroup { return NO; }
+-(BOOL) isFolder {
+    return [self itemType] < ItemTypeLeaf;
+}
+-(BOOL) hasChildren { // has physical children but does not display as folders.
+    return NO;
+}
+
+-(NSArray*) children {
+    return nil;
+}
+
+-(id)   hashObject {
+    return _url;
 }
 
 -(BOOL) isLeaf {
     return [self itemType] >= ItemTypeLeaf;
 }
 
--(BOOL) isFolder {
-    return [self itemType] < ItemTypeLeaf;
-}
 
--(BOOL) needsRefresh {
-    return NO;
-}
-
--(void) refresh {
-    
-}
-
--(BOOL) isExpandable {
-    return NO;
-}
-
--(BOOL) needsSizeCalculation {
-    return NO;
-}
-
--(BOOL) isGroup {
-    return NO;
-}
-
--(BOOL) hasChildren {
-    return NO;
-}
-
-
-
--(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
+-(instancetype) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
         self->_tag = 0;
@@ -71,13 +223,13 @@
     return self;
 }
 
--(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
+-(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
     return [self initWithURL: [NSURL fileURLWithPath:path] parent:parent];
  }
 
 
-+(id) treeItemForURL:(NSURL *)url parent:(id)parent {
++(id) CRVLItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
     // TODO:!! Check Is regular file First. See NSURLIsRegularFileKey
     NSString *typeIdentifier;
@@ -107,21 +259,29 @@
             NSArray *imageUTIs = [NSImage imageTypes];
             if ([imageUTIs containsObject:typeIdentifier]) {
                 //  TODO:!!! Treat here other file types other than just not folders
-                return [[TreeLeaf alloc] initWithURL:url parent:parent];
+                return [[CRVLFile alloc] initWithURL:url parent:parent];
             }
-            return [[TreeLeaf alloc] initWithURL:url parent:parent];
+            return [[CRVLFile alloc] initWithURL:url parent:parent];
         }
     }
     return nil;
 }
 
-+(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent {
++(id)CRVLItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
     //NSString *typeIdentifier = [mdItem valueForAttribute:(id)kMDItemContentType];
     NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
     NSURL *url = [NSURL fileURLWithPath:path];
-    id answer = [self treeItemForURL:url parent:parent];
+    id answer = [self CRVLItemForURL:url parent:parent];
     return answer;
+}
+
++(id) createFromPastedObject:(id)object {
+    // Only creates from URLs for the time being
+    if ([object isKindOfClass:[NSURL class]]) {
+        return [self CRVLItemForURL:object parent:self];
+    }
+    return nil;
 }
 
 
@@ -145,75 +305,25 @@
     [self->_url removeAllCachedResourceValues];
 }
 
--(void) setTag:(TreeItemTagEnum)tag {
-    _tag |= tag;
-}
--(void) resetTag:(TreeItemTagEnum)tag {
-    _tag &= ~tag;
-}
--(void) toggleTag:(TreeItemTagEnum)tag {
-    _tag ^= tag;
-}
 
--(TreeItemTagEnum) tag {
-    return _tag;
-}
-
--(BOOL) hasTags:(TreeItemTagEnum) tag {
-    return (_tag & tag)!=0 ? YES : NO;
-}
 
 -(void) updateFileTags {
-    _tag &= ~tagTreeItemDirty;
+    _tag &= ~attrViewDirty;
     if (isWritable(_url))
-        _tag &= ~tagTreeItemReadOnly;
+        _tag &= ~attrViewReadOnly;
     else
-        _tag |= tagTreeItemReadOnly;
+        _tag |= attrViewReadOnly;
     
     if (isHidden(_url))
-        _tag |= tagTreeItemHidden;
+        _tag |= attrViewHidden;
     else
-        _tag &= ~tagTreeItemHidden;
+        _tag &= ~attrViewHidden;
     
 }
 
--(NSString*) name {
-    if (self.nameCache) {
-        return self.nameCache;
-    }
-    NSString *nameStr = [_url lastPathComponent];
-    if ([nameStr isEqualToString:@"/"]) {
-        nameStr = mediaNameFromURL(_url);
-    }
-    self.nameCache = nameStr;
-    return nameStr;
-}
 
--(void) setName:(NSString*)newName {
-    NSString const *operation=nil;
-    if ([self hasTags:tagTreeItemNew]) {
-        operation = opNewFolder;
-    }
-    else {
-        // If the name didn't change. Do Nothing
-        if ([newName isEqualToString:[self name]]) {
-            return;
-        }
-        operation = opRename;
-    }
-    self.nameCache = newName;
-    NSArray *items = [NSArray arrayWithObject:self];
 
-    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                          items, kDFOFilesKey,
-                          operation, kDFOOperationKey,
-                          newName, kDFORenameFileKey,
-                          self->_parent, kDFODestinationKey,
-                          //self, kFromObjectKey,
-                          nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
-}
 
 -(NSDate*) date_modified {
     NSDate *date=nil;
@@ -268,47 +378,7 @@
     return [[_url URLByDeletingLastPathComponent] path];
 }
 
--(NSImage*) image {
-    NSImage *iconImage;
-    NSImage *image;
-    
-    // First get the image
-    if ([self hasTags:tagTreeItemNew] || self.url==nil) {
-        if ([self isFolder])
-            iconImage = [NSImage imageNamed:@"GenericFolderIcon"];
-        else
-            iconImage = [NSImage imageNamed:@"GenericDocumentIcon"];
-    }
-    else  {
-        iconImage =[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
-    }
-    
-    
-    NSSize imageSize= [iconImage size];
-    //TreeItemTagEnum tags = [self tag];
-    image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-        [iconImage drawInRect:dstRect];
-        
-        // Then will apply an overlay
-        // The code below only draw one of the badges in the order the code is presented.
-        // TODO: ! Consider making an shifted overlay where all the applicable badges are placed
-        //         in sequence, starting from right to left
-        if ([self hasTags:tagTreeItemHidden]) {
-            [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ private", [self url]);
-        }
-        else if ([self hasTags:tagTreeItemReadOnly]) {
-            [[NSImage imageNamed:@"ReadOnlyFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ read-only", [self url]);
-        }
-        else if ([self hasTags:tagTreeItemDropped]) {
-            [[NSImage imageNamed:@"DropFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ dropped", [self url]);
-        }
-        return YES;
-    }];
-    return image;
-}
+
 
 
 -(NSNumber*) exactSize {
@@ -318,21 +388,21 @@
 }
 
 -(NSNumber*) allocatedSize {
-    NSNumber *filesize;
-    [_url getResourceValue:&filesize     forKey:NSURLFileAllocatedSizeKey error:NULL];
-    return filesize;
+    NSNumber *allocatedSize;
+    [_url getResourceValue:&allocatedSize     forKey:NSURLFileAllocatedSizeKey error:NULL];
+    return allocatedSize;
 }
 
 -(NSNumber*) totalSize {
-    NSNumber *filesize;
-    [_url getResourceValue:&filesize     forKey:NSURLTotalFileSizeKey error:NULL];
-    return filesize;
+    NSNumber *totalSize;
+    [_url getResourceValue:&totalSize     forKey:NSURLTotalFileSizeKey error:NULL];
+    return totalSize;
 }
 
 -(NSNumber*) totalAllocatedSize {
-    NSNumber *filesize;
-    [_url getResourceValue:&filesize     forKey:NSURLTotalFileAllocatedSizeKey error:NULL];
-    return filesize;
+    NSNumber *totalAllocatedSize;
+    [_url getResourceValue:&totalAllocatedSize     forKey:NSURLTotalFileAllocatedSizeKey error:NULL];
+    return totalAllocatedSize;
 }
 
 -(NSString*) fileKind {
@@ -341,14 +411,11 @@
     return kind;
 }
 
--(NSString*) hint {
-    return [self name];
-}
 
 
 
--(TreeItem*) root {
-    TreeItem *cursor = self;
+-(instancetype) root {
+    CRVLItem *cursor = self;
     while (cursor->_parent!=NULL) {
         cursor=cursor->_parent;
     }
@@ -364,7 +431,7 @@
 
 -(NSArray *) treeComponents {
     NSMutableArray *answer = [NSMutableArray arrayWithObject:self];
-    TreeItem *cursor = self;
+    CRVLItem *cursor = self;
     while (cursor->_parent!=NULL) {
         cursor=cursor->_parent;
         [answer insertObject:cursor atIndex:0];
@@ -374,7 +441,7 @@
 
 -(NSArray *) treeComponentsToParent:(id)parent {
     NSMutableArray *answer = [NSMutableArray arrayWithObject:self];
-    TreeItem *cursor = self;
+    CRVLItem *cursor = self;
     while (cursor!=parent && cursor->_parent!=NULL ) {
         cursor=cursor->_parent;
         [answer insertObject:cursor atIndex:0];
@@ -391,7 +458,7 @@
     if (_parent) {
         [(TreeBranch*)_parent removeChild:self];
     }
-    [self setTag:tagTreeItemRelease];
+    [self setTag:attrViewRelease];
     return YES;
 }
 
@@ -402,7 +469,7 @@
     return path_relation([self path], otherPath);
 }
 
--(enumPathCompare) compareTo:(TreeItem*) otherItem {
+-(enumPathCompare) compareTo:(CRVLItem*) otherItem {
     return [self relationToPath:[otherItem path]];
 }
 
@@ -514,8 +581,105 @@
     {
         // We only have URLs accepted. Create the URL
         NSURL *url = [[NSURL alloc] initWithPasteboardPropertyList:propertyList ofType:type] ;
-        return [TreeItem treeItemForURL:url parent:nil];
+        return [CRVLItem CRVLItemForURL:url parent:nil];
     }
+}
+
+
+#pragma mark - Pasteboard Drop support
+
+-(NSDragOperation) supportedDragOperations:(id<NSDraggingInfo>)info {
+    
+    NSDragOperation sourceDragMask = [info draggingSourceOperationMask];
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSArray *ptypes =[pboard types];
+    /* Limit the options in function of the dropped Element */
+    // The sourceDragMask should be an or of all the possiblities, and not the only first one.
+    NSDragOperation  supportedMask = NSDragOperationNone;
+    
+    if ( [ptypes containsObject:NSFilenamesPboardType] ) {
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+    }
+    if ( [ptypes containsObject:(id)NSURLPboardType] ) {
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+    }
+    else if ( [ptypes containsObject:(id)kUTTypeFileURL] ) {
+        supportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+    }
+#ifdef USE_UTI
+    else if ( [ptypes containsObject:(id)kTreeItemDropUTI] ) {
+        suportedMask |= ( NSDragOperationCopy + NSDragOperationLink + NSDragOperationMove);
+    }
+#endif
+    
+    sourceDragMask &= supportedMask; // The offered types and the supported types.
+    
+    /* Limit the Operations depending on the Destination Item Class*/
+    if ([self isFolder]) {
+        sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
+    }
+    else if ([self isFolder]==NO) {
+        sourceDragMask &= (NSDragOperationGeneric);
+    }
+    else {
+        sourceDragMask = NSDragOperationNone;
+    }
+    return sourceDragMask;
+}
+
+-(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject {
+    BOOL fireNotfication = NO;
+    NSString const *strOperation;
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+    
+    if ([self isFolder]==NO) {
+        // TODO: !! Dropping Application on top of file or File on top of Application
+        NSLog(@"BrowserController.acceptDrop: - Not impplemented Drop on Files");
+        // TODO:! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
+    }
+    else {
+        if (operation == NSDragOperationCopy) {
+            strOperation = opCopyOperation;
+            fireNotfication = YES;
+        }
+        else if (operation == NSDragOperationMove) {
+            strOperation = opMoveOperation;
+            fireNotfication = YES;
+            
+            // Check whether the destination item is equal to the parent of the item do nothing
+            for (NSURL* file in files) {
+                NSURL *folder = [file URLByDeletingLastPathComponent];
+                if ([[self path] isEqualToString:[folder path]]) // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
+                {
+                    // If true : abort
+                    return nil;
+                }
+            }
+        }
+        else if (operation == NSDragOperationLink) {
+            // TODO: !!! Operation Link
+        }
+        else {
+            // Invalid case
+            fireNotfication = NO;
+        }
+        
+    }
+    if (fireNotfication==YES) {
+        // The copy and move operations are done in the AppDelegate
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              files, kDFOFilesKey,
+                              strOperation, kDFOOperationKey,
+                              self, kDFODestinationKey,
+                              //fromObject, kFromObjectKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:fromObject userInfo:info];
+        return files;
+    }
+    else
+        NSLog(@"BrowserController.acceptDrop: - Unsupported Operation %lu", (unsigned long)operation);
+    return nil;
 }
 
 #pragma mark - Coding Compliant
@@ -525,7 +689,7 @@
  */
 -(void) setValue:(id)value forUndefinedKey:(NSString *)key {
 
-    NSLog(@"TreeItem.setValue:forUndefinedKey: Trying to set value for Key %@", key);
+    NSLog(@"CRVLItem.setValue:forUndefinedKey: Trying to set value for Key %@", key);
 }
 
 /* 
@@ -552,5 +716,8 @@
 -(NSString*) description {
     return [NSString stringWithFormat: @"%@|url:%@", self.className, self.url];
 }
+
+
+
 
 @end

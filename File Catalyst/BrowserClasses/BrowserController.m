@@ -11,12 +11,7 @@
 
 #import "FolderCellView.h"  // Used for the Duplicate/Catalyst View
 
-#import "TreeItem.h"
-#import "TreeLeaf.h"
-#import "TreeBranch.h"
 #import "TreeManager.h"
-//#import "TreeRoot.h"
-#import "filterBranch.h"
 #import "fileOperation.h"
 #import "TableViewController.h"
 #import "IconViewController.h"
@@ -35,14 +30,14 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     id _contextualFocus; // Contains the element used for contextual menus
     NSMutableArray *_observedVisibleItems;
     /* Internal Storage for Drag and Drop Operations */
-    NSDragOperation _validatedOperation; // Passed from Validate Drop to Accept Drop Method
-    TreeBranch *_treeNodeSelected;
-    TreeBranch *_rootNodeSelected;
-    TreeItem *_validatedDestinationItem;
+    NSDragOperation _validatedDropOperation; // Passed from Validate Drop to Accept Drop Method
+    TreeBranch * _treeNodeSelected;
+    TreeBranch * _rootNodeSelected;
+    TreeItem * _validatedDropDestination;
     BOOL _didRegisterDraggedTypes;
     BOOL _awakeFromNibConfigDone;
     BOOL _treeCollapseDetector;
-    TreeBranch *_draggedOutlineItem;
+    TreeBranch * _draggedOutlineItem;
     NSMutableArray *_mruLocation;
     NSUInteger _mruPointer;
     NSMutableIndexSet *extendedSelection;
@@ -281,16 +276,16 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
-    id ret;
+    TreeItem * ret;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
         ret = [BaseDirectories branchAtIndex:index];
     else {
         ret = [item branchAtIndex:index];
     }
-    if ([item isKindOfClass:[TreeBranch class]] && [ret isFolder]) {
+    if ([ret isFolder]) {
         // Use KVO to observe for changes of its children Array
         [self observeItem:ret];
-        [(TreeBranch*)ret refreshContents];
+        [ret refresh];
     }
     return ret;
 }
@@ -299,9 +294,8 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     BOOL answer=NO;
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
-    else if ([item isKindOfClass:[TreeBranch class]] && [item isFolder]) {
-        answer = ([(TreeBranch*)item isExpandable]);
-    }
+    else
+        answer = ([(TreeItem*)item isFolder]);
     return answer;
 }
 
@@ -313,15 +307,18 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     NSTableCellView *cellView=nil;
 
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
-        if ([item isKindOfClass:[TreeItem class]] && [item isLeaf]) {//if it is a file
-            // This is not needed now since the Tree View is not displaying files in this application
-        }
-        else if ([item isKindOfClass:[TreeBranch class]] && [item isFolder]) { // it is a directory
+        if ([item isFolder]) { // it is a directory
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 NSString *sizeString;
-                long fileCount = [(TreeBranch*)item numberOfLeafsInBranch];
-                long long sizeOfFilesInBranch = [[(TreeBranch*)item fileSize] longLongValue];
+                long fileCount=0;
+                if ([item respondsToSelector:@selector(numberOfLeafsInBranch)]) {
+                    fileCount = [item numberOfLeafsInBranch];
+                }
+                long long sizeOfFilesInBranch = -1;
+                if ([item respondsToSelector:@selector(exactSize)]) {
+                    sizeOfFilesInBranch = [[item exactSize] longLongValue];
+                }
                 if (sizeOfFilesInBranch==-1) // Undefined
                     sizeString = @"--";
                 else {
@@ -444,7 +441,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
             //[_myTableView unregisterDraggedTypes];
         } else if (SelectedCount==1) {
             /* Updates the _treeNodeSelected */
-            TreeBranch *tb = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
+            TreeBranch * tb = [_myOutlineView itemAtRow:[rowsSelected firstIndex]];
             if (tb != _treeNodeSelected) { // !!! WARNING This workaround might raise problems in the future depending on the implementation of the folder change notification. Best is to see why this function is being called twice.
                 [self setCurrentNode:tb];
 
@@ -452,7 +449,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
                 // Use KVO to observe for changes of its children Array
                 if ([_treeNodeSelected needsRefresh]) {
                     [self.detailedViewController startBusyAnimationsDelayed];
-                    [(TreeBranch*)_treeNodeSelected refreshContents];
+                    [_treeNodeSelected refresh];
                     // This will automatically call for a refresh
                 }
                 else {
@@ -492,7 +489,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
             [self.myOutlineView selectRowIndexes:selectedIndexes byExtendingSelection:NO];
         }
         else
-            NSAssert(NO, @"BrowserController.selectionDidChangeOn: treeBranch not found in the tree");
+            NSAssert(NO, @"BrowserController.selectionDidChangeOn: Branch not found in the tree");
         // set the PathBar back to the _treeNode
         [self setPathBarToItem:_treeNodeSelected];
     }
@@ -717,26 +714,30 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
         }
         TreeBranch *node;
         if ([branch isFolder]) {
-            node = (TreeBranch*)branch;
+            node = branch;
         }
         else {
-            node = (TreeBranch*)[branch parent];
+            node = [branch parent];
         }
-        // if the flat view is set, if outside of the current node, launch an expand Tree
-        if (self.flatView) {
-            if (![node containedInURL:[_treeNodeSelected url]]) {
-                // Send notification to request Expansion
-                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      opFlatOperation, kDFOOperationKey,
-                                      self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
-                                      node, kDFODestinationKey, // This has to be placed in last because it can be nil
-                                      nil];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+        if ([node respondsToSelector:@selector(url)]) {
+            NSURL *url = [node url];
+            
+            // if the flat view is set, if outside of the current node, launch an expand Tree
+            if (self.flatView && [_treeNodeSelected respondsToSelector:@selector(url)]) {
+                if (url_relation(url, [(id)_treeNodeSelected url])==pathIsParent) {
+                    // Send notification to request Expansion
+                    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          opFlatOperation, kDFOOperationKey,
+                                          self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
+                                          node, kDFODestinationKey, // This has to be placed in last because it can be nil
+                                          nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+                }
             }
+            [self setPathBarToItem:node];
+            
+            [self mruSet:url];
         }
-        [self setPathBarToItem:node];
-
-        [self mruSet:[node url]];
         [self.detailedViewController setCurrentNode:node];
         _treeNodeSelected = node;
     }
@@ -862,8 +863,8 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
     NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
     if (rowsSelected!=nil && [rowsSelected count]>0) {
         NSUInteger index = [rowsSelected firstIndex];
-        id node = [_myOutlineView itemAtRow:index];
-        if ([node isKindOfClass:[TreeBranch class]] && [node isFolder]) { // It is a Folder : Will make it a root
+        TreeItem * node = [_myOutlineView itemAtRow:index];
+        if ([node isFolder]) { // It is a Folder : Will make it a root
             if ([BaseDirectories replaceItem:_rootNodeSelected with:node]) {
                 /* This is needed to force the update of the path bar on setPathBarToItem.
                  other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange,
@@ -873,10 +874,10 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
                 [self.detailedViewController refresh];
             }
             else
-                NSLog(@"BrowserController.OutlineDoubleClickEvent: - Root not found '%@'", [node className]);
+                NSLog(@"BrowserController.OutlineDoubleClickEvent: - Root not found '%@'",node);
         }
         else // When other types are allowed in the tree view this needs to be completed
-            NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", [node className]);
+            NSLog(@"BrowserController.OutlineDoubleClickEvent: - Unknown Class '%@'", node);
     }
 }
 
@@ -1249,7 +1250,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
              [keyPath isEqualToString:USER_DEF_CALCULATE_SIZES]) {
         //NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
         [self startAllBusyAnimations];
-        [self.treeNodeSelected refreshContents];
+        [self.treeNodeSelected refresh];
         [self refresh];
     }
     else if ([keyPath isEqualToString:USER_DEF_HIDE_FOLDERS_WHEN_TREE]) {
@@ -1544,7 +1545,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
         }
         else { // Refreshes all the others
             // [tree setTag:tagTreeItemDirty];  // Only treeManager and operations should make items dirty
-            [tree refreshContents];
+            [tree refresh];
             idx++;
         }
     }
@@ -1553,7 +1554,7 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
         // But avoiding repeating the refreshes already done
         if ([BaseDirectories indexOfItem:tree ]==NSNotFound) {
             // [tree setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
-            [tree refreshContents];
+            [tree refresh];
         }
     }
 
@@ -1620,15 +1621,15 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 
 
--(NSURL*) getTreeViewSelectedURL {
-    NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
-    if ([rowsSelected count]==0)
-        return nil;
-    else {
-        // using collection operator to get the array of the URLs from the selected Items
-        return [[_myOutlineView itemAtRow:[rowsSelected firstIndex]] url];
-    }
-}
+//-(NSURL*) getTreeViewSelectedURL {
+//    NSIndexSet *rowsSelected = [_myOutlineView selectedRowIndexes];
+//    if ([rowsSelected count]==0)
+//        return nil;
+//    else {
+//        // using collection operator to get the array of the URLs from the selected Items
+//        return [[_myOutlineView itemAtRow:[rowsSelected firstIndex]] url];
+//    }
+//}
 
 
 -(id) focusedView {
@@ -1932,16 +1933,39 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 #pragma mark - MYViewProtocol
 -(NSString *) title {
-    NSURL *url;
+    TreeItem * selected;
     if ([self treeViewCollapsed]) {
-        url = [self->_treeNodeSelected url];
+        selected = self->_treeNodeSelected;
     }
     else {
-        url = [self->_rootNodeSelected url];
+        selected = self->_rootNodeSelected;
     }
-    if ([[url pathComponents] count]==1)
-        return pathFriendly(url);
-    return [url lastPathComponent];
+    
+    if ([selected respondsToSelector:@selector(url)]) {
+        NSURL *url = [selected url];
+        if ([[url pathComponents] count]==1)
+            return pathFriendly(url);
+        return [url lastPathComponent];
+    }
+    // When all else fails
+    return [selected name];
+}
+
+
+-(NSString*) homePath {
+    TreeItem * selected;
+    if ([self treeViewCollapsed]) {
+        selected = self->_treeNodeSelected;
+    }
+    else {
+        selected = self->_rootNodeSelected;
+    }
+    
+    if ([selected respondsToSelector:@selector(url)]) {
+        return [[selected url] path];
+    }
+    // When all else fails
+    return nil;
 }
 
 -(NSString*) debugDescription {

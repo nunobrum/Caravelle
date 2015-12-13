@@ -67,7 +67,7 @@
 
 #pragma mark -
 #pragma mark Refreshing contents
-- (void)refreshContents {
+- (void)refresh {
     // This method is overriden to do nothing. The filterBranch has no implementation for this method.
     // It has no URL
 }

@@ -431,7 +431,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NO;
 }
 
-- (void) refreshContents {
+- (void) refresh {
     if ([self needsRefresh]) {
         [self tagRefreshStart];
         NSLog(@"TreeBranch.refreshContents:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
@@ -915,7 +915,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
             for (TreeItem *item in self->_children) {
                 // NOTE: isKindOfClass is preferred over itemType.
                 if ([item isKindOfClass:[TreeBranch class]]) {
-                    total+=[[item fileSize] longLongValue];
+                    total+=[[item exactSize] longLongValue];
                 }
             }
         }
@@ -925,14 +925,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 /* Computes the total size of all the files contains in all subdirectories */
 /* If one directory is not completed, it will return nil which invalidates the sum */
--(NSNumber*) fileSize {
+-(NSNumber*) exactSize {
     if (self->size_files == -1) {
         long long total=0;
         NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
                 for (TreeItem *item in self->_children) {
-                    size = [item fileSize] ;
+                    size = [item exactSize] ;
                     if (size) {
                         total += [size longLongValue];
                     }
@@ -1378,7 +1378,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 if ([item isKindOfClass:[TreeBranch class]])
                     total += [(TreeBranch*)item duplicateSize];
                 else if ([item hasDuplicates])
-                    total += [[item fileSize] longLongValue];
+                    total += [[item exactSize] longLongValue];
             }
         }
     }

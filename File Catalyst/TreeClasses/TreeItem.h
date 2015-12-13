@@ -83,7 +83,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSString*) path ;
 -(NSString*) location;
 -(NSImage*) image;
--(NSNumber*) fileSize;
+-(NSNumber*) exactSize;
 -(NSNumber*) allocatedSize;
 -(NSNumber*) totalSize;
 -(NSNumber*) totalAllocatedSize;
@@ -102,6 +102,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) hasTags:(TreeItemTagEnum) tag;
 -(void) updateFileTags;
 
+-(id) hashObject;
 /*
  * File manipulation methods
  */
@@ -126,6 +127,23 @@ typedef NS_ENUM(NSInteger, ItemType) {
 
 -(BOOL) hasDuplicates;
 -(NSNumber*) duplicateGroup;
+
+-(id) parent;
+
+-(BOOL) needsRefresh;
+-(void)refresh;
+
+
+
+-(BOOL) isExpandable;
+-(BOOL) needsSizeCalculation;
+-(BOOL) isGroup;
+-(BOOL) hasChildren; // has physical children but does not display as folders.
+
+// Copy and paste support
+-(NSDragOperation) supportedDragOperations:(id<NSDraggingInfo>) info;
+-(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject;
+
 
 /*
  * Debug

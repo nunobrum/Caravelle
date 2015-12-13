@@ -16,7 +16,7 @@
 		<key>title</key>
 		<string>Size</string>
 		<key>accessor</key>
-		<string>fileSize</string>
+		<string>exactSize</string>
 		<key>transformer</key>
 		<string>size</string>
 		<key>col_id</key>

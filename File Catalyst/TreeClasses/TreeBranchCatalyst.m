@@ -52,7 +52,7 @@
         }
         else {
             // Will ignore this child
-            NSLog(@"TreeBranchCatalyst._addURLnoRecurr: Error:%@ can't be added to %@", newItem.url, pathURL);
+            NSLog(@"TreeBranchCatalyst._addTreeItem: Error:%@ can't be added to %@", newItem.url, pathURL);
             return NO;
         }
         level++;
@@ -84,7 +84,7 @@
 }
 
 
--(void) refreshContents {
+-(void) refresh {
     if ([self needsRefresh]) {
         [self tagRefreshStart];
         //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);

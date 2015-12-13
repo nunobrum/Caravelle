@@ -92,7 +92,7 @@
     self->_currentNode = branch;
     if (branch!=nil) {
         [self observeItem:self.currentNode];
-        [branch refreshContents];
+        [branch refresh];
     }
 }
 
@@ -502,13 +502,13 @@
     }
 }
 
--(NSArray*) getTableViewSelectedURLs {
-   NSLog(@"NodeViewController.getTableViewSelectedURLs: should be overriden");
+-(NSArray*) getSelectedItemsHash {
+   NSLog(@"NodeViewController.getSelectedItemsHash: should be overriden");
     return nil;
 }
 
--(void) setTableViewSelectedURLs:(NSArray*) urls {
-   NSLog(@"NodeViewController.setTableViewSelectedURLs: should be overriden");
+-(void) setSelectionByHashes:(NSArray *) hashes {
+   NSLog(@"NodeViewController.setSelectionByHashes: should be overriden");
 }
 
 -(NSArray*) getSelectedItems {

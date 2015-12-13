@@ -82,8 +82,8 @@
 - (void) removeSortOnField:(NSString*)key;
 - (void) removeGroupings;
 
--(NSArray*) getTableViewSelectedURLs;
--(void) setTableViewSelectedURLs:(NSArray*) urls;
+-(NSArray*) getSelectedItemsHash;
+-(void) setSelectionByHashes:(NSArray*) hashes;
 -(NSArray*) getSelectedItems;
 -(NSArray*) getSelectedItemsForContextualMenu1; // Can select the current Node
 -(NSArray*) getSelectedItemsForContextualMenu2; // Doesn't select the current Node

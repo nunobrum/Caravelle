@@ -10,7 +10,7 @@
 #ifndef _FileCollection_h
 #define _FileCollection_h
 
-#import "TreeLeaf.h"
+#import <Foundation/Foundation.h>
 
 @interface FileCollection : NSObject {
 @private

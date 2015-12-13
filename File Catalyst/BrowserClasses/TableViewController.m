@@ -9,9 +9,6 @@
 #import "Definitions.h"
 #import "TableViewController.h"
 #import "CustomTableHeaderView.h"
-#import "TreeItem.h"
-#import "TreeBranch.h"
-#import "TreeLeaf.h"
 #import "PasteboardUtils.h"
 #import "NodeSortDescriptor.h"
 #import "BrowserController.h"
@@ -113,8 +110,16 @@
     }
     NSTableCellView *cellView = nil;
 
-    if ([objectValue isKindOfClass:[TreeItem class]]) {
-        TreeItem *theFile = objectValue;
+    TreeItem* theFile = objectValue;
+    if (theFile.isGroup) {
+        // this is a group Row
+        cellView = [aTableView makeViewWithIdentifier:ROW_GROUP owner:self];
+        [cellView.textField setStringValue:[objectValue title]];
+        [cellView setObjectValue:objectValue];
+        
+    }
+    else {
+        
         NSColor *foreground;
         if ([theFile hasTags:tagTreeItemMarked]) {
             foreground = [NSColor redColor];
@@ -191,7 +196,7 @@
                 // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
                 // TODO: Change the code below to use the col_id field instead. This one is working fine. It's just for
                 // when another field is added.
-                if (([theFile itemType] < ItemTypeDummyBranch) && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
+                if ([theFile needsSizeCalculation] && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                     
                     [(TreeBranch*)theFile calculateSize]; // only if the calculation was started successfully
                     cellView.textField.objectValue = @"";
@@ -215,14 +220,6 @@
 
     }
     
-    
-    else if ([objectValue isKindOfClass:[GroupItem class]]) {
-        // this is a group Row
-        cellView = [aTableView makeViewWithIdentifier:ROW_GROUP owner:self];
-        [cellView.textField setStringValue:[objectValue title]];
-        [cellView setObjectValue:objectValue];
-
-    }
     // other cases are not considered here. returning Nil
     return cellView;
 }
@@ -236,12 +233,8 @@
 
 // We want to make "group rows" for the folders
 - (BOOL)tableView:(NSTableView *)tableView isGroupRow:(NSInteger)row {
-    id objectValue = [self->_displayedItems objectAtIndex:row];
-    if ([objectValue isKindOfClass:[TreeItem class]]) {
-        return NO;
-    } else {
-        return YES; // Any other object will be a group
-    }
+    TreeItem* objectValue = [self->_displayedItems objectAtIndex:row];
+    return [objectValue isGroup];
 }
 
 // This function makes sure that the group headers are not selected
@@ -540,7 +533,7 @@
     }
 }
 
--(NSArray*) getTableViewSelectedURLs {
+-(NSArray*) getSelectedItemsHash {
     NSIndexSet *rowsSelected = [_myTableView selectedRowIndexes];
     if ([rowsSelected count]==0)
         return nil;
@@ -548,7 +541,7 @@
         // using collection operator to get the array of the URLs from the selected Items
         NSArray *selectedItems = [self->_displayedItems objectsAtIndexes:rowsSelected];
         if (selectedItems!=nil && [selectedItems count]>0) {
-            return [selectedItems valueForKeyPath:@"@unionOfObjects.url"];
+            return [selectedItems valueForKeyPath:@"@unionOfObjects.hashObject"];
         }
         else {
             return nil;
@@ -556,11 +549,11 @@
     }
 }
 
--(void) setTableViewSelectedURLs:(NSArray*) urls {
-    if (urls!=nil && [urls count]>0) {
+-(void) setSelectionByHashes:(NSArray *)hashes {
+    if (hashes!=nil && [hashes count]>0) {
         NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-            if ([item isKindOfClass:[TreeItem class]] && [urls containsObject:[item url]])
+            if ([hashes containsObject:[(TreeItem*)item hashObject]])
                 return YES;
             else
                 return NO;
@@ -591,11 +584,11 @@
 -(void) refreshKeepingSelections {
     // TODO:? Animate the updates (new files, deleted files)
     // Storing Selected URLs
-    NSArray *selectedURLs = [self getTableViewSelectedURLs];
+    NSArray *selectedHashes = [self getSelectedItemsHash];
     // Refreshing the View
     [self refresh];
     // Reselect stored selections
-    [self setTableViewSelectedURLs:selectedURLs];
+    [self setSelectionByHashes: selectedHashes];
 }
 
 
@@ -639,7 +632,7 @@
 
 - (void) setCurrentNode:(TreeBranch*)branch {
     //Unobserve Tree Items that were set for size calculation
-    for (TreeItem *item in self->observedTreeItemsForSizeCalculation) {
+    for (TreeItem* item in self->observedTreeItemsForSizeCalculation) {
         [item removeObserver:self forKeyPath:kvoTreeBranchPropertySize];
     }
     if ([self->observedTreeItemsForSizeCalculation count]!=0) {
@@ -834,9 +827,9 @@
             }
             NSIndexSet *indexset = [_myTableView selectedRowIndexes];
             [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
-                id item = [self->_displayedItems objectAtIndex:index];
-                if ([item isKindOfClass:[TreeItem class]]) {
-                    [(TreeItem*)item toggleTag:tagTreeItemMarked];
+                TreeItem* item = [self->_displayedItems objectAtIndex:index];
+                if (![item isGroup]) {
+                    [item toggleTag:tagTreeItemMarked];
                 }
                 if ([self->extendedSelection containsIndex:index])
                     [self->extendedSelection removeIndex:index];
@@ -952,7 +945,7 @@
 -(NSInteger) firstSelectableRow {
     NSInteger row=0;
     while (row < [self->_displayedItems count]) {
-        if ([[self->_displayedItems objectAtIndex:row] isKindOfClass:[TreeItem class]])
+        if ([[self->_displayedItems objectAtIndex:row] isGroup]==NO)
             return row;
         row++;
     }

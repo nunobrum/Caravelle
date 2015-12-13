@@ -93,21 +93,21 @@ NSString *KEY_ICON = @"icon";
     [self.view.window makeFirstResponder:self.containerView];
 }
 
--(NSArray*) getTableViewSelectedURLs {
+-(NSArray*) getSelectedItemsHash {
     NSArray *selectedObjects = [self.iconArrayController selectedObjects];
     if ([selectedObjects count]==0)
         return nil;
     else {
         // using collection operator to get the array of the URLs from the selected Items
-        return [selectedObjects valueForKeyPath:@"@unionOfObjects.url"];
+        return [selectedObjects valueForKeyPath:@"@unionOfObjects.hashObject"];
     }
 }
 
--(void) setTableViewSelectedURLs:(NSArray*) urls {
-    if (urls!=nil && [urls count]>0) {
+-(void) setSelectionByHashes:(NSArray *)hashes {
+    if (hashes!=nil && [hashes count]>0) {
         NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-            if ([item isKindOfClass:[TreeItem class]] && [urls containsObject:[item url]])
+            if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]])
                 return YES;
             else
                 return NO;
@@ -138,11 +138,11 @@ NSString *KEY_ICON = @"icon";
 }
 
 -(void) refreshKeepingSelections {
-    NSArray *selectedURLs = [self getTableViewSelectedURLs];
+    NSArray *selectedOjects = [self getSelectedItemsHash];
     // Refreshing the View
     [self refresh];
     // Reselect stored selections
-    [self setTableViewSelectedURLs:selectedURLs];}
+    [self setSelectionByHashes:selectedOjects];}
 
 -(void) reloadItem:(id)object {
     if (object == self.currentNode) {
@@ -388,10 +388,8 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
         }
         NSIndexSet *indexset = [self.iconArrayController selectionIndexes];
         [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
-            id item = [self.itemsToDisplay objectAtIndex:index];
-            if ([item isKindOfClass:[TreeItem class]]) {
-                [(TreeItem*)item toggleTag:tagTreeItemMarked];
-            }
+            TreeItem* item = [self.itemsToDisplay objectAtIndex:index];
+            [item toggleTag:tagTreeItemMarked];
             if ([self->extendedSelection containsIndex:index])
                 [self->extendedSelection removeIndex:index];
             else

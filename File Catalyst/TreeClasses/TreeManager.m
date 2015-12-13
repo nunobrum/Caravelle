@@ -289,16 +289,16 @@ TreeManager *appTreeManager;
                 }
                 else {
                 //NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
-                if ([itemToRefresh respondsToSelector:@selector(refreshContents)]) {
+                if ([itemToRefresh respondsToSelector:@selector(refresh)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
-                    [itemToRefresh refreshContents];
+                    [itemToRefresh refresh];
                 }
                 else {
                     // It will try to refresh the parent
                     id itemParent = [itemToRefresh parent];
-                    if ([itemParent respondsToSelector:@selector(refreshContents)]) {
+                    if ([itemParent respondsToSelector:@selector(refresh)]) {
                         [itemParent setTag:tagTreeItemDirty];
-                        [itemParent refreshContents];
+                        [itemParent refresh];
                     }
                 }
                 }

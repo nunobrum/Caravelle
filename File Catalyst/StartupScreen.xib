@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -18,17 +18,19 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenAuxiliary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="557" height="356"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="557" height="356"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zbC-U7-goO">
                         <rect key="frame" x="23" y="135" width="190" height="190"/>
+                        <animations/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageAlignment="topLeft" imageScaling="axesIndependently" image="Caravelle" id="quT-zK-o0a"/>
                     </imageView>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OMw-Tt-pY3">
                         <rect key="frame" x="224" y="246" width="315" height="68"/>
+                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="H3V-WI-xn4">
                             <font key="font" metaFont="system"/>
                             <string key="title">I'm honored that you decided to try Caravelle. This application is still making its first steps and will evolve with time. For information of its roadmap, consult:</string>
@@ -38,6 +40,7 @@
                     </textField>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="stT-gf-VHa">
                         <rect key="frame" x="23" y="42" width="514" height="63"/>
+                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" borderStyle="border" allowsEditingTextAttributes="YES" id="u2G-ok-kcl">
                             <font key="font" metaFont="system"/>
                             <string key="title">NOTICE: Caravelle is a sandboxed Application. As such, it only has access to folders where the user authorizes. Authorizations are granted with the OSX Open Dialog. Authorizations can be revoked in Preferences Menu.</string>
@@ -47,6 +50,7 @@
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KZu-VW-KXG">
                         <rect key="frame" x="223" y="313" width="141" height="33"/>
+                        <animations/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Caravelle" id="Ame-96-a13">
                             <font key="font" size="27" name=".HelveticaNeueDeskInterface-Regular"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -55,6 +59,7 @@
                     </textField>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uOY-t1-D2X">
                         <rect key="frame" x="21" y="18" width="207" height="18"/>
+                        <animations/>
                         <buttonCell key="cell" type="check" title="Don't show this window again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="OWP-aN-hw5">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                             <font key="font" metaFont="system"/>
@@ -62,6 +67,7 @@
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jps-H3-YIE">
                         <rect key="frame" x="365" y="14" width="172" height="19"/>
+                        <animations/>
                         <buttonCell key="cell" type="roundRect" title="OK" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="cec-jj-1BL">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
@@ -72,6 +78,7 @@
                     </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ayJ-Ze-KBb">
                         <rect key="frame" x="338" y="243" width="199" height="19"/>
+                        <animations/>
                         <buttonCell key="cell" type="recessed" title="www.nunobrum.com/roadmap" bezelStyle="recessed" alignment="center" borderStyle="border" inset="2" id="Rrk-9e-iS7">
                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="systemBold" size="12"/>
@@ -82,6 +89,7 @@
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cxj-67-EOb">
                         <rect key="frame" x="224" y="118" width="315" height="120"/>
+                        <animations/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="Cu8-me-c7O">
                             <font key="font" metaFont="system"/>
                             <string key="title">For now, offering free download of this application, hoping that it will serve you well.  Will be delighted to receive your suggestions or complains to: caravelle@nunobrum.com  Copyright (c) 2015 Nuno Brum.   All rights reserved.</string>
@@ -90,6 +98,7 @@
                         </textFieldCell>
                     </textField>
                 </subviews>
+                <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="6mv-8P-sR8"/>

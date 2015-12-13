@@ -7,7 +7,6 @@
 //
 
 #import "DuplicateInformation.h"
-#import "TreeItem.h"
 
 
 @implementation DuplicateInformation

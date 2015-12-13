@@ -146,7 +146,7 @@ extern NSString *kViewChanged_TreeCollapsed;
 -(TreeBranch*) getItemByURL:(NSURL*)theURL;
 -(void) startAllBusyAnimations;
 -(void) stopBusyAnimations;
--(NSURL*) getTreeViewSelectedURL;
+//-(NSURL*) getTreeViewSelectedURL;
 
 -(id) focusedView;
 -(NSArray*) getSelectedItems;
@@ -160,5 +160,7 @@ extern NSString *kViewChanged_TreeCollapsed;
 -(void) backSelectedFolder;
 -(void) forwardSelectedFolder;
 
+-(NSString*) title;
+-(NSString*) homePath;
 
 @end
