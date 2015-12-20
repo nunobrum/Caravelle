@@ -518,6 +518,17 @@
     }
 }
 
+// Copy and paste support
+-(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info {
+    NSLog(@"TreeItem.supportedPasteOperations:  This method should be overrided.");
+    return NSDragOperationNone;
+}
+
+-(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject {
+    NSLog(@"TreeItem.acceptDropped:operation:  This method should be overrided.");
+    return nil; // Invalidate all
+}
+
 #pragma mark - Coding Compliant
 
 /*

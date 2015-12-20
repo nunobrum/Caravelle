@@ -1106,9 +1106,10 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index {
     if (item!=nil) {
-        _validatedDestinationItem = item;
-        _validatedOperation = validateDrop(info, item);
-        return _validatedOperation;
+        _validatedDropDestination = item;
+        NSDragOperation dragOperations =[item supportedPasteOperations:info];
+        _validatedDropOperation = selectDropOperation(dragOperations);
+        return _validatedDropOperation;
     }
     return NSDragOperationNone;
 }
@@ -1117,7 +1118,8 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index {
-    return acceptDrop(info, _validatedDestinationItem, _validatedOperation, self);
+    
+    return (nil != [self->_validatedDropDestination acceptDropped:info operation:self->_validatedDropOperation sender:self]);
 }
 
 #pragma mark - KVO Methods

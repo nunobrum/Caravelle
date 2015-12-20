@@ -8,6 +8,7 @@
 
 #import "TreeLeaf.h"
 #import "DuplicateInformation.h"
+#import "PasteboardUtils.h"
 
 // TODO:!!? Store this in the NSURL instead of _store
 
@@ -44,6 +45,20 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
         self->_store = [[NSMutableDictionary alloc] init];
     
     [self->_store addEntriesFromDictionary: dict];
+}
+
+
+// Copy and paste support
+-(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info {
+    NSDragOperation sourceDragMask = supportedOperations(info);
+    sourceDragMask &= NSDragOperationGeneric;
+    return sourceDragMask;
+}
+
+-(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject {
+    // TODO:!!!! Implement drop of files
+    NSLog(@"TreeItem.acceptDropped:operation:  Missing implementation");
+    return nil; // Invalidate all
 }
 
 /*

@@ -7,7 +7,7 @@
 //
 #include "definitions.h"
 #include "FileUtils.h"
-
+#import "PasteboardUtils.h"
 
 #import "TreeBranch.h"
 #import "TreeBranch_TreeBranchPrivate.h"
@@ -1578,6 +1578,64 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    }
 //    return answer;
 //}
+
+// Copy and paste support
+-(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info {
+    NSDragOperation sourceDragMask = supportedOperations(info);
+    sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
+    return sourceDragMask;
+}
+
+-(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject {
+    BOOL fireNotfication = NO;
+    NSString const *strOperation;
+    NSPasteboard *pboard = [info draggingPasteboard];
+    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
+    
+    if (operation == NSDragOperationCopy) {
+        strOperation = opCopyOperation;
+        fireNotfication = YES;
+    }
+    else if (operation == NSDragOperationMove) {
+        strOperation = opMoveOperation;
+        fireNotfication = YES;
+        
+        // Check whether the destination item is equal to the parent of the item do nothing
+        for (NSURL* file in files) {
+            NSURL *folder = [file URLByDeletingLastPathComponent];
+            if ([[self path] isEqualToString:[folder path]]) // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
+            {
+                // If true : abort
+                fireNotfication = NO;
+                return nil;
+            }
+        }
+    }
+    else if (operation == NSDragOperationLink) {
+        // TODO: !!! Operation Link
+    }
+    else {
+        // Invalid case
+        fireNotfication = NO;
+    }
+    
+
+    if (fireNotfication==YES) {
+        // The copy and move operations are done in the AppDelegate
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              files, kDFOFilesKey,
+                              strOperation, kDFOOperationKey,
+                              self, kDFODestinationKey,
+                              //fromObject, kFromObjectKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:fromObject userInfo:info];
+    }
+    else
+        NSLog(@"BrowserController.acceptDrop: - Unsupported Operation %lu", (unsigned long)operation);
+    
+    return files;
+}
+
 
 /*
  * Debug

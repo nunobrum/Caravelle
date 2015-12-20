@@ -141,7 +141,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) hasChildren; // has physical children but does not display as folders.
 
 // Copy and paste support
--(NSDragOperation) supportedDragOperations:(id<NSDraggingInfo>) info;
+-(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info;
 -(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject;
 
 

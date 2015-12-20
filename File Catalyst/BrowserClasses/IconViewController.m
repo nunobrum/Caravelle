@@ -240,42 +240,36 @@ NSString *KEY_ICON = @"icon";
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }
-    self->_validatedDropOperation = validateDrop(draggingInfo, self->_validatedDropDestination);
+    NSDragOperation dragOperations =[self->_validatedDropDestination supportedPasteOperations:draggingInfo];
+    self->_validatedDropOperation = selectDropOperation(dragOperations);
     return self->_validatedDropOperation;
-
 }
 
 - (BOOL)collectionView:(NSCollectionView *)collectionView
             acceptDrop:(id<NSDraggingInfo>)draggingInfo
                  index:(NSInteger)index
          dropOperation:(NSCollectionViewDropOperation)dropOperation {
-
-    BOOL opDone = acceptDrop(draggingInfo, self->_validatedDropDestination, self->_validatedDropOperation, self);
-
-    if (self->_validatedDropDestination == self.currentNode && opDone==YES) {
+    
+    NSArray *filesDropped = [self->_validatedDropDestination acceptDropped:draggingInfo operation:self->_validatedDropOperation sender:self];
+    
+    
+    if (self->_validatedDropDestination == self.currentNode && filesDropped!=nil) {
         //Inserts the rows using the specified animation.
         if (self->_validatedDropOperation & (NSDragOperationCopy | NSDragOperationMove)) {
-            NSPasteboard *pboard = [draggingInfo draggingPasteboard];
-            NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
-
+            
             int i= 0;
-            for (id pastedItem in files) {
-                TreeItem *newItem=nil;
-                if ([pastedItem isKindOfClass:[NSURL class]]) {
-                    //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
-                    newItem = [TreeItem treeItemForURL: pastedItem parent:self.currentNode];
-                    [newItem setTag:tagTreeItemDropped];
-                }
-                if (newItem) {
-                    //[self.icons insertObject:newItem atIndex:index+i];
-                    [self.iconArrayController insertObject:newItem atArrangedObjectIndex:index+i];
-                    i++;
-                }
+            for (TreeItem* pastedItem in filesDropped) {
+                [pastedItem setTag:tagTreeItemDropped];
+                
+                //[self.icons insertObject:newItem atIndex:index+i];
+                [self.iconArrayController insertObject:pastedItem atArrangedObjectIndex:index+i];
+                i++;
             }
         }
     }
-    return opDone;
+    return filesDropped!=nil;
 }
+
 
 // Not implemented for the time being
 //- (NSImage *)collectionView:(NSCollectionView *)collectionView

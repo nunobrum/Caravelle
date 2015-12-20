@@ -8,17 +8,13 @@
 
 #import <Foundation/Foundation.h>
 #import "Definitions.h"
-#import "TreeItem.h"
 
-NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
-
+NSDragOperation supportedOperations(id<NSDraggingInfo> info) {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
     NSDragOperation  supportedMask = NSDragOperationNone;
-    NSDragOperation validatedOperation = NSDragOperationNone;
     NSArray *ptypes;
-    NSUInteger modifiers = [NSEvent modifierFlags];
-
+    
     sourceDragMask = [info draggingSourceOperationMask];
     pboard = [info draggingPasteboard];
     ptypes =[pboard types];
@@ -40,19 +36,16 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
     }
 #endif
 
-    sourceDragMask &= supportedMask; // The offered types and the supported types.
+    return supportedMask; // The offered types and the supported types.
 
+}
 
-    /* Limit the Operations depending on the Destination Item Class*/
-    if ([destItem isFolder]) {
-        sourceDragMask &= (NSDragOperationMove + NSDragOperationCopy + NSDragOperationLink);
-    }
-    else if ([destItem isLeaf]) {
-        sourceDragMask &= (NSDragOperationGeneric);
-    }
-    else {
-        sourceDragMask = NSDragOperationNone;
-    }
+NSDragOperation selectDropOperation(NSDragOperation dragOperations) {
+
+    NSUInteger modifiers = [NSEvent modifierFlags];
+    
+    NSDragOperation validatedOperation = NSDragOperationNone;
+    
 
     /* Use the modifiers keys to select */
     //if (modifiers & NSShiftKeyMask) {
@@ -60,17 +53,17 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
     //TODO:!! Use Space to cycle through the options
     if (modifiers & NSAlternateKeyMask) {
         if (modifiers & NSCommandKeyMask) {
-            if      (sourceDragMask & NSDragOperationLink)
+            if      (dragOperations & NSDragOperationLink)
                 validatedOperation=  NSDragOperationLink;
-            else if (sourceDragMask & NSDragOperationGeneric)
+            else if (dragOperations & NSDragOperationGeneric)
                 validatedOperation=  NSDragOperationGeneric;
         }
         else {
-            if      (sourceDragMask & NSDragOperationCopy)
+            if      (dragOperations & NSDragOperationCopy)
                 validatedOperation=  NSDragOperationCopy;
-            else if (sourceDragMask & NSDragOperationMove)
+            else if (dragOperations & NSDragOperationMove)
                 validatedOperation=  NSDragOperationMove;
-            else if (sourceDragMask & NSDragOperationGeneric)
+            else if (dragOperations & NSDragOperationGeneric)
                 validatedOperation=  NSDragOperationGeneric;
             else
                 validatedOperation= NSDragOperationNone;
@@ -78,79 +71,22 @@ NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem) {
         //if (modifiers & NSControlKeyMask) {
     }
     else {
-        if      (sourceDragMask & NSDragOperationMove)
+        if      (dragOperations & NSDragOperationMove)
             validatedOperation=  NSDragOperationMove;
-        else if (sourceDragMask & NSDragOperationCopy)
+        else if (dragOperations & NSDragOperationCopy)
             validatedOperation=  NSDragOperationCopy;
-        else if (sourceDragMask & NSDragOperationLink)
+        else if (dragOperations & NSDragOperationLink)
             validatedOperation=  NSDragOperationLink;
-        else if (sourceDragMask & NSDragOperationGeneric)
+        else if (dragOperations & NSDragOperationGeneric)
             validatedOperation=  NSDragOperationGeneric;
         else
             validatedOperation= NSDragOperationNone;
     }
 
-    // TODO:!!! Implement the Link Operation
-    if (sourceDragMask &  NSDragOperationLink)
-        validatedOperation=  NSDragOperationNone;
 
     return validatedOperation;
 }
 
-BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation operation, id fromObject) {
-    BOOL fireNotfication = NO;
-    NSString const *strOperation;
-    NSPasteboard *pboard = [info draggingPasteboard];
-    NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
-
-    if ([destItem isLeaf]) {
-        // TODO: !! Dropping Application on top of file or File on top of Application
-        NSLog(@"BrowserController.acceptDrop: - Not impplemented Drop on Files");
-        // TODO:! IDEA Maybe an append/Merge/Compare can be done if overlapping two text files
-    }
-    else if ([destItem isFolder]) {
-        if (operation == NSDragOperationCopy) {
-            strOperation = opCopyOperation;
-            fireNotfication = YES;
-        }
-        else if (operation == NSDragOperationMove) {
-            strOperation = opMoveOperation;
-            fireNotfication = YES;
-
-            // Check whether the destination item is equal to the parent of the item do nothing
-            for (NSURL* file in files) {
-                NSURL *folder = [file URLByDeletingLastPathComponent];
-                if ([[destItem path] isEqualToString:[folder path]]) // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
-                {
-                    // If true : abort
-                    fireNotfication = NO;
-                    return fireNotfication;
-                }
-            }
-        }
-        else if (operation == NSDragOperationLink) {
-            // TODO: !!! Operation Link
-        }
-        else {
-            // Invalid case
-            fireNotfication = NO;
-        }
-
-    }
-    if (fireNotfication==YES) {
-        // The copy and move operations are done in the AppDelegate
-        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                              files, kDFOFilesKey,
-                              strOperation, kDFOOperationKey,
-                              destItem, kDFODestinationKey,
-                              //fromObject, kFromObjectKey,
-                              nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:fromObject userInfo:info];
-    }
-    else
-        NSLog(@"BrowserController.acceptDrop: - Unsupported Operation %lu", (unsigned long)operation);
-    return fireNotfication;
-}
 
 extern BOOL writeItemsToPasteboard(NSArray *items, NSPasteboard *pboard, NSArray *types) {
     NSArray *typesDeclared;

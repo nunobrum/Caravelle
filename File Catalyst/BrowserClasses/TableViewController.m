@@ -727,37 +727,31 @@
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }
-    self->_validatedDropOperation = validateDrop(info, self->_validatedDropDestination);
+    NSDragOperation dragOperations =[self->_validatedDropDestination supportedPasteOperations:info];
+    self->_validatedDropOperation = selectDropOperation(dragOperations);
+    
     return self->_validatedDropOperation;
 }
 
 - (BOOL)tableView:(NSTableView *)aTableView acceptDrop:(id < NSDraggingInfo >)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation {
 
-    BOOL opDone = acceptDrop(info, self->_validatedDropDestination, self->_validatedDropOperation, self);
+    
+    NSArray* droppedFiles = [self->_validatedDropDestination acceptDropped:info operation:self->_validatedDropOperation sender:self];
 
-    if (self->_validatedDropDestination == self.currentNode && opDone==YES) {
+    if (self->_validatedDropDestination == self.currentNode && droppedFiles!=nil) {
         //Inserts the rows using the specified animation.
         if (self->_validatedDropOperation & (NSDragOperationCopy | NSDragOperationMove)) {
-            NSPasteboard *pboard = [info draggingPasteboard];
-            NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
-
+            
             int i= 0;
-            for (id pastedItem in files) {
-                TreeItem *newItem=nil;
-                if ([pastedItem isKindOfClass:[NSURL class]]) {
-                    //[(TreeBranch*)targetItem addURL:pastedItem]; This will be done on the refresh after copy
-                    newItem = [TreeItem treeItemForURL: pastedItem parent:self.currentNode];
-                    [newItem setTag:tagTreeItemDropped];
-                }
-                if (newItem) {
-                    [self->_displayedItems insertObject:newItem atIndex:row+i];
-                    [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
-                    i++;
-                }
+            for (TreeItem* pastedItem in droppedFiles) {
+                [pastedItem setTag:tagTreeItemDropped];
+                [self->_displayedItems insertObject:pastedItem atIndex:row+i];
+                [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
+                i++;
             }
         }
     }
-    return opDone;
+    return droppedFiles!=nil;
 }
 
 // This selector is implemented in the super class

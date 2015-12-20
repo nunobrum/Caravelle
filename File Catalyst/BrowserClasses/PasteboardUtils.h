@@ -9,8 +9,9 @@
 #ifndef Caravelle_PasteboardUtils_h
 #define Caravelle_PasteboardUtils_h
 
-extern NSDragOperation validateDrop(id<NSDraggingInfo> info,  TreeItem* destItem);
-extern BOOL acceptDrop(id < NSDraggingInfo > info, TreeItem* destItem, NSDragOperation operation, id fromObject);
+NSDragOperation supportedOperations(id<NSDraggingInfo> info);
+
+extern NSDragOperation selectDropOperation(NSDragOperation dragOperations);
 
 extern BOOL writeItemsToPasteboard(NSArray *items, NSPasteboard *pboard, NSArray *types);
 

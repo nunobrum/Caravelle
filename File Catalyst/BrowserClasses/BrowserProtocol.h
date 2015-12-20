@@ -60,7 +60,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
 -(id)   hashObject; // Used for maintaining selections
 
 // Copy and paste support
--(NSDragOperation) supportedDragOperations:(id<NSDraggingInfo>) info;
+-(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info;
 -(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject;
 
 
