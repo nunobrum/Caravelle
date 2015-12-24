@@ -47,6 +47,6 @@ extern NSString *notificationStartDuplicateFind;
 - (IBAction)pbOKAction:(id)sender;
 - (IBAction)pbCancelAction:(id)sender;
 
--(void) setURLs:(NSArray*) urls;
+-(void) setPaths:(NSArray*) paths;
 
 @end

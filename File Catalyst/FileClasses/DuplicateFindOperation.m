@@ -45,7 +45,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 
 -(void) main {
     statusCount=1; // Indicates the first Phase
-    NSArray *urls = [_taskInfo objectForKey: kRootPathKey];
+    NSArray *paths = [_taskInfo objectForKey: kRootPathKey];
     TreeCollection *roots = nil;
     filterBranch *filterRoot = nil;
     NSMutableArray *duplicates = [[NSMutableArray new] init];
@@ -76,8 +76,9 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         EnumDuplicateOptions options = [Options integerValue];
         NSMutableArray *fileArray = [[NSMutableArray new] init];
         counter = 0;
-        for (NSURL *url in urls) {
+        for (NSString *path in paths) {
             /* Abort if problem detected */
+            NSURL *url = [NSURL URLWithString:path];
             if (url==nil) {
                 /* Should it be informed, or just skip it */
             }

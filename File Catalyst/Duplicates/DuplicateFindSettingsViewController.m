@@ -95,7 +95,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     if (PlusOrMinus==0) {/* This is an Add */
         NSURL *rootURL = [appTreeManager powerboxOpenFolderWithTitle:@"Select a new Directory"];
         if (rootURL) {
-            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL forKey:@"path"];
+            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL.path forKey:@"path"];
             [self.pathContents addObject:newItem];
             [self.pathContents commitEditing];
         }
@@ -165,11 +165,11 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     [self close];
 }
 
--(void) setURLs:(NSArray *)urls {
+-(void) setPaths:(NSArray *)paths {
     // Remove All objects
     [self.pathContents removeObjects: [self.pathContents arrangedObjects]];
-    for (NSURL* url in urls) {
-        NSDictionary *newItem = [NSDictionary dictionaryWithObject:url forKey:@"path"];
+    for (NSString* path in paths) {
+        NSDictionary *newItem = [NSDictionary dictionaryWithObject:path forKey:@"path"];
         [self.pathContents addObject:newItem];
     }
     [self.pathContents commitEditing];

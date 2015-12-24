@@ -2426,7 +2426,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                 [selectedNodes addObject:[myRightView homePath]];
         }
         [duplicateSettingsWindow showWindow:self];
-        [self->duplicateSettingsWindow setURLs:selectedNodes];
+        [self->duplicateSettingsWindow setPaths:selectedNodes];
         [self setApplicationMode: (applicationMode|ApplicationModeDupStarted)];
     }
     else {
