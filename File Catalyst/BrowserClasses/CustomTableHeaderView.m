@@ -200,6 +200,42 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
     [NSMenu popUpContextMenu:theMenu withEvent:theEvent forView:self];
 }
 
+-(void) mouseDown:(NSEvent *)theEvent {
+    // Detect if double click
+    if([theEvent clickCount] > 1) {
+        // Detecting if cursor is on column border
+        NSCursor *curCursor = [NSCursor currentCursor];
+        BOOL isResizeCursor= [curCursor isEqual:[NSCursor resizeLeftRightCursor]] || [curCursor isEqual:[NSCursor resizeLeftCursor]];
+        if (isResizeCursor) {
+            // Check which column to resize
+            NSPoint event_location = [theEvent locationInWindow];
+            NSPoint local_point = [self convertPoint:event_location fromView:nil];
+            NSInteger column = [self columnAtPoint: local_point];
+            NSRect col_rect = [self headerRectOfColumn: column];
+            //NSLog(@"local Point X;%f . col_rect.x:%f + col_rect.size:%f", local_point.x, col_rect.origin.x, col_rect.size.width);
+            if ((local_point.x - col_rect.origin.x) < 5) {
+                // Resizes the previous column
+                column--;
+            }
+            else if ((col_rect.origin.x+col_rect.size.width - local_point.x) < 5) {
+                // Resizes the current column
+                // Do nothing
+            }
+            else {
+                column = -1; // Skips the resize
+                NSLog(@"CustomTableHeaderView.mouseDown: Skipping resize for column %li ", (long)column);
+            }
+            if (column>=0) {
+                TableViewController *controller = (TableViewController*)[[self tableView] delegate];
+                [controller resizeColumn:column width:-1.0]; // -1 makes an automatic resizing
+            }
+        }
+    }
+    else
+        [super mouseDown:theEvent];
+}
+
+// TODO:2.0 Scroll on the table headers change the size of the column
 
 // This method is here so that service menu is blocked in the column headers
 - (id)validRequestorForSendType:(NSString *)sendType

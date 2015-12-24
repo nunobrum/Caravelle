@@ -36,6 +36,7 @@
 
 -(void) setupColumns:(NSArray*) columns;
 -(NSArray*) columns;
+-(void) resizeColumn:(NSInteger)column width:(CGFloat)width;
 
 -(void) loadPreferencesFrom:(NSDictionary*) preferences;
 -(void) savePreferences:(NSMutableDictionary*) preferences;
