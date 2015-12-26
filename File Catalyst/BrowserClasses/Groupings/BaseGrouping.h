@@ -14,6 +14,7 @@
 @property NSInteger nElements;
 
 -(instancetype) initWithTitle:(NSString*)title;
+-(BOOL) isGroup;
 
 @end
 

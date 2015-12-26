@@ -402,20 +402,20 @@
 }
 
 -(void) resizeColumn:(NSInteger)column width:(CGFloat)width {
-    NSLog(@"TableViewController.resizeColumn:%li width:%f ",column, width);
+    //NSLog(@"TableViewController.resizeColumn:%li width:%f ",column, width);
     NSTableColumn *col = [[self.myTableView tableColumns] objectAtIndex:column];
     CGFloat adjustWidth = width;
     
     if (width<0) {
         // Automatic width detection
         CGSize res = [self.myTableView bounds].size;
-        NSLog(@"Table Width : %f Column Width: %f",res.width, [col width]);
+        //NSLog(@"Table Width : %f Column Width: %f",res.width, [col width]);
         adjustWidth = 5.0; // minimum width that will accepted
         NSTableCellView *view;
         for (NSInteger i = 0; i < [self->_displayedItems count]; i++ ) {
             view = [self.myTableView viewAtColumn:column row:i makeIfNecessary:NO];
             CGFloat maxWidth = [[view textField] sizeThatFits:res].width;
-            NSLog(@"%@ %f",view.textField.stringValue, maxWidth);
+            //NSLog(@"%@ %f",view.textField.stringValue, maxWidth);
             if (maxWidth > adjustWidth)
                 adjustWidth = maxWidth;
         }
@@ -424,7 +424,7 @@
                 adjustWidth += [[view textField] frame].origin.x;
         }
     }
-    NSLog(@"Adjust Size %f", adjustWidth);
+    //NSLog(@"Adjust Size %f", adjustWidth);
     [col setWidth:adjustWidth];
     [self.myTableView displayIfNeeded];
     

@@ -16,6 +16,11 @@
     self.nElements = 0;
     return self;
 }
+
+-(BOOL) isGroup {
+    return YES;
+}
+
 @end
 
 

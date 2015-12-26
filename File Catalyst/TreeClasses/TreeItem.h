@@ -72,9 +72,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSArray *) treeComponents;
 -(NSArray *) treeComponentsToParent:(id)parent;
 
--(ItemType)  itemType;
--(BOOL) isLeaf;
--(BOOL) isFolder;
+
 -(NSString*) name;
 -(void) setName:(NSString*)newName;
 -(NSDate*)   date_modified;
@@ -134,7 +132,9 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(void)refresh;
 
 
-
+-(ItemType)  itemType;
+-(BOOL) isLeaf;
+-(BOOL) isFolder;
 -(BOOL) isExpandable;
 -(BOOL) needsSizeCalculation;
 -(BOOL) isGroup;
