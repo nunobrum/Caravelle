@@ -23,7 +23,7 @@ const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;
 
 NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
-
+NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 @interface BrowserController () {
     id _focusedView; // Contains the currently selected view
@@ -253,9 +253,9 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 
 -(BOOL) foldersDisplayedMacro {
-    
-    return (([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_HIDE_FOLDERS_WHEN_TREE] == NO) ||
-    ([self treeViewCollapsed] == YES)) && [self.detailedViewController foldersDisplayed] ;
+    BOOL userDefHideFoldersWhenTreeVisible = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_HIDE_FOLDERS_WHEN_TREE];
+    BOOL treeIsVisible = ![self treeViewCollapsed];
+    return !(userDefHideFoldersWhenTreeVisible == YES && treeIsVisible==YES);
 }
 
 #pragma mark - Tree Outline DataSource Protocol
@@ -911,11 +911,11 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
 
 -(void) setTreeViewCollapsed:(BOOL) collapsed {
     if (collapsed)
-        // TODO:!!!!! Save width in preferences @"TreeWidth"
+        // TODO:1.4 Save width in preferences @"TreeWidth"
         
         [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
     else {
-        // TODO:!!!! Get this from user defaults
+        // TODO:1.4 Get this from user defaults
         CGFloat width = 200.0;
         NSNumber *prefWidth =[self.preferences objectForKey:@"TreeWidth"];
         if (prefWidth != nil) {
@@ -994,7 +994,10 @@ NSString *kViewChanged_TreeCollapsed = @"TreeViewCollapsed";
             // refreshes the view
             [self.detailedViewController refreshKeepingSelections];
         }
-        // TODO:!!!!! Add here notificationViewChanged for the FlatView
+        // Send notificationViewChanged for the FlatView
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
+        
     }
     else
         NSAssert(NO, @"Invalid Segment Number");

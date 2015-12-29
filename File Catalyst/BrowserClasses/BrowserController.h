@@ -17,6 +17,7 @@
 
 
 extern NSString *kViewChanged_TreeCollapsed;
+extern NSString *kViewChanged_FlatView;
 
 
 @interface BrowserController : NSViewController <BrowserParentProtocol, NSOutlineViewDataSource, NSOutlineViewDelegate, MYViewProtocol, NSTextDelegate, NSSplitViewDelegate, NSMenuDelegate> {

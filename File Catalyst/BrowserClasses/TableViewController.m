@@ -582,7 +582,7 @@
     if (hashes!=nil && [hashes count]>0) {
         NSIndexSet *select = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
             //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-            if ([hashes containsObject:[(TreeItem*)item hashObject]])
+            if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
                 return YES;
             else
                 return NO;

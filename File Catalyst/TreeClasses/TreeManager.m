@@ -15,11 +15,31 @@ NSString *notificationRefreshViews = @"RefreshViews";
 
 TreeManager *appTreeManager;
 
-@implementation TreeManager
+
+@interface PathObserver : NSObject
+@property id<PathObserverProtocol>  observer;
+@property NSString *path;
+-(instancetype) initWithPath:(NSString*)path observer:(id)Observer;
+@end
+
+@implementation PathObserver
+-(instancetype) initWithPath:(NSString*)path observer:(id)Observer {
+    self = [super init];
+    self.path = path;
+    self.observer = Observer;
+    return self;
+}
+
+@end
+
+@implementation TreeManager {
+    NSMutableArray *pathObservers;
+}
 
 -(TreeManager*) init {
     self = [super init];
     self->iArray = [[NSMutableArray alloc] init];
+    self->pathObservers = [[NSMutableArray alloc] init];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileSystemChangePath:) name:notificationDirectoryChange object:nil];
     return self;
 }
@@ -227,6 +247,7 @@ TreeManager *appTreeManager;
         if ([itemToRelease parent]!=nil)
             [itemToRelease removeItem]; // Removes it from its parent
         else { // otherwise its on iArray
+            [itemToRelease deinit];
             [iArray removeObject:itemToRelease]; // In this case BrowserTrees must be updated
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
         }
@@ -284,10 +305,11 @@ TreeManager *appTreeManager;
             }
             else
             {
-                if (applicationMode & ApplicationModeDupBrowser) {
-                    NSLog(@"Muting refresh on folder (%@)", changedPath);
-                }
-                else {
+//                if (applicationMode & ApplicationModeDupBrowser) {
+//                    // TODO:!!!!!! Remove this mute
+//                    NSLog(@"Muting refresh on folder (%@)", changedPath);
+//                }
+//                else {
                 //NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
                 if ([itemToRefresh respondsToSelector:@selector(refresh)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
@@ -301,7 +323,14 @@ TreeManager *appTreeManager;
                         [itemParent refresh];
                     }
                 }
-                }
+                //}
+            }
+        }
+        // Now Going to process the observers
+        for (PathObserver *elem in self->pathObservers) {
+            enumPathCompare pc = path_relation(elem.path, changedPath);
+            if (pc == pathIsChild) {
+                [elem.observer pathHasChanged:changedPath];
             }
         }
     }
@@ -457,5 +486,21 @@ TreeManager *appTreeManager;
     return answer;
 }
 
+-(void) addActivityObserver:(NSObject<PathObserverProtocol>*)obj path:(NSString*)path {
+    //TODO: !!!!!!! Assure that path is already being observed.
+    PathObserver *observeElem = [[PathObserver alloc] initWithPath:path observer:obj];
+    [self->pathObservers addObject:observeElem];
+}
+
+-(void) removeActivityObserver:(id)obj {
+    NSInteger i = 0;
+    while (i < [self->pathObservers count]) {
+        PathObserver *elem = self->pathObservers[i];
+        if ([elem.observer isEqual:obj])
+            [self->pathObservers removeObjectAtIndex:i];
+        else
+            i++;
+    }
+}
 
 @end

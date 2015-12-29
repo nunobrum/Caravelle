@@ -60,6 +60,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
 -(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
+-(void) deinit;
 
 -(void) purgeURLCacheResources;
 

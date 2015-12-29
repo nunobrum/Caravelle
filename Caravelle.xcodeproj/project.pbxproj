@@ -284,7 +284,6 @@
 		BCADC2471B3DB39B00245F1D /* FileCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileCollection.m; sourceTree = "<group>"; };
 		BCADC24C1B426AC100245F1D /* DuplicateInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DuplicateInformation.h; sourceTree = "<group>"; };
 		BCADC24D1B426AC100245F1D /* DuplicateInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DuplicateInformation.m; sourceTree = "<group>"; };
-		BCB7B3141C1CCB9E000C7953 /* BrowserProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserProtocol.h; path = BrowserClasses/BrowserProtocol.h; sourceTree = "<group>"; };
 		BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeCollection.m; sourceTree = "<group>"; };
 		BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeCollection.h; sourceTree = "<group>"; };
 		BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
@@ -650,7 +649,6 @@
 		3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */ = {
 			isa = PBXGroup;
 			children = (
-				BCB7B3141C1CCB9E000C7953 /* BrowserProtocol.h */,
 				3C717C05198D54720025E28A /* BrowserView.xib */,
 				3C717C07198D5B200025E28A /* BrowserController.h */,
 				3C717C08198D5B200025E28A /* BrowserController.m */,

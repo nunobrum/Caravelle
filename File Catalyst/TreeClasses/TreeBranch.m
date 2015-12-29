@@ -145,6 +145,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return self;
 }
 
+-(void) deinit {
+    [self _releaseChildren];
+    self->_children = nil;
+    [self _invalidateSizes];
+    [super deinit];
+}
+
 // TODO:!??? Maybe this method is not really needed, since ARC handles this.
 // Think this is even causing problems
 -(void) _releaseChildren {
@@ -323,7 +330,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(TreeItem*) childWithURL:(NSURL*) aURL {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([[self url] isEqual:aURL]) {
+            if ([[item url] isEqual:aURL]) {
                 return item;
             }
         }
@@ -434,7 +441,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 - (void) refresh {
     if ([self needsRefresh]) {
         [self tagRefreshStart];
-        NSLog(@"TreeBranch.refreshContents:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
+        NSLog(@"TreeBranch.refresh:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
         [browserQueue addOperationWithBlock:^(void) { 
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
@@ -479,7 +486,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                             [item setParent:self];
                         }
                         else {
-                            NSLog(@"TreeBranch.refreshContents: Failed to create item for URL %@", theURL);
+                            NSLog(@"TreeBranch.refresh: Failed to create item for URL %@", theURL);
                         }
                     }
                 } // for

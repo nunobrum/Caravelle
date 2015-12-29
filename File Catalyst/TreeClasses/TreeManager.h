@@ -12,6 +12,12 @@
 
 extern NSString *notificationRefreshViews;
 
+@protocol PathObserverProtocol <NSObject>
+
+-(void) pathHasChanged:(NSString*)path;
+
+@end
+
 
 @interface TreeManager : NSObject {
     NSMutableArray *iArray;                 // Used to store the root paths
@@ -23,7 +29,7 @@ extern NSString *notificationRefreshViews;
 
 -(TreeBranch*) addTreeItemWithURL:(NSURL*)url askIfNeeded:(BOOL)askIfNeeded;
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
-//-(TreeItem*) getNodeWithPath:(NSString*)path;
+-(TreeItem*) getNodeWithPath:(NSString*)path;
 
 -(void) fileSystemChangePath:(NSNotification *)note;
 
@@ -33,6 +39,9 @@ extern NSString *notificationRefreshViews;
 
 -(BOOL) startAccessToURL:(NSURL*)url;
 -(void) stopAccesses;
+
+-(void) addActivityObserver:(NSObject<PathObserverProtocol>*)obj path:(NSString*)path;
+-(void) removeActivityObserver:(id)obj;
 
 @end
 

@@ -76,6 +76,10 @@
     return [self initWithURL: [NSURL fileURLWithPath:path] parent:parent];
  }
 
+-(void) deinit {
+    [self setTag:tagTreeItemRelease];
+}
+
 
 +(id) treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
@@ -391,7 +395,7 @@
     if (_parent) {
         [(TreeBranch*)_parent removeChild:self];
     }
-    [self setTag:tagTreeItemRelease];
+    [self deinit];
     return YES;
 }
 

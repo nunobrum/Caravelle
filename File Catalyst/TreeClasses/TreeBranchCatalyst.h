@@ -7,7 +7,12 @@
 //
 
 #import "TreeBranch.h"
+#import "TreeManager.h"
 
-@interface TreeBranchCatalyst : TreeBranch
+@interface TreeBranchCatalyst : TreeBranch<PathObserverProtocol>
+
++(id) treeItemForURL:(NSURL *)url parent:(id)parent;
+
+-(void) removeFilesWithoutDuplicates;
 
 @end

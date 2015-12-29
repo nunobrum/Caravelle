@@ -14,8 +14,33 @@
 
 @implementation TreeBranchCatalyst
 
+-(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
+    self = [super initWithURL:url parent:parent];
+    self.nameCache = url.lastPathComponent;
+    return self;
+}
+
++(id) treeItemForURL:(NSURL *)url parent:(id)parent {
+    id answer;
+    if (isFolder(url)) {
+        answer = [[TreeBranchCatalyst alloc] initWithURL:url parent:parent];
+        return answer;
+    }
+    return [super treeItemForURL:url parent:parent];
+}
+
 -(void) setName:(NSString*)name {
     self.nameCache = name;
+}
+
+-(NSString*) name {
+    if (self.nameCache==nil) {
+        if (self.url!=nil) {
+            self.nameCache = self.url.lastPathComponent;
+        }
+        NSLog(@"TreeBranchCatalyst.name WARNING:going to return NULL");
+    }
+    return self.nameCache;
 }
 
 
@@ -24,13 +49,13 @@
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
     }
-    TreeBranch *cursor = self;
+    TreeBranchCatalyst *cursor = self;
     NSArray *pcomps = [newItem.url pathComponents];
     unsigned long level = [[_url pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
         NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        TreeItem *child = [cursor childContainingURL:pathURL];
+        TreeBranchCatalyst *child = (TreeBranchCatalyst*)[cursor childContainingURL:pathURL];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
             child = [[TreeBranchCatalyst alloc] initWithURL:pathURL parent:cursor];
@@ -45,7 +70,7 @@
         }
         if ([child isFolder])
         {
-            cursor = (TreeBranch*)child;
+            cursor = child;
             if (cursor->_children==nil) {
                 cursor->_children = [[NSMutableArray alloc] init];
             }
@@ -88,7 +113,7 @@
     if ([self needsRefresh]) {
         [self tagRefreshStart];
         //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
-        NSLog(@"TreeBranchCatalyst.refreshContents (%@)", [self path]);
+        NSLog(@"TreeBranchCatalyst.refresh (%@)", [self path]);
         
         [browserQueue addOperationWithBlock:^(void) {
             BOOL is_dirty = NO;
@@ -99,11 +124,13 @@
                 while ( index < [_children count]) {
                     TreeItem *item = self->_children[index];
                     if ([item hasTags:tagTreeItemRelease]!=0) {
+                        [item deinit];  // This assures that its removal from duplicates chains is completed.
                         [self->_children removeObjectAtIndex:index];
                         is_dirty = YES;
                     }
                     // at this point the files should be marked as released
                     else if (fileExistsOnPath([item path])==NO) { // Safefy check
+                        [item deinit];  // This assures that its removal from duplicates chains is completed.
                         [self->_children removeObjectAtIndex:index];
                         is_dirty = YES;
                     }
@@ -116,6 +143,10 @@
                         index++;
                     }
                 }
+                // If in duplicate Mode, will make another pass to remove files without duplicates
+                if ((application_mode() & ApplicationModeDupBrowser)!=0) {
+                    if ([self _removeFilesWithoutDuplicates]) is_dirty = YES;
+                }
                 if (is_dirty) {
                     [self _invalidateSizes]; // Invalidates the previous calculated size
                 }
@@ -125,6 +156,42 @@
             [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
          }];
     }
+}
+
+-(BOOL) _removeFilesWithoutDuplicates {
+    NSInteger index = 0;
+    BOOL is_dirty = NO;
+    while ( index < [_children count]) {
+        TreeItem *item = self->_children[index];
+        if ([item isKindOfClass:[TreeLeaf class]] && ([item hasDuplicates]==NO)) {
+            [self->_children removeObjectAtIndex:index];
+            is_dirty = YES;
+        }
+        else {
+            if ([item isKindOfClass:[TreeBranchCatalyst class]]) {
+                [(TreeBranchCatalyst*)item removeFilesWithoutDuplicates];
+            }
+            index++;
+        }
+    }
+    return is_dirty;
+}
+
+-(void) removeFilesWithoutDuplicates {
+    BOOL hasChanged = NO;
+    @synchronized(self) {
+        if ([self _removeFilesWithoutDuplicates]) {
+            [self _invalidateSizes];
+            hasChanged = YES;
+        }
+    } // synchronized
+    if (hasChanged)
+        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+}
+
+-(void) pathHasChanged:(NSString *)path {
+    [self setTag:tagTreeItemDirty];
+    [self refresh];
 }
 
 -(NSString*) debugDescription {

@@ -304,7 +304,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         else {
             NSLog(@"AppDelegate.goHome:Failed to retrieve home folder from NSUserDefaults");
         }
-        // TODO:An possible workaround this is just using the first Bookmark available
+        // An possible workaround this is just using the first Bookmark available
         
         [self executeOpenFolderInView:view withTitle:@"Select a Folder to Browse"];
         [self savePreferences];
@@ -814,11 +814,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     if ([senderView isKindOfClass:[BrowserController class]]) {
         if ([notifInfo[kViewChangedWhatKey] isEqualToString:kViewChanged_TreeCollapsed]) {
-            if ((applicationMode == ApplicationModeDupBrowser)!=0) {
+            if ((applicationMode & ApplicationModeDupBrowser)!=0) {
                 if (senderView == myRightView) {
-                    [myRightView removeAll];
+                    /*[myRightView removeAll];
                     [myRightView refresh];
-                    if ([(BrowserController*)senderView treeViewCollapsed]) {
+                    if ([myRightView treeViewCollapsed]) {
                         // Activate the Flat View
                         // TODO:! This should be retrieved from Default Settings
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP",@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
@@ -836,28 +836,34 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                         [myRightView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
                         [myRightView setFlatView:NO];
                         [myRightView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
-                    }
+                    }*/
+                    // Just request a refresh
+                    [self statusUpdate:nil];
                 }
                 else if (senderView==myLeftView) {
-                    /* Do nothing in this situation.
-                     
-                    if (applicationMode == ApplicationModeDupSingle) {
-                         // TODO:! This should be retrieved from Default Settings
+                    [myLeftView removeAll];
+                    [myLeftView refresh];
+                    if ([myLeftView treeViewCollapsed]) {
+                        // Activate the Flat View
+                        [myLeftView setFlatView:YES];
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
-                        // Group by Location
                         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
-                        [myLeftView setFlatView:YES];
-                        // ___________________________
-                        // Setting the duplicate Files
-                        // ---------------------------
+                        [myLeftView addTreeRoot:unifiedDuplicatesRoot];
+                        [myLeftView selectFirstRoot];
                         
-                        [myLeftView setRoots:[NSArray arrayWithObject:unifiedDuplicatesRoot]];
-                        [myLeftView stopBusyAnimations];
-                        [self focusOnView:myLeftView];
+                    }
+                    else {
+                        
+                        // Deactivate the Flat View
+                        [myLeftView setFlatView:NO];
+                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
+                        [myLeftView.detailedViewController setupColumns:dupColumns];
+                        // Group by Location
+                        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
+                        [myLeftView setRoots:rootsWithDuplicates.roots];
                         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
-                         */
-                    
+                    }
                 }
             }
         }
@@ -1613,8 +1619,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     // Undo things that are not needed depending on the old mode
     if (old_mode != applicationMode) {
-        if (old_mode == ApplicationModeDupDual) {
-
+        if ((old_mode & ApplicationModeDupDual) !=0) {
+            // removing observings on treeManager
+            [appTreeManager removeActivityObserver:unifiedDuplicatesRoot];
+            for (TreeBranchCatalyst *root in rootsWithDuplicates.itemsInNode) {
+                [appTreeManager removeActivityObserver:root];
+            }
         }
     }
     
@@ -1899,7 +1909,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         for (TreeItem *node in receivedItems) {
             /* Do something here */
             if ([node isLeaf]) { // It is a file : Open the File
-                [node openFile]; // TODO:!!! Register this folder as one of the MRU
+                [node openFile]; // TODO:1.4 Register this folder as one of the MRU
             }
             else if ([node isFolder] && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View

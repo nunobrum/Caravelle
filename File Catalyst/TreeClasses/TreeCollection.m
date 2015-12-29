@@ -23,7 +23,7 @@
     
     @synchronized(self) {
         while (index < [self->_children count]) {
-            TreeBranch *child = self->_children[index];
+            TreeBranchCatalyst *child = self->_children[index];
             enumPathCompare comparison = [child relationToPath:item.path];
             if (comparison == pathIsSame) {
                 // No need to add, its already present
@@ -41,7 +41,7 @@
                     // creates the new node and replaces the existing one.
                     // It will inclose the former in itself.
                     // If the path is a parent, then inherently it should be a Branch
-                    OK = [(TreeBranch*)item addTreeItem:child];
+                    OK = [(TreeBranchCatalyst*)item addTreeItem:child];
                     if (OK) {
                         // answer can now replace item in iArray.
                         [self->_children setObject:item atIndexedSubscript:index];
@@ -54,7 +54,7 @@
                 else {
                     // In this case, what happens is that the item can be removed and added into answer
                     NSLog(@"TreeCollection.addTreeItem: Removing %@", child.url);
-                    BOOL OK1 = [(TreeBranch*)item addTreeItem:child];
+                    BOOL OK1 = [(TreeBranchCatalyst*)item addTreeItem:child];
                     if (OK1) {
                         // answer can now replace item in iArray.
                         [self->_children removeObjectAtIndex:index];

@@ -27,13 +27,19 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     return self;
 }
 
+-(void) deinit {
+    [self removeFromDuplicateRing];
+    [self->_store removeAllObjects];
+    self->_store = nil;
+    [super deinit];
+}
+
 -(ItemType) itemType {
     return ItemTypeLeaf;
 }
 
 
 -(BOOL) removeItem {
-    [self removeFromDuplicateRing];
     return [super removeItem];
 }
 /*
