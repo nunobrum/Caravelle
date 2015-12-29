@@ -8,6 +8,7 @@
 
 #import "DummyBranch.h"
 #import "TreeManager.h"
+#import "TreeBranchCatalyst.h"
 
 @implementation DummyBranch
 
@@ -22,6 +23,9 @@
 }
 
 +(instancetype) parentFor:(TreeItem*) item {
+    // Will block any Catalyst Folder
+    if ([item isKindOfClass:[TreeBranchCatalyst class]])
+        return nil;
     NSURL *url;
     TreeItem *target;
     if (item->_parent) {

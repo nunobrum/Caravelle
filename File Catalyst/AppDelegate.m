@@ -1619,7 +1619,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     // Undo things that are not needed depending on the old mode
     if (old_mode != applicationMode) {
-        if ((old_mode & ApplicationModeDupDual) !=0) {
+        if (((old_mode & ApplicationModeDupBrowser) != 0) &&  // Moving out of Duplicate Mode
+            (( newMode & ApplicationModeDupBrowser) == 0)) {
             // removing observings on treeManager
             [appTreeManager removeActivityObserver:unifiedDuplicatesRoot];
             for (TreeBranchCatalyst *root in rootsWithDuplicates.itemsInNode) {
