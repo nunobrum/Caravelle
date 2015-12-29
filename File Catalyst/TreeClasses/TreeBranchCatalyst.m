@@ -43,6 +43,9 @@
     return self.nameCache;
 }
 
+-(BOOL) needsSizeCalculation {
+    return NO;
+}
 
 -(BOOL) addTreeItem:(TreeItem*) newItem {
     @synchronized(self) {

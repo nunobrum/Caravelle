@@ -27,8 +27,14 @@
     if (item->_parent) {
         target = item->_parent;
         url = item->_parent.url;
+        if (url==nil) {
+            return nil;
+        }
     }
     else {
+        if (item.url==nil) {
+            return nil;
+        }
         if ([[item.url pathComponents] count]==1) {
             return nil;
         }
@@ -58,7 +64,10 @@
     return self.nameCache;
 }
 
-
+-(BOOL) needsSizeCalculation {
+    // Never compute the size of a dummy directory
+    return NO;
+}
 // TODO:1.3 Add a badge to the image
 
 

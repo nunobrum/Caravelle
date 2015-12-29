@@ -25,6 +25,7 @@ typedef NS_OPTIONS(NSUInteger, TreeItemTagEnum) {
     tagTreeItemHidden    = (1UL << 9),
     tagTreeSizeCalcReq   = (1UL << 10), // Used to avoid multiple orders to size calculation
     tagTreeHiddenPresent = (1UL << 11), // Used to check whether the Branches need update after a hidden configuration changed.
+    tagTreeSelectProtect = (1UL << 12),
     tagTreeItemAll       = NSUIntegerMax
 };
 
@@ -140,6 +141,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) needsSizeCalculation;
 -(BOOL) isGroup;
 -(BOOL) hasChildren; // has physical children but does not display as folders.
+-(BOOL) isSelectable;
 
 // Copy and paste support
 -(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info;

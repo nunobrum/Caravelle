@@ -295,7 +295,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
     else
-        answer = ([(TreeItem*)item isFolder]);
+        answer = ([(TreeItem*)item isExpandable]);
     return answer;
 }
 
@@ -724,7 +724,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             
             // if the flat view is set, if outside of the current node, launch an expand Tree
             if (self.flatView && [_treeNodeSelected respondsToSelector:@selector(url)]) {
-                if (url_relation(url, [(id)_treeNodeSelected url])==pathIsParent) {
+                enumPathCompare comp = url_relation(url, [(id)_treeNodeSelected url]);
+                if (comp ==pathIsParent || comp == pathsHaveNoRelation) {
                     // Send notification to request Expansion
                     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                           opFlatOperation, kDFOOperationKey,
@@ -1248,7 +1249,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         // Find the row and reload it.
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
-        [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
     }
     else if ([keyPath isEqualToString:USER_DEF_SEE_HIDDEN_FILES] ||
              [keyPath isEqualToString:USER_DEF_BROWSE_APPS] ||

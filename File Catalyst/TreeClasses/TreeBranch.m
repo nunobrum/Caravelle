@@ -521,6 +521,10 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 #pragma mark - Size related methods.
 
+-(BOOL) needsSizeCalculation {
+    return YES;
+}
+
 -(void) _invalidateSizes {
     self->size_files = -1;
     self->size_total = -1;

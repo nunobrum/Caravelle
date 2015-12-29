@@ -240,8 +240,11 @@
 // This function makes sure that the group headers are not selected
 - (BOOL)tableView:(NSTableView *)aTableView
   shouldSelectRow:(NSInteger)rowIndex {
-    if ([[self->_displayedItems objectAtIndex:rowIndex] isKindOfClass:[GroupItem class]])
+    id item = [self->_displayedItems objectAtIndex:rowIndex];
+    if ([item isKindOfClass:[GroupItem class]])
         return NO;
+    else if ([item isKindOfClass:[TreeItem class]])
+        return [item isSelectable];
     else
         return YES;
 }

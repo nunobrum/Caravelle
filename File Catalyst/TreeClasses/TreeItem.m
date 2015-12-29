@@ -58,7 +58,9 @@
     return NO;
 }
 
-
+-(BOOL) isSelectable {
+    return (_tag & tagTreeSelectProtect)==0;
+}
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];

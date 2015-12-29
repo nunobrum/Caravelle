@@ -105,10 +105,10 @@
         // Find the row and reload it.
         // Note that KVO notifications may be sent from a background thread (in this case, we know they will be)
         // We should only update the UI on the main thread, and in addition, we use NSRunLoopCommonModes to make sure the UI updates when a modal window is up.
-        [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        [self performSelectorOnMainThread:@selector(reloadItem:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
     }
     else if ([keyPath isEqualToString:kvoTreeBranchPropertySize]) {
-        [self performSelectorOnMainThread:@selector(reloadSize:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
+        [self performSelectorOnMainThread:@selector(reloadSize:) withObject:object waitUntilDone:NO modes:[NSArray arrayWithObject:NSRunLoopCommonModes]];
     }
     else if ([keyPath isEqualToString:USER_DEF_DISPLAY_FOLDERS_FIRST] ||
              [keyPath isEqualToString:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
@@ -363,10 +363,7 @@
                                    attributeName, self.filterText];
             }
             
-            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInBranchWithPredicate:predicate depth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+            if (self.filesInSubdirsDisplayed==YES) {
                 tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
             }
             else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
@@ -378,10 +375,7 @@
             
         }
         else {
-            if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInBranchTillDepth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==YES && self.foldersInTable==NO) {
+            if (self.filesInSubdirsDisplayed==YES) {
                 tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
             }
             else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
