@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
@@ -8,9 +8,9 @@
         <customObject id="-2" userLabel="File's Owner" customClass="DuplicateModeStartWindow">
             <connections>
                 <outlet property="chkDontDisplayAgain" destination="fxT-Xe-pbB" id="tgo-XM-UNR"/>
-                <outlet property="duplicateOrganization" destination="bIR-Cw-j6z" id="UZQ-ru-3JV"/>
-                <outlet property="exampleImage" destination="cea-K6-fSc" id="a6k-Dt-Pdh"/>
                 <outlet property="message" destination="tLE-co-WRh" id="BCj-Wa-jnK"/>
+                <outlet property="segTreeView" destination="H65-gW-aiN" id="F3d-sC-dPg"/>
+                <outlet property="segViewMode" destination="45c-C7-MyY" id="Q54-X2-H9B"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -19,24 +19,40 @@
         <window title="Duplicate Display Option" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="779" height="683"/>
+            <rect key="contentRect" x="196" y="240" width="500" height="250"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="779" height="683"/>
+                <rect key="frame" x="0.0" y="0.0" width="500" height="250"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cea-K6-fSc" userLabel="ClassicView">
-                        <rect key="frame" x="109" y="346" width="420" height="320"/>
+                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh" userLabel="Message">
+                        <rect key="frame" x="20" y="42" width="460" height="29"/>
                         <animations/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" imageFrameStyle="grayBezel" image="DuplicatesClassicView" id="iVs-Y7-Tgi"/>
-                    </imageView>
-                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QOn-1u-21h" userLabel="CaravelleView">
-                        <rect key="frame" x="112" y="20" width="647" height="320"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="left" placeholderString="Message from Caravelle" drawsBackground="YES" id="bu8-b1-BPF">
+                            <font key="font" metaFont="system" size="20"/>
+                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <color key="backgroundColor" name="controlLightHighlightColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Jr-OU-B7Z">
+                        <rect key="frame" x="112" y="83" width="370" height="51"/>
                         <animations/>
-                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="DuplicatesCaravelleView" id="umB-S9-QC2"/>
-                    </imageView>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Use the Tree Button to view duplicate files by their location, instead of the default duplicate grouping." id="kAU-y4-PWy">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxT-Xe-pbB">
+                        <rect key="frame" x="18" y="18" width="152" height="18"/>
+                        <animations/>
+                        <buttonCell key="cell" type="check" title="Don't show this again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="bNa-8m-7D7">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                    </button>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ReU-RE-TA4">
-                        <rect key="frame" x="547" y="384" width="208" height="19"/>
+                        <rect key="frame" x="400" y="19" width="80" height="19"/>
                         <animations/>
                         <buttonCell key="cell" type="roundRect" title="OK" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="SAs-tl-NU0">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -46,74 +62,71 @@
                             <action selector="close:" target="-2" id="wwX-e6-2jG"/>
                         </connections>
                     </button>
-                    <matrix verticalHuggingPriority="750" fixedFrame="YES" tag="1" allowsEmptySelection="NO" autorecalculatesCellSize="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bIR-Cw-j6z">
-                        <rect key="frame" x="20" y="19" width="85" height="644"/>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f7V-1T-ce1">
+                        <rect key="frame" x="20" y="198" width="32" height="32"/>
                         <animations/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        <size key="cellSize" width="78" height="18"/>
-                        <size key="intercellSpacing" width="4" height="2"/>
-                        <buttonCell key="prototype" type="radio" title="Radio" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="d4X-no-h0P">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                            <font key="font" metaFont="system"/>
-                        </buttonCell>
-                        <cells>
-                            <column>
-                                <buttonCell type="radio" title="Classic" imagePosition="left" alignment="left" tag="1" inset="2" id="v9j-6w-uZi">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <buttonCell type="radio" title="Caravelle" bezelStyle="regularSquare" imagePosition="left" alignment="left" inset="2" id="4vD-hH-MGt">
-                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </column>
-                        </cells>
-                    </matrix>
-                    <box verticalHuggingPriority="750" fixedFrame="YES" title="Box" boxType="separator" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="8xI-jb-uoQ">
-                        <rect key="frame" x="12" y="342" width="776" height="5"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSInfo" id="M51-GL-HAW"/>
+                    </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cAg-o0-RvR">
+                        <rect key="frame" x="58" y="200" width="424" height="29"/>
                         <animations/>
-                        <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
-                        <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                        <font key="titleFont" metaFont="system"/>
-                    </box>
-                    <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh" userLabel="Message">
-                        <rect key="frame" x="20" y="322" width="705" height="39"/>
-                        <animations/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="center" placeholderString="Message from Caravelle" drawsBackground="YES" id="bu8-b1-BPF">
-                            <font key="font" metaFont="system" size="32"/>
-                            <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                            <color key="backgroundColor" name="controlLightHighlightColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Jr-OU-B7Z">
-                        <rect key="frame" x="545" y="459" width="211" height="204"/>
-                        <animations/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="kAU-y4-PWy">
-                            <font key="font" metaFont="system"/>
-                            <string key="title">The duplicate has started, take a moment to select how files are going to be presented.  Classic View groups duplicated files by their matching peers.  Caravelle proposes a view where duplicates are grouped by their location on disk. This way is easier to select and delete duplicates in a given location.</string>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Duplicate File Finder" id="Nqi-bz-9yX">
+                            <font key="font" metaFont="system" size="24"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fxT-Xe-pbB">
-                        <rect key="frame" x="545" y="361" width="145" height="18"/>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7mW-ry-ab5">
+                        <rect key="frame" x="112" y="142" width="370" height="51"/>
                         <animations/>
-                        <buttonCell key="cell" type="check" title="Don't ask this again" bezelStyle="regularSquare" imagePosition="left" inset="2" id="bNa-8m-7D7">
-                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enabling the Dual Pane Mode, the right pane will contain duplicates of the files selected on the left pane." id="RMe-a7-SWa">
                             <font key="font" metaFont="system"/>
-                        </buttonCell>
-                    </button>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H65-gW-aiN">
+                        <rect key="frame" x="43" y="96" width="51" height="24"/>
+                        <animations/>
+                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="TZd-iI-SOy">
+                            <font key="font" metaFont="system"/>
+                            <segments>
+                                <segment toolTip="Tree View Visibility" image="IconTreeView20" width="32" selected="YES"/>
+                                <segment toolTip="Show Subdirectory Files" image="Tornado16" width="32" enabled="NO">
+                                    <nil key="label"/>
+                                </segment>
+                            </segments>
+                        </segmentedCell>
+                    </segmentedControl>
+                    <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="45c-C7-MyY">
+                        <rect key="frame" x="29" y="155" width="65" height="24"/>
+                        <animations/>
+                        <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="bsW-nz-svN">
+                            <font key="font" metaFont="system"/>
+                            <segments>
+                                <segment toolTip="Single Pane Mode" image="singlePane" width="29" selected="YES">
+                                    <nil key="label"/>
+                                </segment>
+                                <segment toolTip="Dual Pane Mode" image="dualPane" width="29" tag="1">
+                                    <nil key="label"/>
+                                </segment>
+                            </segments>
+                        </segmentedCell>
+                    </segmentedControl>
                 </subviews>
                 <animations/>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="76.5" y="242.5"/>
+            <point key="canvasLocation" x="76" y="242"/>
         </window>
     </objects>
     <resources>
-        <image name="DuplicatesCaravelleView" width="647" height="320"/>
-        <image name="DuplicatesClassicView" width="420" height="320"/>
+        <image name="IconTreeView20" width="20" height="20"/>
+        <image name="NSInfo" width="32" height="32"/>
+        <image name="Tornado16" width="16" height="16"/>
+        <image name="dualPane" width="19" height="16"/>
+        <image name="singlePane" width="20" height="20"/>
     </resources>
 </document>

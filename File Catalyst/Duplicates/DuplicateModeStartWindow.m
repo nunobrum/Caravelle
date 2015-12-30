@@ -28,11 +28,14 @@
     if ([self.chkDontDisplayAgain integerValue] != 0)
         self->_answer |= DupDialogMaskChkDontDisplayAgain;
     
-    if ([self.duplicateOrganization selectedRow]==0)
+    if ([self.segViewMode selectedSegment]==0)
         self->_answer |= DupDialogMaskClassicView;
     else
         self->_answer |= DupDialogMaskCaravelleView;
     
+    if ([self.segTreeView isSelectedForSegment:0]) {
+        self->_answer |= DupDialogMaskTreeSelected;
+    }
     
     if (self.window.isModalPanel)
         [NSApp stopModal];

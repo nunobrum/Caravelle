@@ -12,14 +12,17 @@ typedef NS_OPTIONS(NSUInteger, EnumDupStartDialogAnswer) {
     DupDialogMaskChkDontDisplayAgain = 1,
     DupDialogMaskClassicView         = 2,
     DupDialogMaskCaravelleView       = 4,
-    DupDialogMaskOKPressed           = 8
+    DupDialogMaskTreeSelected        = 8,
+    DupDialogMaskOKPressed           = 16
 };
 
 @interface DuplicateModeStartWindow : NSWindowController
 
-@property (weak) IBOutlet NSImageView *exampleImage;
+
 @property (weak) IBOutlet NSButton *chkDontDisplayAgain;
-@property (weak) IBOutlet NSMatrix *duplicateOrganization;
+@property (weak) IBOutlet NSSegmentedControl *segViewMode;
+@property (weak) IBOutlet NSSegmentedControl *segTreeView;
+
 @property (weak) IBOutlet NSTextField *message;
 @property (readonly) NSUInteger answer;
 
