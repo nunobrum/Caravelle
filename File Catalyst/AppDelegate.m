@@ -2304,18 +2304,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [myRightView refresh];
             [myRightView startAllBusyAnimations];
             
+            FileCollection *collectedDuplicates = [FileCollection duplicatesOfFiles:selectedFiles dCounter:dupShow];
+            
             if ([myRightView treeViewCollapsed]) {
                 /* Whether it will present one flat view */
-                FileCollection *collectedDuplicates = nil;
-                for (TreeItem *item in selectedFiles ) {
-                    FileCollection *itemDups = [duplicates duplicatesOfPath:[item path] dCounter:dupShow];
-                    if (collectedDuplicates==nil) {
-                        collectedDuplicates = itemDups;
-                    }
-                    else {
-                        [collectedDuplicates concatenateFileCollection:itemDups];
-                    }
-                }
                 TreeRoot *selectedDuplicatesRoot = [[TreeRoot alloc] init];
                 [selectedDuplicatesRoot setName:@"Duplicates"];
                 [selectedDuplicatesRoot setFileCollection:collectedDuplicates];
@@ -2323,10 +2315,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             }
             else {
                 /* Whether it will present a treeView */
-                for (TreeItem *item in selectedFiles ) {
-                    FileCollection *itemDups = [duplicates duplicatesOfPath:[item path] dCounter:dupShow];
-                    [myRightView addFileCollection: itemDups];
+                for (TreeBranch *r in rootsWithDuplicates.branchesInNode) {
+                    [myRightView addTreeRoot:[[TreeBranchCatalyst alloc] initWithURL:r.url parent:nil]];
                 }
+                [myRightView addFileCollection: collectedDuplicates];
             }
             [myRightView selectFirstRoot];
             [myRightView refresh];

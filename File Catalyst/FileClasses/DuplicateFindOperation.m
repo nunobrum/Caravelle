@@ -89,12 +89,6 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                 /* Should it be informed, or just skip it */
             }
             else {
-                TreeBranchCatalyst *r = [TreeBranchCatalyst treeItemForURL:url parent:roots];
-                [roots addTreeItem:r]; // Adding the root elements
-                //adding path observers
-                [appTreeManager addActivityObserver:filterRoot path:path];
-                [appTreeManager addActivityObserver:r path:path];
-                
                 MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                 for (NSURL *theURL in dirEnumerator) {
                     if ((!isFolder(theURL)) &&
@@ -211,20 +205,25 @@ NSString *kEndDateFilter   = @"EndDateFilter";
             NSLog(@"DuplicateFindOperation: Creating Tree");
             counter = 0;
             if ([duplicates count]!=0) {
+                for (NSString *path in paths) {
+                    /* Abort if problem detected */
+                    NSURL *url = [NSURL fileURLWithPath:path isDirectory:YES];
+                    if (url!=nil) {
+                        TreeBranchCatalyst *r = [TreeBranchCatalyst treeItemForURL:url parent:roots];
+                        [roots addTreeItem:r]; // Adding the root elements
+                        //adding path observers
+                        [appTreeManager addActivityObserver:filterRoot path:path];
+                        [appTreeManager addActivityObserver:r path:path];
+                    }
+                }
                 [filterRoot addItemArray:duplicates];
                 // Adding the duplicates to the new Tree
                 for (TreeLeaf *item in duplicates) {
                     [roots addTreeItem:item];
                     counter++;
                 }
+                
             }
-        }
-    }
-    if ([self isCancelled] || [duplicates count]==0) {
-        // Removing observers
-        [appTreeManager removeActivityObserver:filterRoot];
-        for (TreeBranchCatalyst *r in roots.itemsInNode) {
-            [appTreeManager removeActivityObserver:r];
         }
     }
     

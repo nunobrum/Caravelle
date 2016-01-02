@@ -119,8 +119,8 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
     // Blocks the system menu
-    [NSApp registerServicesMenuSendTypes:nil
-                             returnTypes:nil];
+    [NSApp registerServicesMenuSendTypes:[NSArray array]
+                             returnTypes:[NSArray array]];
 }
 
 

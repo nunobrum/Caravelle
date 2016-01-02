@@ -120,7 +120,7 @@
         
         [browserQueue addOperationWithBlock:^(void) {
             BOOL is_dirty = NO;
-            [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+            //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
             @synchronized(self) {
                 // Set all items as candidates for release
                 NSUInteger index = 0 ;
@@ -156,7 +156,8 @@
                 [self tagRefreshFinished];
                 
             } // synchronized
-            [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+            if (is_dirty)
+                [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
          }];
     }
 }

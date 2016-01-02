@@ -24,8 +24,9 @@
 -(void) setFiles: (NSArray *)otherArray;
 
 -(FileCollection*) filesInPath:(NSString*) path;
--(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount;
--(FileCollection*) duplicatesOfPath:(NSString*) path dCounter:(NSUInteger)dCount;
+//-(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount;
+//-(FileCollection*) duplicatesOfPath:(NSString*) path dCounter:(NSUInteger)dCount;
++(FileCollection*) duplicatesOfFiles:(NSArray*)fileArray dCounter:(NSUInteger)dCount;
 
 -(void) concatenateFileCollection: (FileCollection *)otherCollection;
 

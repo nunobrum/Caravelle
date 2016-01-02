@@ -464,30 +464,30 @@ TreeManager *appTreeManager;
 #endif
     if (url_allowed) {
         enumPathCompare comp = url_relation(url_allowed, url);
-        if (comp==pathIsChild || comp == pathIsSame) {
-            answer = [TreeItem treeItemForURL:url_allowed parent:nil];
-            [answer setTag:tagTreeItemDirty]; // Forcing its update
+        if (comp!=pathIsChild && comp != pathIsSame) {
+            // NSAlert telling that the program will proceed with this new URL
+            NSAlert *info = [[NSAlert alloc] init];
+            [info setMessageText:@"Proceeding with indicated Folder"];
+            [info addButtonWithTitle:@"OK"];
+            [info setInformativeText:@"The Opened Folder is different from requested"];
+            [info setAlertStyle:NSInformationalAlertStyle];
+            [info runModal];
+             
         }
-        else {
-            // TODO: !!!! NSAlert telling that the program will proceed with this new URL
-        }
-        
-        // But will only return it if is a Branch Like
-         /*{
-                TreeItem *ti;
-                ti = [aux getNodeWithURL:url];
-                if (ti==nil) // didn't find, will have to create it
-                    ti = (TreeBranch*)[aux addURL:url];
-                // sanity check before assigning
-                if (ti!=nil && [ti isFolder])
-                    answer = (TreeBranch*) ti;
-            }*/
+        answer = [TreeItem treeItemForURL:url_allowed parent:nil];
+        [answer setTag:tagTreeItemDirty]; // Forcing its update
     }
     return answer;
 }
 
 -(void) addActivityObserver:(NSObject<PathObserverProtocol>*)obj path:(NSString*)path {
-    //TODO: !!!!!!! Assure that path is already being observed.
+    // Assure that path is already being observed.
+    if ([self getNodeWithPath:path]==nil) {
+        // This means it is not being obeserved
+        // The next instruction a
+        TreeBranch *branch = [self addTreeItemWithURL:[NSURL fileURLWithPath:path isDirectory:NO] askIfNeeded:NO];
+        NSAssert(branch!=nil,@"TreeManager.addActivityObserver:path: Failed to create an observing for path:%@", path);
+    }
     PathObserver *observeElem = [[PathObserver alloc] initWithPath:path observer:obj];
     [self->pathObservers addObject:observeElem];
 }

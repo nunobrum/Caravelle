@@ -131,6 +131,30 @@
     return newCollection;
 }
 
++(FileCollection*) duplicatesOfFiles:(NSArray*)fileArray dCounter:(NSUInteger)dCount {
+    FileCollection *newCollection = [[FileCollection new] init];
+    newCollection->fileArray = [[NSMutableArray new] init];
+    for (TreeLeaf *finfo in fileArray) {
+        if ([finfo respondsToSelector:@selector(nextDuplicate)]) {
+            [finfo setDuplicateRefreshCount:dCount]; // This avoids that the file itself is added.
+            TreeLeaf *cursor=[finfo nextDuplicate];
+            if (cursor==nil)
+                NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            else {
+                while (cursor!=finfo) {
+                    if ([cursor duplicateRefreshCount]!=dCount) {
+                        [newCollection->fileArray addObject:cursor];
+                        [cursor setDuplicateRefreshCount: dCount];
+                    }
+                    
+                    cursor = [cursor nextDuplicate];
+                }
+            }
+        }
+    }
+    return newCollection;
+}
+
 -(void) concatenateFileCollection: (FileCollection *)otherCollection {
     if (fileArray==nil) 
         fileArray = [NSMutableArray arrayWithArray:[otherCollection fileArray]];
