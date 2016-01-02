@@ -921,13 +921,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 -(BOOL) checkAppInDuplicateBlocking {
     if (applicationMode & ApplicationModeDupBrowser) {
         if ([self->userPreferenceManager duplicatesAuthorized]==NO) {
-            NSAlert *buyAppInInfo =  [NSAlert alertWithMessageText:@"Locked Feature"
-                                                     defaultButton:@"OK"
-                                                   alternateButton:nil // TODO:1.4 Buy Button to open direcly the referred window
-                                                       otherButton:nil
-                                         informativeTextWithFormat:@"App-In 'Duplicates Manager' needed to proceed.\nThis App-In can be bought direcly on menu Caravelle-Preferences... App-Ins section"];
+            NSAlert *buyAppInInfo = [[NSAlert alloc] init];
+            [buyAppInInfo addButtonWithTitle:@"OK"];
+            // TODO:1.4 Buy Button to open direcly the referred window
+            [buyAppInInfo setMessageText:@"Locked Feature"];
+            [buyAppInInfo setInformativeText:@"App-In 'Duplicates Manager' needed to proceed.\nThis App-In can be bought direcly on menu Caravelle-Preferences... App-Ins section"];
             [buyAppInInfo setAlertStyle:NSWarningAlertStyle];
-            [buyAppInInfo beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            [buyAppInInfo beginSheetModalForWindow:[self myWindow] completionHandler:nil ];
             return NO;
         }
     }
@@ -1029,11 +1029,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // TODO:!! Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
         // For the time being this is an invalid condition. Need to notify user.
-        NSAlert *alert = [NSAlert alertWithMessageText:@"Multiple Files Selected"
-                                         defaultButton:@"OK"
-                                       alternateButton:nil
-                                           otherButton:nil
-                             informativeTextWithFormat:@"Rename of multiple files will be available in a future version."];
+        NSAlert *alert = [[NSAlert alloc] init];
+        [alert addButtonWithTitle:@"OK"];
+        // TODO:1.4 Buy Button to open direcly the referred window
+        [alert setMessageText:@"Multiple Files Selected"];
+        [alert setInformativeText:@"Rename of multiple files will be available in a future version."];
+        [alert setAlertStyle:NSWarningAlertStyle];
         [alert beginSheetModalForWindow:[self myWindow] completionHandler:^(NSModalResponse returnCode) {}];
 
     }
@@ -1232,12 +1233,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             else {
                 // Display a warning saying that the application lost control of the clipboard
                 // and that the cut cannot be done. Will be aborted.
-                NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the Cut operation !"
-                                                 defaultButton:@"OK"
-                                               alternateButton:nil
-                                                   otherButton:nil
-                                     informativeTextWithFormat:@"Another application changed the System Clipboard."];
-                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+                NSAlert *alert = [[NSAlert alloc] init];
+                [alert setMessageText:@"Can't complete the Cut operation !"];
+                [alert addButtonWithTitle:@"OK"];
+                [alert setInformativeText:@"Another application changed the System Clipboard."];
+                [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
             }
         }
         else { // Make a regular copy
@@ -1533,13 +1533,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // TODO:1.4 Preview Mode
         NSLog(@"AppDelegate.appModeChanged: Preview Mode");
         // Now displaying an NSAlert with the information that this will be available in a next version
-        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Preview Pane"
-                                                      defaultButton:@"OK"
-                                                    alternateButton:nil
-                                                        otherButton:nil
-                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+        NSAlert *notAvailableAlert =  [[NSAlert alloc] init];
+        [notAvailableAlert setMessageText:@"Preview Pane"];
+        [notAvailableAlert addButtonWithTitle:@"OK"];
+        [notAvailableAlert setInformativeText:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
         [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
-        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [notAvailableAlert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
         // Reposition last mode
         _application_mode = old_mode;
     }
@@ -1547,13 +1546,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // TODO:1.4 Sync Mode
         NSLog(@"AppDelegate.appModeChanged: Sync Mode");
         // Now displaying an NSAlert with the information that this will be available in a next version
-        NSAlert *notAvailableAlert =  [NSAlert alertWithMessageText:@"Directory Compare & Synchronization"
-                                                      defaultButton:@"OK"
-                                                    alternateButton:nil
-                                                        otherButton:nil
-                                          informativeTextWithFormat:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
+        NSAlert *notAvailableAlert =  [[NSAlert alloc] init];
+        [notAvailableAlert setMessageText:@"Directory Compare & Synchronization"];
+        [notAvailableAlert addButtonWithTitle:@"OK"];
+        [notAvailableAlert setInformativeText:@"This feature will be implemented in a future version. For more information consult the Caravelle Roadmap.  www.nunobrum.com/roadmap"];
         [notAvailableAlert setAlertStyle:NSInformationalAlertStyle];
-        [notAvailableAlert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+        [notAvailableAlert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
         // Reposition last mode
         _application_mode = old_mode;
     }
@@ -2168,12 +2166,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                 [item removeItem];
             }
             // Inform User
-            NSAlert *alert = [NSAlert alertWithMessageText:@"Error creating Folder"
-                                             defaultButton:@"OK"
-                                           alternateButton:nil
-                                               otherButton:nil
-                                 informativeTextWithFormat:@"Possible Causes:\nFile already exists or write is restricted"];
-            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            NSAlert *alert = [[NSAlert alloc] init];
+            [alert setMessageText:@"Error creating Folder" ];
+            [alert addButtonWithTitle:@"OK"];
+            [alert setInformativeText:@"Possible Causes:\nFile already exists or write is restricted"];
+            [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
         }
         else if ([operation isEqualTo:opFlatOperation]) {
             // Cancel the Flat View
@@ -2548,13 +2545,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             }
             else {
                 // Display information that no duplicates were found
-                NSAlert *alert = [NSAlert alertWithMessageText:@"Congratulations !"
-                                                 defaultButton:@"OK"
-                                               alternateButton:nil
-                                                   otherButton:nil
-                                     informativeTextWithFormat:@"No duplicate files were found"];
+                // Inform User
+                NSAlert *alert = [[NSAlert alloc] init];
+                [alert setMessageText:@"Congratulations !"];
+                [alert addButtonWithTitle:@"OK"];
+                [alert setInformativeText:@"No duplicate files were found"];
                 [alert setAlertStyle:NSInformationalAlertStyle];
-                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+                [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
             }
         }
         else {
@@ -2724,17 +2721,19 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             else {
                 // Failed to created either the source or the destination. Not likely to happen but...
                 // Messagebox with alert
-                NSAlert *alert = [NSAlert alertWithMessageText:@"Can't complete the operation !"
-                                                 defaultButton:@"OK"
-                                               alternateButton:nil
-                                                   otherButton:nil
-                                     informativeTextWithFormat:@"Failed to allocate memory."];
-                [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+                NSAlert *alert = [[NSAlert alloc] init ];
+                [alert setMessageText:@"Can't complete the operation !"];
+                [alert addButtonWithTitle:@"OK"];
+                [alert setInformativeText:@"Failed to allocate memory."];
+                [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
+                
             }
         }
         else {
             NSAlert *alert = [NSAlert alertWithError:error];
-            [alert beginSheetModalForWindow:[self myWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+            [alert beginSheetModalForWindow:[self myWindow] completionHandler:^(NSModalResponse returnCode) {
+                
+            }];
 
             NSLog(@"AppDelegate.processNext:Error: Error not processed %@", error); // Don't comment this, before all tests are completed.
             // Delete the error not processed
