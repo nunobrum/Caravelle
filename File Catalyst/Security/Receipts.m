@@ -79,8 +79,10 @@ int validateAppReceipt () {
     
     NSString *path = receiptURL.path;
     const BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:nil];
-    if (!exists) return answer;
-    
+    if (!exists) {
+        NSLog(@"validateAppReceipt: Couldn't find receipt at %@", path);
+        return answer;
+    }
     const char *cpath = [[path stringByStandardizingPath] fileSystemRepresentation];
     FILE *fp = fopen(cpath, "rb");
     if (!fp) return answer;

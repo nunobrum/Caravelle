@@ -76,7 +76,7 @@ NSString *titleForDates(NSDate *first, NSDate *last) {
     NSInteger max = 0;
     sum  = 0;
     for (int i=0 ; i < [values count]-1 ; i++) {
-        differential[i] = abs([values[i+1] timeIntervalSinceDate:values[i]]);
+        differential[i] = fabs([values[i+1] timeIntervalSinceDate:values[i]]);
         if (differential[i] > differential[max]) max = i;
         //if (differential[i]< min) max = differential[i];
         sum += differential[i];

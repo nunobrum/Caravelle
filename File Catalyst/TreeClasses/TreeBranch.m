@@ -441,7 +441,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 - (void) refresh {
     if ([self needsRefresh]) {
         [self tagRefreshStart];
-        NSLog(@"TreeBranch.refresh:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
+        //NSLog(@"TreeBranch.refresh:(%@)", [self path]); //, [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
         [browserQueue addOperationWithBlock:^(void) { 
             // Using a new ChildrenPointer so that the accesses to the _children are minimized
 
