@@ -2185,6 +2185,22 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                 [dest setTag:tagTreeItemDirty];
                 [dest refresh];
             }
+            NSError *error = [info objectForKey:kDFOErrorKey];
+            if (error) {
+                NSAlert *alert = [NSAlert alertWithError:error];
+                if (alert) {
+                    // TODO:1.3.3 extend this to consider the "Ignore" and "Continue" buttons
+                    //[alert addButtonWithTitle:@"Stop"];
+                    //[alert addButtonWithTitle:@"Abort"];
+                    //[alert addButtonWithTitle:@"Continue"];
+                    NSString *infoMessage = [alert informativeText];
+                    NSString *message = [alert messageText];
+                    NSLog(@"Error: %@ Information: %@", message, infoMessage);
+                    [alert beginSheetModalForWindow:[self myWindow] completionHandler:^(NSModalResponse returnCode) {
+                        //NSLog(@"Alert return code :%ld", (long)returnCode);
+                    }];
+                }
+            }
         }
     }
 

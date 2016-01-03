@@ -1099,7 +1099,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"~/Google\\ Drive/XCode/ssl_098/openssl/**",
+					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
 					/opt/local/share/asn1c,
 				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
@@ -1107,7 +1107,7 @@
 					"$(inherited)",
 					"/usr/local/ssl/lib/**",
 				);
-				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";
@@ -1129,7 +1129,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"~/Google\\ Drive/XCode/ssl_098/openssl/**",
+					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
 					/opt/local/share/asn1c,
 				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
@@ -1137,7 +1137,7 @@
 					"$(inherited)",
 					"/usr/local/ssl/lib/**",
 				);
-				MACOSX_DEPLOYMENT_TARGET = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";

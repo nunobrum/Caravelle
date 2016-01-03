@@ -127,14 +127,14 @@
                 while ( index < [_children count]) {
                     TreeItem *item = self->_children[index];
                     if ([item hasTags:tagTreeItemRelease]!=0) {
-                        [item deinit];  // This assures that its removal from duplicates chains is completed.
-                        [self->_children removeObjectAtIndex:index];
+                        [item removeItem];  // This assures that its removal from duplicates chains is completed. And also from registered parent
+                        [self->_children removeObject:item];
                         is_dirty = YES;
                     }
                     // at this point the files should be marked as released
                     else if (fileExistsOnPath([item path])==NO) { // Safefy check
-                        [item deinit];  // This assures that its removal from duplicates chains is completed.
-                        [self->_children removeObjectAtIndex:index];
+                        [item removeItem];  // This assures that its removal from duplicates chains is completed. And also from registered parent
+                        [self->_children removeObject:item];
                         is_dirty = YES;
                     }
                     else {

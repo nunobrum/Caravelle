@@ -4,15 +4,9 @@
 <array>
 	<dict>
 		<key>id</key>
-		<string>com.cascode.duplicates</string>
+		<string>com.cascode.duplicates2</string>
 		<key>icon</key>
 		<string>duplicatesIcon</string>
-	</dict>
-	<dict>
-		<key>id</key>
-		<string>com.cascode.all</string>
-		<key>icon</key>
-		<string>Everything</string>
 	</dict>
 </array>
 </plist>

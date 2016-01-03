@@ -59,7 +59,9 @@
                         }
                         else {
                             error = loop_error;
+                            // TODO:!!!!!!! Pass the errors back to the application
                             OK = NO; // Memorizes error
+                            break;
                         }
                         statusCount++;
                         if ([self isCancelled]) break;
@@ -83,6 +85,7 @@
                     }
                     statusCount++;
                     if (OK) okCount++;
+                    else break;
                     if ([self isCancelled]) break;
                 }
             }
@@ -148,6 +151,7 @@
                     if (OK) {
                         okCount++;
                     }
+                    else break;
                     if ([self isCancelled]) break;
                 }
             }
@@ -177,9 +181,10 @@
                                     [dest addURL:newURL];
 #endif //UPDATE_TREE
                                 }
-                                else
+                                else {
                                     OK = NO;
-
+                                    break;
+                                }
                                 statusCount++;
                                 if ([self isCancelled] || OK==NO) break;
                             }
@@ -195,8 +200,10 @@
                                         [dest addURL:newURL];
 #endif //UPDATE_TREE
                                     }
-                                    else
+                                    else {
                                         OK = NO;
+                                        break;
+                                    }
                                     statusCount++;
                                 }
                                 else if ([item isKindOfClass:[TreeItem class]]) {
@@ -209,8 +216,10 @@
                                         [(TreeItem*)item removeItem];
 #endif //UPDATE_TREE
                                     }
-                                    else
+                                    else {
                                         OK = NO;
+                                        break;
+                                    }
                                     statusCount++;
                                 }
                                 if ([self isCancelled] || OK==NO) break;
@@ -227,8 +236,10 @@
                                         [dest addURL:newURL];
 #endif //UPDATE_TREE
                                     }
-                                    else
+                                    else {
                                         OK = NO;
+                                        break;
+                                    }
                                     statusCount++;
                                 }
                                 else if ([item isKindOfClass:[TreeItem class]]) {
@@ -241,8 +252,10 @@
                                         [(TreeItem*)item removeItem];
 #endif //UPDATE_TREE
                                     }
-                                    else
+                                    else {
                                         OK = NO;
+                                        break;
+                                    }
                                     statusCount++;
                                 }
                                 if ([self isCancelled] || OK==NO) break;
@@ -267,11 +280,12 @@
 
                             if (newURL)
                                 okCount++;
-                            else
+                            else {
                                 OK = NO;
-
+                                break;
+                            }
                             statusCount++;
-                            if ([self isCancelled] || OK==NO) break;
+                            if ([self isCancelled]) break;
                         }
                     }
                     else if ([op isEqualTo:opMoveOperation]) {
@@ -286,11 +300,13 @@
 
                             if (newURL)
                                 okCount++;
-                            else
+                            else {
                                 OK = NO;
+                                break;
+                            }
                             statusCount++;
 
-                            if ([self isCancelled] || OK==NO) break;
+                            if ([self isCancelled]) break;
                         }
                     }
 
@@ -305,10 +321,12 @@
                             }
                             if (newURL)
                                 okCount++;
-                            else
+                            else {
                                 OK = NO;
+                                break;
+                            }
                             statusCount++;
-                            if ([self isCancelled] || OK==NO) break;
+                            if ([self isCancelled]) break;
                         }
                     }
                 }

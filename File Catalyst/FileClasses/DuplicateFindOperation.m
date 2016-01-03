@@ -213,10 +213,11 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                         [roots addTreeItem:r]; // Adding the root elements
                         //adding path observers
                         [appTreeManager addActivityObserver:filterRoot path:path];
-                        [appTreeManager addActivityObserver:r path:path];
                     }
                 }
+                // Firstly adding the flat view that will monitor all the files
                 [filterRoot addItemArray:duplicates];
+                // Then the tree view, that will re-register the parents
                 // Adding the duplicates to the new Tree
                 for (TreeLeaf *item in duplicates) {
                     [roots addTreeItem:item];
