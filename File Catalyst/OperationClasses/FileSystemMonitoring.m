@@ -273,23 +273,29 @@ void  myCallbackFunction ( ConstFSEventStreamRef streamRef, void *clientCallBack
         else
             NSLog(@"FileSystemMonitoring.main : failed to start stream");
     }
-}
-
--(void) cancel {
-    if (stream != NULL) {
-        FSEventStreamStop(stream);
+    FSEventStreamStop(stream);
+    @try {
         FSEventStreamInvalidate(stream);
-        CFRelease(monitoredPaths);
-        [super cancel];
-        while (![self isCancelled]) {
-            NSLog(@"FileSystemMonitoring.cancel - Trying to Cancel task");
-        }
     }
+    @catch (NSException *exception) {
+        NSLog(@"FileSystemMonitoring.main: Failed to invalidate stream");
+    }
+    
+    FSEventStreamRelease(stream);
+    stream = NULL;
+    CFRelease(monitoredPaths);
+    monitoredPaths=NULL;
 }
 
 -(void) dealloc {
-    [self cancel];
+    if (stream!=NULL) {
+        FSEventStreamRelease(stream);
+        stream = NULL;
+    }
+    if (monitoredPaths) {
+        CFRelease(monitoredPaths);
+        monitoredPaths = NULL;
+    }
 }
-
 @end
 
