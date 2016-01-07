@@ -417,7 +417,7 @@
         }
         
         // Adding the parent directory as .. if requested
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] && self.foldersInTable==YES) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
             DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
             if (dummyParent != nil)
                 [tableData insertObject:dummyParent atIndex:0];

@@ -144,5 +144,64 @@
 		<key>app_mode</key>
 		<integer>16</integer>
 	</dict>
+	<key>COL_OWNER_NAME</key>
+	<dict>
+		<key>title</key>
+		<string>Owner</string>
+		<key>accessor</key>
+		<string>fileOwnerName</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>string</string>
+	</dict>
+	<key>COL_OWNER_ID</key>
+	<dict>
+		<key>title</key>
+		<string>OwnerID</string>
+		<key>accessor</key>
+		<string>fileOwnerID</string>
+		<key>transformer</key>
+		<string>integer</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>integer</string>
+	</dict>
+	<key>COL_OWNER_GROUP</key>
+	<dict>
+		<key>title</key>
+		<string>Group</string>
+		<key>accessor</key>
+		<string>fileGroupName</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>string</string>
+	</dict>
+	<key>COL_GROUP_ID</key>
+	<dict>
+		<key>title</key>
+		<string>GroupID</string>
+		<key>accessor</key>
+		<string>fileGroupID</string>
+		<key>transformer</key>
+		<string>integer</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>integer</string>
+	</dict>
+	<key>COL_PERMISSIONS</key>
+	<dict>
+		<key>title</key>
+		<string>Permissions</string>
+		<key>accessor</key>
+		<string>filePermissions</string>
+		<key>selected</key>
+		<false/>
+		<key>grouping</key>
+		<string>string</string>
+	</dict>
 </dict>
 </plist>

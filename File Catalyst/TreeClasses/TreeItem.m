@@ -352,6 +352,71 @@
 }
 
 
+-(NSString*) fileOwnerName {
+    NSError *error;
+    NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
+    
+    if (fileAttributes != nil) {
+        NSString *fileOwner = [fileAttributes fileOwnerAccountName];
+        return fileOwner;
+    }
+    return nil;
+}
+
+-(NSNumber*) fileOwnerID {
+    NSError *error;
+    NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
+    
+    if (fileAttributes != nil) {
+        NSNumber *fileOwner = [fileAttributes fileOwnerAccountID];
+        return fileOwner;
+    }
+    return nil;
+}
+
+-(NSString*) fileGroupName {
+    NSError *error;
+    NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
+    
+    if (fileAttributes != nil) {
+        NSString *fileOwner = [fileAttributes fileGroupOwnerAccountName];
+        return fileOwner;
+    }
+    return nil;
+}
+
+-(NSNumber*) fileGroupID {
+    NSError *error;
+    NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
+    
+    if (fileAttributes != nil) {
+        NSNumber *fileOwner = [fileAttributes fileGroupOwnerAccountID];
+        return fileOwner;
+    }
+    return nil;
+}
+
+-(NSString*) filePermissions {
+    NSError *error;
+    NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
+    
+    if (fileAttributes != nil) {
+        NSUInteger filePermissions = [fileAttributes filePosixPermissions];
+        // TODO:!!!!!!! Transform the number into U:rwx G:rwx A:rwx
+        unichar permissions [9] = {'r','w','x','r','w','x','r','w','x'};
+        for (int i=8;i>=0;i--) {
+            if ((filePermissions & 1)==0) {
+                permissions[i] = '-';
+            }
+            filePermissions = filePermissions >> 1;
+        }
+        NSString *pattr = [NSString stringWithCharacters:permissions length:9];
+        return pattr;
+    }
+    return nil;
+}
+
+
 
 -(TreeItem*) root {
     TreeItem *cursor = self;

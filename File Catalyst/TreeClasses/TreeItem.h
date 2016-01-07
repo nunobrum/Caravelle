@@ -91,6 +91,12 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSString*) hint;
 
 
+-(NSString*) fileOwnerName;
+-(NSNumber*) fileOwnerID;
+-(NSString*) fileGroupName;
+-(NSNumber*) fileGroupID;
+-(NSString*) filePermissions;
+
 -(void) setUrl:(NSURL*)url;
 -(NSURL*) url;
 
