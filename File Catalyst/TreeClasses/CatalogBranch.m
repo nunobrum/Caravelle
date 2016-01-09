@@ -33,7 +33,7 @@
         filterBranch *fb = (filterBranch*)[self childWithName:branchName class:[filterBranch class]];
         if (fb==nil) {
             // The folder doesn't exist. It will created it
-            NSPredicate *pred = nil; // TODO:!Create the predicate [NSPredicate predicateWithFormat:];
+            NSPredicate *pred = nil; 
             fb = [[filterBranch alloc] initWithFilter:pred name:branchName parent:self];
             return [self addChild:fb];
         }

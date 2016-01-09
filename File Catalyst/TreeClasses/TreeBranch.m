@@ -80,7 +80,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 }
 //NSArray* treesContaining(NSArray* treeItems) {
-//    //TODO:Optimization Create a Class to manage arrays of Branches. This is useful for the Browser Controller
 //    NSMutableArray *treeRoots = [[NSMutableArray alloc] init];
 //    
 //    for (TreeItem *item in treeItems) {
@@ -152,8 +151,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     [super deinit];
 }
 
-// TODO:!??? Maybe this method is not really needed, since ARC handles this.
-// Think this is even causing problems
 -(void) _releaseChildren {
 //    for (TreeItem *item in _children) {
 //        // NOTE: isKindOfClass is preferred over itemType.
@@ -415,7 +412,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(BOOL) needsRefresh {
 
     TreeItemTagEnum tag;
-    // TODO:!!!? Verify Atomicity and get rid of synchronized clause if OK
+    // TODO:? Verify Atomicity and get rid of synchronized clause if OK
     @synchronized(self) {
          tag = [self tag];
     }
@@ -1446,7 +1443,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 */
 
-// TODO:????? Is this still being used ?
+/*
 -(void) prepareForDuplicates {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
@@ -1459,6 +1456,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
 }
+*/
 
 #pragma mark -
 #pragma mark Tag Manipulation
@@ -1623,7 +1621,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
     }
     else if (operation == NSDragOperationLink) {
-        // TODO: !!! Operation Link
+        // TODO:1.4 Operation Link
     }
     else {
         // Invalid case

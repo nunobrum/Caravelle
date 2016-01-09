@@ -104,7 +104,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
     
     for (NSString *invalidIdentifier in response.invalidProductIdentifiers) {
         // Handle any invalid product identifiers.
-        NSLog(@"AppStoreManager.productRequest:didReceiveResponse: The product %@ is invalid", invalidIdentifier);
+        NSLog(@"UserPreferencesManager.productRequest:didReceiveResponse: The product %@ is invalid", invalidIdentifier);
     }
     self.requestPending = @0;
     
@@ -189,6 +189,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
         }
         [self updateStatus:newStatus onProduct:transaction.payment.productIdentifier];
     }
+    self->authorizedAppIns = AppInsNotRead; // Ensures that the receipt validation is called again
 }
 
 //- (void) paymentQueue:(SKPaymentQueue *)queue removedTransactions:(NSArray *)transactions {
@@ -276,7 +277,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
     if (savedReceipts) {
         for (NSArray *transactionRecord in savedReceipts) {
             // TODO:!!!! XOR with GUID
-            if ([[transactionRecord firstObject] isEqualToString:@"com.cascode.duplicates"]) {
+            if ([[transactionRecord firstObject] isEqualToString:@"com.cascode.duplicates2"]) {
                 authorizedAppIns |= AppInDuplicateManager;
             }
         }
@@ -304,7 +305,7 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
         
         for (SKProduct *article in self->_products) {
             // Handle valid product identifiers.
-            NSLog(@"AppStoreManager.productRequest:didReceiveResponse: The product %@ is valid", article.productIdentifier);
+            //NSLog(@"AppStoreManager.productRequest:didReceiveResponse: The product %@ is valid", article.productIdentifier);
             NSDictionary * pluginInfo = [self infoForProduct:article.productIdentifier];
             NSImage *icon = [NSImage imageNamed:[pluginInfo objectForKey:@"icon"]];
             
@@ -385,7 +386,6 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
     [self.prefsTree setSelectionIndexPath:[NSIndexPath indexPathWithIndex:0]];
     // Corresponding to index 0
     
-    // TODO:!!!!! Get the information from User Defaults :USER_DEF_APPIN_PRODUCTS;
     // Get the App-In information from App Store
     [self updateItemList];
     

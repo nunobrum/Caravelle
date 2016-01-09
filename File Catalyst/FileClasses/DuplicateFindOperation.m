@@ -26,7 +26,8 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 
 @interface DuplicateFindOperation () {
     NSUInteger dupCounter;
-    NSUInteger counter;
+    NSUInteger counter, totalCounter;
+    unsigned long long sizeCounter, totalSize, duplicateSize;
 }
 
 @end
@@ -34,17 +35,29 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 @implementation DuplicateFindOperation
 
 -(NSString*) statusText {
-    if (statusCount==1)
-        return [NSString stringWithFormat:@"Indexed %lu files ", counter];
-    else if (statusCount==2)
-        return [NSString stringWithFormat:@"%lu scanned, %lu duplicates", counter, dupCounter]; // One is subtracted since the counter is initialized as 1.
-    else if (statusCount==3)
-        return [NSString stringWithFormat:@"Creating Tree %lu", counter];
+    if (statusCount==1) {
+        NSString *sizeFormatted = [NSByteCountFormatter stringFromByteCount:sizeCounter countStyle:NSByteCountFormatterCountStyleFile];
+        return [NSString stringWithFormat:@"Indexed %lu files, total size %@ ", counter, sizeFormatted];
+    }
+    else if (statusCount==2) {
+        // The math below : it makes a half of the size percentage and a half of the file count percentage
+        // just one or the other doesn't look very real on the progress
+        float percent = 50.0 * sizeCounter / totalSize + 50.0 * counter/totalCounter;
+        NSString *sizeFormatted = [NSByteCountFormatter stringFromByteCount:duplicateSize countStyle:NSByteCountFormatterCountStyleFile];
+        return [NSString stringWithFormat:@"Comparing...%3.1f%%, %lu duplicates found, total size %@", percent, dupCounter, sizeFormatted]; // One is subtracted since the counter is initialized as 1.
+    }
+    else if (statusCount==3) {
+        float percent = 100.0 * counter / totalCounter;
+        return [NSString stringWithFormat:@"Creating Tree %3.1f%%", percent];
+    }
     else
         return @"Starting Duplicate Find"; // This should only appear if this is called is before the task starts
 }
 
 -(void) main {
+    sizeCounter = 0;
+    totalSize = 0;
+    duplicateSize = 0;
     statusCount=1; // Indicates the first Phase
     NSArray *paths = [_taskInfo objectForKey: kRootPathKey];
     TreeCollection *roots = nil;
@@ -80,7 +93,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         // Preparing single View
         filterRoot = [[filterBranch alloc] initWithFilter:nil name:@"Duplicates" parent:nil];
 
-        NSLog(@"DuplicateFindOperation: Starting Duplicate Scan");
+        //NSLog(@"DuplicateFindOperation: Starting Duplicate Scan");
         counter = 0;
         for (NSString *path in paths) {
             /* Abort if problem detected */
@@ -91,14 +104,15 @@ NSString *kEndDateFilter   = @"EndDateFilter";
             else {
                 MyDirectoryEnumerator *dirEnumerator = [[MyDirectoryEnumerator new ] init:url WithMode:BViewDuplicateMode];
                 for (NSURL *theURL in dirEnumerator) {
-                    if ((!isFolder(theURL)) &&
-                        (filesize(theURL) >= minFileSize)) {
+                    long long fsize = exact_size(theURL);
+                    if ((!isFolder(theURL)) && (fsize >= minFileSize)) {
                         NSDate *fileDate = dateModified(theURL);
                         if ([startDateFilter laterDate:fileDate] && [endDateFilter earlierDate:fileDate]) {
                             TreeLeaf *fi = [TreeLeaf treeItemForURL:theURL parent:nil];
                             if (fi) {
                                 if (namePredicate==nil || [namePredicate evaluateWithObject:fi]) {
                                     [fileArray addObject:fi];
+                                    sizeCounter += fsize;
                                     //NSLog(@"accepted %@",theURL);
                                 }
                                 //else { NSLog(@"rejected %@",theURL); }
@@ -119,22 +133,27 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         {
             NSUInteger dupGroup = 1; // Starts at one since 0 is reserved for no Duplicates
             dupCounter = 0;
-            statusCount = 2; // Second Phase
+            totalSize = sizeCounter;
+            sizeCounter = 0;
+            totalCounter = counter;
             counter=0;
+            statusCount = 2; // Second Phase
+            
             NSUInteger j;  // Scan index
             BOOL duplicate;
-            NSLog(@"DuplicateFindOperation: Ordering Files");
+            //NSLog(@"DuplicateFindOperation: Ordering Files");
             if (options & DupCompareSize) {
                 NSSortDescriptor *desc = [NSSortDescriptor sortDescriptorWithKey:@"exactSize" ascending:NO];
                 [fileArray sortUsingDescriptors:[NSArray arrayWithObject:desc]];
             }
-            NSLog(@"DuplicateFindOperation: Matching %li files", [fileArray count]);
+            //NSLog(@"DuplicateFindOperation: Matching %li files", [fileArray count]);
             TreeLeaf *FileA, *FileB;
             while ([fileArray count]>1) {
                 counter++;
                 if ([self isCancelled])
                     break;
                 FileA = [fileArray objectAtIndex:0];
+                sizeCounter += [[FileA exactSize] longLongValue];
                 NSUInteger max_files = [fileArray count];
                 //NSLog(@"%@",FileA.url);
                 for (j=1; j<max_files; j++) {
@@ -181,6 +200,9 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                             // group is only incremented if FileB is the first duplicate of FileA
                             dupGroup++;
                         }
+                        // adds the total size that is duplicate and not the size of all the duplicates
+                        duplicateSize += [[FileB exactSize] longLongValue];
+                        
                         // The cycle will end once one duplicate is found
                         // This simplifies the algorithm, but makes the group IDs more complex
                         j = max_files;
@@ -201,8 +223,9 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         
         if (![self isCancelled])
         {
+            totalCounter = dupCounter;
             statusCount = 3;
-            NSLog(@"DuplicateFindOperation: Creating Tree");
+            //NSLog(@"DuplicateFindOperation: Creating Tree");
             counter = 0;
             if ([duplicates count]!=0) {
                 for (NSString *path in paths) {

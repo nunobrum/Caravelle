@@ -28,7 +28,7 @@
 #import "StartupScreenController.h"
 #import "DuplicateModeStartWindow.h"
 
-// TODO:! Virtual Folders
+// TODO:2.0 Virtual Folders
 // #import "filterBranch.h"
 // #import "CatalogBranch.h"
 #import "myValueTransformers.h"
@@ -311,7 +311,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 #else
         if (homepath == nil || [homepath isEqualToString:@""]) {
-            NSLog(@"Failed to retrieve home folder from NSUserDefaults. Using Home Directory");
+            NSLog(@"AppDelegate.goHome: Failed to retrieve home folder from NSUserDefaults. Using Home Directory");
             homepath = NSHomeDirectory();
         }
 
@@ -512,7 +512,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             NSDictionary *taskInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       //homeDir,kRootPathKey,
                                       @"/Users/vika/Documents/",kRootPathKey,
-                                      myLeftView, kSenderKey,
+                                      myLeftView, kDFOFromViewKey,
                                       [NSNumber numberWithInteger:BViewCatalystMode], kModeKey,
                                       nil];
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
@@ -816,28 +816,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         if ([notifInfo[kViewChangedWhatKey] isEqualToString:kViewChanged_TreeCollapsed]) {
             if ((applicationMode & ApplicationModeDupBrowser)!=0) {
                 if (senderView == myRightView) {
-                    /*[myRightView removeAll];
-                    [myRightView refresh];
-                    if ([myRightView treeViewCollapsed]) {
-                        // Activate the Flat View
-                        // TODO:! This should be retrieved from Default Settings
-                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP",@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
-                        [myRightView.detailedViewController setupColumns:dupColumns];
-                        [myRightView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:NO];
-                        [myRightView setFlatView:YES];
-                        [myRightView selectFirstRoot];
-                    
-                    }
-                    else {
-                        // Activate the Flat View
-                        NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
-                        [myRightView.detailedViewController setupColumns:dupColumns];
-                        // Group by Location
-                        [myRightView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
-                        [myRightView setFlatView:NO];
-                        [myRightView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
-                    }*/
-                    // Just request a refresh
                     [self statusUpdate:nil];
                 }
                 else if (senderView==myLeftView) {
@@ -846,6 +824,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                     if ([myLeftView treeViewCollapsed]) {
                         // Activate the Flat View
                         [myLeftView setFlatView:YES];
+                        // TODO:1.4 This should be retrieved from the default settings
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
                         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
@@ -888,9 +867,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 //    if (treeUpdateOperationID == loadScanCountNum)
 //    {
 //        TreeRoot *receivedTree = [notifData valueForKey:kTreeRootKey];
-//        BrowserController *BView =[notifData valueForKey: kSenderKey];
+//        BrowserController *BView =[notifData valueForKey: kDFOFromViewKey];
 //        id sender = [note object];
-//        assert(BView!=sender); // check if the kSenderKey can't be deleted
+//        assert(BView!=sender); // check if the kDFOFromViewKey can't be deleted
 //        [BView addTreeRoot:receivedTree];
 //        [BView stopBusyAnimations];
 //        [BView selectFolderByItem: receivedTree];
@@ -993,11 +972,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
 
     NSUInteger numberOfFiles = [selectedFiles count];
-    // TODO: ! Option for the rename, on the table or on a dedicated dialog
+    // TODO:1.4 Option for the rename, on the table or on a dedicated dialog
     if (numberOfFiles == 1) {
         TreeItem *selectedFile = [selectedFiles firstObject];
         NSString *oldFilename = [[selectedFile path] lastPathComponent];
-        if (1) { // Rename done in place // TODO: Put this is a USer Configuration
+        if (1) { // Rename done in place // TODO:1.4 Put this is a USer Configuration
             [[self selectedView] startEditItemName:selectedFile];
         }
         // Using a dialog Box
@@ -1026,7 +1005,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         }
     }
     else if (numberOfFiles > 1) {
-        // TODO:!! Implement the multi-rename
+        // TODO:1.4 Implement the multi-rename
         // If more than one file, will invoke the multi-rename dialog
         // For the time being this is an invalid condition. Need to notify user.
         NSAlert *alert = [[NSAlert alloc] init];
@@ -1042,7 +1021,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 -(BOOL) startFileOperation:(NSDictionary *) operationInfo {
     [self _startOperationBusyIndication: operationInfo];
-    // TODO:FILOP Divide the operations per classes
+    // TODO:1.3.3 Divide the operations per classes
     FileOperation *operation = [[FileOperation alloc] initWithInfo:operationInfo];
     putInQueue(operation);
     return YES;
@@ -1070,24 +1049,20 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     // Checking first if the operation is not blocked.
     if ([self checkAppInDuplicateBlocking]==NO) return;
+    id node = nil;
     
     if ([self selectedView] == myLeftView) {
-        id node = [myRightView treeNodeSelected];
-        if ([node isKindOfClass:[TreeBranch class]]) {
-            [self copyItems:selectedFiles toBranch: node];
-        }
-        else {
-            // TODO: !! log error
-        }
+        node = [myRightView treeNodeSelected];
     }
     else if ([self selectedView] == myRightView) {
-        id node = [myLeftView treeNodeSelected];
-        if ([node isKindOfClass:[TreeBranch class]]) {
-            [self copyItems:selectedFiles toBranch: node];
-        }
-        else {
-            // TODO: !! log error
-        }
+        node = [myLeftView treeNodeSelected];
+    }
+    
+    if (node!=nil && [node isKindOfClass:[TreeBranch class]]) {
+        [self copyItems:selectedFiles toBranch: node];
+    }
+    else {
+        NSLog(@"AppDelegate.executeCopyTo: Received wrong object. Expected TreeBranch received %@", [node className]);
     }
 }
 
@@ -1095,24 +1070,20 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     
     // Checking first if the operation is not blocked.
     if ([self checkAppInDuplicateBlocking]==NO) return;
+    id node = nil;
     
     if ([self selectedView] == myLeftView) {
-        id node = [myRightView treeNodeSelected];
-        if ([node isKindOfClass:[TreeBranch class]]) {
-            [self copyItems:selectedFiles toBranch: node];
-        }
-        else {
-            // TODO: !! log error
-        }
+        node = [myRightView treeNodeSelected];
     }
     else if ([self selectedView] == myRightView) {
-        id node = [myLeftView treeNodeSelected];
-        if ([node isKindOfClass:[TreeBranch class]]) {
-            [self copyItems:selectedFiles toBranch: node];
-        }
-        else {
-            // TODO: !! log error
-        }
+        node = [myLeftView treeNodeSelected];
+    }
+    
+    if (node!=nil && [node isKindOfClass:[TreeBranch class]]) {
+        [self moveItems:selectedFiles toBranch: node];
+    }
+    else {
+        NSLog(@"AppDelegate.executeMoveTo: Received wrong object. Expected TreeBranch received %@", [node className]);
     }
 }
 
@@ -1159,7 +1130,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 
     // Will create name list for text application paste
-    // TODO:!! multi copy, where an additional copy will append items to the pasteboard
+    // TODO:1.4.1 multi copy, where an additional copy will append items to the pasteboard
     /* use the following function of NSFileManager to create a directory that will serve as
      clipboard for situation where the Application can be closed.
      - (NSURL *)URLForDirectory:(NSSearchPathDirectory)directory
@@ -1349,14 +1320,14 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSArray *selectedItems = [[self selectedView] getSelectedItems];
     NSInteger selectionCount = [selectedItems count];
     if (selectionCount!=0) {
-        // TODO:! Ask whether to move the files into the new created Folder
+        // TODO:1.5 Ask whether to move the files into the new created Folder
     }
     id node = [[self selectedView] treeNodeSelected];
     if ([node isKindOfClass:[TreeBranch class]]) {
         [self executeNewFolder: node];
     }
     else {
-        // TODO: !! log error
+        NSLog(@"AppDelegate.toolbarNewFolder: Received wrong object. Expected TreeBranch received %@", [node className]);
     }
 }
 
@@ -1375,7 +1346,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 
 - (IBAction)toolbarSearch:(id)sender {
-    // TODO:! Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
+    // TODO:1.5 Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
     //- (BOOL)showSearchResultsForQueryString:(NSString *)queryString
 }
 
@@ -1474,16 +1445,16 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [self executePaste:destinationBranch];
     }
     else {
-        // TODO:!! Log error
+        NSLog(@"AppDelegate.paste: Received wrong object. Expected TreeBranch received %@", [destinationBranch className]);
     }
 }
 
 - (IBAction)contextualPaste:(id)sender {
     // the validateMenuItems insures that node is Branch
     NSArray *items = [[self contextualFocus] getSelectedItemsForContextualMenu1];
-    if ([items count]==1) { // Can only paste on one item. TODO: In the future can paste to many
+    if ([items count]==1) { // Can only paste on one item. TODO:3.0 In the future can paste to many
         TreeItem *item = [items firstObject];
-        // TODO:!! need to test if its an application,
+        // TODO:1.5 need to test if its an application,
         //if ([item isKindOfClass:[TreePackage class]]) {
             // and if it is will simply use it to open the items on the clipboard.
 
@@ -1493,6 +1464,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         }
         [self executePaste:(TreeBranch*)item];
     }
+    else
+        NSLog(@"AppDelegate.contextualPaste: Can't paste in many files");
 }
 
 -(IBAction)delete:(id)sender {
@@ -1564,7 +1537,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [myLeftView setTreeViewCollapsed:YES];
         // Activate the Flat View
         [myLeftView setFlatView:YES];
-        // TODO:! This should be retrieved from Default Settings
+        // TODO:1.3.3 This should be retrieved from Default Settings
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
         // Group by Location
@@ -1588,7 +1561,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // Make the FlatView and Group by Location
         [myLeftView setFlatView:YES];
         
-        // TODO:! This should be retrieved from Default Settings
+        // TODO:1.3.3 This should be retrieved from Default Settings
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
@@ -1951,7 +1924,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     else {
         nItems = [NSString stringWithFormat:@"%ld items", (long)count];
     }
-    // TODO:FILOP Move this to the File Operations
+    // TODO:1.3.3 Move this to the File Operations
     if ([operation isEqualTo:opCopyOperation]) {
         operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
     }
@@ -2006,7 +1979,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             //NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
             NSString *operation = [info objectForKey:kDFOOperationKey];
             BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
-            // TODO:FILOP The FileOperations should generate their own messages to display here.
+            // TODO:1.3.3 The FileOperations should generate their own messages to display here.
             // Its more correct in an object oriented perspective. File Operations should also be subclassed.
             // the main on the File Operations is becomming a big mess
             // Also, make sure that the URL vs TreeItem recovery is done in the FileUtils.
@@ -2110,7 +2083,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         NSString *status = @"Internal Error";
         NSArray *operations = [operationsQueue operations];
         NSOperation *currOperation = operations[0];
-        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:FILOP This should be moved to File Operations statusText Selector
+        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:1.3.3 This should be moved to File Operations statusText Selector
             NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
             
             if ([op isEqualTo:opCopyOperation]) {
@@ -2195,7 +2168,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                     //[alert addButtonWithTitle:@"Continue"];
                     NSString *infoMessage = [alert informativeText];
                     NSString *message = [alert messageText];
-                    NSLog(@"Error: %@ Information: %@", message, infoMessage);
+                    NSLog(@"AppDelegate.mainThread_operationFinished: ERROR: %@ Information: %@", message, infoMessage);
                     [alert beginSheetModalForWindow:[self myWindow] completionHandler:^(NSModalResponse returnCode) {
                         //NSLog(@"Alert return code :%ld", (long)returnCode);
                     }];
@@ -2307,8 +2280,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             // Tries to retrieve the object from "FromObjectKey"
             selView = [[theNotification userInfo] objectForKey:kDFOFromViewKey];
             if (selView==nil || NO==[selView isKindOfClass:[BrowserController class]]) {
-                //Defaults to the LeftView
-                selView = myLeftView;
+                //Defaults to the selectedView
+                selView = self.selectedView;
             }
         }
         if (selView==myLeftView || selView ==myLeftView.detailedViewController) {
@@ -2461,12 +2434,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(applicationMode)];
     }
     else {
-        
-        if (myRightView!=nil )
-            [myRightView startAllBusyAnimations];
-        [myLeftView startAllBusyAnimations];
-        
-        //[self.toolbarAppModeSelect setSelected:YES forSegment:segmentForApplicationMode(ApplicationModeDuplicate)];
         
         duplicates = [[FileCollection alloc] init];
         NSDictionary *notifInfo = [theNotification userInfo];
@@ -2777,7 +2744,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     if (pendingOperationErrors==nil) {
         pendingOperationErrors = [[NSMutableArray alloc] init];
     }
-    // TODO: !!!!! Only add errors that can be treated.
+    // TODO:? Only add errors that can be treated.
     [pendingOperationErrors addObject:note];
     if ([pendingOperationErrors count] == 1) { // Call it if there aren't more pending
         [self processNextError:nil]; // Nil is passed on purpose to trigger the reading of the error queue
@@ -2833,7 +2800,7 @@ shouldCopyItemAtURL:(NSURL *)srcURL
     enumPathCompare comp = url_relation(srcURL, dstURL);
     if (comp==pathIsParent || comp == pathIsChild) {
         // If the path is contained or contains the operation cannot be completed
-        //TODO:! create an error subclass
+        //TODO:1.5 create an error subclass
         return NO;
     }
     //NSLog(@"should copy item\n%@ to\n%@", srcURL, dstURL);
@@ -2847,7 +2814,7 @@ shouldMoveItemAtURL:(NSURL *)srcURL
     enumPathCompare comp = url_relation(srcURL, dstURL);
     if (comp==pathIsParent || comp == pathIsChild) {
         // If the path is contained or contains the operation cannot be completed
-        //TODO:! create an error subclass
+        //TODO:1.5 create an error subclass
         return NO;
     }
     //NSLog(@"should move item\n%@ to\n%@", srcURL, dstURL);

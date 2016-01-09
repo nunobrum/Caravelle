@@ -71,7 +71,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 //-(TreeBranch*)     duplicateBranchAtIndex:(NSUInteger) index;
 //-(NSMutableArray*) duplicatesInBranchTillDepth:(NSInteger)depth;
 //-(NSMutableArray*) duplicatesInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
--(void)            prepareForDuplicates;
+//-(void)            prepareForDuplicates;
 
 -(BOOL) isExpandable;
 

@@ -305,11 +305,6 @@ TreeManager *appTreeManager;
             }
             else
             {
-//                if (applicationMode & ApplicationModeDupBrowser) {
-//                    // TODO:!!!!!! Remove this mute
-//                    NSLog(@"Muting refresh on folder (%@)", changedPath);
-//                }
-//                else {
                 //NSLog(@"TreeManager.fileSystemChangePath: - Refreshing (%@)", changedPath);
                 if ([itemToRefresh respondsToSelector:@selector(refresh)]) {
                     [itemToRefresh setTag:tagTreeItemDirty];
@@ -323,7 +318,6 @@ TreeManager *appTreeManager;
                         [itemParent refresh];
                     }
                 }
-                //}
             }
         }
         // Now Going to process the observers
@@ -436,7 +430,7 @@ TreeManager *appTreeManager;
     url_allowed = [self powerboxOpenFolderWithTitle:title];
 #endif
 #if (AFTER_POWERBOX_INFORMATION==1)
-    // TODO:!! Make this a information with a checkbox to skip future messages
+    // TODO:1.4 Make this a information with a checkbox to skip future messages
     NSAlert *alert = [[NSAlert alloc] init];
     [alert addButtonWithTitle:@"OK"];
     

@@ -116,7 +116,7 @@
     if ([self needsRefresh]) {
         [self tagRefreshStart];
         //NSLog(@"TreeBranch.refreshContents:(%@) H:%hhd", [self path], [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_SEE_HIDDEN_FILES]);
-        NSLog(@"TreeBranchCatalyst.refresh (%@)", [self path]);
+        //NSLog(@"TreeBranchCatalyst.refresh (%@)", [self path]);
         
         [browserQueue addOperationWithBlock:^(void) {
             BOOL is_dirty = NO;
@@ -138,11 +138,7 @@
                         is_dirty = YES;
                     }
                     else {
-                        if ([item itemType]==ItemTypeBranch) {
-                            // TODO:!!!! Recurse the refresh Contents folder ?????
-                            // Maybe it sufices to mark it as dirty, it will be automatically done on the browser
-                            // But the size calculators must be changed accordingly
-                        }
+                        [item updateFileTags];
                         index++;
                     }
                 }

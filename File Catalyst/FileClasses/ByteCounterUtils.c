@@ -9,7 +9,7 @@
 #include "ByteCounterUtils.h"
 
 
-// TODO:! User Definitions to change between 1000 and 1024 counter style :
+// TODO:1.4 User Definitions to change between 1000 and 1024 counter style :
 /*
  enum {
  NSByteCountFormatterCountStyleFile   = 0,

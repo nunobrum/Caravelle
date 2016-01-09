@@ -59,7 +59,6 @@
                         }
                         else {
                             error = loop_error;
-                            // TODO:!!!!!!! Pass the errors back to the application
                             OK = NO; // Memorizes error
                             break;
                         }

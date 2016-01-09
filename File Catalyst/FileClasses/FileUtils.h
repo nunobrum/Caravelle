@@ -18,7 +18,7 @@ extern NSString* utiType(NSURL* url);
 extern inline NSString* name(NSURL*url);
 extern NSDate* dateModified(NSURL*url);
 extern inline NSString* path(NSURL*url);
-extern long long filesize(NSURL*url);
+extern long long exact_size(NSURL*url);
 extern BOOL fileURLlExists(NSURL *url);
 
 /* Enumerate to be used on the result of the path relation compare method */

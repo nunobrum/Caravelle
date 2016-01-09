@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-extern NSString *kSenderKey;
 extern NSString *kModeKey;
 extern NSString *kOperationCountKey;
 extern NSString *kRootPathKey;

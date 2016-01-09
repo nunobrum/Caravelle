@@ -86,8 +86,9 @@
         enumPathCompare test = path_relation(path, finfo.path);
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
-            if (cursor==nil)
-                NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            if (cursor==nil) {
+                //NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            }
             else {
                 while (cursor!=finfo) {
                     if ([cursor duplicateRefreshCount]!=dCount) {
@@ -112,8 +113,9 @@
         enumPathCompare test = path_relation(path, finfo.path);
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
-            if (cursor==nil)
-                NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            if (cursor==nil) {
+                //NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            }
             else {
                 while (cursor!=finfo) {
                     test = path_relation(path, cursor.path);
@@ -138,8 +140,9 @@
         if ([finfo respondsToSelector:@selector(nextDuplicate)]) {
             [finfo setDuplicateRefreshCount:dCount]; // This avoids that the file itself is added.
             TreeLeaf *cursor=[finfo nextDuplicate];
-            if (cursor==nil)
-                NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            if (cursor==nil) {
+                //NSLog(@"FileCollection.duplicatesInPath: Deleted Duplicate %@",finfo.url);
+            }
             else {
                 while (cursor!=finfo) {
                     if ([cursor duplicateRefreshCount]!=dCount) {

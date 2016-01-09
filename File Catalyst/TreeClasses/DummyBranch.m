@@ -72,7 +72,7 @@
     // Never compute the size of a dummy directory
     return NO;
 }
-// TODO:1.3 Add a badge to the image
+// TODO:1.3 Add a badge to the dummy icon. Actually need to understand what happened with XCODE 7.2. Icons seem to already come with a badge.
 
 
 -(id) valueForKey:(NSString *)key {

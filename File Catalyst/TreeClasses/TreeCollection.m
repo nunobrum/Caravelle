@@ -37,7 +37,7 @@
             }
             else if (comparison==pathIsParent) {
                 if (OK==NO) {
-                    NSLog(@"TreeCollection.addTreeItem: Replacing %@ with %@ as parent", child.url, item.url);
+                    //NSLog(@"TreeCollection.addTreeItem: Replacing %@ with %@ as parent", child.url, item.url);
                     // creates the new node and replaces the existing one.
                     // It will inclose the former in itself.
                     // If the path is a parent, then inherently it should be a Branch
@@ -53,7 +53,7 @@
                 }
                 else {
                     // In this case, what happens is that the item can be removed and added into answer
-                    NSLog(@"TreeCollection.addTreeItem: Removing %@", child.url);
+                    //NSLog(@"TreeCollection.addTreeItem: Removing %@", child.url);
                     BOOL OK1 = [(TreeBranchCatalyst*)item addTreeItem:child];
                     if (OK1) {
                         // answer can now replace item in iArray.
@@ -77,13 +77,13 @@
                 NSURL *par_url = [item.url URLByDeletingLastPathComponent];
                 TreeBranchCatalyst *parent = [[TreeBranchCatalyst alloc] initWithURL:par_url parent:self];
                 
-                NSLog(@"TreeCollection.addTreeItem: Adding %@ and %@", parent, item);
+                //NSLog(@"TreeCollection.addTreeItem: Adding %@ and %@", parent, item);
                 
                 [self->_children addObject:parent];
                 [parent addTreeItem:item];
             }
             else {
-                NSLog(@"TreeCollection.addTreeItem: Adding %@", item);
+                //NSLog(@"TreeCollection.addTreeItem: Adding %@", item);
                 [self->_children addObject:item];
             }
             OK = YES;

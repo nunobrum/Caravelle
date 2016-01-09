@@ -83,7 +83,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
-#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO: !!! This is not being used.
+#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO:1.4 This is not being used.
 #define USER_DEF_APP_BEHAVIOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"

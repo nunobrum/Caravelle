@@ -162,7 +162,8 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
 
         // Column Names cannot be groupped
         if ([[columnInfo() objectForKey:[column identifier]] objectForKey:COL_GROUPING_KEY]!=nil) { // and can be grouped
-            // TODO: !!!! Label the item ungroup when the field is already being groupped.
+            // TODO:1.4 Label the item ungroup when the field is already being groupped.
+            // All this should change in the version 1.4 or 1.5. Groupings will be done by dragging column indentifiers.
             NSString *itemTitle = [NSString stringWithFormat:@"Group using %@", clickedColumnText];
             [theMenu addItemWithTitle:itemTitle action:@selector(groupSelect:) keyEquivalent:@""];
 
@@ -223,7 +224,7 @@ NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude
             }
             else {
                 column = -1; // Skips the resize
-                NSLog(@"CustomTableHeaderView.mouseDown: Skipping resize for column %li ", (long)column);
+                //NSLog(@"CustomTableHeaderView.mouseDown: Skipping resize for column %li ", (long)column);
             }
             if (column>=0) {
                 TableViewController *controller = (TableViewController*)[[self tableView] delegate];

@@ -69,7 +69,7 @@ inline NSString* path(NSURL*url) {
 }
 
 
-inline long long filesize(NSURL*url) {
+inline long long exact_size(NSURL*url) {
     NSNumber *filesize;
     [url getResourceValue:&filesize     forKey:NSURLFileSizeKey error:NULL];
     return [filesize longLongValue];
@@ -181,7 +181,7 @@ NSURL* copyFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
 
     // if one folder is contained in another, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:!!!! create an error subclass, in order to make a error dialog
+        //TODO:1.4 create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager copyItemAtURL:srcURL toURL:destFileURL error:&error];
@@ -201,7 +201,6 @@ NSURL *moveFileToDirectory(NSURL*srcURL, NSURL *destURL, NSString *newName, NSEr
     }
     // if one file is contained in another, or the same, abort operation
     if (isFolder(srcURL) && (url_relation(srcURL, destFileURL)==pathIsChild)) {
-        //TODO:!!!! create an error subclass, in order to make a error dialog
         return NULL;
     }
     [appFileManager moveItemAtURL:srcURL toURL:destFileURL error:&error];
@@ -228,7 +227,6 @@ NSURL * replaceFileWithFile(NSURL*srcURL, NSURL *destURL, NSString *newName, NSE
 /*BOOL copyFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
     // if one file is contained in another, or the same, abort operation
     if (url_relation(srcURL, destURL)!=pathsHaveNoRelation) {
-        //TODO:! create an error subclass
         return NO;
     }
     [appFileManager copyItemAtURL:srcURL toURL:destURL error:&error];
@@ -241,7 +239,6 @@ NSURL * replaceFileWithFile(NSURL*srcURL, NSURL *destURL, NSString *newName, NSE
 BOOL moveFileTo(NSURL*srcURL, NSURL *destURL, NSError *error) {
     // if one file is contained in another, or the same, abort operation
     if (url_relation(srcURL, destURL)!=pathsHaveNoRelation) {
-        //TODO:! create an error subclass
         return NO;
     }
     BOOL OK = [appFileManager moveItemAtURL:srcURL toURL:destURL error:&error];
@@ -396,7 +393,7 @@ NSString *duplicateFileNameProposal(NSString *path) {
 
 
 BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error) {
-    // TODO:! Check what are the attributes that must be set. see umask(2) documentation
+    // TODO:2.0 Check what are the attributes that must be set. see umask(2) documentation
     NSURL *newDirectory = [parent URLByAppendingPathComponent:name isDirectory:YES];
     BOOL OK = [appFileManager createDirectoryAtURL:newDirectory withIntermediateDirectories:NO attributes:nil error:&error];
     return OK;

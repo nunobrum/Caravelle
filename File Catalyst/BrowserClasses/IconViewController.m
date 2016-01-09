@@ -236,7 +236,7 @@ NSString *KEY_ICON = @"icon";
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([self->_validatedDropDestination isFolder]) {
-        // TODO:!!!! Put here a timer for opening the Folder
+        // TODO:1.5 Put here a timer for opening the Folder
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }

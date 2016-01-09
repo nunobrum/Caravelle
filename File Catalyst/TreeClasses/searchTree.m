@@ -104,10 +104,10 @@
     // The NSMetadataQuery will send back a note when updates are happening. By looking at the [note name], we can tell what is happening
     if ([[note name] isEqualToString:NSMetadataQueryDidStartGatheringNotification]) {
         // The gathering phase has just started!
-        NSLog(@"Started gathering");
+        NSLog(@"searchTree.queryNote: Started gathering");
     } else if ([[note name] isEqualToString:NSMetadataQueryDidFinishGatheringNotification]) {
         // At this point, the gathering phase will be done. You may recieve an update later on.
-        NSLog(@"Finished gathering");
+        NSLog(@"searchTree.queryNote: Finished gathering");
         for (NSMetadataItem *item in self->_query.results) {
             //NSLog(@"QR:%@",[item valueForAttribute:(id)kMDItemPath]);
             //NSArray *a = [item attributes];
@@ -117,10 +117,10 @@
         }
     } else if ([[note name] isEqualToString:NSMetadataQueryGatheringProgressNotification]) {
         // The query is still gatherint results...
-        NSLog(@"Progressing...%lu", (unsigned long)self->_query.resultCount);
+        NSLog(@"searchTree.queryNote: Progressing...%lu", (unsigned long)self->_query.resultCount);
     } else if ([[note name] isEqualToString:NSMetadataQueryDidUpdateNotification]) {
         // An update will happen when Spotlight notices that a file as added, removed, or modified that affected the search results.
-        NSLog(@"An update happened.");
+        NSLog(@"searchTree.queryNote: An update happened.");
     }
 }
 

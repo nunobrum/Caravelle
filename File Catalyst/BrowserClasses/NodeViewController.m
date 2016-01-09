@@ -224,12 +224,12 @@
 }
 
 - (void) focusOnFirstView {
-    NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
+    //NSLog(@"NodeViewController.focusOnFirstView: should be overriden");
     [self.view.window makeFirstResponder:self.containerView];
 }
 
 - (void) focusOnLastView {
-    NSLog(@"NodeViewController.focusOnLastView: should be overriden");
+    //NSLog(@"NodeViewController.focusOnLastView: should be overriden");
     [self.view.window makeFirstResponder:self.containerView];
 }
 
@@ -283,7 +283,7 @@
 }
 
 -(IBAction) menuGroupingSelector:(id) sender {
-    NSLog(@"NodeViewController.menuGroupingSelector %@",[sender title]);
+    //NSLog(@"NodeViewController.menuGroupingSelector %@",[sender title]);
     BOOL activate_grouping = toggleMenuState((NSMenuItem *)sender);
 
     // Find the identifier

@@ -10,8 +10,6 @@
 #import "DuplicateInformation.h"
 #import "PasteboardUtils.h"
 
-// TODO:!!? Store this in the NSURL instead of _store
-
 
 const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 //const NSString *keyMD5Info       = @"TStoreMD5Key";
@@ -62,7 +60,7 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 }
 
 -(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject {
-    // TODO:!!!! Implement drop of files
+    // TODO:1.5 Implement drop of files
     NSLog(@"TreeItem.acceptDropped:operation:  Missing implementation");
     return nil; // Invalidate all
 }
@@ -199,7 +197,9 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 }
 
 -(void) setDuplicateRefreshCount:(NSInteger)count {
-    [self duplicateInfo]->dupRefreshCounter = count;
+    DuplicateInformation *dupInfo = [self duplicateInfo];
+    if (dupInfo)
+        dupInfo->dupRefreshCounter = count;
 }
 
 -(NSInteger) duplicateRefreshCount {

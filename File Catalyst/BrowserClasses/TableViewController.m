@@ -141,8 +141,8 @@
             cellView.imageView.objectValue = [theFile image];
             
             // Setting the color
-            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemDirty+tagTreeItemToMove]) {
-                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or dirty
+            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemToMove]) {
+                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or moved
             }
             else {
                 // Set color back to normal
@@ -192,10 +192,7 @@
                 }
             }
             else {
-                // If its the filesize and it wasn't found, ask for
-                // NOTE: isKindOfClass is preferred over itemType. Otherwise the size won't be calculated
-                // TODO: Change the code below to use the col_id field instead. This one is working fine. It's just for
-                // when another field is added.
+                // If its the filesize and it wasn't found, ask for size computation
                 if ([theFile needsSizeCalculation] && [identifier hasPrefix:@"COL_SIZE"] && [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_CALCULATE_SIZES]) {
                     
                     [(TreeBranch*)theFile calculateSize]; // only if the calculation was started successfully
@@ -261,7 +258,7 @@
 // -------------------------------------------------------------------------------
 - (void)tableView:(NSTableView *)inTableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-    // TODO:!! if Control or Alt is presssed the new column is just added to the sortDescriptor
+    // TODO:1.5 if Control or Alt is presssed the new column is just added to the sortDescriptor
     // NSUInteger modifierKeys = [NSEvent modifierFlags];
     // test NSControlKeyMask and NSAlternateKeyMask
 
@@ -614,7 +611,7 @@
 }
 
 -(void) refreshKeepingSelections {
-    // TODO:? Animate the updates (new files, deleted files)
+    // TODO:1.5 Animate the updates (new files, deleted files)
     // Storing Selected URLs
     NSArray *selectedHashes = [self getSelectedItemsHash];
     // Refreshing the View
@@ -755,7 +752,7 @@
 
     /* Limit the Operations depending on the Destination Item Class*/
     if ([self->_validatedDropDestination isFolder]) {
-        // TODO:!!! Put here a timer for opening the Folder
+        // TODO:1.4 Put here a timer for opening the Folder
         // Recording time and first time
         // if not first time and recorded time > 3 seconds => open folder
     }
@@ -778,7 +775,7 @@
             for (TreeItem* pastedItem in droppedFiles) {
                 [pastedItem setTag:tagTreeItemDropped];
                 [self->_displayedItems insertObject:pastedItem atIndex:row+i];
-                [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:Try NSTableViewAnimationEffectGap
+                [aTableView insertRowsAtIndexes:[NSIndexSet indexSetWithIndex:row+i] withAnimation:NSTableViewAnimationSlideDown]; //TODO:? Try NSTableViewAnimationEffectGap
                 i++;
             }
         }

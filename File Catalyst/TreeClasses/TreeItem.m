@@ -85,7 +85,7 @@
 
 +(id) treeItemForURL:(NSURL *)url parent:(id)parent {
     // We create folder items or image items, and ignore everything else; all based on the UTI we get from the URL
-    // TODO:!! Check Is regular file First. See NSURLIsRegularFileKey
+    // TODO:1.3.3 Check Is regular file First. See NSURLIsRegularFileKey
     NSString *typeIdentifier;
     if ([url getResourceValue:&typeIdentifier forKey:NSURLTypeIdentifierKey error:NULL]) {
         if (isFolder(url)) {
@@ -104,7 +104,7 @@
             }
             if (//[typeIdentifier isEqualToString:(NSString *)kUTTypeFolder] ||
                 [typeIdentifier isEqualToString:(NSString *)kUTTypeVolume]) {
-                // TODO:!!! Create a dedicated class for a Volume or a mounting point
+                // TODO:1.4 Create a dedicated class for a Volume or a mounting point
             }
             return [[TreeBranch alloc] initWithURL:url parent:parent];
         }
@@ -112,7 +112,7 @@
             /* Check if it is an image type */
             NSArray *imageUTIs = [NSImage imageTypes];
             if ([imageUTIs containsObject:typeIdentifier]) {
-                //  TODO:!!! Treat here other file types other than just not folders
+                //  TODO:1.3.3 Treat here other file types other than just not folders
                 return [[TreeLeaf alloc] initWithURL:url parent:parent];
             }
             return [[TreeLeaf alloc] initWithURL:url parent:parent];
@@ -133,7 +133,7 @@
 
 -(void) setUrl:(NSURL*)url {
     // The tags shoud be set here accordingly to the information got from URL
-    // TODO: When the Icon View is changed to a data Delegate model instead of the ArrayController, the "name" notification can be removed.
+    // TODO:1.3.3 When the Icon View is changed to a data Delegate model instead of the ArrayController, the "name" notification can be removed.
     [self willChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change
     self->_url = url;
     self->_nameCache = nil; // Will force update in the next call to name
@@ -297,7 +297,7 @@
         
         // Then will apply an overlay
         // The code below only draw one of the badges in the order the code is presented.
-        // TODO: ! Consider making an shifted overlay where all the applicable badges are placed
+        // TODO:1.4 Consider making an shifted overlay where all the applicable badges are placed
         //         in sequence, starting from right to left
         if ([self hasTags:tagTreeItemHidden]) {
             [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];
@@ -396,13 +396,24 @@
     return nil;
 }
 
+/*
+-(NSString*) fileLock {
+    NSError * error;
+    NSDictionary *attributes =  [[NSFileManager defaultManager] attributesOfItemAtPath:self.url.path error:&error];
+    //NSNumber *fileLock = [attributes objectForKey:@"NSFileImmutable"];
+    if ([attributes fileIsImmutable])
+        return @"Locked";
+    else
+        return @"";
+}*/
+
 -(NSString*) filePermissions {
     NSError *error;
     NSDictionary *fileAttributes = [appFileManager attributesOfItemAtPath:self.url.path error:&error];
     
     if (fileAttributes != nil) {
         NSUInteger filePermissions = [fileAttributes filePosixPermissions];
-        // TODO:!!!!!!! Transform the number into U:rwx G:rwx A:rwx
+        
         unichar permissions [9] = {'r','w','x','r','w','x','r','w','x'};
         for (int i=8;i>=0;i--) {
             if ((filePermissions & 1)==0) {
@@ -518,7 +529,7 @@
 #pragma mark NSPasteboardWriting support
 
 
-//TODO:!!! Try to pass NSFilenamePboardType to see if drag to recycle bin can be executed
+//TODO:1.3.3 Try to pass NSFilenamePboardType to see if drag to recycle bin can be executed
 - (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
 #ifdef USE_UTI
     /* Adding the TreeType */

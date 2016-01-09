@@ -502,7 +502,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         if ([self selectFolderByItem:self.treeNodeSelected.parent])
             return;
     }
-    // TODO: ! Beep something
+    // else -> TODO:1.5 Beep something
 }
 
 
@@ -676,7 +676,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     }
 }
 
-// TODO:!! Use this selector for making key bindings.
+// TODO:? Use this selector for making key bindings.
 /*
 - (BOOL)menuHasKeyEquivalent:(NSMenu *)menu
                     forEvent:(NSEvent *)event
@@ -686,7 +686,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
  */
 
-// TODO:!! Use this selector to validate the grouping menus
+// TODO:? Use this selector to validate the grouping menus
 /*
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem {
     SEL theAction = [anItem action];
@@ -1182,7 +1182,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 }
             }
             else {
-                NSLog(@"Oh! Shit ! Its happening again");
+                NSLog(@"BrowserController.reloadItem: ERROR! View Not Found");
             }
             [_myOutlineView reloadItem:object reloadChildren:YES];
 
@@ -1544,7 +1544,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     // Refresh first the Roots, deletes the ones tagged for deletion
     NSUInteger idx=0;
     while (idx < [BaseDirectories numberOfBranchesInNode]) {
-        // TODO: !!!!! This is to be a function of the TreeCollection. 
+        // Ideally this should pass to the TreeClasses. Keeping it here for the time being.
         TreeBranch *tree = [BaseDirectories branchAtIndex:idx];
         if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
             [BaseDirectories removeItemAtIndex:idx];
@@ -1570,7 +1570,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         if (itemToExpand)
             [_myOutlineView expandItem:itemToExpand];
         else
-            NSLog(@"Sou nulo");
+            NSLog(@"BrowserController.refresh: ERROR! Item not found.");
     }
     [self stopBusyAnimations];
     [_myOutlineView reloadData];
@@ -1593,7 +1593,6 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void) setRoots:(NSArray*) rootDirectories {
-    //TODO: Optimization Create a Class to manage arrays of Branches
     [BaseDirectories releaseChildren];
     for (TreeItem* root in rootDirectories) {
         [BaseDirectories addTreeItem:root];
