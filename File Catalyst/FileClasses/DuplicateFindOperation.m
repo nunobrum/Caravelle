@@ -234,8 +234,6 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                     if (url!=nil) {
                         TreeBranchCatalyst *r = [TreeBranchCatalyst treeItemForURL:url parent:roots];
                         [roots addTreeItem:r]; // Adding the root elements
-                        //adding path observers
-                        [appTreeManager addActivityObserver:filterRoot path:path];
                     }
                 }
                 // Firstly adding the flat view that will monitor all the files

@@ -14,5 +14,6 @@
 +(id) treeItemForURL:(NSURL *)url parent:(id)parent;
 
 -(void) removeFilesWithoutDuplicates;
+-(BOOL) purgeEmptyFolders;
 
 @end

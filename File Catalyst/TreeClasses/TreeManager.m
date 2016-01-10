@@ -76,6 +76,7 @@ TreeManager *appTreeManager;
     NSUInteger index=0;
     TreeBranch *answer=nil;
 
+    // TODO:!!!!! Use @synchronized clauses here.
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
         enumPathCompare comparison = [item relationToPath:[url path]];

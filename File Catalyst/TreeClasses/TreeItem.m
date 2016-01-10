@@ -46,6 +46,10 @@
     return NO;
 }
 
+-(BOOL) canAndNeedsFlat {
+    return NO;
+}
+
 -(BOOL) needsSizeCalculation {
     return NO;
 }

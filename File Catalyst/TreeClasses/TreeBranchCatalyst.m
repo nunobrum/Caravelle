@@ -101,7 +101,9 @@
             [cursor->_children addObject:newItem];
         }
     }
-    [newItem setParent:cursor];
+    if (newItem->_parent==nil) {
+        [newItem setParent:cursor];
+    }
     return YES; /* Stops here Nothing More to Add */
 }
 
@@ -111,6 +113,34 @@
     return [super needsRefresh];
 }
 
+-(BOOL) canAndNeedsFlat {
+    return NO;
+}
+
+-(BOOL) purgeEmptyFolders {
+    int purged = 0;
+    int elCounter = 0;
+    @synchronized(self) {
+        while (elCounter < [self.children count]) {
+            id elem = [self.children objectAtIndex:elCounter];
+            if ([elem respondsToSelector:@selector(purgeEmptyFolders)]) {
+                if ([elem purgeEmptyFolders]) {
+                    [self.children removeObjectAtIndex:elCounter];
+                    [elem setTag:tagTreeItemRelease];
+                    purged++;
+                }
+                else
+                    elCounter++;
+            }
+            else
+                elCounter++;
+        }
+    }
+    if (purged>0) {
+        [self notifyDidChangeTreeBranchPropertyChildren];
+    }
+    return (elCounter==0);
+}
 
 -(void) refresh {
     if ([self needsRefresh]) {

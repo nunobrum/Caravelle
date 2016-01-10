@@ -278,13 +278,15 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(NSInteger) _releaseReleasedChildren {
     NSInteger released = 0;
     NSUInteger index = 0;
-
+    
+    // No Synchronized clause here. Its handled in the method calling this one.
+    
     while (index < [_children count]) {
         TreeItem *item = [_children objectAtIndex:index];
         if ([item hasTags:tagTreeItemRelease]) {
             // NOTE: isKindOfClass is preferred over itemType.
             if ([item isKindOfClass:[TreeBranch class]]) {
-                [(TreeBranch*)item _releaseChildren]; // This branch will be completely deleted
+                [(TreeBranch*)item deinit]; // This branch will be completely deleted
             }
             else if ([item isKindOfClass:[TreeLeaf class]]) {
                 [(TreeLeaf*)item removeFromDuplicateRing]; // Removing itself from the duplicate lists
@@ -301,11 +303,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 -(NSInteger) releaseReleasedChildren {
     NSInteger released = 0;
-    [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         released += [self _releaseReleasedChildren];
     }
-    [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+    if (released > 0)
+        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
     return released;
 }
 
@@ -690,6 +693,31 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //    }
 //    [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
 //}
+
+#pragma mark - Flat Operation
+
+-(BOOL) _hasUndeveloppedFolders {
+    
+    if (self->_children!= nil) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item isFolder]) {
+                    if ([(TreeBranch*)item _hasUndeveloppedFolders])
+                        return YES;
+                }
+            }
+        }
+    }
+    else {
+        return YES;
+    }
+    return NO;
+}
+
+
+-(BOOL) canAndNeedsFlat {
+    return [self _hasUndeveloppedFolders];
+}
 
 -(void) harverstUndeveloppedFolders:(NSMutableArray*)collector {
     

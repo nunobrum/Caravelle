@@ -119,6 +119,7 @@
 		BCEB37321BA940AD00B1DAA9 /* xer_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37171BA940AD00B1DAA9 /* xer_decoder.c */; };
 		BCEB37331BA940AD00B1DAA9 /* xer_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37191BA940AD00B1DAA9 /* xer_encoder.c */; };
 		BCEB37341BA940AD00B1DAA9 /* xer_support.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB371B1BA940AD00B1DAA9 /* xer_support.c */; };
+		BCF1AF821C42810000E47E2C /* DuplicateDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -338,6 +339,8 @@
 		BCEB371A1BA940AD00B1DAA9 /* xer_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xer_encoder.h; path = ASN1C/xer_encoder.h; sourceTree = "<group>"; };
 		BCEB371B1BA940AD00B1DAA9 /* xer_support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xer_support.c; path = ASN1C/xer_support.c; sourceTree = "<group>"; };
 		BCEB371C1BA940AD00B1DAA9 /* xer_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xer_support.h; path = ASN1C/xer_support.h; sourceTree = "<group>"; };
+		BCF1AF801C42810000E47E2C /* DuplicateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateDelegate.h; path = Duplicates/DuplicateDelegate.h; sourceTree = "<group>"; };
+		BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateDelegate.m; path = Duplicates/DuplicateDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -673,6 +676,8 @@
 				BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */,
 				BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */,
 				BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */,
+				BCF1AF801C42810000E47E2C /* DuplicateDelegate.h */,
+				BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */,
 			);
 			name = DuplicatedFindClasses;
 			sourceTree = "<group>";
@@ -947,6 +952,7 @@
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
 				BC0EBE5C1BA3087A00837EDE /* Receipts.m in Sources */,
 				BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */,
+				BCF1AF821C42810000E47E2C /* DuplicateDelegate.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
 				3C15E93E1AF3D13C006DF095 /* SizeGrouping.m in Sources */,
 				BCEB372D1BA940AD00B1DAA9 /* per_decoder.c in Sources */,

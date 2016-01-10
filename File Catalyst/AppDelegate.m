@@ -27,6 +27,7 @@
 
 #import "StartupScreenController.h"
 #import "DuplicateModeStartWindow.h"
+#import "DuplicateDelegate.h"
 
 // TODO:2.0 Virtual Folders
 // #import "filterBranch.h"
@@ -190,9 +191,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSInteger statusTimeoutCounter;
     NSInteger statusFilesMoved,statusFilesCopied,statusFilesDeleted;
     // Duplicate Support
-    FileCollection *duplicates;
-    filterBranch *unifiedDuplicatesRoot;
-    TreeCollection *rootsWithDuplicates;
+    DuplicateDelegate *duplicateController;
 }
 
 // -------------------------------------------------------------------------------
@@ -828,7 +827,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
                         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
-                        [myLeftView addTreeRoot:unifiedDuplicatesRoot];
+                        [myLeftView addTreeRoot:duplicateController.unifiedDuplicatesRoot];
                         [myLeftView selectFirstRoot];
                         
                     }
@@ -840,7 +839,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                         [myLeftView.detailedViewController setupColumns:dupColumns];
                         // Group by Location
                         [myLeftView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
-                        [myLeftView setRoots:rootsWithDuplicates.roots];
+                        [myLeftView setRoots:duplicateController.rootsWithDuplicates.roots];
                         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
                     }
                 }
@@ -1545,7 +1544,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // ___________________________
         // Setting the duplicate Files
         // ---------------------------
-        [myLeftView addTreeRoot:unifiedDuplicatesRoot];
+        [myLeftView addTreeRoot:duplicateController.unifiedDuplicatesRoot];
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView];
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
@@ -1581,7 +1580,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // Setting the duplicate Files
         // ---------------------------
         
-        [myLeftView setRoots:rootsWithDuplicates.roots];
+        [myLeftView setRoots:duplicateController.rootsWithDuplicates.roots];
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView]; // Changing selected
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
@@ -1593,10 +1592,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         if (((old_mode & ApplicationModeDupBrowser) != 0) &&  // Moving out of Duplicate Mode
             (( newMode & ApplicationModeDupBrowser) == 0)) {
             // removing observings on treeManager
-            [appTreeManager removeActivityObserver:unifiedDuplicatesRoot];
-            for (TreeBranchCatalyst *root in rootsWithDuplicates.itemsInNode) {
-                [appTreeManager removeActivityObserver:root];
-            }
+            [duplicateController deinit];
         }
     }
     
@@ -2304,7 +2300,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             }
             else {
                 /* Whether it will present a treeView */
-                for (TreeBranch *r in rootsWithDuplicates.branchesInNode) {
+                for (TreeBranch *r in duplicateController.rootsWithDuplicates.branchesInNode) {
                     [myRightView addTreeRoot:[[TreeBranchCatalyst alloc] initWithURL:r.url parent:nil]];
                 }
                 [myRightView addFileCollection: collectedDuplicates];
@@ -2398,7 +2394,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
  */
 
 -(NSNumber*) boolDuplicateModeActive {
-    return [NSNumber numberWithBool:(applicationMode & (ApplicationModeDupBrowser | ApplicationModeDupStarted))];
+    return [NSNumber numberWithBool:(applicationMode & (ApplicationModeDupBrowser))];
 }
 
 -(void) setBoolDuplicateModeActive:(NSNumber*) mode {
@@ -2435,8 +2431,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
     else {
         
-        duplicates = [[FileCollection alloc] init];
         NSDictionary *notifInfo = [theNotification userInfo];
+        duplicateController = [[DuplicateDelegate alloc] initWithInfo:notifInfo app:self];
         
         // start the GetPathsOperation with the root path to start the search
         DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
@@ -2564,14 +2560,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
     [self savePreferences]; // Saving preferences so that the views are correctly recovered
     
-    
-    [duplicates setFiles: duplicatedFileArray];
-    
-    // Dual View
-    rootsWithDuplicates = [info objectForKey:kRootsList];
-    // Single View
-    unifiedDuplicatesRoot = [info objectForKey:kRootUnified];
-    
+    // Set the Duplicate Controller that will monitor the updates.
+    [duplicateController setDuplicateInfo:info];
 
     
     // ___________________________________

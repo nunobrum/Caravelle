@@ -28,7 +28,6 @@
 -(void) initChildren;
 
 -(NSInteger) _releaseReleasedChildren;
--(void) _releaseChildren;
 
 @end
 
