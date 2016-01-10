@@ -939,6 +939,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
+                size = @0; // This will make the function return something if the array has no elements
                 for (TreeItem *item in self->_children) {
                     size = [item exactSize] ;
                     if (size) {
@@ -973,6 +974,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
+                size = @0; // This will make the function return something if the array has no elements
                 for (TreeItem *item in self->_children) {
                     size = [item allocatedSize] ;
                     if (size) {
@@ -1008,6 +1010,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
+                size = @0; // This will make the function return something if the array has no elements
                 for (TreeItem *item in self->_children) {
                     size = [item totalSize] ;
                     if (size) {
@@ -1043,6 +1046,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         NSNumber *size;
         if (self->_children!=nil) {
             @synchronized(self) {
+                size = @0; // This will make the function return something if the array has no elements
                 for (TreeItem *item in self->_children) {
                     size = [item totalAllocatedSize] ;
                     if (size) {
