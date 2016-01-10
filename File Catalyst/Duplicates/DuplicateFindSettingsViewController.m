@@ -9,6 +9,7 @@
 #import "Definitions.h"
 #import "AppOperation.h"
 #import "TreeManager.h"
+#import "TreeCollection.h"
 #import "DuplicateFindOperation.h"
 
 NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
@@ -51,7 +52,10 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
 
 #import "DuplicateFindSettingsViewController.h"
 
-@interface DuplicateFindSettingsViewController ()
+@interface DuplicateFindSettingsViewController ()  {
+    TreeCollection *CPaths;
+}
+
 
 @end
 
@@ -73,6 +77,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         // register it with the name that we refer to it with
         [NSValueTransformer setValueTransformer:fToCTransformer
                                         forName:@"ValueToBoolean"];
+        self->CPaths = [[TreeCollection alloc] initWithURL:nil parent:nil];
         
     }
     return self;
@@ -95,9 +100,41 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
     if (PlusOrMinus==0) {/* This is an Add */
         NSURL *rootURL = [appTreeManager powerboxOpenFolderWithTitle:@"Select a new Directory"];
         if (rootURL) {
-            NSDictionary *newItem = [NSDictionary dictionaryWithObject:rootURL.path forKey:@"path"];
-            [self.pathContents addObject:newItem];
-            [self.pathContents commitEditing];
+            NSString *errorMessage = nil;
+            NSString *path2Add = rootURL.path;
+            for (NSDictionary *item in self.pathContents.arrangedObjects) {
+                NSString *path = item[@"path"];
+                enumPathCompare res = path_relation(path, path2Add);
+                switch (res) {
+                    case pathIsParent:
+                        // Update 
+                        errorMessage = [NSString stringWithFormat:@"Please, first remove the folder %@", path];
+                        break;
+                    case pathIsChild:
+                        errorMessage = [NSString stringWithFormat:@"Folder already contained in %@",path];
+                        break;
+                    case pathIsSame:
+                        errorMessage = [NSString stringWithFormat:@"Folder already selected"];
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (errorMessage) {
+                NSAlert *alert = [[NSAlert alloc] init];
+                [alert setMessageText:@"Can't add the indicated folder"];
+                [alert setAlertStyle:NSInformationalAlertStyle];
+                [alert setInformativeText:errorMessage];
+                [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+                    //TODO:1.4 complete with the list of options:
+                    // If parent: Replace the parent
+                }];
+            }
+            else {
+                NSDictionary *newItem = [NSDictionary dictionaryWithObject:path2Add forKey:@"path"];
+                [self.pathContents addObject:newItem];
+                [self.pathContents commitEditing];
+            }
         }
     }
     else { /* This is a subtract */
