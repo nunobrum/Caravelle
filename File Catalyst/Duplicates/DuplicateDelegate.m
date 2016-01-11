@@ -54,6 +54,9 @@
     [self.unifiedDuplicatesRoot refresh];
 }
 
+-(void) mainThread_sendNote {
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:kvoTreeBranchPropertyChildren]) {
@@ -61,7 +64,9 @@
         [self.rootsWithDuplicates releaseReleasedChildren];
         [self.rootsWithDuplicates purgeEmptyFolders];
         
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
+        [self performSelectorOnMainThread:@selector(mainThread_sendNote) withObject:nil waitUntilDone:NO];
+        
+        
     }
 }
 

@@ -115,6 +115,8 @@
     }
     if (self.isCancelled==NO)
         [itemToFlat notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
+    else // only pairs with the willChangeValueForKey stated above
+        [itemToFlat didChangeValueForKey:kvoTreeBranchPropertyChildren];
     
     // If not OK Will have to cancel the flat View. OK Will clear the operating status message.
     NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];

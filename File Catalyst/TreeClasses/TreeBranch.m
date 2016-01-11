@@ -214,11 +214,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) notifyDidChangeTreeBranchPropertyChildren {
-    TreeItem *cursor = self;
-    do {
+    [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+    TreeItem *cursor = self->_parent;
+    while (cursor!=nil) {
+        [cursor willChangeValueForKey:kvoTreeBranchPropertyChildren];
         [cursor didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
         cursor = cursor->_parent;
-    } while (cursor!=nil);
+    }
 }
 
 #pragma mark -
@@ -303,12 +305,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 -(NSInteger) releaseReleasedChildren {
     NSInteger released = 0;
-    //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     @synchronized(self) {
         released += [self _releaseReleasedChildren];
     }
-    if (released > 0)
+    if (released > 0) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
         [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+    }
     return released;
 }
 

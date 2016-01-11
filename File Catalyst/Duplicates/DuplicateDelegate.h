@@ -24,5 +24,6 @@
 -(void) setDuplicateInfo:(NSDictionary *)info;
 -(void) deinit;
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
 
 @end

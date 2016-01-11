@@ -443,6 +443,7 @@
 
 -(void) notifyChange {
     if (self->_parent!=nil) {
+        [self->_parent willChangeValueForKey:kvoTreeBranchPropertyChildren];
         [(TreeBranch*) self->_parent notifyDidChangeTreeBranchPropertyChildren];
     }
 }

@@ -137,6 +137,7 @@
         }
     }
     if (purged>0) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];
         [self notifyDidChangeTreeBranchPropertyChildren];
     }
     return (elCounter==0);
@@ -150,7 +151,6 @@
         
         [browserQueue addOperationWithBlock:^(void) {
             BOOL is_dirty = NO;
-            //[self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
             @synchronized(self) {
                 // Set all items as candidates for release
                 NSUInteger index = 0 ;
@@ -182,8 +182,10 @@
                 [self tagRefreshFinished];
                 
             } // synchronized
-            if (is_dirty)
-                [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+            if (is_dirty) {
+                [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+                [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This informs the observer about change
+            }
          }];
     }
 }
@@ -215,8 +217,10 @@
             hasChanged = YES;
         }
     } // synchronized
-    if (hasChanged)
+    if (hasChanged) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];
         [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+    }
 }
 
 -(void) pathHasChanged:(NSString *)path {

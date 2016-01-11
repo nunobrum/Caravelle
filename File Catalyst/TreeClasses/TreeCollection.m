@@ -89,7 +89,10 @@
             OK = YES;
         }
     }
-    if (OK) [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
+    if (OK) {
+        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];
+        [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
+    }
     return OK;
 }
 
