@@ -9,7 +9,9 @@
 #ifndef Caravelle_PasteboardUtils_h
 #define Caravelle_PasteboardUtils_h
 
-NSDragOperation supportedOperations(id<NSDraggingInfo> info);
+extern NSDragOperation supportedOperations(id<NSDraggingInfo> info);
+
+extern void DebugPBoard(NSPasteboard*pboard);
 
 extern NSDragOperation selectDropOperation(NSDragOperation dragOperations);
 

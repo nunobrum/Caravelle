@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
@@ -632,10 +632,10 @@ CA
                                 <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="tYy-rB-lbq">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment toolTip="Undo" image="undo16" width="28" enabled="NO">
+                                        <segment toolTip="Undo - Under Development" image="undo16" width="28" enabled="NO">
                                             <nil key="label"/>
                                         </segment>
-                                        <segment toolTip="Redo" image="redo16" width="28" enabled="NO" tag="1">
+                                        <segment toolTip="Redo - Under Development" image="redo16" width="28" enabled="NO" tag="1">
                                             <nil key="label"/>
                                         </segment>
                                     </segments>
@@ -665,7 +665,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="Actions" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsd-Du-IYs">
-                                <rect key="frame" x="322" y="5" width="53" height="26"/>
+                                <rect key="frame" x="364" y="5" width="53" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" id="Qc6-E4-OxL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -693,8 +693,22 @@ CA
                                     <action selector="toolbarNewFolder:" target="-1" id="1mE-FR-gbG"/>
                                 </connections>
                             </segmentedControl>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7s-hR-NZP">
+                                <rect key="frame" x="315" y="6" width="38" height="24"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="PP7-HO-ZdQ">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment toolTip="Refresh" image="refresh16" width="32">
+                                            <nil key="label"/>
+                                        </segment>
+                                    </segments>
+                                </segmentedCell>
+                                <connections>
+                                    <action selector="toolbarRefresh:" target="494" id="oqq-hw-4Qi"/>
+                                </connections>
+                            </segmentedControl>
                             <popUpButton toolTip="View Options" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="urp-yc-gQO">
-                                <rect key="frame" x="385" y="5" width="58" height="26"/>
+                                <rect key="frame" x="427" y="5" width="58" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="rI1-hz-veL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -737,7 +751,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P7k-cG-lxo">
-                                <rect key="frame" x="450" y="1" width="264" height="32"/>
+                                <rect key="frame" x="492" y="1" width="264" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" priority="100" constant="140" id="Tu0-yr-HOl"/>
                                 </constraints>
@@ -759,7 +773,6 @@ CA
                             <constraint firstItem="5de-cw-kiE" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="3HE-QM-lxt"/>
                             <constraint firstAttribute="centerY" secondItem="uVR-In-oSw" secondAttribute="centerY" id="AbX-d9-hXx"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
-                            <constraint firstItem="fsd-Du-IYs" firstAttribute="leading" secondItem="u5A-Di-okM" secondAttribute="trailing" constant="16" id="HJ7-fc-QH7"/>
                             <constraint firstItem="urp-yc-gQO" firstAttribute="leading" secondItem="fsd-Du-IYs" secondAttribute="trailing" constant="16" id="I6O-mA-ypd"/>
                             <constraint firstAttribute="trailing" secondItem="685-pk-2bz" secondAttribute="trailing" id="Jyr-L0-vZi"/>
                             <constraint firstItem="v0W-ls-fHr" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="6" id="M3o-oM-mbf"/>
@@ -774,9 +787,12 @@ CA
                             <constraint firstAttribute="centerY" secondItem="urp-yc-gQO" secondAttribute="centerY" id="csj-2E-k0B"/>
                             <constraint firstAttribute="centerY" secondItem="fsd-Du-IYs" secondAttribute="centerY" id="dJA-1c-vu8"/>
                             <constraint firstItem="u5A-Di-okM" firstAttribute="leading" secondItem="S4e-Ro-5Lx" secondAttribute="trailing" constant="8" symbolic="YES" id="dnb-sx-OH1"/>
+                            <constraint firstItem="L7s-hR-NZP" firstAttribute="centerY" secondItem="l3N-JB-c9m" secondAttribute="centerY" id="fqs-k9-HG7"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="36" id="il6-Bv-eOs"/>
                             <constraint firstAttribute="centerY" secondItem="P7k-cG-lxo" secondAttribute="centerY" id="j1s-pY-Me3"/>
+                            <constraint firstItem="fsd-Du-IYs" firstAttribute="leading" secondItem="L7s-hR-NZP" secondAttribute="trailing" constant="16" id="k1f-xE-GAo"/>
                             <constraint firstAttribute="centerY" secondItem="5de-cw-kiE" secondAttribute="centerY" id="uKP-oG-GEk"/>
+                            <constraint firstItem="L7s-hR-NZP" firstAttribute="leading" secondItem="u5A-Di-okM" secondAttribute="trailing" constant="8" symbolic="YES" id="ytq-tG-PiF"/>
                             <constraint firstAttribute="bottom" secondItem="685-pk-2bz" secondAttribute="bottom" id="zFc-K0-gVw"/>
                         </constraints>
                     </customView>
@@ -817,7 +833,7 @@ CA
                     <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="uJf-ro-GFu"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="228" y="748"/>
+            <point key="canvasLocation" x="-112" y="691"/>
         </window>
         <menu showsStateColumn="NO" id="KYS-Gr-c21" userLabel="fileContextMenu">
             <items>
@@ -893,6 +909,7 @@ CA
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>
         <image name="redo16" width="16" height="16"/>
+        <image name="refresh16" width="16" height="16"/>
         <image name="singlePane" width="20" height="20"/>
         <image name="trashcanman32" width="32" height="32"/>
         <image name="undo16" width="16" height="16"/>

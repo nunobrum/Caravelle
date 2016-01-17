@@ -408,13 +408,14 @@ TreeManager *appTreeManager;
 
 -(NSURL*) validateURSecurity:(NSURL*) url {
     NSURL *url_allowed;
+    NSString *friendlyTitle = pathFriendly(url);
+    
 #if (BEFORE_POWERBOX_ALERT==1)
     // if fails then will open it with a Powerbox
     NSAlert *alert = [[NSAlert alloc] init];
     [alert addButtonWithTitle:@"Proceed"];
     [alert addButtonWithTitle:@"Cancel"];
     
-    NSString *friendlyTitle = pathFriendly(url);
     NSString *title = [NSString stringWithFormat:@"Caravelle was requested to access to Folder\n%@", friendlyTitle];
     
     [alert setMessageText:title];

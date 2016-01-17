@@ -1676,7 +1676,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
     else
         NSLog(@"BrowserController.acceptDrop: - Unsupported Operation %lu", (unsigned long)operation);
-    
+    // TODO:1.4 Return Tree Items, and change calling function to add the items into the window
     return files;
 }
 

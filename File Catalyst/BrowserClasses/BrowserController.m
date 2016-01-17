@@ -723,8 +723,14 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             NSURL *url = [node url];
             
             // if the flat view is set, if outside of the current node, launch an expand Tree
-            if (self.flatView && [_treeNodeSelected respondsToSelector:@selector(url)]) {
-                enumPathCompare comp = url_relation(url, [(id)_treeNodeSelected url]);
+            if (self.flatView && [node canAndNeedsFlat]) {
+                // Assumes a change is needed
+                enumPathCompare comp = pathsHaveNoRelation;
+                
+                // then checks whether is not needed
+                if ([_treeNodeSelected respondsToSelector:@selector(url)]) {
+                    comp = url_relation(url, [(id)_treeNodeSelected url]);
+                }
                 if (comp ==pathIsParent || comp == pathsHaveNoRelation) {
                     // Send notification to request Expansion
                     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:

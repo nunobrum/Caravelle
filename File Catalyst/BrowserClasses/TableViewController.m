@@ -769,6 +769,9 @@
 
     if (self->_validatedDropDestination == self.currentNode && droppedFiles!=nil) {
         //Inserts the rows using the specified animation.
+        
+        // TODO:1.4 Implement the insertion of TreeItems, Must change implementation of acceptDropped of TreeBranches.
+        /*
         if (self->_validatedDropOperation & (NSDragOperationCopy | NSDragOperationMove)) {
             
             int i= 0;
@@ -779,6 +782,7 @@
                 i++;
             }
         }
+         */
     }
     return droppedFiles!=nil;
 }

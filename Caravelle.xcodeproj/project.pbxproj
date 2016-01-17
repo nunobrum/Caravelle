@@ -85,6 +85,115 @@
 		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
 		BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
 		BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
+		BC95688E1C484EB100DAB21A /* CaravelaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC95688D1C484EB100DAB21A /* CaravelaTests.m */; };
+		BC9568991C484EB200DAB21A /* CaravelaUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9568981C484EB200DAB21A /* CaravelaUITests.m */; };
+		BC9568A81C484F9C00DAB21A /* Payload.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370B1BA940AD00B1DAA9 /* Payload.c */; };
+		BC9568A91C484F9C00DAB21A /* xer_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37171BA940AD00B1DAA9 /* xer_decoder.c */; };
+		BC9568AA1C484F9C00DAB21A /* SizeTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF0AAD1B11A3FA00FB4F7A /* SizeTableCellView.m */; };
+		BC9568AB1C484F9C00DAB21A /* MD5.c in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464418F9B87C002B633C /* MD5.c */; };
+		BC9568AC1C484F9C00DAB21A /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
+		BC9568AD1C484F9C00DAB21A /* TreeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463A18F9B86A002B633C /* TreeItem.m */; };
+		BC9568AE1C484F9C00DAB21A /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
+		BC9568AF1C484F9C00DAB21A /* DuplicateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */; };
+		BC9568B01C484F9C00DAB21A /* TreeRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463818F9B86A002B633C /* TreeRoot.m */; };
+		BC9568B11C484F9C00DAB21A /* FolderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464218F9B87C002B633C /* FolderCellView.m */; };
+		BC9568B21C484F9C00DAB21A /* ber_tlv_tag.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F51BA940AD00B1DAA9 /* ber_tlv_tag.c */; };
+		BC9568B31C484F9C00DAB21A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA675518F87C2F0080C4FC /* AppDelegate.m */; };
+		BC9568B41C484F9C00DAB21A /* TreePackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C87646D1B13764E001B79BD /* TreePackage.m */; };
+		BC9568B51C484F9C00DAB21A /* TreeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD788A819D52DEE0042E8B9 /* TreeManager.m */; };
+		BC9568B61C484F9C00DAB21A /* DateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9401AF3E2AF006DF095 /* DateGrouping.m */; };
+		BC9568B71C484F9C00DAB21A /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
+		BC9568B81C484F9C00DAB21A /* per_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370F1BA940AD00B1DAA9 /* per_encoder.c */; };
+		BC9568B91C484F9C00DAB21A /* per_opentype.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37111BA940AD00B1DAA9 /* per_opentype.c */; };
+		BC9568BA1C484F9C00DAB21A /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
+		BC9568BB1C484F9C00DAB21A /* ber_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F11BA940AD00B1DAA9 /* ber_decoder.c */; };
+		BC9568BC1C484F9C00DAB21A /* constr_SET_OF.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36FB1BA940AD00B1DAA9 /* constr_SET_OF.c */; };
+		BC9568BD1C484F9C00DAB21A /* TreeLeaf.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463618F9B86A002B633C /* TreeLeaf.m */; };
+		BC9568BE1C484F9C00DAB21A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
+		BC9568BF1C484F9C00DAB21A /* TreeCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */; };
+		BC9568C01C484F9C00DAB21A /* NodeSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */; };
+		BC9568C11C484F9C00DAB21A /* FileAttributesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE11A05254A00ED6392 /* FileAttributesController.m */; };
+		BC9568C21C484F9C00DAB21A /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
+		BC9568C31C484F9C00DAB21A /* IconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E51ACFB03900E09A85 /* IconViewController.m */; };
+		BC9568C41C484F9C00DAB21A /* FileSystemMonitoring.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */; };
+		BC9568C51C484F9C00DAB21A /* NativeEnumerated.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37051BA940AD00B1DAA9 /* NativeEnumerated.c */; };
+		BC9568C61C484F9C00DAB21A /* per_support.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37131BA940AD00B1DAA9 /* per_support.c */; };
+		BC9568C71C484F9C00DAB21A /* der_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37011BA940AD00B1DAA9 /* der_encoder.c */; };
+		BC9568C81C484F9C00DAB21A /* constr_TYPE.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36FD1BA940AD00B1DAA9 /* constr_TYPE.c */; };
+		BC9568C91C484F9C00DAB21A /* ber_tlv_length.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F31BA940AD00B1DAA9 /* ber_tlv_length.c */; };
+		BC9568CA1C484F9C00DAB21A /* BrowserTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA851A5F1CA100786D64 /* BrowserTableView.m */; };
+		BC9568CB1C484F9C00DAB21A /* BrowserOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA881A5F269E00786D64 /* BrowserOutlineView.m */; };
+		BC9568CC1C484F9C00DAB21A /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
+		BC9568CD1C484F9C00DAB21A /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
+		BC9568CE1C484F9C00DAB21A /* INTEGER.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37031BA940AD00B1DAA9 /* INTEGER.c */; };
+		BC9568CF1C484F9C00DAB21A /* IconViewBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */; };
+		BC9568D01C484F9C00DAB21A /* UserPreferencesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */; };
+		BC9568D11C484F9C00DAB21A /* asn_codecs_prim.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */; };
+		BC9568D21C484F9C00DAB21A /* searchTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466419EB21FB008C691E /* searchTree.m */; };
+		BC9568D31C484F9C00DAB21A /* xer_support.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB371B1BA940AD00B1DAA9 /* xer_support.c */; };
+		BC9568D41C484F9C00DAB21A /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
+		BC9568D51C484F9C00DAB21A /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E91ACFCE7400E09A85 /* TableViewController.m */; };
+		BC9568D61C484F9C00DAB21A /* NativeInteger.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37071BA940AD00B1DAA9 /* NativeInteger.c */; };
+		BC9568D71C484F9C00DAB21A /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
+		BC9568D81C484F9C00DAB21A /* ByteCounterUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDD42F61AF60C0C0018D24D /* ByteCounterUtils.c */; };
+		BC9568D91C484F9C00DAB21A /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
+		BC9568DA1C484F9C00DAB21A /* StringGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */; };
+		BC9568DB1C484F9C00DAB21A /* BaseGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */; };
+		BC9568DC1C484F9C00DAB21A /* BIT_STRING.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F71BA940AD00B1DAA9 /* BIT_STRING.c */; };
+		BC9568DD1C484F9C00DAB21A /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
+		BC9568DE1C484F9C00DAB21A /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
+		BC9568DF1C484F9C00DAB21A /* RenameFileDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF5DA8B1A65D09800786D64 /* RenameFileDialog.m */; };
+		BC9568E01C484F9C00DAB21A /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
+		BC9568E11C484F9C00DAB21A /* NodeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */; };
+		BC9568E21C484F9C00DAB21A /* xer_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37191BA940AD00B1DAA9 /* xer_encoder.c */; };
+		BC9568E31C484F9C00DAB21A /* constraints.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36FF1BA940AD00B1DAA9 /* constraints.c */; };
+		BC9568E41C484F9C00DAB21A /* TreeBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463418F9B86A002B633C /* TreeBranch.m */; };
+		BC9568E51C484F9C00DAB21A /* MyDirectoryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */; };
+		BC9568E61C484F9C00DAB21A /* IconCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */; };
+		BC9568E71C484F9C00DAB21A /* ReceiptAttribute.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37151BA940AD00B1DAA9 /* ReceiptAttribute.c */; };
+		BC9568E81C484F9C00DAB21A /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
+		BC9568E91C484F9C00DAB21A /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
+		BC9568EA1C484F9C00DAB21A /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
+		BC9568EB1C484F9C00DAB21A /* OCTET_STRING.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37091BA940AD00B1DAA9 /* OCTET_STRING.c */; };
+		BC9568EC1C484F9C00DAB21A /* asn_SET_OF.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EE1BA940AD00B1DAA9 /* asn_SET_OF.c */; };
+		BC9568ED1C484F9C00DAB21A /* BrowserController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C717C08198D5B200025E28A /* BrowserController.m */; };
+		BC9568EE1C484F9C00DAB21A /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BC0EBE5B1BA3087A00837EDE /* Receipts.m */; };
+		BC9568EF1C484F9C00DAB21A /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
+		BC9568F01C484F9C00DAB21A /* DuplicateDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */; };
+		BC9568F11C484F9C00DAB21A /* ImagePreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464318F9B87C002B633C /* ImagePreviewCell.m */; };
+		BC9568F21C484F9C00DAB21A /* SizeGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */; };
+		BC9568F31C484F9C00DAB21A /* per_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370D1BA940AD00B1DAA9 /* per_decoder.c */; };
+		BC9568F41C484F9C00DAB21A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
+		BC9568F51C484F9C00DAB21A /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
+		BC9568F61C484F9C00DAB21A /* constr_SEQUENCE.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F91BA940AD00B1DAA9 /* constr_SEQUENCE.c */; };
+		BC9568F71C484F9C00DAB21A /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
+		BC9568F81C484F9C00DAB21A /* FileOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC419B611E100600F41 /* FileOperation.m */; };
+		BC9568FD1C484F9C00DAB21A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
+		BC9568FE1C484F9C00DAB21A /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		BC9569001C484F9C00DAB21A /* UserDefault.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */; };
+		BC9569011C484F9C00DAB21A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */; };
+		BC9569021C484F9C00DAB21A /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
+		BC9569031C484F9C00DAB21A /* RenameFileDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5DA8C1A65D09800786D64 /* RenameFileDialog.xib */; };
+		BC9569041C484F9C00DAB21A /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
+		BC9569051C484F9C00DAB21A /* FileExistsChoice.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF17D1F1A17D3910082A9B0 /* FileExistsChoice.xib */; };
+		BC9569061C484F9C00DAB21A /* DuplicatesFindSettings.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CF645BA19AB4A4100DD53F5 /* DuplicatesFindSettings.xib */; };
+		BC9569071C484F9C00DAB21A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675A18F87C2F0080C4FC /* Images.xcassets */; };
+		BC9569081C484F9C00DAB21A /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675118F87C2F0080C4FC /* Credits.rtf */; };
+		BC9569091C484F9C00DAB21A /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
+		BC95690A1C484F9C00DAB21A /* IconView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E31ACFB03900E09A85 /* IconView.xib */; };
+		BC95690B1C484F9C00DAB21A /* GenericFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5B6C11ABF76630065E543 /* GenericFolderIcon.icns */; };
+		BC95690C1C484F9C00DAB21A /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
+		BC95690D1C484F9C00DAB21A /* GenericDocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5B6C01ABF76620065E543 /* GenericDocumentIcon.icns */; };
+		BC95690E1C484F9C00DAB21A /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
+		BC95690F1C484F9C00DAB21A /* BrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C717C05198D54720025E28A /* BrowserView.xib */; };
+		BC9569101C484F9C00DAB21A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675718F87C2F0080C4FC /* MainMenu.xib */; };
+		BC9569111C484F9C00DAB21A /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
+		BC9569121C484F9C00DAB21A /* UserPreferencesDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEF82D81A4EDAB20089F42A /* UserPreferencesDialog.xib */; };
+		BC9569131C484F9C00DAB21A /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
+		BC9569141C484F9C00DAB21A /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
+		BC9569151C484F9C00DAB21A /* TableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */; };
+		BC9569161C484F9C00DAB21A /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */; };
+		BC9569171C484F9C00DAB21A /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
 		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
 		BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */; };
@@ -273,6 +382,22 @@
 		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DuplicateModeStartWindow.xib; path = Duplicates/DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
 		BC766D721BBED721004AA9BC /* TreeBranchCatalyst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeBranchCatalyst.h; sourceTree = "<group>"; };
 		BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeBranchCatalyst.m; sourceTree = "<group>"; };
+		BC9568761C484EB100DAB21A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		BC9568771C484EB100DAB21A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		BC95687A1C484EB100DAB21A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		BC95687C1C484EB100DAB21A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		BC95687D1C484EB100DAB21A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		BC95687F1C484EB100DAB21A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BC9568821C484EB100DAB21A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		BC9568841C484EB100DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC9568891C484EB100DAB21A /* CaravelaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC95688D1C484EB100DAB21A /* CaravelaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaravelaTests.m; sourceTree = "<group>"; };
+		BC95688F1C484EB200DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC9568941C484EB200DAB21A /* CaravelaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC9568981C484EB200DAB21A /* CaravelaUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaravelaUITests.m; sourceTree = "<group>"; };
+		BC95689A1C484EB200DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BC95691B1C484F9C00DAB21A /* Caravela.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Caravela.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BC95691C1C484F9C00DAB21A /* Caravelle copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Caravelle copy-Info.plist"; path = "/Volumes/Macintosh HD/Users/nuno/Google Drive/XCode/Caravelle/master/caravelle/Caravelle copy-Info.plist"; sourceTree = "<absolute>"; };
 		BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = PrivateFolderBadgeIcon.icns; path = ../PrivateFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = ReadOnlyFolderBadgeIcon.icns; path = ../ReadOnlyFolderBadgeIcon.icns; sourceTree = "<group>"; };
 		BCADC2441B3BEFB300245F1D /* DropFolderBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = DropFolderBadgeIcon.icns; sourceTree = "<group>"; };
@@ -361,6 +486,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568861C484EB100DAB21A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568911C484EB200DAB21A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568F91C484F9C00DAB21A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC9568FD1C484F9C00DAB21A /* Cocoa.framework in Frameworks */,
+				BC9568FE1C484F9C00DAB21A /* Automator.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -453,8 +601,12 @@
 				3C8960221A9A9AB700458013 /* Caravelle.entitlements */,
 				3CEA674818F87C2F0080C4FC /* Sources */,
 				3CEA676618F87C2F0080C4FC /* File CatalystTests */,
+				BC9568751C484EB100DAB21A /* Caravela */,
+				BC95688C1C484EB100DAB21A /* CaravelaTests */,
+				BC9568971C484EB200DAB21A /* CaravelaUITests */,
 				3CEA674118F87C2F0080C4FC /* Frameworks */,
 				3CEA674018F87C2F0080C4FC /* Products */,
+				BC95691C1C484F9C00DAB21A /* Caravelle copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -463,6 +615,9 @@
 			children = (
 				3CEA673F18F87C2F0080C4FC /* Caravelle.app */,
 				3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */,
+				BC9568891C484EB100DAB21A /* CaravelaTests.xctest */,
+				BC9568941C484EB200DAB21A /* CaravelaUITests.xctest */,
+				BC95691B1C484F9C00DAB21A /* Caravela.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -692,6 +847,47 @@
 			name = Security;
 			sourceTree = "<group>";
 		};
+		BC9568751C484EB100DAB21A /* Caravela */ = {
+			isa = PBXGroup;
+			children = (
+				BC9568761C484EB100DAB21A /* AppDelegate.h */,
+				BC9568771C484EB100DAB21A /* AppDelegate.m */,
+				BC95687C1C484EB100DAB21A /* ViewController.h */,
+				BC95687D1C484EB100DAB21A /* ViewController.m */,
+				BC95687F1C484EB100DAB21A /* Assets.xcassets */,
+				BC9568811C484EB100DAB21A /* Main.storyboard */,
+				BC9568841C484EB100DAB21A /* Info.plist */,
+				BC9568791C484EB100DAB21A /* Supporting Files */,
+			);
+			path = Caravela;
+			sourceTree = "<group>";
+		};
+		BC9568791C484EB100DAB21A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BC95687A1C484EB100DAB21A /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		BC95688C1C484EB100DAB21A /* CaravelaTests */ = {
+			isa = PBXGroup;
+			children = (
+				BC95688D1C484EB100DAB21A /* CaravelaTests.m */,
+				BC95688F1C484EB200DAB21A /* Info.plist */,
+			);
+			path = CaravelaTests;
+			sourceTree = "<group>";
+		};
+		BC9568971C484EB200DAB21A /* CaravelaUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BC9568981C484EB200DAB21A /* CaravelaUITests.m */,
+				BC95689A1C484EB200DAB21A /* Info.plist */,
+			);
+			path = CaravelaUITests;
+			sourceTree = "<group>";
+		};
 		BCEB36E81BA9405A00B1DAA9 /* ASN1 */ = {
 			isa = PBXGroup;
 			children = (
@@ -789,6 +985,57 @@
 			productReference = 3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		BC9568881C484EB100DAB21A /* CaravelaTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC95689E1C484EB200DAB21A /* Build configuration list for PBXNativeTarget "CaravelaTests" */;
+			buildPhases = (
+				BC9568851C484EB100DAB21A /* Sources */,
+				BC9568861C484EB100DAB21A /* Frameworks */,
+				BC9568871C484EB100DAB21A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CaravelaTests;
+			productName = CaravelaTests;
+			productReference = BC9568891C484EB100DAB21A /* CaravelaTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BC9568931C484EB200DAB21A /* CaravelaUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC9568A11C484EB200DAB21A /* Build configuration list for PBXNativeTarget "CaravelaUITests" */;
+			buildPhases = (
+				BC9568901C484EB200DAB21A /* Sources */,
+				BC9568911C484EB200DAB21A /* Frameworks */,
+				BC9568921C484EB200DAB21A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CaravelaUITests;
+			productName = CaravelaUITests;
+			productReference = BC9568941C484EB200DAB21A /* CaravelaUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		BC9568A61C484F9C00DAB21A /* Caravela */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC9569181C484F9C00DAB21A /* Build configuration list for PBXNativeTarget "Caravela" */;
+			buildPhases = (
+				BC9568A71C484F9C00DAB21A /* Sources */,
+				BC9568F91C484F9C00DAB21A /* Frameworks */,
+				BC9568FF1C484F9C00DAB21A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Caravela;
+			productName = "File Catalyst";
+			productReference = BC95691B1C484F9C00DAB21A /* Caravela.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -812,6 +1059,21 @@
 					3CEA675F18F87C2F0080C4FC = {
 						TestTargetID = 3CEA673E18F87C2F0080C4FC;
 					};
+					BC9568881C484EB100DAB21A = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = BC9568731C484EB100DAB21A;
+					};
+					BC9568931C484EB200DAB21A = {
+						CreatedOnToolsVersion = 7.2;
+						TestTargetID = BC9568731C484EB100DAB21A;
+					};
+					BC9568A61C484F9C00DAB21A = {
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
+					};
 				};
 			};
 			buildConfigurationList = 3CEA673A18F87C2F0080C4FC /* Build configuration list for PBXProject "Caravelle" */;
@@ -829,6 +1091,9 @@
 			targets = (
 				3CEA673E18F87C2F0080C4FC /* Caravelle */,
 				3CEA675F18F87C2F0080C4FC /* CaravelleTests */,
+				BC9568881C484EB100DAB21A /* CaravelaTests */,
+				BC9568931C484EB200DAB21A /* CaravelaUITests */,
+				BC9568A61C484F9C00DAB21A /* Caravela */,
 			);
 		};
 /* End PBXProject section */
@@ -870,6 +1135,51 @@
 			buildActionMask = 2147483647;
 			files = (
 				3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568871C484EB100DAB21A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568921C484EB200DAB21A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568FF1C484F9C00DAB21A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC9569001C484F9C00DAB21A /* UserDefault.plist in Resources */,
+				BC9569011C484F9C00DAB21A /* InfoPlist.strings in Resources */,
+				BC9569021C484F9C00DAB21A /* ReadOnlyFolderBadgeIcon.icns in Resources */,
+				BC9569031C484F9C00DAB21A /* RenameFileDialog.xib in Resources */,
+				BC9569041C484F9C00DAB21A /* DropFolderBadgeIcon.icns in Resources */,
+				BC9569051C484F9C00DAB21A /* FileExistsChoice.xib in Resources */,
+				BC9569061C484F9C00DAB21A /* DuplicatesFindSettings.xib in Resources */,
+				BC9569071C484F9C00DAB21A /* Images.xcassets in Resources */,
+				BC9569081C484F9C00DAB21A /* Credits.rtf in Resources */,
+				BC9569091C484F9C00DAB21A /* PrivateFolderBadgeIcon.icns in Resources */,
+				BC95690A1C484F9C00DAB21A /* IconView.xib in Resources */,
+				BC95690B1C484F9C00DAB21A /* GenericFolderIcon.icns in Resources */,
+				BC95690C1C484F9C00DAB21A /* AvailableColumns.plist in Resources */,
+				BC95690D1C484F9C00DAB21A /* GenericDocumentIcon.icns in Resources */,
+				BC95690E1C484F9C00DAB21A /* IconViewItem.xib in Resources */,
+				BC95690F1C484F9C00DAB21A /* BrowserView.xib in Resources */,
+				BC9569101C484F9C00DAB21A /* MainMenu.xib in Resources */,
+				BC9569111C484F9C00DAB21A /* DuplicateModeStartWindow.xib in Resources */,
+				BC9569121C484F9C00DAB21A /* UserPreferencesDialog.xib in Resources */,
+				BC9569131C484F9C00DAB21A /* StartupScreen.xib in Resources */,
+				BC9569141C484F9C00DAB21A /* FileAttributesController.xib in Resources */,
+				BC9569151C484F9C00DAB21A /* TableViewController.xib in Resources */,
+				BC9569161C484F9C00DAB21A /* AppleIncRootCertificate.cer in Resources */,
+				BC9569171C484F9C00DAB21A /* payplugins.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -972,6 +1282,110 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC9568851C484EB100DAB21A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC95688E1C484EB100DAB21A /* CaravelaTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568901C484EB200DAB21A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC9568991C484EB200DAB21A /* CaravelaUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC9568A71C484F9C00DAB21A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC9568A81C484F9C00DAB21A /* Payload.c in Sources */,
+				BC9568A91C484F9C00DAB21A /* xer_decoder.c in Sources */,
+				BC9568AA1C484F9C00DAB21A /* SizeTableCellView.m in Sources */,
+				BC9568AB1C484F9C00DAB21A /* MD5.c in Sources */,
+				BC9568AC1C484F9C00DAB21A /* myValueTransformers.m in Sources */,
+				BC9568AD1C484F9C00DAB21A /* TreeItem.m in Sources */,
+				BC9568AE1C484F9C00DAB21A /* CustomTableHeaderView.m in Sources */,
+				BC9568AF1C484F9C00DAB21A /* DuplicateGrouping.m in Sources */,
+				BC9568B01C484F9C00DAB21A /* TreeRoot.m in Sources */,
+				BC9568B11C484F9C00DAB21A /* FolderCellView.m in Sources */,
+				BC9568B21C484F9C00DAB21A /* ber_tlv_tag.c in Sources */,
+				BC9568B31C484F9C00DAB21A /* AppDelegate.m in Sources */,
+				BC9568B41C484F9C00DAB21A /* TreePackage.m in Sources */,
+				BC9568B51C484F9C00DAB21A /* TreeManager.m in Sources */,
+				BC9568B61C484F9C00DAB21A /* DateGrouping.m in Sources */,
+				BC9568B71C484F9C00DAB21A /* BrowserIconView.m in Sources */,
+				BC9568B81C484F9C00DAB21A /* per_encoder.c in Sources */,
+				BC9568B91C484F9C00DAB21A /* per_opentype.c in Sources */,
+				BC9568BA1C484F9C00DAB21A /* DuplicateInformation.m in Sources */,
+				BC9568BB1C484F9C00DAB21A /* ber_decoder.c in Sources */,
+				BC9568BC1C484F9C00DAB21A /* constr_SET_OF.c in Sources */,
+				BC9568BD1C484F9C00DAB21A /* TreeLeaf.m in Sources */,
+				BC9568BE1C484F9C00DAB21A /* NumberGrouping.m in Sources */,
+				BC9568BF1C484F9C00DAB21A /* TreeCollection.m in Sources */,
+				BC9568C01C484F9C00DAB21A /* NodeSortDescriptor.m in Sources */,
+				BC9568C11C484F9C00DAB21A /* FileAttributesController.m in Sources */,
+				BC9568C21C484F9C00DAB21A /* StartupScreenController.m in Sources */,
+				BC9568C31C484F9C00DAB21A /* IconViewController.m in Sources */,
+				BC9568C41C484F9C00DAB21A /* FileSystemMonitoring.m in Sources */,
+				BC9568C51C484F9C00DAB21A /* NativeEnumerated.c in Sources */,
+				BC9568C61C484F9C00DAB21A /* per_support.c in Sources */,
+				BC9568C71C484F9C00DAB21A /* der_encoder.c in Sources */,
+				BC9568C81C484F9C00DAB21A /* constr_TYPE.c in Sources */,
+				BC9568C91C484F9C00DAB21A /* ber_tlv_length.c in Sources */,
+				BC9568CA1C484F9C00DAB21A /* BrowserTableView.m in Sources */,
+				BC9568CB1C484F9C00DAB21A /* BrowserOutlineView.m in Sources */,
+				BC9568CC1C484F9C00DAB21A /* TreeBranchCatalyst.m in Sources */,
+				BC9568CD1C484F9C00DAB21A /* filterBranch.m in Sources */,
+				BC9568CE1C484F9C00DAB21A /* INTEGER.c in Sources */,
+				BC9568CF1C484F9C00DAB21A /* IconViewBox.m in Sources */,
+				BC9568D01C484F9C00DAB21A /* UserPreferencesManager.m in Sources */,
+				BC9568D11C484F9C00DAB21A /* asn_codecs_prim.c in Sources */,
+				BC9568D21C484F9C00DAB21A /* searchTree.m in Sources */,
+				BC9568D31C484F9C00DAB21A /* xer_support.c in Sources */,
+				BC9568D41C484F9C00DAB21A /* DuplicateModeStartWindow.m in Sources */,
+				BC9568D51C484F9C00DAB21A /* TableViewController.m in Sources */,
+				BC9568D61C484F9C00DAB21A /* NativeInteger.c in Sources */,
+				BC9568D71C484F9C00DAB21A /* FileExistsChoice.m in Sources */,
+				BC9568D81C484F9C00DAB21A /* ByteCounterUtils.c in Sources */,
+				BC9568D91C484F9C00DAB21A /* FileCollection.m in Sources */,
+				BC9568DA1C484F9C00DAB21A /* StringGrouping.m in Sources */,
+				BC9568DB1C484F9C00DAB21A /* BaseGrouping.m in Sources */,
+				BC9568DC1C484F9C00DAB21A /* BIT_STRING.c in Sources */,
+				BC9568DD1C484F9C00DAB21A /* CatalogBranch.m in Sources */,
+				BC9568DE1C484F9C00DAB21A /* PasteboardUtils.m in Sources */,
+				BC9568DF1C484F9C00DAB21A /* RenameFileDialog.m in Sources */,
+				BC9568E01C484F9C00DAB21A /* FileUtils.m in Sources */,
+				BC9568E11C484F9C00DAB21A /* NodeViewController.m in Sources */,
+				BC9568E21C484F9C00DAB21A /* xer_encoder.c in Sources */,
+				BC9568E31C484F9C00DAB21A /* constraints.c in Sources */,
+				BC9568E41C484F9C00DAB21A /* TreeBranch.m in Sources */,
+				BC9568E51C484F9C00DAB21A /* MyDirectoryEnumerator.m in Sources */,
+				BC9568E61C484F9C00DAB21A /* IconCollectionItem.m in Sources */,
+				BC9568E71C484F9C00DAB21A /* ReceiptAttribute.c in Sources */,
+				BC9568E81C484F9C00DAB21A /* DuplicateFindSettingsViewController.m in Sources */,
+				BC9568E91C484F9C00DAB21A /* AppOperation.m in Sources */,
+				BC9568EA1C484F9C00DAB21A /* CalcFolderSizes.m in Sources */,
+				BC9568EB1C484F9C00DAB21A /* OCTET_STRING.c in Sources */,
+				BC9568EC1C484F9C00DAB21A /* asn_SET_OF.c in Sources */,
+				BC9568ED1C484F9C00DAB21A /* BrowserController.m in Sources */,
+				BC9568EE1C484F9C00DAB21A /* Receipts.m in Sources */,
+				BC9568EF1C484F9C00DAB21A /* DummyBranch.m in Sources */,
+				BC9568F01C484F9C00DAB21A /* DuplicateDelegate.m in Sources */,
+				BC9568F11C484F9C00DAB21A /* ImagePreviewCell.m in Sources */,
+				BC9568F21C484F9C00DAB21A /* SizeGrouping.m in Sources */,
+				BC9568F31C484F9C00DAB21A /* per_decoder.c in Sources */,
+				BC9568F41C484F9C00DAB21A /* main.m in Sources */,
+				BC9568F51C484F9C00DAB21A /* ExpandFolders.m in Sources */,
+				BC9568F61C484F9C00DAB21A /* constr_SEQUENCE.c in Sources */,
+				BC9568F71C484F9C00DAB21A /* DuplicateFindOperation.m in Sources */,
+				BC9568F81C484F9C00DAB21A /* FileOperation.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1013,6 +1427,14 @@
 				3CEA676A18F87C2F0080C4FC /* en */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		BC9568811C484EB100DAB21A /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BC9568821C484EB100DAB21A /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1102,6 +1524,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"APP_IS_SANDBOXED=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1132,6 +1559,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APP_IS_SANDBOXED=1";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1193,6 +1621,152 @@
 			};
 			name = Release;
 		};
+		BC95689F1C484EB200DAB21A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = CaravelaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cascode.CaravelaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Caravela.app/Contents/MacOS/Caravela";
+			};
+			name = Debug;
+		};
+		BC9568A01C484EB200DAB21A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = CaravelaTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cascode.CaravelaTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Caravela.app/Contents/MacOS/Caravela";
+			};
+			name = Release;
+		};
+		BC9568A21C484EB200DAB21A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = CaravelaUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cascode.CaravelaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "712cefac-75f6-4a48-b0fa-971b1e4bca65";
+				TEST_TARGET_NAME = Caravela;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		BC9568A31C484EB200DAB21A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = CaravelaUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cascode.CaravelaUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "712cefac-75f6-4a48-b0fa-971b1e4bca65";
+				TEST_TARGET_NAME = Caravela;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+		BC9569191C484F9C00DAB21A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Caravelle.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
+					"APP_IS_SANDBOXED=0",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
+					/opt/local/share/asn1c,
+				);
+				INFOPLIST_FILE = "Caravelle copy-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/usr/local/ssl/lib/**",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		BC95691A1C484F9C00DAB21A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Caravelle.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APP_IS_SANDBOXED=0";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
+					/opt/local/share/asn1c,
+				);
+				INFOPLIST_FILE = "Caravelle copy-Info.plist";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"/usr/local/ssl/lib/**",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1219,6 +1793,31 @@
 			buildConfigurations = (
 				3CEA677418F87C300080C4FC /* Debug */,
 				3CEA677518F87C300080C4FC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BC95689E1C484EB200DAB21A /* Build configuration list for PBXNativeTarget "CaravelaTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC95689F1C484EB200DAB21A /* Debug */,
+				BC9568A01C484EB200DAB21A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BC9568A11C484EB200DAB21A /* Build configuration list for PBXNativeTarget "CaravelaUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC9568A21C484EB200DAB21A /* Debug */,
+				BC9568A31C484EB200DAB21A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		BC9569181C484F9C00DAB21A /* Build configuration list for PBXNativeTarget "Caravela" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BC9569191C484F9C00DAB21A /* Debug */,
+				BC95691A1C484F9C00DAB21A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

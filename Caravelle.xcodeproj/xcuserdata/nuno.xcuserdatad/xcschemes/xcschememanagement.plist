@@ -4,10 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Caravelle.xcscheme</key>
+		<key>Caravela.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
+		</dict>
+		<key>Caravelle copy.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>Caravelle.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
 		</dict>
 		<key>CaravelleTests.xcscheme</key>
 		<dict>
@@ -28,6 +38,26 @@
 			<true/>
 		</dict>
 		<key>3CEA675F18F87C2F0080C4FC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BC9568731C484EB100DAB21A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BC9568881C484EB100DAB21A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BC9568931C484EB200DAB21A</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BC9568A61C484F9C00DAB21A</key>
 		<dict>
 			<key>primary</key>
 			<true/>

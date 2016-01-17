@@ -9,6 +9,26 @@
 #import <Foundation/Foundation.h>
 #import "Definitions.h"
 
+void DebugPBoard(NSPasteboard*pboard) {
+    NSLog(@"PBOARD:%@",[pboard name]);
+    for (NSString *type in [pboard types]) {
+        id pBoardContents = [pboard propertyListForType:type];
+        NSLog(@"type:%@, class:%@", type, [pBoardContents class]);
+        if ([pBoardContents isKindOfClass:[NSString class]]) {
+            NSLog(@"String:%@",pBoardContents);
+        }
+        else if ([pBoardContents isKindOfClass:[NSArray class]]) {
+            int i = 1;
+            for (id item in pBoardContents)
+                NSLog(@"%i:%@",i++, item);
+            
+        }
+        else {
+            NSLog(@"unknown:%@",pBoardContents);
+        }
+    }
+}
+
 NSDragOperation supportedOperations(id<NSDraggingInfo> info) {
     NSPasteboard *pboard;
     NSDragOperation sourceDragMask;
@@ -89,22 +109,32 @@ NSDragOperation selectDropOperation(NSDragOperation dragOperations) {
 
 
 extern BOOL writeItemsToPasteboard(NSArray *items, NSPasteboard *pboard, NSArray *types) {
-    NSArray *typesDeclared;
-
-    if ([types containsObject:NSURLPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSURLPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedURLs = [items valueForKeyPath:@"@unionOfObjects.url"];
-        return [pboard writeObjects:selectedURLs];
+    BOOL answer = NO;
+    NSArray *typesDeclared = [types arrayByAddingObjectsFromArray:
+                              [[items firstObject] writableTypesForPasteboard:pboard]];
+    
+    [pboard declareTypes:typesDeclared owner:nil];
+    if ([pboard writeObjects:items]==NO) return NO;
+    
+//    if ([types containsObject:NSURLPboardType] == YES) {
+//        NSArray *selectedURLs = [items valueForKeyPath:@"@unionOfObjects.url"];
+//        answer |= [pboard setPropertyList:selectedURLs forType:NSURLPboardType];
+//    }
+    if ([types containsObject:NSFilenamesPboardType] == YES) {
+        NSArray *selectedPaths = [items valueForKeyPath:@"@unionOfObjects.path"];
+        answer |= [pboard setPropertyList:selectedPaths forType:NSFilenamesPboardType];
     }
-    else if ([types containsObject:NSFilenamesPboardType] == YES) {
-        typesDeclared = [NSArray arrayWithObject:NSFilenamesPboardType];
-        [pboard declareTypes:typesDeclared owner:nil];
-        NSArray *selectedURLs = [items valueForKeyPath:@"@unionOfObjects.url"];
-        NSArray *selectedPaths = [selectedURLs valueForKeyPath:@"@unionOfObjects.path"];
-        return [pboard writeObjects:selectedPaths];
+    if ([types containsObject:NSStringPboardType] == YES) {
+        NSArray* str_representation = [items valueForKeyPath:@"@unionOfObjects.path"];
+        // Join the paths, one name per line
+        NSString* pathPerLine = [str_representation componentsJoinedByString:@"\n"];
+        //Now add the pathsPerLine as a string
+        answer |= [pboard setString:pathPerLine forType:NSStringPboardType];
     }
-    return NO;
+    //Debug
+    NSLog(@"Writing to Pasteboard types Declared");
+    DebugPBoard(pboard);
+    return answer;
 }
 
 

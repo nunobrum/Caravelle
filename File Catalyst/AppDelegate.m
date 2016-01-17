@@ -315,7 +315,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         }
 
         url = [NSURL fileURLWithPath:homepath isDirectory:YES];
-        id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url];
+        id item = [(TreeManager*)appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
         [self prepareView:view withItem:item];
 #endif
     }
@@ -1143,14 +1143,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     // Get The clipboard
     NSPasteboard* clipboard = [NSPasteboard generalPasteboard];
     [clipboard clearContents];
-    [clipboard declareTypes:[NSArray arrayWithObjects:
-                                    NSURLPboardType,
-                                    //NSFilenamesPboardType,
-                                    // NSFileContentsPboardType, not passing file contents
-                                    NSStringPboardType, nil]
-                      owner:nil];
-
+    
     if (onlyNames==YES) {
+        [clipboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil]
+                          owner:nil];
+
         NSArray* str_representation = [selectedFiles valueForKeyPath:@"@unionOfObjects.name"];
         // Join the paths, one name per line
         NSString* pathPerLine = [str_representation componentsJoinedByString:@"\n"];
@@ -1159,6 +1156,19 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
     // if only names are copied, the urls are not
     else {
+        [clipboard declareTypes:[NSArray arrayWithObjects:
+                                 NSURLPboardType,
+                                 NSFilenamesPboardType,
+                                 // NSFileContentsPboardType, not passing file contents
+                                 NSStringPboardType, nil]
+                          owner:nil];
+
+        NSArray* str_representation = [selectedFiles valueForKeyPath:@"@unionOfObjects.path"];
+        // Join the paths, one name per line
+        NSString* pathPerLine = [str_representation componentsJoinedByString:@"\n"];
+        //Now add the pathsPerLine as a string
+        [clipboard setString:pathPerLine forType:NSStringPboardType];
+
         NSArray* urls  = [selectedFiles valueForKeyPath:@"@unionOfObjects.url"];
         [clipboard writeObjects:urls];
     }
@@ -1335,6 +1345,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [self executeNewFolder:(TreeBranch*)[[self selectedView] getLastClickedItem]];
 }
 
+- (IBAction)toolbarRefresh:(id)sender {
+    [self refreshAllViews:nil];
+}
+
 - (IBAction)toolbarGotoFolder:(id)sender {
     [self executeOpenFolderInView:[self selectedView] withTitle:@"Select a Folder"];
 }
@@ -1347,10 +1361,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 - (IBAction)toolbarSearch:(id)sender {
     // TODO:1.5 Search Mode : Similar files Same Size, Same Kind, Same Date, ..., or Directory Search
     //- (BOOL)showSearchResultsForQueryString:(NSString *)queryString
-}
-
-- (IBAction)toolbarRefresh:(id)sender {
-    [self refreshAllViews:nil];
 }
 
 - (IBAction)toolbarHome:(id)sender {

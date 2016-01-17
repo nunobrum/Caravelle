@@ -252,7 +252,8 @@ NSString *KEY_ICON = @"icon";
     
     NSArray *filesDropped = [self->_validatedDropDestination acceptDropped:draggingInfo operation:self->_validatedDropOperation sender:self];
     
-    
+    // TODO:1.4 Implement code below when acceptDropped returns TreeItems
+    /*
     if (self->_validatedDropDestination == self.currentNode && filesDropped!=nil) {
         //Inserts the rows using the specified animation.
         if (self->_validatedDropOperation & (NSDragOperationCopy | NSDragOperationMove)) {
@@ -267,6 +268,7 @@ NSString *KEY_ICON = @"icon";
             }
         }
     }
+     */
     return filesDropped!=nil;
 }
 

@@ -50,7 +50,9 @@ extern const CFStringRef kTreeItemDropUTI;
 
 #define APP_STORE @1 // Used to validate Receipts
 
+#ifndef APP_IS_SANDBOXED
 #define APP_IS_SANDBOXED 1
+#endif
 
 #if (APP_IS_SANDBOXED==1)
 
