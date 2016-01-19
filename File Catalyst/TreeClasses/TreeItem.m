@@ -39,7 +39,10 @@
 }
 
 -(void) refresh {
-    
+    if (self.parent) {
+        [self.parent setTag:tagTreeItemDirty];
+        [self.parent refresh];
+    }
 }
 
 -(BOOL) isExpandable {

@@ -1583,6 +1583,11 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     [self.detailedViewController refreshKeepingSelections];
 }
 
+-(void) cleanRefresh {
+    [self.treeNodeSelected forceRefreshOnBranch];
+
+}
+
 -(void) addTreeRoot:(TreeBranch*)theRoot {
     if (theRoot!=nil) {
         [BaseDirectories addTreeItem: theRoot];

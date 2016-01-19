@@ -132,6 +132,7 @@ extern NSString *kViewChanged_FlatView;
 
 -(void) reloadItem:(id) item;
 -(void) refresh;
+-(void) cleanRefresh;
 -(void) addTreeRoot:(TreeBranch*)theRoot;
 -(void) addFileCollection:(FileCollection*) collection;
 -(void) setRoots:(NSArray*) baseDirectories;

@@ -798,9 +798,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 /* Received when a complete refresh of views is needed */
 
 -(void) refreshAllViews:(NSNotification*) theNotification {
-    [(id<MYViewProtocol>)myLeftView refresh];
-    if (myRightView!=nil) {
-        [(id<MYViewProtocol>)myRightView refresh];
+    [myLeftView cleanRefresh];
+    if (myRightView!=nil && (application_mode() & ApplicationMode2Views)!=0) {
+        [myRightView cleanRefresh];
     }
 }
 

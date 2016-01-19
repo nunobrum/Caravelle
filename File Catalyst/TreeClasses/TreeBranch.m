@@ -1546,7 +1546,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                 }
             }
         }
-        [self notifyDidChangeTreeBranchPropertyChildren];   // This will inform the observer about change
+        [self didChangeValueForKey:kvoTreeBranchPropertyChildren];   // This will inform the observer about change
     }
 }
 
@@ -1634,6 +1634,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     BOOL fireNotfication = NO;
     NSString const *strOperation;
     NSPasteboard *pboard = [info draggingPasteboard];
+    NSLog(@"treeBranch %@, accept drop", self.path);
+    DebugPBoard(pboard);
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     
     if (operation == NSDragOperationCopy) {
