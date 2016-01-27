@@ -13,7 +13,7 @@
     NSString *oldFilename;
 }
 
-@property (strong) IBOutlet NSPanel *window;
+
 
 @property (strong) IBOutlet NSTextField *ebFilename;
 

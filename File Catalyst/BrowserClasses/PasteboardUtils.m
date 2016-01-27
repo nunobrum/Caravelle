@@ -10,18 +10,18 @@
 #import "Definitions.h"
 
 void DebugPBoard(NSPasteboard*pboard) {
-    NSLog(@"PBOARD:%@",[pboard name]);
+    NSLog(@"PBOARD:%@\n========================================",[pboard name]);
     for (NSString *type in [pboard types]) {
         id pBoardContents = [pboard propertyListForType:type];
-        NSLog(@"type:%@, class:%@", type, [pBoardContents class]);
+        NSLog(@"type:%@, class:%@\n_____________________________________", type, [pBoardContents class]);
         if ([pBoardContents isKindOfClass:[NSString class]]) {
             NSLog(@"String:%@",pBoardContents);
         }
         else if ([pBoardContents isKindOfClass:[NSArray class]]) {
             int i = 1;
-            for (id item in pBoardContents)
-                NSLog(@"%i:%@",i++, item);
-            
+            for (id item in pBoardContents) {
+                NSLog(@"item %i:%@",i++, item);
+            }
         }
         else {
             NSLog(@"unknown:%@",pBoardContents);

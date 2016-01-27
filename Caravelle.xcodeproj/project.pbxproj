@@ -1804,6 +1804,7 @@
 				BC9568A01C484EB200DAB21A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 		BC9568A11C484EB200DAB21A /* Build configuration list for PBXNativeTarget "CaravelaUITests" */ = {
 			isa = XCConfigurationList;
@@ -1812,6 +1813,7 @@
 				BC9568A31C484EB200DAB21A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 		BC9569181C484F9C00DAB21A /* Build configuration list for PBXNativeTarget "Caravela" */ = {
 			isa = XCConfigurationList;

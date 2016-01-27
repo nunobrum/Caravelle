@@ -8,17 +8,11 @@
 
 
 
-/*#include "./openssl_x86_64/crypto/ossl_typ.h"
- #include "./openssl_x86_64/crypto/asn1/asn1t.h"
- #include "./openssl_x86_64/crypto/x509/x509_vfy.h"
- #include "./openssl_x86_64/crypto/asn1/asn1.h"
- #include "./openssl_x86_64/crypto/pkcs7/pkcs7.h"
- */
+#if (APP_IS_SANDBOXED==1)
 
 #include <openssl/x509.h>
 #include <openssl/asn1.h>
 #include <openssl/pkcs7.h>
-#include <OCTET_STRING.h>
 #include "Payload.h"
 
 //#import <Foundation/Foundation.h>
@@ -431,3 +425,5 @@ int validateAppReceipt () {
     // Return Success
     return answer;
 }
+
+#endif

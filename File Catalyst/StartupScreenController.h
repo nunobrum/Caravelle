@@ -10,7 +10,7 @@
 
 @interface StartupScreenController : NSWindowController
 
-@property (strong) IBOutlet NSWindow *window;
+
 @property (weak) IBOutlet NSButton *chkDontShowThisAgain;
 
 - (instancetype)initWithWindowNibName:(NSString *)windowNibName;
