@@ -368,7 +368,7 @@ CA
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
                         <rect key="frame" x="2" y="3" width="187" height="17"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" placeholderString="File or Folder Information here" usesSingleLineMode="YES" id="gJV-jD-cFn">
+                        <textFieldCell key="cell" lineBreakMode="truncatingHead" sendsActionOnEndEditing="YES" placeholderString="File or Folder Information here" usesSingleLineMode="YES" id="gJV-jD-cFn">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

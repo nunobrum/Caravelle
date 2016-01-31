@@ -178,7 +178,8 @@ int validateAppReceipt () {
                             // This corresponds to the value of CFBundleIdentifier in the Info.plist file.
                             bundle_id = &entry->value;
                             if (NO == NSString_UTF8STRING_compare(entry, mainInfo[@"CFBundleIdentifier"])) {
-                                answer = -1; // Signal an error
+                                NSLog(@"Error Validating Receipt. Expected Identifier '%@'", mainInfo[@"CFBundleIdentifier"]);
+                                answer = 173; // Signal an error
                             }
                             
                             break;
@@ -188,7 +189,8 @@ int validateAppReceipt () {
                             // CFBundleShortVersionString (in OS X) in the Info.plist.
                             bundle_version = &entry->value;
                             if (NO == NSString_UTF8STRING_compare(entry, mainInfo[@"CFBundleShortVersionString"])) {
-                                answer = -1; // Signal an error
+                                NSLog(@"Error Validating Receipt. Expected version '%@'. Ignoring", mainInfo[@"CFBundleShortVersionString"]);
+                                //answer = 173; // Signal an error
                             }
                             break;
                             
