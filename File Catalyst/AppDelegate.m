@@ -1046,8 +1046,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 -(void) executeCopyTo:(NSArray*) selectedFiles {
     
-    // Checking first if the operation is not blocked.
-    if ([self checkAppInDuplicateBlocking]==NO) return;
     id node = nil;
     
     if ([self selectedView] == myLeftView) {
@@ -1124,9 +1122,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 
 - (void)executeCopy:(NSArray*) selectedFiles onlyNames:(BOOL)onlyNames {
-    // Checking first if the operation is not blocked.
-    if ([self checkAppInDuplicateBlocking]==NO) return;
-
+    
 
     // Will create name list for text application paste
     // TODO:1.4.1 multi copy, where an additional copy will append items to the pasteboard
@@ -1496,6 +1492,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 -(void) setApplicationModeEnum:(EnumApplicationMode) newMode {
     EnumApplicationMode old_mode = applicationMode;
     [self willChangeValueForKey:BOOL_DUPLICATE_MODE];
+    [self willChangeValueForKey:BOOL_ALLOW_DUPLICATE];
     _application_mode = newMode;
     
     if (newMode == ApplicationMode1View) {
@@ -1612,6 +1609,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [self adjustSideInformation: self.selectedView];
     [self.ContentSplitView displayIfNeeded];
     [self didChangeValueForKey:BOOL_DUPLICATE_MODE]; // This is needed to inform of the change.
+    [self didChangeValueForKey:BOOL_ALLOW_DUPLICATE];
 }
 
 - (IBAction)viewModeChanged:(id)sender {
@@ -1671,6 +1669,21 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             theAction == @selector(paste:) ||
             theAction == @selector(contextualPaste:)) {
             return NO;
+        }
+        else if (theAction == @selector(toolbarDelete:) ||
+                 theAction == @selector(contextualDelete:) ||
+                 theAction == @selector(delete:) ||
+                 
+                 theAction == @selector(toolbarRename:) ||
+                 theAction == @selector(contextualRename:) ||
+                 
+                 theAction == @selector(toolbarMoveTo:) ||
+                 theAction == @selector(contextualMoveTo:) ||
+                 
+                 theAction == @selector(contextualCut:) ||
+                 theAction == @selector(cut:)
+                 ) {
+            if ([self->userPreferenceManager duplicatesAuthorized]==NO) return NO;
         }
     }
 
@@ -2391,7 +2404,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [_StatusBar setTitle: statusText];
     }
     else {
-        [_StatusBar setTitle: @"Ooops! Received Notification without User Info"];
+        [_StatusBar setTitle: @"No File Selected"];
     }
 
 }
@@ -2428,6 +2441,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         // Already in Duplicate Mode, resume to Browser Mode
         [self exitDuplicateMode];
     }
+}
+
+-(NSNumber*) boolAllowDelete {
+    return [NSNumber numberWithBool: ! (((applicationMode & ApplicationModeDupBrowser)!=0) && ([self->userPreferenceManager duplicatesAuthorized]==NO))];
 }
 
 /* invoked by Find Duplicates Dialog on OK Button */

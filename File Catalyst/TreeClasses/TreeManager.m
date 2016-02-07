@@ -280,7 +280,7 @@ TreeManager *appTreeManager;
          kFSEventStreamEventFlagUnmount, // When a device is unmounted underneath the path being monitored.
          */
 
-        //NSLog(@"FSEvent %@", changedPath);
+        //NSLog(@"TreeManager.fileSystemChangePath: %@", changedPath);
         //LogFlags(flags);
 
         id itemToRefresh = [self getNodeWithPath:changedPath];

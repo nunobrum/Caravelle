@@ -105,7 +105,12 @@
  */
 
 @property NSNumber *boolDuplicateModeActive;
+// Used to annonce change of state : willChange/didChange
 #define BOOL_DUPLICATE_MODE @"boolDuplicateModeActive"
+
+@property (readonly) NSNumber* boolAllowDelete;
+// Used to annonce change of state : willChange/didChange
+#define BOOL_ALLOW_DUPLICATE @"boolAllowDelete"
 
 
 @end

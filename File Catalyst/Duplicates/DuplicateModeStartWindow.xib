@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
@@ -19,14 +19,14 @@
         <window title="Duplicate Display Option" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="500" height="250"/>
+            <rect key="contentRect" x="196" y="240" width="500" height="267"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="500" height="250"/>
+                <rect key="frame" x="0.0" y="0.0" width="500" height="267"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="tLE-co-WRh" userLabel="Message">
-                        <rect key="frame" x="20" y="42" width="460" height="29"/>
+                        <rect key="frame" x="20" y="46" width="460" height="29"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" borderStyle="bezel" alignment="left" placeholderString="Message from Caravelle" drawsBackground="YES" id="bu8-b1-BPF">
                             <font key="font" metaFont="system" size="20"/>
                             <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -34,7 +34,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0Jr-OU-B7Z">
-                        <rect key="frame" x="112" y="83" width="370" height="51"/>
+                        <rect key="frame" x="112" y="108" width="370" height="51"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Use the Tree Button to view duplicate files by their location, instead of the default duplicate grouping." id="kAU-y4-PWy">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -59,19 +59,11 @@
                         </connections>
                     </button>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f7V-1T-ce1">
-                        <rect key="frame" x="20" y="198" width="32" height="32"/>
+                        <rect key="frame" x="20" y="222" width="32" height="32"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Caravelle" id="M51-GL-HAW"/>
                     </imageView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cAg-o0-RvR">
-                        <rect key="frame" x="58" y="200" width="424" height="29"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Duplicate File Finder" id="Nqi-bz-9yX">
-                            <font key="font" metaFont="system" size="24"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7mW-ry-ab5">
-                        <rect key="frame" x="112" y="142" width="370" height="51"/>
+                        <rect key="frame" x="112" y="159" width="370" height="51"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Enabling the Dual Pane Mode, the right pane will contain duplicates of the files selected on the left pane." id="RMe-a7-SWa">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -79,7 +71,7 @@
                         </textFieldCell>
                     </textField>
                     <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H65-gW-aiN">
-                        <rect key="frame" x="43" y="96" width="51" height="24"/>
+                        <rect key="frame" x="43" y="136" width="51" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="TZd-iI-SOy">
                             <font key="font" metaFont="system"/>
                             <segments>
@@ -91,7 +83,7 @@
                         </segmentedCell>
                     </segmentedControl>
                     <segmentedControl verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="45c-C7-MyY">
-                        <rect key="frame" x="29" y="155" width="65" height="24"/>
+                        <rect key="frame" x="29" y="184" width="65" height="24"/>
                         <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="bsW-nz-svN">
                             <font key="font" metaFont="system"/>
                             <segments>
@@ -104,17 +96,38 @@
                             </segments>
                         </segmentedCell>
                     </segmentedControl>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Boo-23-sia">
+                        <rect key="frame" x="70" y="72" width="412" height="34"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Deleting or Moving duplicated files requires an In-App Purchase." id="Kgi-KZ-T2k">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dIS-G0-ild">
+                        <rect key="frame" x="20" y="89" width="48" height="17"/>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="PRO" id="xL2-be-cX2"/>
+                    </imageView>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cAg-o0-RvR">
+                        <rect key="frame" x="58" y="224" width="424" height="29"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Duplicate File Finder" id="Nqi-bz-9yX">
+                            <font key="font" metaFont="system" size="24"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="76" y="242"/>
+            <point key="canvasLocation" x="76" y="250.5"/>
         </window>
     </objects>
     <resources>
         <image name="Caravelle" width="122.87999725341797" height="122.87999725341797"/>
         <image name="IconTreeView20" width="20" height="20"/>
+        <image name="PRO" width="32" height="14"/>
         <image name="Tornado16" width="16" height="16"/>
         <image name="dualPane" width="19" height="16"/>
         <image name="singlePane" width="20" height="20"/>
