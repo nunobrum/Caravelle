@@ -77,13 +77,20 @@
 		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
 		BC0EBE5C1BA3087A00837EDE /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BC0EBE5B1BA3087A00837EDE /* Receipts.m */; };
+		BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2728C81C68ECC2001EAA0E /* MainSideBarController.m */; };
+		BC2728CD1C68ECC2001EAA0E /* MainSideBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC2728C91C68ECC2001EAA0E /* MainSideBarView.xib */; };
+		BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2728CB1C68ECC2001EAA0E /* SidebarTableCellView.m */; };
 		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
 		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
+		BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */; };
+		BC3FFB581C77F64A003FB6F5 /* RecentlyUsedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
 		BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
 		BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
 		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
 		BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
+		BC6F02D41C712A8C0090BF9A /* SideBarObject.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6F02D31C712A8C0090BF9A /* SideBarObject.m */; };
+		BC6F02D61C7135750090BF9A /* MAC_Address.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6F02D51C7135750090BF9A /* MAC_Address.m */; };
 		BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
 		BC95688E1C484EB100DAB21A /* CaravelaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC95688D1C484EB100DAB21A /* CaravelaTests.m */; };
 		BC9568991C484EB200DAB21A /* CaravelaUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9568981C484EB200DAB21A /* CaravelaUITests.m */; };
@@ -192,7 +199,6 @@
 		BC9569131C484F9C00DAB21A /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
 		BC9569141C484F9C00DAB21A /* FileAttributesController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE21A05254A00ED6392 /* FileAttributesController.xib */; };
 		BC9569151C484F9C00DAB21A /* TableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */; };
-		BC9569161C484F9C00DAB21A /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */; };
 		BC9569171C484F9C00DAB21A /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
 		BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2401B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns */; };
 		BCADC2431B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = BCADC2411B3BE10E00245F1D /* ReadOnlyFolderBadgeIcon.icns */; };
@@ -203,7 +209,6 @@
 		BCDCA49C1BDAE47D00D7D09C /* TreeCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */; };
 		BCEA2CEA1C358C23006D4645 /* libssl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BCEA2CE91C358C23006D4645 /* libssl.tbd */; };
 		BCEA2CEC1C358C3B006D4645 /* libcrypto.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BCEA2CEB1C358C3B006D4645 /* libcrypto.tbd */; };
-		BCEB36DF1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */; };
 		BCEB371D1BA940AD00B1DAA9 /* asn_codecs_prim.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */; };
 		BCEB371E1BA940AD00B1DAA9 /* asn_SET_OF.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EE1BA940AD00B1DAA9 /* asn_SET_OF.c */; };
 		BCEB371F1BA940AD00B1DAA9 /* ber_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F11BA940AD00B1DAA9 /* ber_decoder.c */; };
@@ -228,6 +233,7 @@
 		BCEB37321BA940AD00B1DAA9 /* xer_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37171BA940AD00B1DAA9 /* xer_decoder.c */; };
 		BCEB37331BA940AD00B1DAA9 /* xer_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37191BA940AD00B1DAA9 /* xer_encoder.c */; };
 		BCEB37341BA940AD00B1DAA9 /* xer_support.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB371B1BA940AD00B1DAA9 /* xer_support.c */; };
+		BCEF55201C72673700E415FE /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEF551F1C72673700E415FE /* AppleIncRootCertificate.cer */; };
 		BCF1AF821C42810000E47E2C /* DuplicateDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */; };
 /* End PBXBuildFile section */
 
@@ -368,10 +374,19 @@
 		BC08C9AD1B79535C00D12486 /* payplugins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = payplugins.plist; sourceTree = "<group>"; };
 		BC0EBE5A1BA3087A00837EDE /* Receipts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Receipts.h; path = Security/Receipts.h; sourceTree = "<group>"; };
 		BC0EBE5B1BA3087A00837EDE /* Receipts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Receipts.m; path = Security/Receipts.m; sourceTree = "<group>"; };
+		BC2728C71C68ECC2001EAA0E /* MainSideBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainSideBarController.h; path = "File Catalyst/SideBar/MainSideBarController.h"; sourceTree = SOURCE_ROOT; };
+		BC2728C81C68ECC2001EAA0E /* MainSideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainSideBarController.m; path = "File Catalyst/SideBar/MainSideBarController.m"; sourceTree = SOURCE_ROOT; };
+		BC2728C91C68ECC2001EAA0E /* MainSideBarView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainSideBarView.xib; path = "File Catalyst/SideBar/MainSideBarView.xib"; sourceTree = SOURCE_ROOT; };
+		BC2728CA1C68ECC2001EAA0E /* SidebarTableCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SidebarTableCellView.h; path = "File Catalyst/SideBar/SidebarTableCellView.h"; sourceTree = SOURCE_ROOT; };
+		BC2728CB1C68ECC2001EAA0E /* SidebarTableCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SidebarTableCellView.m; path = "File Catalyst/SideBar/SidebarTableCellView.m"; sourceTree = SOURCE_ROOT; };
 		BC27BFE51B5C13F9001AE181 /* CalcFolderSizes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalcFolderSizes.h; sourceTree = "<group>"; };
 		BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcFolderSizes.m; sourceTree = "<group>"; };
 		BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandFolders.h; sourceTree = "<group>"; };
 		BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpandFolders.m; sourceTree = "<group>"; };
+		BC3FFB531C77E645003FB6F5 /* MYFIFOArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYFIFOArray.h; path = "File Catalyst/SideBar/MYFIFOArray.h"; sourceTree = SOURCE_ROOT; };
+		BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYFIFOArray.m; path = "File Catalyst/SideBar/MYFIFOArray.m"; sourceTree = SOURCE_ROOT; };
+		BC3FFB561C77F64A003FB6F5 /* RecentlyUsedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyUsedArray.h; path = "File Catalyst/SideBar/RecentlyUsedArray.h"; sourceTree = SOURCE_ROOT; };
+		BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecentlyUsedArray.m; path = "File Catalyst/SideBar/RecentlyUsedArray.m"; sourceTree = SOURCE_ROOT; };
 		BC523DD51B594B7C0030C97A /* NumberGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberGrouping.h; path = BrowserClasses/Groupings/NumberGrouping.h; sourceTree = "<group>"; };
 		BC523DD61B594B7C0030C97A /* NumberGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberGrouping.m; path = BrowserClasses/Groupings/NumberGrouping.m; sourceTree = "<group>"; };
 		BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartupScreen.xib; sourceTree = "<group>"; };
@@ -380,6 +395,10 @@
 		BC6C2AAC1B697095009FD1D8 /* DuplicateModeStartWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateModeStartWindow.h; path = Duplicates/DuplicateModeStartWindow.h; sourceTree = "<group>"; };
 		BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateModeStartWindow.m; path = Duplicates/DuplicateModeStartWindow.m; sourceTree = "<group>"; };
 		BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DuplicateModeStartWindow.xib; path = Duplicates/DuplicateModeStartWindow.xib; sourceTree = "<group>"; };
+		BC6F02D21C712A8C0090BF9A /* SideBarObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBarObject.h; path = "File Catalyst/SideBar/SideBarObject.h"; sourceTree = SOURCE_ROOT; };
+		BC6F02D31C712A8C0090BF9A /* SideBarObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBarObject.m; path = "File Catalyst/SideBar/SideBarObject.m"; sourceTree = SOURCE_ROOT; };
+		BC6F02D51C7135750090BF9A /* MAC_Address.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAC_Address.m; path = Security/MAC_Address.m; sourceTree = "<group>"; };
+		BC6F02D71C7135B50090BF9A /* MAC_Address.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MAC_Address.h; path = Security/MAC_Address.h; sourceTree = "<group>"; };
 		BC766D721BBED721004AA9BC /* TreeBranchCatalyst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeBranchCatalyst.h; sourceTree = "<group>"; };
 		BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeBranchCatalyst.m; sourceTree = "<group>"; };
 		BC9568761C484EB100DAB21A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -410,7 +429,6 @@
 		BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeCollection.h; sourceTree = "<group>"; };
 		BCEA2CE91C358C23006D4645 /* libssl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libssl.tbd; path = usr/lib/libssl.tbd; sourceTree = SDKROOT; };
 		BCEA2CEB1C358C3B006D4645 /* libcrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcrypto.tbd; path = usr/lib/libcrypto.tbd; sourceTree = SDKROOT; };
-		BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		BCEB36E61BA8ACFF00B1DAA9 /* libheimdal-asn1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libheimdal-asn1.dylib"; path = "usr/lib/libheimdal-asn1.dylib"; sourceTree = SDKROOT; };
 		BCEB36E91BA940AD00B1DAA9 /* asn_application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = asn_application.h; path = ASN1C/asn_application.h; sourceTree = "<group>"; };
 		BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = asn_codecs_prim.c; path = ASN1C/asn_codecs_prim.c; sourceTree = "<group>"; };
@@ -464,6 +482,7 @@
 		BCEB371A1BA940AD00B1DAA9 /* xer_encoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xer_encoder.h; path = ASN1C/xer_encoder.h; sourceTree = "<group>"; };
 		BCEB371B1BA940AD00B1DAA9 /* xer_support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xer_support.c; path = ASN1C/xer_support.c; sourceTree = "<group>"; };
 		BCEB371C1BA940AD00B1DAA9 /* xer_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xer_support.h; path = ASN1C/xer_support.h; sourceTree = "<group>"; };
+		BCEF551F1C72673700E415FE /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
 		BCF1AF801C42810000E47E2C /* DuplicateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateDelegate.h; path = Duplicates/DuplicateDelegate.h; sourceTree = "<group>"; };
 		BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateDelegate.m; path = Duplicates/DuplicateDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -654,6 +673,7 @@
 				3CEA675418F87C2F0080C4FC /* AppDelegate.h */,
 				3CEA675518F87C2F0080C4FC /* AppDelegate.m */,
 				3CEA675718F87C2F0080C4FC /* MainMenu.xib */,
+				BC2728C61C68ECA0001EAA0E /* SideBar */,
 				3CA7DFC619B6121000600F41 /* OperationClasses */,
 				3CF645B3199DBDE500DD53F5 /* BrowserViewClasses */,
 				3C29463218F9B833002B633C /* TreeClasses */,
@@ -681,10 +701,10 @@
 		3CEA674918F87C2F0080C4FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				BCEF551F1C72673700E415FE /* AppleIncRootCertificate.cer */,
 				3CEA674A18F87C2F0080C4FC /* Caravelle-Info.plist */,
 				3CEA674B18F87C2F0080C4FC /* InfoPlist.strings */,
 				3CEA674E18F87C2F0080C4FC /* main.m */,
-				BCEB36DE1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer */,
 				3CEA675018F87C2F0080C4FC /* Caravelle-Prefix.pch */,
 				3CEA675118F87C2F0080C4FC /* Credits.rtf */,
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
@@ -843,8 +863,29 @@
 				BCEB36E81BA9405A00B1DAA9 /* ASN1 */,
 				BC0EBE5A1BA3087A00837EDE /* Receipts.h */,
 				BC0EBE5B1BA3087A00837EDE /* Receipts.m */,
+				BC6F02D51C7135750090BF9A /* MAC_Address.m */,
+				BC6F02D71C7135B50090BF9A /* MAC_Address.h */,
 			);
 			name = Security;
+			sourceTree = "<group>";
+		};
+		BC2728C61C68ECA0001EAA0E /* SideBar */ = {
+			isa = PBXGroup;
+			children = (
+				BC2728C71C68ECC2001EAA0E /* MainSideBarController.h */,
+				BC2728C81C68ECC2001EAA0E /* MainSideBarController.m */,
+				BC2728C91C68ECC2001EAA0E /* MainSideBarView.xib */,
+				BC2728CA1C68ECC2001EAA0E /* SidebarTableCellView.h */,
+				BC2728CB1C68ECC2001EAA0E /* SidebarTableCellView.m */,
+				BC6F02D21C712A8C0090BF9A /* SideBarObject.h */,
+				BC6F02D31C712A8C0090BF9A /* SideBarObject.m */,
+				BC3FFB531C77E645003FB6F5 /* MYFIFOArray.h */,
+				BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */,
+				BC3FFB561C77F64A003FB6F5 /* RecentlyUsedArray.h */,
+				BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */,
+			);
+			name = SideBar;
+			path = FileClasses;
 			sourceTree = "<group>";
 		};
 		BC9568751C484EB100DAB21A /* Caravela */ = {
@@ -1110,11 +1151,13 @@
 				BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */,
 				3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */,
 				3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */,
+				BC2728CD1C68ECC2001EAA0E /* MainSideBarView.xib in Resources */,
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
 				BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */,
 				3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */,
 				3CF5B6C31ABF76630065E543 /* GenericFolderIcon.icns in Resources */,
+				BCEF55201C72673700E415FE /* AppleIncRootCertificate.cer in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
 				3CF5B6C21ABF76630065E543 /* GenericDocumentIcon.icns in Resources */,
 				3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */,
@@ -1125,7 +1168,6 @@
 				BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */,
 				3C84EFE41A05254A00ED6392 /* FileAttributesController.xib in Resources */,
 				3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */,
-				BCEB36DF1BA89DCD00B1DAA9 /* AppleIncRootCertificate.cer in Resources */,
 				BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1178,7 +1220,6 @@
 				BC9569131C484F9C00DAB21A /* StartupScreen.xib in Resources */,
 				BC9569141C484F9C00DAB21A /* FileAttributesController.xib in Resources */,
 				BC9569151C484F9C00DAB21A /* TableViewController.xib in Resources */,
-				BC9569161C484F9C00DAB21A /* AppleIncRootCertificate.cer in Resources */,
 				BC9569171C484F9C00DAB21A /* payplugins.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1203,12 +1244,14 @@
 				BCEB37211BA940AD00B1DAA9 /* ber_tlv_tag.c in Sources */,
 				3CEA675618F87C2F0080C4FC /* AppDelegate.m in Sources */,
 				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
+				BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
 				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				BCEB372E1BA940AD00B1DAA9 /* per_encoder.c in Sources */,
 				BCEB372F1BA940AD00B1DAA9 /* per_opentype.c in Sources */,
 				BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */,
+				BC3FFB581C77F64A003FB6F5 /* RecentlyUsedArray.m in Sources */,
 				BCEB371F1BA940AD00B1DAA9 /* ber_decoder.c in Sources */,
 				BCEB37241BA940AD00B1DAA9 /* constr_SET_OF.c in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
@@ -1227,6 +1270,7 @@
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */,
+				BC6F02D61C7135750090BF9A /* MAC_Address.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				BCEB37281BA940AD00B1DAA9 /* INTEGER.c in Sources */,
 				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,
@@ -1240,9 +1284,12 @@
 				3CF17D231A18C9E50082A9B0 /* FileExistsChoice.m in Sources */,
 				3CDD42F81AF60C0C0018D24D /* ByteCounterUtils.c in Sources */,
 				BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */,
+				BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */,
 				3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */,
+				BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */,
 				3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */,
 				BCEB37221BA940AD00B1DAA9 /* BIT_STRING.c in Sources */,
+				BC6F02D41C712A8C0090BF9A /* SideBarObject.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
 				3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */,
 				3CF5DA8D1A65D09800786D64 /* RenameFileDialog.m in Sources */,

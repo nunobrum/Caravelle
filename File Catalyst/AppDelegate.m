@@ -402,7 +402,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
     if (myRightView.detailedViewController.currentNode==nil) {
         // Right side
-        [self goHome: myRightView]; // Display the User Preferences Left Home
+        if ((applicationMode & ApplicationModeDupBrowser)==0) {
+            // Only does it if not in duplicate mode.
+            [self goHome: myRightView]; // Display the User Preferences Left Home
+        }
     }
     
     [_ContentSplitView adjustSubviews];
@@ -457,6 +460,16 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [self.toolbarFunctionBarSelect setSelected:displayFunctionBar forSegment:0];
     [self toolbarToggleFunctionKeys:self.toolbarFunctionBarSelect];
     
+    // Get from user defaults the presence of the panel
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_PANEL_VISIBLE]==YES) {
+        sideBarController = [[MainSideBarController alloc] initWithNibName:@"MainSideBarView" bundle:nil ];
+        NSRect SideRect = sideBarController.view.bounds;
+        [self.LeftSideBarWidth setConstant:SideRect.size.width];
+        [self.MainSideBar addSubview:sideBarController.view];
+    }
+    
+    //[self.myWindowView needsDisplay];
+
     
     // TODO:1.4 Implement the modes preview and Sync
     if (applicationMode != ApplicationMode2Views ) {
@@ -479,8 +492,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     //NSArray *constraints = [NSLayoutConstraint constraintsWithVisualFormat:@"|-0-[myLeftView]-0-|"
     //                                                               options:0 metrics:nil views:viewsDictionary];
     //[myLeftView.view addConstraints:constraints];
-
-    if (applicationMode == ApplicationMode2Views) {
+    
+        if (applicationMode == ApplicationMode2Views) {
         [self makeView1:@"Left" view2:@"Right"];
     }
     else if (applicationMode == ApplicationMode1View) {
@@ -1380,7 +1393,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [self.FunctionBar setHidden:YES];
     }
     [[self SplitViewBottomLineConstraint] setConstant:constant];
-    [[self ContentSplitView] setNeedsDisplay:YES];
+    [[self LeftSideBarBottomLineConstraint] setConstant:constant];
+    [[self myWindowView] setNeedsDisplay:YES];
     // Reposition the value in the user defaults
     [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
 }

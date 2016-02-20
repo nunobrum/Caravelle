@@ -9,10 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "Definitions.h"
 #import "BrowserController.h"
+#import "MainSideBarController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, ParentProtocol, NSMenuDelegate> {
     BrowserController *myLeftView;
     BrowserController *myRightView;
+    MainSideBarController *sideBarController;
     id<MYViewProtocol> _selectedView;
     id<MYViewProtocol> _contextualFocus;
     //__weak LeftDataSource *_RightDataSrc;
@@ -33,7 +35,10 @@
 @property (weak) IBOutlet NSBox *BottomLine;
 @property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
 @property (weak) IBOutlet NSView *FunctionBar;
+@property (weak) IBOutlet NSView *MainSideBar;
 
+@property (weak) IBOutlet NSLayoutConstraint *LeftSideBarWidth;
+@property (weak) IBOutlet NSLayoutConstraint *LeftSideBarBottomLineConstraint;
 
 /*
  * Toolbar outlets

@@ -85,7 +85,8 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
-#define USER_DEF_MRU_COUNT @"MostRecentLocationCount" // TODO:1.4 This is not being used.
+#define USER_DEF_MRU_COUNT @"MostRecentLocationCount"
+#define USER_DEF_MRU       @"MostRecentLocation"
 #define USER_DEF_APP_BEHAVIOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
@@ -96,6 +97,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_TREE_VISIBLE @"TreeVisible"
 #define USER_DEF_TREE_WIDTH   @"TreeWidth"
 #define USER_DEF_SORT_KEYS    @"SortKeys"
+#define USER_DEF_LEFT_PANEL_VISIBLE @"LeftPanelVisible"
 
 #define USER_DEF_DUPLICATE_CLASSIC_VIEW @"DuplicateClassicView"
 

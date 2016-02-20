@@ -401,28 +401,24 @@ int validateAppReceipt () {
                              JSON Field Value string*/
                     }
                 }
-            }
-        }
-    }
-    PKCS7_free(p7);
-    
-    /* For additional security, you may verify the fingerprint of the root certificate and verify the OIDs of the intermediate certificate and signing certificate. The OID in the certificate policies extension of the intermediate certificate is (1 2 840 113635 100 5 6 1), and the marker OID of the signing certificate is (1 2 840 113635 100 6 11 1). */
-    
-    // Check the LSMinimumSystemVersion :
-    // See: xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#
-    
-    // Verify if Signed by Apple
-    
-    // If it fails the local signature, a check with the apple store can be attempted
-    //See:xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#
-    
-    // Verify that the bundle identifier matches
-    
-    // Verify that the Version matches : Use the CFBundleShortVersionString of the InfoPlist.strings :
-    // See : xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#
-    
-    // Compute the GUID
-    
+                
+                /* For additional security, you may verify the fingerprint of the root certificate and verify the OIDs of the intermediate certificate and signing certificate. The OID in the certificate policies extension of the intermediate certificate is (1 2 840 113635 100 5 6 1), and the marker OID of the signing certificate is (1 2 840 113635 100 6 11 1). */
+                
+                // Check the LSMinimumSystemVersion :
+                // See: xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#
+                
+                // Verify if Signed by Apple
+                
+                // If it fails the local signature, a check with the apple store can be attempted
+                //See:xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateRemotely.html#
+                
+                // Verify that the bundle identifier matches
+                
+                // Verify that the Version matches : Use the CFBundleShortVersionString of the InfoPlist.strings :
+                // See : xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#
+                
+                // Compute the GUID
+
     
     // Return Success
     return answer;

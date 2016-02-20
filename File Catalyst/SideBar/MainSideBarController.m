@@ -6,23 +6,19 @@
 //  Copyright © 2016 Nuno Brum. All rights reserved.
 //
 
+#include "Definitions.h"
 #import "MainSideBarController.h"
 #import "SidebarTableCellView.h"
-
-@interface sideBarObject : NSObject
-
-@property NSString *title;
-@property NSImage *image;
-@property NSObject *objValue;
-
-@end
+#import "SideBarObject.h"
+#import "RecentlyUsedArray.h"
+#import "TreeManager.h"
 
 @implementation MainSideBarController
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    NSLog(@"MainSideController.initWithNibName:bundle: Init done");
+    //NSLog(@"MainSideController.initWithNibName:bundle: Init done");
     return self;
 }
 
@@ -32,7 +28,9 @@
     
     // The data is stored ina  dictionary. The objects are the nib names to load.
     _childrenDictionary = [NSMutableDictionary new];
-    
+    [self populateAuthorizations];
+    //[self populateFavorites];
+    [self populateRecentlyUsed];
     
     // The basic recipe for a sidebar. Note that the selectionHighlightStyle is set to NSTableViewSelectionHighlightStyleSourceList in the nib
     [_sidebarOutlineView sizeLastColumnToFit];
@@ -47,6 +45,12 @@
     [[NSAnimationContext currentContext] setDuration:0];
     [_sidebarOutlineView expandItem:nil expandChildren:YES];
     [NSAnimationContext endGrouping];
+    
+    // Set an observer to the USER Defaults
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_SECURITY_BOOKMARKS
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
 }
 
 
@@ -67,7 +71,7 @@
 - (NSArray *)_childrenForItem:(id)item {
     NSArray *children;
     if (item == nil) {
-        children = _topLevelItems;
+        children = [_childrenDictionary allKeys];
     } else {
         children = [_childrenDictionary objectForKey:item];
     }
@@ -87,10 +91,14 @@
 }
 
 - (NSInteger) outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+    if (item==nil)
+        return [_childrenDictionary count];
     return [[self _childrenForItem:item] count];
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isGroupItem:(id)item {
+    if (item==nil)
+        return NO;
     return [_topLevelItems containsObject:item];
 }
 
@@ -115,49 +123,59 @@
         // The cell is setup in IB. The textField and imageView outlets are properly setup.
         // Special attributes are automatically applied by NSTableView/NSOutlineView for the source list
         SidebarTableCellView *result = [outlineView makeViewWithIdentifier:@"MainCell" owner:self];
-        result.textField.stringValue = item;
-        // Setup the icon based on our section
-        id parent = [outlineView parentForItem:item];
-        NSInteger index = [_topLevelItems indexOfObject:parent];
-        NSInteger iconOffset = index % 4;
-        switch (iconOffset) {
-            case 0: {
-                result.imageView.image = [NSImage imageNamed:NSImageNameIconViewTemplate];
-                break;
-            }
-            case 1: {
-                result.imageView.image = [NSImage imageNamed:NSImageNameHomeTemplate];
-                break;
-            }
-            case 2: {
-                result.imageView.image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
-                break;
-            }
-            case 3: {
-                result.imageView.image = [NSImage imageNamed:NSImageNameSlideshowTemplate];
-                break;
-            }
+        if ([item isKindOfClass:[SideBarObject class]] ) {
+            SideBarObject *it = item;
+            result.textField.stringValue = it.title;
+            result.imageView.image = it.image;
+            [result.button setHidden:YES];
+            return result;
         }
-        BOOL hideUnreadIndicator = YES;
-        // Setup the unread indicator to show in some cases. Layout is done in SidebarTableCellView's viewWillDraw
-        if (index == 0) {
-            // First row in the index
-            hideUnreadIndicator = NO;
-            [result.button setTitle:@"42"];
-            [result.button sizeToFit];
-            // Make it appear as a normal label and not a button
-            [[result.button cell] setHighlightsBy:0];
-        } else if (index == 2) {
-            // Example for a button
-            hideUnreadIndicator = NO;
-            result.button.target = self;
-            result.button.action = @selector(buttonClicked:);
-            [result.button setImage:[NSImage imageNamed:NSImageNameAddTemplate]];
-            // Make it appear as a button
-            [[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
+        else {
+            // !!!!! The test code below should disappear
+            result.textField.stringValue = item;
+            // Setup the icon based on our section
+            id parent = [outlineView parentForItem:item];
+            NSInteger index = [_topLevelItems indexOfObject:parent];
+            NSInteger iconOffset = index % 4;
+            switch (iconOffset) {
+                case 0: {
+                    result.imageView.image = [NSImage imageNamed:NSImageNameIconViewTemplate];
+                    break;
+                }
+                case 1: {
+                    result.imageView.image = [NSImage imageNamed:NSImageNameHomeTemplate];
+                    break;
+                }
+                case 2: {
+                    result.imageView.image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
+                    break;
+                }
+                case 3: {
+                    result.imageView.image = [NSImage imageNamed:NSImageNameSlideshowTemplate];
+                    break;
+                }
+            }
+            BOOL hideUnreadIndicator = YES;
+            // Setup the unread indicator to show in some cases. Layout is done in SidebarTableCellView's viewWillDraw
+            if (index == 0) {
+                // First row in the index
+                hideUnreadIndicator = NO;
+                [result.button setTitle:@"42"];
+                [result.button sizeToFit];
+                // Make it appear as a normal label and not a button
+                [[result.button cell] setHighlightsBy:0];
+            } else if (index == 2) {
+                // Example for a button
+                hideUnreadIndicator = NO;
+                result.button.target = self;
+                result.button.action = @selector(buttonClicked:);
+                [result.button setImage:[NSImage imageNamed:NSImageNameAddTemplate]];
+                // Make it appear as a button
+                [[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
+            }
+            [result.button setHidden:hideUnreadIndicator];
+            return result;
         }
-        [result.button setHidden:hideUnreadIndicator];
-        return result;
     }
 }
 
@@ -185,11 +203,52 @@
 }
 
 -(void) populateAuthorizations {
-    [_childrenDictionary setObject:[NSArray arrayWithObjects:@"ContentView2", nil] forKey:@"Authorizations"];
+    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
+    NSMutableArray *authorizedItems = [NSMutableArray arrayWithCapacity:[secBookmarks count]];
+    
+    // Retrieve allowed URLs
+    for (NSData *bookmark in secBookmarks) {
+        BOOL dataStalled;
+        NSError *error;
+        NSURL *allowedURL = [NSURL URLByResolvingBookmarkData:bookmark
+                                                      options:NSURLBookmarkResolutionWithSecurityScope
+                                                relativeToURL:nil
+                                          bookmarkDataIsStale:&dataStalled
+                                                        error:&error];
+        if (error==nil && dataStalled==NO) {
+            SideBarObject *item = [[SideBarObject alloc] init];
+            TreeItem *tItem = [appTreeManager addTreeItemWithURL:allowedURL askIfNeeded:NO];
+            item.title = [tItem name];
+            item.image = [tItem image];
+            item.objValue = tItem;
+            [authorizedItems addObject:item];
+        }
+    }
+    if ([authorizedItems count] > 0)
+        [_childrenDictionary setObject:authorizedItems forKey:@"Authorizations"];
 }
 
 -(void) populateRecentlyUsed {
-    [_childrenDictionary setObject:[NSArray arrayWithObjects:@"ContentView1", @"ContentView1", @"ContentView1", @"ContentView1", @"ContentView2", nil] forKey:@"Recently Used"];
+    RecentlyUsedArray *registeredMRUs = recentlyUsedLocations();
+    NSMutableArray *MRUItems = [NSMutableArray arrayWithCapacity:[registeredMRUs.array count]];
+    
+    // Retrieve allowed URLs
+    for (NSString *path in registeredMRUs.array) {
+        SideBarObject *item = [[SideBarObject alloc] init];
+        NSURL *url = [NSURL fileURLWithPath:path];
+        if (url) {
+            TreeItem *tItem = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
+            if (tItem) {
+                item.title = [tItem name];
+                item.image = [tItem image];
+                item.objValue = tItem;
+                
+                [MRUItems addObject:item];
+            }
+        }
+    }
+    if ([MRUItems count] > 0)
+        [_childrenDictionary setObject:MRUItems forKey:@"Recently Used"];
 }
 
 -(void) populateFavorites {
@@ -202,6 +261,12 @@
     
 }
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if ([keyPath isEqualToString:USER_DEF_SECURITY_BOOKMARKS]) {
+        //NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
+        [self populateAuthorizations];
+    }
+}
 
 
 @end

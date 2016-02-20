@@ -96,14 +96,6 @@
                             </segments>
                         </segmentedCell>
                     </segmentedControl>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Boo-23-sia">
-                        <rect key="frame" x="70" y="72" width="412" height="34"/>
-                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Deleting or Moving duplicated files requires an In-App Purchase." id="Kgi-KZ-T2k">
-                            <font key="font" metaFont="system"/>
-                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                        </textFieldCell>
-                    </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dIS-G0-ild">
                         <rect key="frame" x="20" y="89" width="48" height="17"/>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="PRO" id="xL2-be-cX2"/>
@@ -112,6 +104,14 @@
                         <rect key="frame" x="58" y="224" width="424" height="29"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Duplicate File Finder" id="Nqi-bz-9yX">
                             <font key="font" metaFont="system" size="24"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Boo-23-sia">
+                        <rect key="frame" x="70" y="80" width="412" height="34"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Deleting or Moving duplicated files requires an In-App Purchase." id="Kgi-KZ-T2k">
+                            <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
