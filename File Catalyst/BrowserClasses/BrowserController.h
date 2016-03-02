@@ -47,9 +47,6 @@ extern NSString *kViewChanged_FlatView;
 @property (strong) IBOutlet NSSegmentedControl *viewOptionsSwitches;
 @property (strong) IBOutlet NSSegmentedControl *mruBackForwardControl;
 
-
-@property (strong) IBOutlet NSMenu *contextualMenu;
-
 // This controller is used to select groupings
 
 

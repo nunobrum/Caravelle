@@ -24,6 +24,10 @@ extern NSString *kDFOOkCountKey;
 extern NSString *kDFOStatusCountKey;
 extern NSString *kDFOFromViewKey;
 
+/* Used for the Duplicate Find Options */
+extern NSString *kOptionsKey;
+
+/* Used for the Operations */
 extern NSString const *opOpenOperation;
 extern NSString const *opCopyOperation;
 extern NSString const *opMoveOperation;
@@ -85,11 +89,15 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_RIGHT_HOME @"BrowserRightHomeDir"
 #define USER_DEF_STORE_BOOKMARKS @"StoreAllowedURLs"
 #define USER_DEF_SECURITY_BOOKMARKS @"SecurityScopeBookmarks"
-#define USER_DEF_MRU_COUNT @"MostRecentLocationCount"
-#define USER_DEF_MRU       @"MostRecentLocation"
 #define USER_DEF_APP_BEHAVIOUR @"ApplicationBehaviour"
 #define USER_DEF_APP_VIEW_MODE @"ApplicationViewMode"
 #define USER_DEF_APP_DISPLAY_FUNCTION_BAR @"DisplayFunctionBar"
+
+// Current Lists
+#define USER_DEF_FAVORITES @"FavoriteList"
+#define USER_DEF_MRU_COUNT @"MostRecentLocationCount"
+#define USER_DEF_MRU       @"MostRecentLocation"
+
 
 // View Preferences
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
@@ -184,9 +192,44 @@ typedef NS_ENUM(unichar, CommandKeys) {
     KeyCodeLeft,
     KeyCodeRight
 };
-extern NSString *kOptionsKey;
+
+
+// The last 4 bits are zeroed for the menu display.
+// This allows to implement up to 16 subcommands channeling through the same validation process and selector function.
+// This is useful for menus that change name but sharing the same selector and key equivalents.
+
+typedef NS_ENUM(NSUInteger, EnumContextualMenuItemTags)  {
+    menuDivider      = 0x0000,
+    menuAddFavorite  = 0x0010,
+    menuInformation  = 0x0110,
+    menuView         = 0x0120,
+    menuViewPackage  = 0x0130,
+    menuOpen         = 0x0140,
+    menuOpenWith     = 0x0150,
+    menuRename       = 0x0160,
+    menuCopy         = 0x0170,
+    menuMove         = 0x0180,
+    menuDelete       = 0x0190,
+    menuErase        = 0x01A0,
+    menuCopyTo       = 0x0200,
+    menuCopyRight,
+    menuCopyLeft,
+    menuMoveTo       = 0x0210,
+    menuMoveRight,
+    menuMoveLeft,
+    menuClipCut      = 0x0300,
+    menuClipCopy     = 0x0310,
+    menuClipCopyName = 0x0320,
+    menuClipPaste    = 0x0330,
+    menuNewFolder    = 0x0400,
+    //menuNewFile,
+    menuEnd          = 0xffff
+    
+};
+
 
 extern BOOL toggleMenuState(NSMenuItem *menui); // Defined in AppDelegate
+void updateContextualMenu(NSMenu *menu, NSArray *itemsSelected, EnumContextualMenuItemTags itemTags[]); // Defined in AppDelegate
 
 extern NSFileManager *appFileManager;
 extern NSOperationQueue *operationsQueue;

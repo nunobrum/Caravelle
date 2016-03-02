@@ -1674,7 +1674,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 // Can select the current Node
 - (NSArray*)getSelectedItemsForContextualMenu1 {
-    static NSArray* answer = nil; // This will send the last answer when further requests are done
+    NSArray* answer = nil; // This will send the last answer when further requests are done
     // The condition below is used to detect which table view is selected. 
     if (self->_contextualFocus == _myOutlineView) {
         if ([_myOutlineView clickedRow]==-1)

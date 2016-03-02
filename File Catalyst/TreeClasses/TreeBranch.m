@@ -195,7 +195,29 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 
-
+// Menu support
+-(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag {
+    BOOL answer;
+    switch (tag) {
+            // Enables these ones
+        case menuClipPaste:
+        case menuNewFolder:
+        case menuAddFavorite:
+            answer = YES;
+            break;
+            
+        // Invalidates these ones
+        case menuView:
+            answer = NO;
+            break;
+            
+        default:
+            answer = [super respondsToMenuTag:tag];
+            break;
+    }
+    
+    return answer;
+}
 
 
 #pragma mark KVO methods

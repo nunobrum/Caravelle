@@ -45,6 +45,8 @@
 	<false/>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
+	<key>MostRecentLocation</key>
+	<array/>
 	<key>StoreAllowedURLs</key>
 	<true/>
 	<key>BrowserLeftHomeDir</key>

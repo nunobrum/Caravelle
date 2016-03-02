@@ -150,6 +150,10 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) isSelectable;
 -(BOOL) canAndNeedsFlat;
 
+// Menu support
+-(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag;
+
+
 // Copy and paste support
 -(NSDragOperation) supportedPasteOperations:(id<NSDraggingInfo>) info;
 -(NSArray*) acceptDropped:(id<NSDraggingInfo>)info operation:(NSDragOperation)operation sender:(id)fromObject;

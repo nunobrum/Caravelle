@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <development version="5000" identifier="xcode"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IconViewController">
@@ -28,74 +28,6 @@
             </connections>
         </arrayController>
         <menu title="ContextualMenu" showsStateColumn="NO" id="77" userLabel="fileContextMenu">
-            <items>
-                <menuItem title="Get Info" tag="1" keyEquivalent="" id="91">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualInformation:" target="-1" id="99"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Rename" tag="2" keyEquivalent="" id="90">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualRename:" target="-1" id="92"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Open" keyEquivalent="" id="89">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualOpen:" target="-1" id="101"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Delete" tag="9" keyEquivalent="" id="88">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualDelete:" target="-1" id="96"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="87"/>
-                <menuItem title="Copy Right" tag="6" keyEquivalent="" id="86">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualCopyTo:" target="-1" id="94"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Move Right" tag="7" keyEquivalent="" id="85">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualMoveTo:" target="-1" id="95"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="84"/>
-                <menuItem title="Cut" keyEquivalent="x" id="83">
-                    <connections>
-                        <action selector="contextualCut:" target="-1" id="100"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Copy" keyEquivalent="c" id="82">
-                    <connections>
-                        <action selector="contextualCopy:" target="-1" id="102"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Copy Name" keyEquivalent="c" id="81">
-                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                    <connections>
-                        <action selector="contextualCopyName:" target="-1" id="98"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Paste" keyEquivalent="v" id="80">
-                    <connections>
-                        <action selector="contextualPaste:" target="-1" id="97"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="79"/>
-                <menuItem title="New Folder" keyEquivalent="" id="78">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualNewFolder:" target="-1" id="93"/>
-                    </connections>
-                </menuItem>
-            </items>
             <connections>
                 <outlet property="delegate" destination="-2" id="LWK-9T-3G7"/>
             </connections>

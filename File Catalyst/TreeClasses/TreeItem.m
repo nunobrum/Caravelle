@@ -485,6 +485,33 @@
     return YES;
 }
 
+// Menu support
+// Its the class responding because at this point we only care if
+// file answers to it or not. If later the instance can't execute the command,
+// the menu will be invalidated.
+-(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag {
+    BOOL answer;
+    switch (tag) {
+        case menuInformation:
+        case menuOpen:
+        case menuRename:
+        case menuCopy:
+        case menuMove:
+        case menuCopyTo:
+        case menuMoveTo:
+        case menuDelete:
+        case menuClipCopy:
+        case menuClipCopyName:
+        case menuClipCut:
+            answer = YES;
+            break;
+            
+        default:
+            answer = NO;
+    }
+    return answer;
+}
+
 #pragma mark -
 #pragma mark URL comparison methods
 

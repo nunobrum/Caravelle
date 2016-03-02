@@ -57,6 +57,7 @@
 - (void)awakeFromNib {
     // We want it to appear "inline"
     [[self.button cell] setBezelStyle:NSInlineBezelStyle];
+    [self addTrackingRect:self.bounds owner:self userData:nil assumeInside:NO];
 }
 
 
@@ -65,7 +66,7 @@
     [super viewWillDraw];
     if (![self.button isHidden]) {
         [self.button sizeToFit];
-        
+        NSLog(@".!.");
         NSRect textFrame = self.textField.frame;
         NSRect buttonFrame = self.button.frame;
         buttonFrame.origin.x = NSWidth(self.frame) - NSWidth(buttonFrame);
@@ -74,5 +75,14 @@
         self.textField.frame = textFrame;
     }
 }
+
+-(void) mouseEntered:(NSEvent *)theEvent {
+    [self.button setHidden:NO];
+}
+
+-(void) mouseExited:(NSEvent *)theEvent {
+    [self.button setHidden:YES];
+}
+
 
 @end

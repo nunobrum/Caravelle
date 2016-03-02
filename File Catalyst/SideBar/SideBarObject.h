@@ -13,5 +13,6 @@
 @property NSString *title;
 @property NSImage *image;
 @property NSObject *objValue;
+@property NSMutableArray *children;
 
 @end

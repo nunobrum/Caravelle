@@ -104,6 +104,162 @@ BOOL toggleMenuState(NSMenuItem *menui) {
     return st == NSOnState;
 }
 
+void menuForTag(EnumContextualMenuItemTags tag, NSMenuItem *menuItem) {
+    unichar key = 0;
+    NSUInteger mask = 0;
+    switch (tag) {
+        case menuAddFavorite:
+            menuItem.title = @"Add Favorite";
+            [menuItem setAction:@selector(contextualAddFavorite:)];
+            break;
+            
+        case menuInformation:
+            menuItem.title = @"Get Info";
+            key = NSF1FunctionKey;
+            [menuItem setAction:@selector(contextualInformation:)];
+            break;
+            
+        case menuRename:
+            menuItem.title = @"Rename";
+            key = NSF2FunctionKey;
+            [menuItem setAction: @selector(contextualRename:)];
+            break;
+            
+        case menuOpen:
+            menuItem.title = @"Open";
+            key = NSF4FunctionKey;
+            [menuItem setAction: @selector(contextualOpen:)];
+            break;
+            
+        case menuView:
+            menuItem.title = @"View";
+            key = NSF3FunctionKey;
+            [menuItem setAction: @selector(contextualRename:)];
+            break;
+            
+        case menuOpenWith:
+            menuItem.title = @"Open With...";
+            //key = NSLeftArrowFunctionKey;
+            break;
+            
+        case menuDelete:
+            menuItem.title = @"Delete";
+            key = NSF8FunctionKey;
+            [menuItem setAction: @selector(contextualDelete:)];
+            break;
+            
+        case menuCopyTo:
+            menuItem.title = @"Copy to...";
+            key = NSF5FunctionKey;
+            [menuItem setAction: @selector(contextualCopyTo:)];
+            break;
+            
+        case menuCopyLeft:
+            menuItem.title = @"Copy to Left";
+            key = NSF6FunctionKey;
+            [menuItem setAction: @selector(contextualCopyTo:)];
+            break;
+            
+        case menuCopyRight:
+            menuItem.title = @"Copy Right";
+            key = NSF6FunctionKey;
+            [menuItem setAction: @selector(contextualCopyTo:)];
+            break;
+            
+        case menuMoveTo:
+            menuItem.title = @"Move to...";
+            key = NSF7FunctionKey;
+            [menuItem setAction: @selector(contextualMoveTo:)];
+            break;
+            
+        case menuMoveLeft:
+            menuItem.title = @"Move to Left";
+            key = NSF7FunctionKey;
+            [menuItem setAction: @selector(contextualMoveTo:)];
+            break;
+
+        case menuMoveRight:
+            menuItem.title = @"Move to Right";
+            key = NSF7FunctionKey;
+            [menuItem setAction: @selector(contextualMoveTo:)];
+            break;
+            
+        case menuClipCut:
+            menuItem.title = @"Cut";
+            key = 'x';
+            [menuItem setAction: @selector(contextualCut:)];
+            break;
+            
+        case menuClipCopy:
+            menuItem.title = @"Copy";
+            key = 'c';
+            mask = NSCommandKeyMask;
+            [menuItem setAction: @selector(contextualCopy:)];
+            break;
+            
+        case menuClipCopyName:
+            menuItem.title = @"Copy Name";
+            key = 'c';
+            mask = NSCommandKeyMask + NSAlternateKeyMask;
+            [menuItem setAction: @selector(contextualCopyName:)];
+            break;
+            
+        case menuClipPaste:
+            menuItem.title = @"Paste";
+            key = 'v';
+            mask = NSCommandKeyMask;
+            [menuItem setAction: @selector(contextualPaste:)];
+            break;
+            
+        case menuNewFolder:
+            menuItem.title = @"New Folder";
+            key = NSF7FunctionKey;
+            [menuItem setAction: @selector(contextualNewFolder:)];
+            break;
+            
+        case menuDivider:
+        default:
+            menuItem.title = @"";
+            break;
+    }
+    if (key != 0) {
+        [menuItem setKeyEquivalent:[NSString stringWithCharacters:&key length:1]];
+        [menuItem setKeyEquivalentModifierMask:mask];
+        
+    }
+}
+
+void updateContextualMenu(NSMenu *menu, NSArray *itemsSelected, EnumContextualMenuItemTags itemTags[]) {
+    NSInteger index = 0;
+    BOOL addDivider = NO;
+    while (itemTags[index] != menuEnd) {
+        EnumContextualMenuItemTags tag = itemTags[index++];
+        if (tag == menuDivider) {
+            addDivider = YES; // This avoids adding two consecutive dividers if menus are eliminated
+        }
+        else {
+            BOOL isIncluded = NO;
+            for (TreeItem *item in itemsSelected) {
+                if ([item respondsToMenuTag:tag & 0xFFFFFFF0]) {
+                    isIncluded = YES;
+                    break;
+                }
+            }
+            if (isIncluded) {
+                if (addDivider) {
+                    [menu addItem:[NSMenuItem separatorItem]];
+                    addDivider = NO;
+                }
+                NSMenuItem *menuItem = [[NSMenuItem alloc] init];
+                menuForTag(tag, menuItem);
+                [menu addItem:menuItem];
+            }
+        }
+    }
+    if (addDivider) {
+        [menu addItem:[NSMenuItem separatorItem]];
+    }
+}
 
 NSUInteger segmentForApplicationMode(EnumApplicationMode mode) {
     NSUInteger segment;
@@ -1282,6 +1438,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
 }
 
+-(IBAction)contextualAction:(id)sender {
+    NSLog(@"menu Action");
+}
 
 - (IBAction)toolbarInformation:(id)sender {
     NSArray *selectedFiles = [[self selectedView] getSelectedItems];
@@ -1364,6 +1523,28 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 - (IBAction)contextualGotoFolder:(id)sender {
     [self executeOpenFolderInView:sender withTitle:@"Select a Folder"];
+}
+
+- (IBAction) contextualAddFavorite:(id)sender {
+    NSArray *itemsSelected = [[self contextualFocus] getSelectedItemsForContextualMenu1];
+    
+    if ([itemsSelected count]==1) {
+        NSArray *currentFavorites = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_FAVORITES];
+        NSString *pathToAdd = [(TreeItem*)[itemsSelected firstObject] path];
+        
+        NSArray *newArray;
+        if (currentFavorites==nil) {
+            newArray = [NSArray arrayWithObject:pathToAdd];
+            [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:USER_DEF_FAVORITES];
+        }
+        else {
+            // Only if is not inserted yet
+            if (![currentFavorites containsObject:pathToAdd]) {
+                NSArray *newArray = [currentFavorites arrayByAddingObject:pathToAdd];
+                [[NSUserDefaults standardUserDefaults] setObject:newArray forKey:USER_DEF_FAVORITES];
+            }
+        }
+    }
 }
 
 
@@ -1714,7 +1895,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     // Actions that require a contextual selection including the current Node
     if (theAction == @selector(contextualInformation:) ||
         theAction == @selector(contextualNewFolder:) ||
-        theAction == @selector(contextualPaste:)
+        theAction == @selector(contextualPaste:) ||
+        theAction == @selector(contextualAddFavorite:)
         ) {
         itemsSelected = [(BrowserController*)[self contextualFocus] getSelectedItemsForContextualMenu1];
     }
@@ -1745,6 +1927,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             theAction == @selector(contextualNewFolder:)) {
             if ([targetFolder hasTags:tagTreeItemReadOnly]) {
                 allow = NO;
+            }
+            else if (theAction == @selector(contextualAddFavorite:)) {
+                allow = YES;
             }
             // No other conditions. This is supposed to be a folder, no need to test this condition
         }
@@ -1794,6 +1979,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                 theAction == @selector(toolbarOpen:)
                 ) {
 
+            }
+            // Action that requires a Folder
+            else if (theAction == @selector(contextualAddFavorite:)) {
+                allow = [item isFolder];
             }
             // Actions that can only be made in one file and req. R/W
             else if (theAction == @selector(contextualRename:) ||

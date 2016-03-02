@@ -11,6 +11,44 @@
 #import "CustomTableHeaderView.h"
 #import "DummyBranch.h"
 
+EnumContextualMenuItemTags viewMenuFiles[] = {
+    menuInformation,
+    menuView,
+    menuOpen,
+    menuOpenWith,
+    menuRename,
+    menuDelete,
+    menuDivider,
+    menuClipCut,
+    menuClipCopy,
+    menuClipPaste,
+    menuDivider,
+    menuEnd
+};
+
+EnumContextualMenuItemTags viewMenuNoFiles[] = {
+    menuAddFavorite,
+    menuNewFolder,
+    menuInformation,
+    menuDivider,
+    menuClipPaste,
+    menuDivider,
+    menuEnd,
+};
+
+EnumContextualMenuItemTags viewMenuLeft[] = {
+    menuCopyRight,
+    menuMoveRight,
+    menuDivider,
+    menuEnd
+};
+
+EnumContextualMenuItemTags viewMenuRight[] = {
+    menuCopyLeft,
+    menuMoveLeft,
+    menuDivider,
+    menuEnd
+};
 
 @interface NodeViewController () {
     TreeBranch *_currentNode;
@@ -145,15 +183,24 @@
 //// TODO: 1.4 Make a Full programatic menu
 -(void) menuNeedsUpdate:(NSMenu*) menu {
     //NSLog(@"NodeViewController.menuNeedsUpdate");
-    if (self.twinName==nil) {
-        [[menu itemAtIndex:5] setTitle: @"Copy to..."];
-        [[menu itemAtIndex:6] setTitle: @"Move to..."];
+    // tries a contextual excluding the click in blank space
+    [menu removeAllItems];
+    NSArray *itemsSelected = [self getSelectedItemsForContextualMenu2];
+    if (itemsSelected==nil) {
+        itemsSelected = [self getSelectedItemsForContextualMenu1];
+        updateContextualMenu(menu, itemsSelected, viewMenuNoFiles);
     }
     else {
-        [[menu itemAtIndex:5] setTitle:[NSString stringWithFormat:@"Copy %@",[self twinName]]];
-        [[menu itemAtIndex:6] setTitle:[NSString stringWithFormat:@"Move %@",[self twinName]]];
+        updateContextualMenu(menu, itemsSelected, viewMenuFiles);
+        if (self.twinName!=nil) {
+            if ([[self viewName] isEqualToString:@"Left"]) {
+                updateContextualMenu(menu, itemsSelected, viewMenuLeft);
+            }
+            else {
+                updateContextualMenu(menu, itemsSelected, viewMenuRight);
+            }
+        }
     }
-
 }
 
 -(void) reloadItem:(id)object {

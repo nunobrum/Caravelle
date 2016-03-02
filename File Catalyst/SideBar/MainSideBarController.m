@@ -24,12 +24,12 @@
 
 - (void)awakeFromNib {
     // The array determines our order
-    _topLevelItems = [NSArray arrayWithObjects:@"Favorites", @"Recently Used", @"Authorizations", @"Devices", nil];
+    _topLevelItems = [[NSMutableArray alloc] init ];
+    
     
     // The data is stored ina  dictionary. The objects are the nib names to load.
-    _childrenDictionary = [NSMutableDictionary new];
     [self populateAuthorizations];
-    //[self populateFavorites];
+    [self populateFavorites];
     [self populateRecentlyUsed];
     
     // The basic recipe for a sidebar. Note that the selectionHighlightStyle is set to NSTableViewSelectionHighlightStyleSourceList in the nib
@@ -51,19 +51,32 @@
                                             forKeyPath:USER_DEF_SECURITY_BOOKMARKS
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_FAVORITES
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
 }
 
-
-- (void)_setContentViewToName:(NSString *)name {
-    NSLog(@"Change view to %@", name);
-}
 
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
     if ([_sidebarOutlineView selectedRow] != -1) {
-        NSString *item = [_sidebarOutlineView itemAtRow:[_sidebarOutlineView selectedRow]];
+        SideBarObject *item = [_sidebarOutlineView itemAtRow:[_sidebarOutlineView selectedRow]];
         if ([_sidebarOutlineView parentForItem:item] != nil) {
             // Only change things for non-root items (root items can be selected, but are ignored)
-            [self _setContentViewToName:item];
+            if ([[(SideBarObject*)item objValue] isKindOfClass:[TreeItem class]]) {
+                TreeItem *tItem = (TreeItem*)[(SideBarObject*)item objValue];
+                
+                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      [NSArray arrayWithObject:tItem], kDFOFilesKey,
+                                      opOpenOperation, kDFOOperationKey,
+                                      self, kDFOFromViewKey,
+                                      nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+            }
+        }
+        else {
+            NSLog(@"Change view to %@", item);
+            
         }
     }
 }
@@ -71,9 +84,9 @@
 - (NSArray *)_childrenForItem:(id)item {
     NSArray *children;
     if (item == nil) {
-        children = [_childrenDictionary allKeys];
+        children = _topLevelItems;
     } else {
-        children = [_childrenDictionary objectForKey:item];
+        children = [item children];
     }
     return children;
 }
@@ -92,7 +105,7 @@
 
 - (NSInteger) outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if (item==nil)
-        return [_childrenDictionary count];
+        return [_topLevelItems count];
     return [[self _childrenForItem:item] count];
 }
 
@@ -113,76 +126,58 @@
 
 - (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
     // For the groups, we just return a regular text view.
-    if ([_topLevelItems containsObject:item]) {
+    SideBarObject *itObj = item;
+    if ([_topLevelItems containsObject:itObj]) {
         NSTextField *result = [outlineView makeViewWithIdentifier:@"HeaderTextField" owner:self];
         // Uppercase the string value, but don't set anything else. NSOutlineView automatically applies attributes as necessary
-        NSString *value = [item uppercaseString];
+        NSString *value = [itObj.title uppercaseString];
         [result setStringValue:value];
         return result;
     } else  {
         // The cell is setup in IB. The textField and imageView outlets are properly setup.
         // Special attributes are automatically applied by NSTableView/NSOutlineView for the source list
         SidebarTableCellView *result = [outlineView makeViewWithIdentifier:@"MainCell" owner:self];
-        if ([item isKindOfClass:[SideBarObject class]] ) {
-            SideBarObject *it = item;
-            result.textField.stringValue = it.title;
-            result.imageView.image = it.image;
-            [result.button setHidden:YES];
-            return result;
+
+        result.textField.stringValue = itObj.title;
+        result.imageView.image = itObj.image;
+        result.objectValue = itObj.objValue;
+        if ([itObj.objValue isKindOfClass: [TreeItem class]]) {
+            [result setToolTip: [(TreeItem*)itObj.objValue path]];
+            result.button.target = self;
+            result.button.action = @selector(buttonClicked:);
+            [result.button setImage:[NSImage imageNamed:@"StopButton"]];
+            //[[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
+            [result.button setBezelStyle:NSInlineBezelStyle];
+            [result.button sizeToFit];
         }
-        else {
-            // !!!!! The test code below should disappear
-            result.textField.stringValue = item;
-            // Setup the icon based on our section
-            id parent = [outlineView parentForItem:item];
-            NSInteger index = [_topLevelItems indexOfObject:parent];
-            NSInteger iconOffset = index % 4;
-            switch (iconOffset) {
-                case 0: {
-                    result.imageView.image = [NSImage imageNamed:NSImageNameIconViewTemplate];
-                    break;
-                }
-                case 1: {
-                    result.imageView.image = [NSImage imageNamed:NSImageNameHomeTemplate];
-                    break;
-                }
-                case 2: {
-                    result.imageView.image = [NSImage imageNamed:NSImageNameQuickLookTemplate];
-                    break;
-                }
-                case 3: {
-                    result.imageView.image = [NSImage imageNamed:NSImageNameSlideshowTemplate];
-                    break;
-                }
-            }
-            BOOL hideUnreadIndicator = YES;
-            // Setup the unread indicator to show in some cases. Layout is done in SidebarTableCellView's viewWillDraw
-            if (index == 0) {
-                // First row in the index
-                hideUnreadIndicator = NO;
-                [result.button setTitle:@"42"];
-                [result.button sizeToFit];
-                // Make it appear as a normal label and not a button
-                [[result.button cell] setHighlightsBy:0];
-            } else if (index == 2) {
-                // Example for a button
-                hideUnreadIndicator = NO;
-                result.button.target = self;
-                result.button.action = @selector(buttonClicked:);
-                [result.button setImage:[NSImage imageNamed:NSImageNameAddTemplate]];
-                // Make it appear as a button
-                [[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
-            }
-            [result.button setHidden:hideUnreadIndicator];
-            return result;
-        }
+        [result.button setHidden:YES];
+        return result;
+        
     }
 }
 
 - (void)buttonClicked:(id)sender {
     // Example target action for the button
     NSInteger row = [_sidebarOutlineView rowForView:sender];
-    NSLog(@"row: %ld", row);
+    if (row != -1) {
+        SideBarObject *item = [_sidebarOutlineView itemAtRow:row];
+        SideBarObject * parent = [_sidebarOutlineView parentForItem:item];
+        if (parent != nil) {
+            // Only change things for non-root items (root items can be selected, but are ignored)
+            if ([parent.objValue isEqualTo:SIDE_GROUP_FAVORITES]) {
+                NSLog(@"Deleting FAvorites");
+            }
+            else if ([parent.objValue isEqualTo:SIDE_GROUP_RECENT_USED]) {
+                NSLog(@"Deleting Recently Used");
+            }
+            else if ([parent.objValue isEqualTo:SIDE_GROUP_AUTHORIZATIONS]) {
+                NSLog(@"Deleting Authorizations");
+            }
+        }
+        else {
+            NSLog(@"Change view to %@", item);
+        }
+    }
 }
 
 - (IBAction)sidebarMenuDidChange:(id)sender {
@@ -224,8 +219,13 @@
             [authorizedItems addObject:item];
         }
     }
-    if ([authorizedItems count] > 0)
-        [_childrenDictionary setObject:authorizedItems forKey:@"Authorizations"];
+    if ([authorizedItems count] > 0) {
+        SideBarObject *authorizations = [[SideBarObject alloc] init];
+        authorizations.title = @"Authorizations";
+        authorizations.children = authorizedItems;
+        authorizations.objValue = SIDE_GROUP_AUTHORIZATIONS;
+        [_topLevelItems addObject:authorizations];
+    }
 }
 
 -(void) populateRecentlyUsed {
@@ -247,25 +247,60 @@
             }
         }
     }
-    if ([MRUItems count] > 0)
-        [_childrenDictionary setObject:MRUItems forKey:@"Recently Used"];
+    if ([MRUItems count] > 0) {
+        SideBarObject *recentlyUsed = [[SideBarObject alloc] init];
+        recentlyUsed.title = @"Recently Used";
+        recentlyUsed.objValue = SIDE_GROUP_RECENT_USED;
+        recentlyUsed.children = MRUItems;
+        [_topLevelItems addObject:recentlyUsed];
+    }
+
 }
 
 -(void) populateFavorites {
-    [_childrenDictionary setObject:[NSArray arrayWithObjects:@"ContentView1", @"ContentView2", @"ContentView3", nil] forKey:@"Favorites"];
+    NSArray *favPaths = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_FAVORITES];
     
+    if (favPaths!=nil) {
+        NSMutableArray *favorites = [NSMutableArray arrayWithCapacity:[favPaths count]];
+        
+        for (NSString *path in favPaths) {
+            SideBarObject *item = [[SideBarObject alloc] init];
+            NSURL *url = [NSURL fileURLWithPath:path];
+            if (url) {
+                TreeItem *tItem = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
+                if (tItem) {
+                    item.title = [tItem name];
+                    item.image = [tItem image];
+                    item.objValue = tItem;
+                    
+                    [favorites addObject:item];
+                }
+            }
+        }
+        if ([favorites count] > 0) {
+            SideBarObject *favItem = [[SideBarObject alloc] init];
+            favItem.title = @"Favorites";
+            favItem.objValue = SIDE_GROUP_FAVORITES;
+            favItem.children = favorites;
+            [_topLevelItems addObject:favItem];
+        }
+    }
 }
 
--(void) populateDevices {
-    [_childrenDictionary setObject:[NSArray arrayWithObjects:@"ContentView1", @"ContentView2", @"ContentView3", nil] forKey:@"Devices"];
-    
-}
+//-(void) populateDevices {
+//    [_childrenDictionary setObject:[NSArray arrayWithObjects:@"ContentView1", @"ContentView2", @"ContentView3", nil] forKey:@"Devices"];
+//    
+//}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:USER_DEF_SECURITY_BOOKMARKS]) {
         //NSLog(@"BrowserController.observeValueForKeyPath: %@", keyPath);
         [self populateAuthorizations];
     }
+    else if ([keyPath isEqualToString:USER_DEF_FAVORITES]) {
+        [self populateFavorites];
+    }
+    [_sidebarOutlineView reloadData];
 }
 
 

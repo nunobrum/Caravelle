@@ -9,10 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <Cocoa/Cocoa.h>
 
+
+#define SIDE_GROUP_FAVORITES      @"FAVS"
+#define SIDE_GROUP_RECENT_USED    @"MRUS"
+#define SIDE_GROUP_AUTHORIZATIONS @"AUTH"
+
 @interface MainSideBarController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate> {
 @private
-    NSArray *_topLevelItems;
-    NSMutableDictionary *_childrenDictionary;
+    NSMutableArray *_topLevelItems;
     IBOutlet NSOutlineView *_sidebarOutlineView;
     
 }

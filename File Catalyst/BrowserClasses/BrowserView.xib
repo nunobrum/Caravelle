@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
             <connections>
-                <outlet property="contextualMenu" destination="q8e-qr-VOA" id="5Gn-F0-kWw"/>
                 <outlet property="mruBackForwardControl" destination="Wu7-Ak-lRK" id="IXM-1P-Zra"/>
                 <outlet property="myColumnsPopDpwnButton" destination="pYl-r6-ME0" id="p7V-fF-GVm"/>
                 <outlet property="myFilterText" destination="Lo2-4t-2Jl" id="ijU-KQ-eWf"/>
@@ -231,7 +230,7 @@
                                                     </binding>
                                                     <outlet property="dataSource" destination="-2" id="mT6-xG-dgd"/>
                                                     <outlet property="delegate" destination="-2" id="Vbl-au-7cv"/>
-                                                    <outlet property="menu" destination="q8e-qr-VOA" id="w63-7W-4oS"/>
+                                                    <outlet property="menu" destination="q8e-qr-VOA" id="ivm-vL-PVP"/>
                                                 </connections>
                                             </outlineView>
                                         </subviews>
@@ -356,78 +355,10 @@
             </constraints>
         </customView>
         <menu title="ContextualMenu" showsStateColumn="NO" id="q8e-qr-VOA" userLabel="fileContextMenu">
-            <items>
-                <menuItem title="Get Info" tag="1" keyEquivalent="" id="3VP-FH-tZh">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualInformation:" target="-1" id="oSR-FV-CRi"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Rename" tag="2" keyEquivalent="" id="G3B-EB-1gV">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualRename:" target="-1" id="e6x-L7-73M"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Open" keyEquivalent="" id="WFz-fS-fZg">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualOpen:" target="-1" id="IAK-9r-0qf"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Delete" tag="9" keyEquivalent="" id="AiJ-65-eUG">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualDelete:" target="-1" id="izf-rs-02N"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="MXg-ci-KvD"/>
-                <menuItem title="Copy Right" tag="6" keyEquivalent="" id="wht-kT-dyW">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualCopyTo:" target="-1" id="SCg-Pf-JgJ"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Move Right" tag="7" keyEquivalent="" id="2y4-f6-GSF">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualMoveTo:" target="-1" id="lo7-JR-iTY"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="T3V-xG-RoY"/>
-                <menuItem title="Cut" keyEquivalent="x" id="say-To-m67">
-                    <connections>
-                        <action selector="contextualCut:" target="-1" id="a17-lI-alr"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Copy" keyEquivalent="c" id="Fn1-51-4VD">
-                    <connections>
-                        <action selector="contextualCopy:" target="-1" id="wPL-zM-oXt"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Copy Name" keyEquivalent="c" id="NNa-AH-9Gc">
-                    <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
-                    <connections>
-                        <action selector="contextualCopyName:" target="-1" id="aWx-JL-CIx"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Paste" keyEquivalent="v" id="wri-v2-VgO">
-                    <connections>
-                        <action selector="contextualPaste:" target="-1" id="zQK-QA-jGk"/>
-                    </connections>
-                </menuItem>
-                <menuItem isSeparatorItem="YES" id="gvN-b3-nLQ"/>
-                <menuItem title="New Folder" keyEquivalent="" id="xKl-Mj-ZxK">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="contextualNewFolder:" target="-1" id="5Cr-mg-hqS"/>
-                    </connections>
-                </menuItem>
-            </items>
             <connections>
                 <outlet property="delegate" destination="-2" id="lzs-1D-yLY"/>
             </connections>
-            <point key="canvasLocation" x="738.5" y="354.5"/>
+            <point key="canvasLocation" x="788" y="198.5"/>
         </menu>
         <userDefaultsController representsSharedInstance="YES" id="BVQ-ny-CsH"/>
     </objects>

@@ -12,7 +12,7 @@
 #import "SizeTableCellView.h"
 #import "BrowserTableView.h"
 
-@interface TableViewController : NodeViewController <NodeViewProtocol, NSTableViewDataSource, NSTableViewDelegate>
+@interface TableViewController : NodeViewController <NodeViewProtocol, NSTableViewDataSource, NSTableViewDelegate, NSMenuDelegate>
 
 @property (strong) IBOutlet BrowserTableView *myTableView;
 

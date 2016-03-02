@@ -56,4 +56,7 @@
 
 @property(retain) IBOutlet NSButton *button;
 
+- (void)mouseEntered:(NSEvent *)theEvent;
+- (void)mouseExited:(NSEvent *)theEvent;
+
 @end

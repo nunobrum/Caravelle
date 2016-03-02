@@ -53,6 +53,8 @@
 
 
 /* Toolbar Actions */
+- (IBAction)contextualAction:(id)sender;
+
 - (IBAction)toolbarInformation:(id)sender;
 - (IBAction)contextualInformation:(id)sender;
 
@@ -77,6 +79,8 @@
 
 - (IBAction)toolbarGotoFolder:(id)sender;
 
+- (IBAction) contextualAddFavorite:(id)sender;
+
 - (IBAction)toolbarSearch:(id)sender;
 
 - (IBAction)toolbarHome:(id)sender;
@@ -98,7 +102,11 @@
 - (IBAction)delete:(id)sender;
 
 - (IBAction)copyName:(id)sender ;
+
+- (IBAction)contextualCut:(id)sender;
+- (IBAction)contextualCopy:(id)sender;
 - (IBAction)contextualCopyName:(id)sender ;
+- (IBAction)contextualPaste:(id)sender;
 
 - (IBAction)viewModeChanged:(id)sender;
 - (IBAction)viewTypeChanged:(id)sender;

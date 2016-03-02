@@ -513,7 +513,7 @@
 
 // Can select the current Node
 - (NSArray*)getSelectedItemsForContextualMenu1 {
-    static NSArray* answer = nil; // This will send the last answer when further requests are done
+    NSArray* answer = nil; // This will send the last answer when further requests are done
 
     // if the click was outside the items displayed
     if ([_myTableView clickedRow] == -1 ) {
@@ -534,7 +534,7 @@
 
 // Doesn't select the current Node
 -(NSArray*) getSelectedItemsForContextualMenu2 {
-    static NSArray* answer = nil; // This will send the last answer when further requests are done
+    NSArray* answer = nil; // This will send the last answer when further requests are done
     
     // if the click was in one of the items displayed
     if ([_myTableView clickedRow] != -1 ) {
