@@ -66,7 +66,6 @@
     [super viewWillDraw];
     if (![self.button isHidden]) {
         [self.button sizeToFit];
-        NSLog(@".!.");
         NSRect textFrame = self.textField.frame;
         NSRect buttonFrame = self.button.frame;
         buttonFrame.origin.x = NSWidth(self.frame) - NSWidth(buttonFrame);

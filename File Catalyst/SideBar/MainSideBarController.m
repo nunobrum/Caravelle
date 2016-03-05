@@ -165,13 +165,16 @@
         if (parent != nil) {
             // Only change things for non-root items (root items can be selected, but are ignored)
             if ([parent.objValue isEqualTo:SIDE_GROUP_FAVORITES]) {
-                NSLog(@"Deleting FAvorites");
+                //NSLog(@"MainSideBarController.buttonClicked: Deleteing Favorite");
+                [self deleteFavorite:item];
             }
             else if ([parent.objValue isEqualTo:SIDE_GROUP_RECENT_USED]) {
-                NSLog(@"Deleting Recently Used");
+                //NSLog(@"MainSideBarController.buttonClicked: Deleting Recently Used");
+                [self deleteRecentlyUsed:item];
             }
             else if ([parent.objValue isEqualTo:SIDE_GROUP_AUTHORIZATIONS]) {
-                NSLog(@"Deleting Authorizations");
+                //NSLog(@"MainSideBarController.buttonClicked:  Deleting Authorizations");
+                [self deleteAuthorization:item];
             }
         }
         else {
@@ -228,6 +231,23 @@
     }
 }
 
+-(void) deleteAuthorization:(SideBarObject*) item {
+    NSString *path = [(TreeItem*)item.objValue path];
+    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
+    NSArray *updatedBookmarks = [secBookmarks filteredArrayUsingPredicate:
+                                  [NSPredicate predicateWithBlock: ^BOOL(id  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        BOOL dataStalled;
+        NSError *error;
+        NSURL *authorizedURL = [NSURL URLByResolvingBookmarkData:evaluatedObject
+                                                         options:NSURLBookmarkResolutionWithSecurityScope
+                                                   relativeToURL:nil
+                                             bookmarkDataIsStale:&dataStalled
+                                                           error:&error];
+        return [authorizedURL.path isEqualTo:path]==NO;
+    }]];
+    [[NSUserDefaults standardUserDefaults] setObject:updatedBookmarks forKey:USER_DEF_SECURITY_BOOKMARKS];
+}
+
 -(void) populateRecentlyUsed {
     RecentlyUsedArray *registeredMRUs = recentlyUsedLocations();
     NSMutableArray *MRUItems = [NSMutableArray arrayWithCapacity:[registeredMRUs.array count]];
@@ -255,6 +275,10 @@
         [_topLevelItems addObject:recentlyUsed];
     }
 
+}
+
+-(void) deleteRecentlyUsed:(SideBarObject*)item {
+    // TODO:!!!!!!!!!!
 }
 
 -(void) populateFavorites {
@@ -285,6 +309,14 @@
             [_topLevelItems addObject:favItem];
         }
     }
+}
+
+-(void) deleteFavorite:(SideBarObject*) item {
+    NSString *path = [(TreeItem*)item.objValue path];
+    NSArray *favPaths = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_FAVORITES];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF != %@", path];
+    NSArray *newPaths = [favPaths filteredArrayUsingPredicate: predicate];
+    [[NSUserDefaults standardUserDefaults] setObject:newPaths forKey:USER_DEF_FAVORITES];
 }
 
 //-(void) populateDevices {

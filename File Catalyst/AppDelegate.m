@@ -521,7 +521,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 }
 
 -(void) makeView1:(NSString*)view1 view2:(NSString*)view2 {
-    NSUInteger panelCount = [[self.ContentSplitView subviews] count];
+    NSArray *subViews = [self.ContentSplitView subviews];
+    NSUInteger panelCount = [subViews count];
+    
+    // Discounts the first panel if it is a Side Bar
+    if ([[(NSView*)subViews[0] identifier] isEqualToString:@"SideBarViewID"])
+        panelCount--;
     
     if (myLeftView == nil) {
         myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -619,9 +624,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     // Get from user defaults the presence of the panel
     if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_PANEL_VISIBLE]==YES) {
         sideBarController = [[MainSideBarController alloc] initWithNibName:@"MainSideBarView" bundle:nil ];
-        NSRect SideRect = sideBarController.view.bounds;
-        [self.LeftSideBarWidth setConstant:SideRect.size.width];
-        [self.MainSideBar addSubview:sideBarController.view];
+        [self.ContentSplitView addSubview:sideBarController.view];
     }
     
     //[self.myWindowView needsDisplay];
@@ -1574,7 +1577,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [self.FunctionBar setHidden:YES];
     }
     [[self SplitViewBottomLineConstraint] setConstant:constant];
-    [[self LeftSideBarBottomLineConstraint] setConstant:constant];
     [[self myWindowView] setNeedsDisplay:YES];
     // Reposition the value in the user defaults
     [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];

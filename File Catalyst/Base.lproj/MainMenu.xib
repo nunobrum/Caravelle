@@ -339,9 +339,6 @@ CA
                 <outlet property="BottomLine" destination="NCw-gI-xDW" id="5sc-IZ-1nJ"/>
                 <outlet property="ContentSplitView" destination="6MC-cR-BWB" id="70s-Di-Uy4"/>
                 <outlet property="FunctionBar" destination="cfC-d6-5mb" id="9cl-X9-nVg"/>
-                <outlet property="LeftSideBarBottomLineConstraint" destination="bjR-Zd-x6q" id="kmq-D5-Tzt"/>
-                <outlet property="LeftSideBarWidth" destination="AxM-ZQ-7Z9" id="B0J-hS-6Xq"/>
-                <outlet property="MainSideBar" destination="uz3-1n-qCh" id="Sch-XC-P9C"/>
                 <outlet property="SplitViewBottomLineConstraint" destination="n6t-Yn-8Vf" id="P5c-j0-3eV"/>
                 <outlet property="StatusBar" destination="gJV-jD-cFn" id="f7n-Rf-6Hj"/>
                 <outlet property="buttonCopyTo" destination="71S-Xk-3oe" id="A6v-Zj-6F8"/>
@@ -367,14 +364,8 @@ CA
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="uz3-1n-qCh" userLabel="SideBar">
-                        <rect key="frame" x="1" y="26" width="185" height="596"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="185" id="AxM-ZQ-7Z9"/>
-                        </constraints>
-                    </customView>
-                    <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB">
-                        <rect key="frame" x="187" y="26" width="668" height="596"/>
+                    <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB" userLabel="MainSplitView">
+                        <rect key="frame" x="1" y="26" width="854" height="596"/>
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
                         <rect key="frame" x="2" y="3" width="187" height="17"/>
@@ -819,22 +810,18 @@ CA
                     </textField>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="uz3-1n-qCh" secondAttribute="trailing" constant="1" id="5Sc-Xw-9Os"/>
                     <constraint firstAttribute="trailing" secondItem="bPg-b7-DdD" secondAttribute="trailing" constant="11" id="CAu-Gc-Iyx"/>
                     <constraint firstItem="l3N-JB-c9m" firstAttribute="top" secondItem="2038" secondAttribute="top" id="CpY-9F-7KN"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="centerY" secondItem="L75-zs-bdV" secondAttribute="centerY" id="DIQ-Lf-k7B"/>
                     <constraint firstAttribute="bottom" secondItem="NCw-gI-xDW" secondAttribute="bottom" constant="24" id="Fk9-7w-6Hw"/>
-                    <constraint firstItem="uz3-1n-qCh" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="bottom" constant="1" id="Ft9-nT-ot5"/>
                     <constraint firstItem="6MC-cR-BWB" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="bottom" constant="1" id="ILg-vK-FLw"/>
                     <constraint firstItem="bPg-b7-DdD" firstAttribute="leading" secondItem="8BL-5Q-1hY" secondAttribute="trailing" constant="8" id="Klt-AV-6fX"/>
                     <constraint firstItem="Clz-g3-ghw" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="L75-zs-bdV" secondAttribute="trailing" priority="200" constant="32" id="M2g-rq-a4a"/>
                     <constraint firstAttribute="bottom" secondItem="8BL-5Q-1hY" secondAttribute="bottom" constant="3" id="Rhj-s9-wzI"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="centerY" secondItem="Clz-g3-ghw" secondAttribute="centerY" id="Rre-YA-sDz"/>
-                    <constraint firstItem="uz3-1n-qCh" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="TAD-3X-Vua"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="leading" secondItem="Clz-g3-ghw" secondAttribute="trailing" constant="11" id="XIo-vN-UtX"/>
                     <constraint firstItem="NCw-gI-xDW" firstAttribute="leading" secondItem="2038" secondAttribute="leading" id="YO4-PZ-tgL"/>
                     <constraint firstItem="Clz-g3-ghw" firstAttribute="baseline" secondItem="L75-zs-bdV" secondAttribute="baseline" id="aFc-H8-Sf5"/>
-                    <constraint firstItem="NCw-gI-xDW" firstAttribute="top" secondItem="uz3-1n-qCh" secondAttribute="bottom" constant="1" id="bjR-Zd-x6q"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="L75-zs-bdV" secondAttribute="trailing" priority="500" constant="50" id="h4J-f7-Nbr"/>
                     <constraint firstAttribute="bottom" secondItem="cfC-d6-5mb" secondAttribute="bottom" constant="25" id="hLg-lP-bTf"/>
                     <constraint firstItem="8BL-5Q-1hY" firstAttribute="centerY" secondItem="bPg-b7-DdD" secondAttribute="centerY" id="jvo-Kf-H1R"/>
@@ -846,6 +833,7 @@ CA
                     <constraint firstAttribute="trailing" secondItem="NCw-gI-xDW" secondAttribute="trailing" id="qpt-dk-ct2"/>
                     <constraint firstAttribute="trailing" secondItem="6MC-cR-BWB" secondAttribute="trailing" constant="1" id="toe-ht-7iN"/>
                     <constraint firstItem="L75-zs-bdV" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="4" id="uJf-ro-GFu"/>
+                    <constraint firstItem="6MC-cR-BWB" firstAttribute="leading" secondItem="2038" secondAttribute="leading" constant="1" id="ufR-5e-dGp"/>
                 </constraints>
             </view>
             <point key="canvasLocation" x="376" y="637"/>

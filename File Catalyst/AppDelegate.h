@@ -35,10 +35,7 @@
 @property (weak) IBOutlet NSBox *BottomLine;
 @property (weak) IBOutlet NSLayoutConstraint *SplitViewBottomLineConstraint;
 @property (weak) IBOutlet NSView *FunctionBar;
-@property (weak) IBOutlet NSView *MainSideBar;
 
-@property (weak) IBOutlet NSLayoutConstraint *LeftSideBarWidth;
-@property (weak) IBOutlet NSLayoutConstraint *LeftSideBarBottomLineConstraint;
 
 /*
  * Toolbar outlets
