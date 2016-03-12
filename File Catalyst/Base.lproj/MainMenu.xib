@@ -364,8 +364,11 @@ CA
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <splitView dividerStyle="paneSplitter" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB" userLabel="MainSplitView">
+                    <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6MC-cR-BWB" userLabel="MainSplitView">
                         <rect key="frame" x="1" y="26" width="854" height="596"/>
+                        <connections>
+                            <outlet property="delegate" destination="494" id="amN-3I-Dc6"/>
+                        </connections>
                     </splitView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L75-zs-bdV">
                         <rect key="frame" x="2" y="3" width="187" height="17"/>
@@ -613,25 +616,8 @@ CA
                                 <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <font key="titleFont" metaFont="system"/>
                             </box>
-                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
-                                <rect key="frame" x="18" y="6" width="65" height="24"/>
-                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
-                                    <font key="font" metaFont="system"/>
-                                    <segments>
-                                        <segment toolTip="Single Pane Mode" image="singlePane" width="29" selected="YES">
-                                            <nil key="label"/>
-                                        </segment>
-                                        <segment toolTip="Dual Pane Mode" image="dualPane" width="29" tag="1">
-                                            <nil key="label"/>
-                                        </segment>
-                                    </segments>
-                                    <connections>
-                                        <action selector="viewModeChanged:" target="494" id="C31-m3-Jzx"/>
-                                    </connections>
-                                </segmentedCell>
-                            </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="S4e-Ro-5Lx">
-                                <rect key="frame" x="206" y="6" width="63" height="24"/>
+                                <rect key="frame" x="223" y="6" width="63" height="24"/>
                                 <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="tYy-rB-lbq">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -656,11 +642,14 @@ CA
                                 </searchFieldCell>
                             </searchField>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Bii-Yd-WT4">
-                                <rect key="frame" x="164" y="6" width="38" height="24"/>
+                                <rect key="frame" x="18" y="6" width="63" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectAny" id="wx1-RO-MFB">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment label="F#" toolTip="Function Keys Bar Visibility" width="32"/>
+                                        <segment toolTip="Show side bar" image="sideView" width="28">
+                                            <nil key="label"/>
+                                        </segment>
+                                        <segment label="F#" toolTip="Function Keys Bar Visibility" width="28"/>
                                     </segments>
                                 </segmentedCell>
                                 <connections>
@@ -668,7 +657,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="Actions" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsd-Du-IYs">
-                                <rect key="frame" x="364" y="5" width="53" height="26"/>
+                                <rect key="frame" x="381" y="5" width="53" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" selectedItem="wsl-HW-Rax" id="Qc6-E4-OxL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -683,7 +672,7 @@ CA
                                 </connections>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u5A-Di-okM">
-                                <rect key="frame" x="273" y="6" width="38" height="24"/>
+                                <rect key="frame" x="290" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="6Rs-Kf-Pcm">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -697,7 +686,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="L7s-hR-NZP">
-                                <rect key="frame" x="315" y="6" width="38" height="24"/>
+                                <rect key="frame" x="332" y="6" width="38" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="PP7-HO-ZdQ">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -711,7 +700,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <popUpButton toolTip="View Options" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="urp-yc-gQO">
-                                <rect key="frame" x="427" y="5" width="58" height="26"/>
+                                <rect key="frame" x="444" y="5" width="58" height="26"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" inset="2" pullsDown="YES" altersStateOfSelectedItem="NO" id="rI1-hz-veL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
@@ -741,7 +730,7 @@ CA
                                 </popUpButtonCell>
                             </popUpButton>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uVR-In-oSw">
-                                <rect key="frame" x="91" y="6" width="65" height="24"/>
+                                <rect key="frame" x="154" y="6" width="65" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="ksp-w8-Ak1">
                                     <font key="font" metaFont="system"/>
                                     <segments>
@@ -754,7 +743,7 @@ CA
                                 </connections>
                             </segmentedControl>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P7k-cG-lxo">
-                                <rect key="frame" x="492" y="1" width="264" height="32"/>
+                                <rect key="frame" x="509" y="1" width="264" height="32"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="lessThanOrEqual" priority="100" constant="140" id="Tu0-yr-HOl"/>
                                 </constraints>
@@ -771,22 +760,39 @@ CA
                                     </binding>
                                 </connections>
                             </button>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
+                                <rect key="frame" x="85" y="6" width="65" height="24"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
+                                    <font key="font" metaFont="system"/>
+                                    <segments>
+                                        <segment toolTip="Single Pane Mode" image="singlePane" width="29" selected="YES">
+                                            <nil key="label"/>
+                                        </segment>
+                                        <segment toolTip="Dual Pane Mode" image="dualPane" width="29" tag="1">
+                                            <nil key="label"/>
+                                        </segment>
+                                    </segments>
+                                    <connections>
+                                        <action selector="viewModeChanged:" target="494" id="C31-m3-Jzx"/>
+                                    </connections>
+                                </segmentedCell>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="5de-cw-kiE" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="3HE-QM-lxt"/>
+                            <constraint firstItem="S4e-Ro-5Lx" firstAttribute="leading" secondItem="uVR-In-oSw" secondAttribute="trailing" constant="8" symbolic="YES" id="2GO-sJ-dmn"/>
+                            <constraint firstItem="uVR-In-oSw" firstAttribute="leading" secondItem="5de-cw-kiE" secondAttribute="trailing" constant="8" symbolic="YES" id="6QG-GL-GVG"/>
                             <constraint firstAttribute="centerY" secondItem="uVR-In-oSw" secondAttribute="centerY" id="AbX-d9-hXx"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" id="FNu-hx-AQG"/>
                             <constraint firstAttribute="height" constant="37" id="G3v-kd-kYw"/>
                             <constraint firstItem="urp-yc-gQO" firstAttribute="leading" secondItem="fsd-Du-IYs" secondAttribute="trailing" constant="16" id="I6O-mA-ypd"/>
+                            <constraint firstItem="5de-cw-kiE" firstAttribute="leading" secondItem="Bii-Yd-WT4" secondAttribute="trailing" constant="8" symbolic="YES" id="Im3-fT-E6P"/>
                             <constraint firstAttribute="trailing" secondItem="685-pk-2bz" secondAttribute="trailing" id="Jyr-L0-vZi"/>
                             <constraint firstItem="v0W-ls-fHr" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="6" id="M3o-oM-mbf"/>
+                            <constraint firstItem="Bii-Yd-WT4" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="OMy-wC-W8z"/>
                             <constraint firstAttribute="trailing" secondItem="v0W-ls-fHr" secondAttribute="trailing" constant="20" id="Pv0-B0-2aJ"/>
                             <constraint firstAttribute="centerY" secondItem="u5A-Di-okM" secondAttribute="centerY" id="TUB-Ui-V9C"/>
-                            <constraint firstItem="uVR-In-oSw" firstAttribute="leading" secondItem="5de-cw-kiE" secondAttribute="trailing" constant="12" id="WjT-at-dkN"/>
                             <constraint firstItem="P7k-cG-lxo" firstAttribute="leading" secondItem="urp-yc-gQO" secondAttribute="trailing" constant="16" id="Zr3-hM-yxP"/>
-                            <constraint firstItem="S4e-Ro-5Lx" firstAttribute="leading" secondItem="Bii-Yd-WT4" secondAttribute="trailing" constant="8" symbolic="YES" id="acw-po-UU4"/>
                             <constraint firstAttribute="centerY" secondItem="Bii-Yd-WT4" secondAttribute="centerY" id="b3b-TB-x4J"/>
-                            <constraint firstItem="Bii-Yd-WT4" firstAttribute="leading" secondItem="uVR-In-oSw" secondAttribute="trailing" constant="12" id="bdU-YB-WCw"/>
                             <constraint firstAttribute="centerY" secondItem="S4e-Ro-5Lx" secondAttribute="centerY" id="clg-oe-kta"/>
                             <constraint firstAttribute="centerY" secondItem="urp-yc-gQO" secondAttribute="centerY" id="csj-2E-k0B"/>
                             <constraint firstAttribute="centerY" secondItem="fsd-Du-IYs" secondAttribute="centerY" id="dJA-1c-vu8"/>
@@ -914,6 +920,7 @@ CA
         <image name="manmove32" width="32" height="32"/>
         <image name="redo16" width="16" height="16"/>
         <image name="refresh16" width="16" height="16"/>
+        <image name="sideView" width="20" height="20"/>
         <image name="singlePane" width="20" height="20"/>
         <image name="undo16" width="16" height="16"/>
     </resources>

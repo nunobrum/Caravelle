@@ -106,6 +106,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_TREE_WIDTH   @"TreeWidth"
 #define USER_DEF_SORT_KEYS    @"SortKeys"
 #define USER_DEF_LEFT_PANEL_VISIBLE @"LeftPanelVisible"
+#define USER_DEF_LEFT_PANEL_SIZE    @"LeftPanelSize"
 
 #define USER_DEF_DUPLICATE_CLASSIC_VIEW @"DuplicateClassicView"
 
@@ -131,6 +132,9 @@ extern const CFStringRef kTreeItemDropUTI;
 #define APP_BEHAVIOUR_NATIVE        0
 #define APP_BEHAVIOUR_MULTIPLATFORM 1
 
+// Used to identify the options on the main view
+#define MAIN_VIEW_OPTION_VISIBLE_SIDEBAR 0
+#define MAIN_VIEW_OPTION_VISIBLE_FUNCTIONS 1
 
 // Used to check where is the focus of the window for the contextual selection
 // This is a terrible workaround because I didn't find a clear and neat way

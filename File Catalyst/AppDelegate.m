@@ -501,6 +501,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [myRightView savePreferences];
         }
     }
+    BOOL sideCollapsed = [self.ContentSplitView isSubviewCollapsed: self->sideBarController.view] ;
+    [[NSUserDefaults standardUserDefaults] setBool:(sideCollapsed==NO) forKey:USER_DEF_LEFT_PANEL_VISIBLE];
+    if (!sideCollapsed) {
+        NSInteger width = NSWidth([(NSView*)[[self.ContentSplitView subviews] objectAtIndex:0] bounds]);
+        [[NSUserDefaults standardUserDefaults] setInteger:width forKey:USER_DEF_LEFT_PANEL_SIZE];
+    }
     BOOL OK = [[NSUserDefaults standardUserDefaults] synchronize];
     if (!OK)
         NSLog(@"AppDelegate.savePreferences: Failed to store User Defaults");
@@ -521,12 +527,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 }
 
 -(void) makeView1:(NSString*)view1 view2:(NSString*)view2 {
-    NSArray *subViews = [self.ContentSplitView subviews];
+    NSArray *subViews = [self.BrowserSplitView subviews];
     NSUInteger panelCount = [subViews count];
-    
-    // Discounts the first panel if it is a Side Bar
-    if ([[(NSView*)subViews[0] identifier] isEqualToString:@"SideBarViewID"])
-        panelCount--;
     
     if (myLeftView == nil) {
         myLeftView  = [[BrowserController alloc] initWithNibName:@"BrowserView" bundle:nil ];
@@ -535,7 +537,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
     }
     if (panelCount == 0) {
-        [_ContentSplitView addSubview:myLeftView.view];
+        [self.BrowserSplitView addSubview:myLeftView.view];
         panelCount++;
     }
     [myLeftView  setName:view1  TwinName:view2];  // A first call not valid, because its called before the add view
@@ -551,7 +553,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             [myRightView setParentController:self];
                     }
         if (panelCount == 1) {
-            [_ContentSplitView addSubview:myRightView.view];
+            [self.BrowserSplitView addSubview:myRightView.view];
         }
         [myRightView setName:view2 TwinName:view1];
     }
@@ -616,19 +618,16 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
     _application_mode = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_APP_VIEW_MODE];
 
-    // Configuring the FunctionBar according to User Defaults
-    BOOL displayFunctionBar = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
-    [self.toolbarFunctionBarSelect setSelected:displayFunctionBar forSegment:0];
-    [self toolbarToggleFunctionKeys:self.toolbarFunctionBarSelect];
     
-    // Get from user defaults the presence of the panel
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_PANEL_VISIBLE]==YES) {
-        sideBarController = [[MainSideBarController alloc] initWithNibName:@"MainSideBarView" bundle:nil ];
-        [self.ContentSplitView addSubview:sideBarController.view];
-    }
+    sideBarController = [[MainSideBarController alloc] initWithNibName:@"MainSideBarView" bundle:nil ];
+    [self.ContentSplitView addSubview:sideBarController.view];
     
-    //[self.myWindowView needsDisplay];
-
+    self.BrowserSplitView = [[NSSplitView alloc] init];
+    [self.BrowserSplitView setVertical:YES];
+    [self.BrowserSplitView setDividerStyle:NSSplitViewDividerStylePaneSplitter];
+    [self.BrowserSplitView setContentCompressionResistancePriority:500 forOrientation:NSLayoutConstraintOrientationVertical];
+    
+    [self.ContentSplitView addSubview:self.BrowserSplitView];
     
     // TODO:1.4 Implement the modes preview and Sync
     if (applicationMode != ApplicationMode2Views ) {
@@ -661,6 +660,15 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     else {
         NSAssert(NO,@"Application start mode not supported");
     }
+    // Configuring the FunctionBar according to User Defaults
+    BOOL displayFunctionBar = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
+    [self.toolbarFunctionBarSelect setSelected:displayFunctionBar forSegment:MAIN_VIEW_OPTION_VISIBLE_FUNCTIONS];
+    [self setDisplayFunctionKeys:displayFunctionBar];
+    
+    // Get from user defaults the presence of the panel
+    BOOL sideBarVisible = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_PANEL_VISIBLE];
+    [self.toolbarFunctionBarSelect setSelected:sideBarVisible forSegment:MAIN_VIEW_OPTION_VISIBLE_SIDEBAR];
+    [self setDisplaySideBar:sideBarVisible];
 
     // Make a default focus
     self->_selectedView = myLeftView;
@@ -668,6 +676,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [myLeftView focusOnFirstView];
     [self adjustSideInformation:myLeftView];
 
+    //[self.myWindowView needsDisplay];
     
 
 }
@@ -1564,9 +1573,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     }
 }
 
-- (IBAction)toolbarToggleFunctionKeys:(id)sender { // TODO:??? Replace this with bindings to User Defaults
+-(void) setDisplayFunctionKeys:(BOOL)setting {
     CGFloat constant;
-    BOOL setting = [sender isSelectedForSegment:0];
     if (setting) {
         NSRect newFrame = [self.FunctionBar frame];
         constant = NSHeight(newFrame); // Creates space for the view
@@ -1579,7 +1587,37 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [[self SplitViewBottomLineConstraint] setConstant:constant];
     [[self myWindowView] setNeedsDisplay:YES];
     // Reposition the value in the user defaults
-    [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
+}
+
+-(void) setDisplaySideBar:(BOOL)setting {
+    if (setting) {
+        // Sidebar is visible
+        NSInteger width = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_LEFT_PANEL_SIZE];
+        [self.ContentSplitView setPosition:width ofDividerAtIndex:0];
+    }
+    else {
+        // TODO:1.4 Save width in preferences @"TreeWidth"
+        NSInteger width = NSWidth([(NSView*)[[self.ContentSplitView subviews] objectAtIndex:0] bounds]);
+        [[NSUserDefaults standardUserDefaults] setInteger:width forKey:USER_DEF_LEFT_PANEL_SIZE];
+        [self.ContentSplitView setPosition:0 ofDividerAtIndex:0];
+    }
+    [self.ContentSplitView setNeedsDisplay:YES];
+    [self.myWindowView displayIfNeeded];
+}
+
+- (IBAction)toolbarToggleFunctionKeys:(id)sender { // TODO:??? Replace this with bindings to User Defaults
+    NSInteger selectedSegment = [sender selectedSegment];
+    
+    BOOL setting = [sender isSelectedForSegment:selectedSegment];
+    
+    if (selectedSegment==MAIN_VIEW_OPTION_VISIBLE_FUNCTIONS) { // The Function Keys
+        [self setDisplayFunctionKeys:setting];
+        [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_APP_DISPLAY_FUNCTION_BAR];
+    }
+    if (selectedSegment == MAIN_VIEW_OPTION_VISIBLE_SIDEBAR) {
+        [self setDisplaySideBar:setting];
+        [[NSUserDefaults standardUserDefaults] setBool:setting forKey:USER_DEF_LEFT_PANEL_VISIBLE];
+    }
 }
 
 
@@ -2043,6 +2081,103 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     //NSLog(@"%s  %hhd", sel_getName(theAction), allow);
     return allow; //[super validateUserInterfaceItem:anItem];
 }
+
+#pragma mark - NSSplitViewDelegate methods
+#define kMinConstraintValue 100.0f
+#define kMaxConstraintValue 350.0f
+
+// -------------------------------------------------------------------------------
+//	awakeFromNib:
+//
+//	This delegate allows the collapsing of the first and last subview.
+// -------------------------------------------------------------------------------
+- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview
+{
+    BOOL canCollapseSubview = NO;
+    
+    NSArray *splitViewSubviews = [splitView subviews];
+    if  (splitViewSubviews != nil && [splitViewSubviews count]>0)
+    {
+        if ((splitView == self.ContentSplitView) && (subview == [splitViewSubviews objectAtIndex:0]))
+        {
+            canCollapseSubview = YES; //[self.toolbarFunctionBarSelect isSelectedForSegment:MAIN_VIEW_OPTION_VISIBLE_SIDEBAR] == NO;
+        }
+    }
+    return canCollapseSubview;
+}
+
+// -------------------------------------------------------------------------------
+//	shouldCollapseSubview:subView:dividerIndex
+//
+//	This delegate allows the collapsing of the first and last subview.
+// -------------------------------------------------------------------------------
+- (BOOL)splitView:(NSSplitView *)splitView shouldCollapseSubview:(NSView *)subview forDoubleClickOnDividerAtIndex:(NSInteger)dividerIndex
+{
+    // yes, if you can collapse you should collapse it
+    if (splitView == self.ContentSplitView) {
+        return YES;
+    }
+    return NO;
+}
+
+// -------------------------------------------------------------------------------
+//	constrainMinCoordinate:proposedCoordinate:index
+// -------------------------------------------------------------------------------
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
+{
+    CGFloat constrainedCoordinate = proposedCoordinate;
+    if ((splitView == self.ContentSplitView) && (index == 0))
+    {
+        constrainedCoordinate = proposedCoordinate + kMinConstraintValue;
+    }
+    //NSLog(@"constrainMinCoordinate: Index: %ld proposed %f MinCoordinate: %f", (long)index, proposedCoordinate, constrainedCoordinate);
+    return constrainedCoordinate;
+}
+
+// -------------------------------------------------------------------------------
+//	constrainMaxCoordinate:proposedCoordinate:proposedCoordinate:index
+// -------------------------------------------------------------------------------
+
+- (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
+{
+    CGFloat constrainedCoordinate = proposedCoordinate;
+    if ((splitView == self.ContentSplitView) && (index == 0)) {
+        if (proposedCoordinate < 0) { // Happens at startup
+            //constrainedCoordinate = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_LEFT_PANEL_SIZE];
+            constrainedCoordinate = proposedCoordinate;
+        }
+        else {
+            //CGFloat detailedWidth = [[[splitView subviews] objectAtIndex:0] frame].size.width;
+            constrainedCoordinate = kMaxConstraintValue;
+        }
+    }
+    //NSLog(@"constrainMaxCoordinate: Index: %ld proposed: %f MaxCoordinate: %f", (long)index, proposedCoordinate, constrainedCoordinate);
+    return constrainedCoordinate;
+}
+
+- (BOOL)splitMView:(NSSplitView *)splitView shouldAdjustSizeOfSubview:(NSView *)subview {
+    NSLog(@"AppDelegate.shouldAdjustSizeOfSubview");
+    if (subview == [[self.ContentSplitView subviews] objectAtIndex:0]) {
+        return NO;
+    }
+    return YES;
+}
+
+- (void)splitViewDidResizeSubviews:(NSNotification *)aNotification {
+    // Use this notfication to set the select state of the button
+    NSSplitView *splitView = [aNotification object];
+    NSArray *subViews = [splitView subviews];
+    if  (subViews != nil && [subViews count]>0)
+    {
+        if (splitView == self.ContentSplitView) {
+            BOOL sideCollapsed = [self.ContentSplitView isSubviewCollapsed: [subViews objectAtIndex:0]] ;
+            [self.toolbarFunctionBarSelect setSelected:!sideCollapsed forSegment:MAIN_VIEW_OPTION_VISIBLE_SIDEBAR];
+            //NSLog(@"splitViewDidResizeSubviews colapsed:%hhd", sideCollapsed);
+
+        }
+    }
+}
+
 
 #pragma mark - Parent Protocol
 

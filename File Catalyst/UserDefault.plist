@@ -8,6 +8,8 @@
 	<true/>
 	<key>LeftPanelVisible</key>
 	<true/>
+	<key>LeftPanelSize</key>
+	<integer>150</integer>
 	<key>ApplicationViewMode</key>
 	<integer>0</integer>
 	<key>KeyMappings</key>

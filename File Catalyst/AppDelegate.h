@@ -11,7 +11,7 @@
 #import "BrowserController.h"
 #import "MainSideBarController.h"
 
-@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, ParentProtocol, NSMenuDelegate> {
+@interface AppDelegate : NSObject <NSApplicationDelegate, NSWindowDelegate, NSFileManagerDelegate, ParentProtocol, NSMenuDelegate, NSSplitViewDelegate> {
     BrowserController *myLeftView;
     BrowserController *myRightView;
     MainSideBarController *sideBarController;
@@ -25,6 +25,9 @@
 
 @property (weak) IBOutlet NSTextFieldCell *StatusBar;
 @property (weak) IBOutlet NSSplitView *ContentSplitView;
+@property NSSplitView *BrowserSplitView;
+
+
 @property (weak) IBOutlet NSProgressIndicator *statusProgressIndicator;
 @property (weak) IBOutlet NSTextField *statusProgressLabel;
 @property (weak) IBOutlet NSButton *buttonCopyTo;
