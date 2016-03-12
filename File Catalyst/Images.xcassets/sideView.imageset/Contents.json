@@ -2,12 +2,12 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "singlePane.png",
+      "filename" : "sideView.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "singlePane2x.png",
+      "filename" : "sideView2x.png",
       "scale" : "2x"
     },
     {
