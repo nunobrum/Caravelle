@@ -73,9 +73,9 @@
     self = [super init];
     if (self) {
         self->_tag = 0;
-        [self setUrl:url];
         self->_parent = parent;
         self.nameCache = nil;
+        [self setUrl:url];
     }
     return self;
 }
@@ -187,6 +187,10 @@
         _tag |= tagTreeItemHidden;
     else
         _tag &= ~tagTreeItemHidden;
+    
+    if (self->_parent) {
+        _tag |= (self->_parent->_tag & tagTreeAuthorized); // If parent is authorized, this item is also authorized.
+    }
     
 }
 

@@ -489,7 +489,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             [self.myOutlineView selectRowIndexes:selectedIndexes byExtendingSelection:NO];
         }
         else
-            NSAssert(NO, @"BrowserController.selectionDidChangeOn: Branch not found in the tree");
+            NSLog(@"BrowserController.selectionDidChangeOn: Branch not found in the tree");
         // set the PathBar back to the _treeNode
         [self setPathBarToItem:_treeNodeSelected];
     }

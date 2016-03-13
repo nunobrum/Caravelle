@@ -109,7 +109,7 @@ void menuForTag(EnumContextualMenuItemTags tag, NSMenuItem *menuItem) {
     NSUInteger mask = 0;
     switch (tag) {
         case menuAddFavorite:
-            menuItem.title = @"Add Favorite";
+            menuItem.title = @"Add to Favorites";
             [menuItem setAction:@selector(contextualAddFavorite:)];
             break;
             
@@ -187,6 +187,7 @@ void menuForTag(EnumContextualMenuItemTags tag, NSMenuItem *menuItem) {
         case menuClipCut:
             menuItem.title = @"Cut";
             key = 'x';
+            mask = NSCommandKeyMask;
             [menuItem setAction: @selector(contextualCut:)];
             break;
             
@@ -626,7 +627,9 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [self.BrowserSplitView setVertical:YES];
     [self.BrowserSplitView setDividerStyle:NSSplitViewDividerStylePaneSplitter];
     [self.BrowserSplitView setContentCompressionResistancePriority:500 forOrientation:NSLayoutConstraintOrientationVertical];
-    
+    [self.BrowserSplitView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable ];
+    [self.BrowserSplitView setAutoresizesSubviews:YES];
+
     [self.ContentSplitView addSubview:self.BrowserSplitView];
     
     // TODO:1.4 Implement the modes preview and Sync

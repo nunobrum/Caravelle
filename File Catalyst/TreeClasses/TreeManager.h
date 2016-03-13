@@ -37,8 +37,9 @@ extern NSString *notificationRefreshViews;
 -(NSURL*) secScopeContainer:(NSURL*) url;
 -(NSURL*) validateURSecurity:(NSURL*) url;
 
--(BOOL) startAccessToURL:(NSURL*)url;
 -(void) stopAccesses;
+
+-(void) removeAuthorization:(NSString*) path;
 
 -(void) addActivityObserver:(NSObject<PathObserverProtocol>*)obj path:(NSString*)path;
 -(void) removeActivityObserver:(id)obj;

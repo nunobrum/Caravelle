@@ -44,16 +44,18 @@ TreeManager *appTreeManager;
     return self;
 }
 
--(BOOL) startAccessToURL:(NSURL*)url {
-#if (APP_IS_SANDBOXED==1)
-    for (TreeBranch *item in self->iArray) {
-        if ([item canContainURL: url]) {
-            [[item url] startAccessingSecurityScopedResource];
-            return YES;
-        }
+
+-(void) reconfigureEventMonitor {
+    // If the thread exist kill it
+    if (FSMonitorThread!=nil) {
+        [FSMonitorThread cancel];
     }
-#endif
-    return NO;
+    FSMonitorThread = [[FileSystemMonitoring alloc] init];
+    
+    // Change the list of surveilances
+    [FSMonitorThread configureFSEventStream:iArray];
+    //Start the loop
+    [FSMonitorThread start];
 }
 
 
@@ -162,16 +164,7 @@ TreeManager *appTreeManager;
         [[answer url] startAccessingSecurityScopedResource];
 #endif
 
-        // If the thread exist kill it
-        if (FSMonitorThread!=nil) {
-            [FSMonitorThread cancel];
-        }
-        FSMonitorThread = [[FileSystemMonitoring alloc] init];
-
-        // Change the list of surveilances
-        [FSMonitorThread configureFSEventStream:iArray];
-        //Start the loop
-        [FSMonitorThread start];
+        [self reconfigureEventMonitor];
     }
     enumPathCompare comparison = url_relation([answer url], url);
     if (comparison == pathIsChild) {
@@ -183,10 +176,12 @@ TreeManager *appTreeManager;
 
 -(TreeItem*) getNodeWithURL:(NSURL*)url {
     TreeItem *answer=nil;
-    for (TreeBranch *item in self->iArray) {
-        if ([item canContainURL:url]) {
-            answer = [item getNodeWithURL:url];
-            break;
+    @synchronized(self) {
+        for (TreeBranch *item in self->iArray) {
+            if ([item canContainURL:url]) {
+                answer = [item getNodeWithURL:url];
+                break;
+            }
         }
     }
     return answer;
@@ -194,10 +189,12 @@ TreeManager *appTreeManager;
 
 -(TreeItem*) getNodeWithPath:(NSString*)path {
     TreeItem *answer=nil;
-    for (TreeBranch *item in self->iArray) {
-        if ([item canContainPath:path]) {
-            answer = [item getNodeWithPath:path];
-            break;
+    @synchronized(self) {
+        for (TreeBranch *item in self->iArray) {
+            if ([item canContainPath:path]) {
+                answer = [item getNodeWithPath:path];
+                break;
+            }
         }
     }
     return answer;
@@ -373,6 +370,41 @@ TreeManager *appTreeManager;
     return nil;
 }
 
+-(void) removeAuthorization:(NSString*) path {
+    // * Deleting Authorization from NSUserDefaults
+    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
+    NSArray *updatedBookmarks = [secBookmarks filteredArrayUsingPredicate:
+                                 [NSPredicate predicateWithBlock: ^BOOL(id  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+        BOOL dataStalled;
+        NSError *error;
+        NSURL *authorizedURL = [NSURL URLByResolvingBookmarkData:evaluatedObject
+                                                         options:NSURLBookmarkResolutionWithSecurityScope
+                                                   relativeToURL:nil
+                                             bookmarkDataIsStale:&dataStalled
+                                                           error:&error];
+        return [authorizedURL.path isEqualTo:path]==NO;
+    }]];
+    [[NSUserDefaults standardUserDefaults] setObject:updatedBookmarks forKey:USER_DEF_SECURITY_BOOKMARKS];
+    // remove observation of activity, etc.....
+    
+    TreeBranch *itemDeleted = nil;
+    @synchronized(self) {
+        for (TreeBranch *item in self->iArray) {
+            if (path_relation(item.path, path)== pathIsSame) {
+                itemDeleted = item;
+                [self->iArray removeObject:item];
+                break;
+            }
+        }
+    }
+    if (itemDeleted) {
+        [itemDeleted willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        [itemDeleted resetTagsInBranch:tagTreeAuthorized];
+        [itemDeleted didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        [[itemDeleted url] stopAccessingSecurityScopedResource];
+        [self reconfigureEventMonitor];
+    }
+}
 
 // This selector verifies if an URL is authorized or not, if yes, it returns a security approved version of it
 // otherwise it returns nil
@@ -471,7 +503,7 @@ TreeManager *appTreeManager;
              
         }
         answer = [TreeItem treeItemForURL:url_allowed parent:nil];
-        [answer setTag:tagTreeItemDirty]; // Forcing its update
+        [answer setTag:tagTreeItemDirty + tagTreeAuthorized]; // Forcing its update and setting the authorization flag
     }
     return answer;
 }

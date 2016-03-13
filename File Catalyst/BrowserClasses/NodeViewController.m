@@ -19,6 +19,8 @@ EnumContextualMenuItemTags viewMenuFiles[] = {
     menuRename,
     menuDelete,
     menuDivider,
+    menuAddFavorite,
+    menuDivider,
     menuClipCut,
     menuClipCopy,
     menuClipPaste,

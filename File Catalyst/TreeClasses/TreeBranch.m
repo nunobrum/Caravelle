@@ -1548,7 +1548,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 -(void) resetTagsInBranch:(TreeItemTagEnum)tags {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            [item setTag:tags];
+            [item resetTag:tags];
             if ([item isFolder]) {
                 [(TreeBranch*)item resetTagsInBranch:tags];
             }

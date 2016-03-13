@@ -52,6 +52,7 @@
 @interface SidebarTableCellView : NSTableCellView {
 @private
     NSButton *_button;
+    NSTrackingRectTag trackingArea;
 }
 
 @property(retain) IBOutlet NSButton *button;

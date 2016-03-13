@@ -233,19 +233,7 @@
 
 -(void) deleteAuthorization:(SideBarObject*) item {
     NSString *path = [(TreeItem*)item.objValue path];
-    NSArray *secBookmarks = [[NSUserDefaults standardUserDefaults] arrayForKey:USER_DEF_SECURITY_BOOKMARKS];
-    NSArray *updatedBookmarks = [secBookmarks filteredArrayUsingPredicate:
-                                  [NSPredicate predicateWithBlock: ^BOOL(id  _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
-        BOOL dataStalled;
-        NSError *error;
-        NSURL *authorizedURL = [NSURL URLByResolvingBookmarkData:evaluatedObject
-                                                         options:NSURLBookmarkResolutionWithSecurityScope
-                                                   relativeToURL:nil
-                                             bookmarkDataIsStale:&dataStalled
-                                                           error:&error];
-        return [authorizedURL.path isEqualTo:path]==NO;
-    }]];
-    [[NSUserDefaults standardUserDefaults] setObject:updatedBookmarks forKey:USER_DEF_SECURITY_BOOKMARKS];
+    [appTreeManager removeAuthorization:path];
 }
 
 -(void) populateRecentlyUsed {

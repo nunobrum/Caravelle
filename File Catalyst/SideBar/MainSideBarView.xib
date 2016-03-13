@@ -24,7 +24,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" viewBased="YES" indentationPerLevel="14" outlineTableColumn="kWj-ZA-RXU" id="EPB-Vr-vsU">
-                                <rect key="frame" x="0.0" y="0.0" width="185" height="0.0"/>
+                                <rect key="frame" x="0.0" y="0.0" width="185" height="596"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <size key="intercellSpacing" width="3" height="0.0"/>
                                 <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -57,14 +57,14 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                 <subviews>
                                                     <imageView verticalCompressionResistancePriority="749" translatesAutoresizingMaskIntoConstraints="NO" id="Gq4-uP-Po9">
-                                                        <rect key="frame" x="0.0" y="5" width="16" height="17"/>
+                                                        <rect key="frame" x="1" y="5" width="16" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="16" id="rZb-SZ-Rqu"/>
                                                         </constraints>
                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSApplicationIcon" id="kmj-VI-hB0"/>
                                                     </imageView>
                                                     <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OWN-Yz-xYr">
-                                                        <rect key="frame" x="21" y="5" width="55" height="17"/>
+                                                        <rect key="frame" x="22" y="5" width="55" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="17" id="OJl-70-Nkh"/>
                                                         </constraints>
@@ -75,7 +75,7 @@
                                                         </textFieldCell>
                                                     </textField>
                                                     <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DiB-8r-xI8">
-                                                        <rect key="frame" x="161" y="5" width="17" height="17"/>
+                                                        <rect key="frame" x="164" y="5" width="17" height="17"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="17" id="I9s-O8-QQG"/>
                                                             <constraint firstAttribute="height" constant="17" id="fDm-un-gl3"/>
@@ -89,11 +89,10 @@
                                                 <constraints>
                                                     <constraint firstItem="Gq4-uP-Po9" firstAttribute="centerY" secondItem="kbS-1L-Pem" secondAttribute="centerY" id="0eT-QQ-NwM"/>
                                                     <constraint firstItem="Gq4-uP-Po9" firstAttribute="top" secondItem="DiB-8r-xI8" secondAttribute="top" id="8Qy-DT-2Fb"/>
-                                                    <constraint firstAttribute="trailing" secondItem="DiB-8r-xI8" secondAttribute="trailing" constant="4" id="CfH-wV-Prm"/>
+                                                    <constraint firstAttribute="trailing" secondItem="DiB-8r-xI8" secondAttribute="trailing" constant="1" id="CfH-wV-Prm"/>
                                                     <constraint firstItem="OWN-Yz-xYr" firstAttribute="leading" secondItem="Gq4-uP-Po9" secondAttribute="trailing" constant="7" id="Zs5-UV-HLl"/>
-                                                    <constraint firstItem="Gq4-uP-Po9" firstAttribute="bottom" secondItem="OWN-Yz-xYr" secondAttribute="bottom" id="aKu-7Q-jzh"/>
                                                     <constraint firstItem="OWN-Yz-xYr" firstAttribute="bottom" secondItem="Gq4-uP-Po9" secondAttribute="bottom" id="c4a-Ud-RPd"/>
-                                                    <constraint firstItem="Gq4-uP-Po9" firstAttribute="leading" secondItem="kbS-1L-Pem" secondAttribute="leading" id="cDA-Yz-r2i"/>
+                                                    <constraint firstItem="Gq4-uP-Po9" firstAttribute="leading" secondItem="kbS-1L-Pem" secondAttribute="leading" constant="1" id="cDA-Yz-r2i"/>
                                                     <constraint firstItem="DiB-8r-xI8" firstAttribute="bottom" secondItem="OWN-Yz-xYr" secondAttribute="bottom" id="huI-jK-A07"/>
                                                 </constraints>
                                                 <connections>
@@ -129,10 +128,10 @@
                 </scrollView>
             </subviews>
             <constraints>
-                <constraint firstItem="GaN-XH-9H2" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="Vaa-QG-lDM"/>
-                <constraint firstItem="GaN-XH-9H2" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="Za7-bs-6Cd"/>
-                <constraint firstAttribute="trailing" secondItem="GaN-XH-9H2" secondAttribute="trailing" id="bj6-bp-yGf"/>
-                <constraint firstAttribute="bottom" secondItem="GaN-XH-9H2" secondAttribute="bottom" id="svV-Ek-Gcr"/>
+                <constraint firstItem="GaN-XH-9H2" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" id="0Qq-Kn-TlF"/>
+                <constraint firstAttribute="trailing" secondItem="GaN-XH-9H2" secondAttribute="trailing" id="CB0-YG-uPZ"/>
+                <constraint firstAttribute="bottom" secondItem="GaN-XH-9H2" secondAttribute="bottom" id="PU4-vL-3L8"/>
+                <constraint firstItem="GaN-XH-9H2" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" id="y5X-Bk-B5i"/>
             </constraints>
             <point key="canvasLocation" x="86.5" y="155"/>
         </customView>
