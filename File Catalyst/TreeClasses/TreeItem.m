@@ -481,6 +481,13 @@
     return YES;
 }
 
+-(NSArray*) openWithApplications {
+    CFArrayRef appls;
+    appls = LSCopyApplicationURLsForURL((__bridge CFURLRef _Nonnull)(self.url),   kLSRolesViewer+kLSRolesEditor );
+    NSArray *answer = CFBridgingRelease(appls);
+    return answer;
+}
+
 -(BOOL) removeItem {
     if (_parent) {
         [(TreeBranch*)_parent removeChild:self];

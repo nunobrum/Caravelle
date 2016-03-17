@@ -116,6 +116,8 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) openFile;
 -(BOOL) removeItem;
 
+-(NSArray*) openWithApplications;
+
 /*
  * URL Comparison methods
  */

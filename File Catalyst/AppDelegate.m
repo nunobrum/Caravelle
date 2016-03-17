@@ -254,6 +254,24 @@ void updateContextualMenu(NSMenu *menu, NSArray *itemsSelected, EnumContextualMe
                 NSMenuItem *menuItem = [[NSMenuItem alloc] init];
                 menuForTag(tag, menuItem);
                 [menu addItem:menuItem];
+                if (tag == menuOpenWith) {
+                    // Special situation where the menu is handled here. Because it has to be asked from the item Selected.
+                    // TODO:!!!! Check that all files are identical
+                    TreeItem *firstItem = [itemsSelected firstObject];
+                    NSArray *apps = [firstItem openWithApplications];
+                    if (apps != nil && [apps count] > 0) {
+                        NSMenu *menu = [[NSMenu alloc] init];
+                        for (NSURL *app in apps) {
+                            NSMenuItem *menuApp = [[NSMenuItem alloc] initWithTitle:app.lastPathComponent action:@selector(contextualOpenWith:) keyEquivalent:@""];
+                            [menuApp setRepresentedObject:app];
+                            [menu addItem:menuApp];
+                        }
+                        [menu setAutoenablesItems:NO]; // Default enables everything
+                        [menu setSubmenu:menu forItem:menuItem];
+                    }
+                    
+                    
+                }
             }
         }
     }
@@ -1507,6 +1525,15 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 - (IBAction)contextualOpen:(id)sender {
     [self executeOpen:[[self contextualFocus] getSelectedItemsForContextualMenu2]];
 }
+
+-(IBAction)contextualOpenWith:(id)sender {
+    NSArray *selectedFiles = [[self contextualFocus] getSelectedItemsForContextualMenu2];
+    NSURL *app = [sender representedObject];
+    for (TreeItem *item in selectedFiles) {
+        [[NSWorkspace sharedWorkspace] openFile:[item path] withApplication:[app lastPathComponent]];
+    }
+}
+
 
 - (IBAction)toolbarNewFolder:(id)sender {
     NSArray *selectedItems = [[self selectedView] getSelectedItems];

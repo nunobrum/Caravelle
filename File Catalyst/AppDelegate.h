@@ -72,6 +72,7 @@
 
 - (IBAction)toolbarOpen:(id)sender;
 - (IBAction)contextualOpen:(id)sender;
+- (IBAction)contextualOpenWith:(id)sender;
 
 - (IBAction)toolbarNewFolder:(id)sender;
 - (IBAction)contextualNewFolder:(id)sender;

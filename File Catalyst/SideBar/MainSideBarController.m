@@ -176,6 +176,13 @@
                 //NSLog(@"MainSideBarController.buttonClicked:  Deleting Authorizations");
                 [self deleteAuthorization:item];
             }
+            [parent.children removeObject:item];
+            if ([parent.children count] == 0) {
+                if ([_sidebarOutlineView parentForItem:parent] == nil) {
+                    [_topLevelItems removeObject:parent];
+                }
+            }
+            [_sidebarOutlineView reloadData];
         }
         else {
             NSLog(@"Change view to %@", item);

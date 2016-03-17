@@ -65,6 +65,31 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     return nil; // Invalidate all
 }
 
+
+/*
+ * Menu support
+ */
+-(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag {
+    BOOL answer;
+    switch (tag) {
+            // Enables these ones
+        case menuOpenWith:
+            answer = YES;
+            break;
+            
+            // Invalidates these ones
+        //case xxxxxx:
+        //    answer = NO;
+        //    break;
+            
+        default:
+            answer = [super respondsToMenuTag:tag];
+            break;
+    }
+    
+    return answer;
+}
+
 /*
  * Dupplicate Support
  */

@@ -418,6 +418,33 @@ int validateAppReceipt () {
                 // See : xcdoc://?url=developer.apple.com/library/mac/releasenotes/General/ValidateAppStoreReceipt/Chapters/ValidateLocally.html#
                 
                 // Compute the GUID
+                //TODO:!!!!!!!!!!!
+                //===============================================
+//                UInt8 *guid = NULL;
+//                size_t guid_sz;
+//                
+//                /* Declare and initialize an EVP context for OpenSSL. */
+//                EVP_MD_CTX evp_ctx;
+//                EVP_MD_CTX_init(&evp_ctx);
+//                
+//                /* A buffer for result of the hash computation. */
+//                UInt8 digest[20];
+//                
+//                /* Set up the EVP context to compute a SHA-1 digest. */
+//                EVP_DigestInit_ex(&evp_ctx, EVP_sha1(), NULL);
+//                
+//                /* Concatenate the pieces to be hashed.  They must be concatenated in this order. */
+//                EVP_DigestUpdate(&evp_ctx, guid, guid_sz);
+//                EVP_DigestUpdate(&evp_ctx, opaque->buf, opaque->size);
+//                EVP_DigestUpdate(&evp_ctx, bundle_id->buf, bundle_id->size);
+//                
+//                /* Compute the hash, saving the result into the digest variable. */
+//                EVP_DigestFinal_ex(&evp_ctx, digest, NULL);
+            }
+        }
+    }
+    PKCS7_free(p7);
+    
 
     
     // Return Success
