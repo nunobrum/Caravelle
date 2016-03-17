@@ -10,6 +10,10 @@
 #import "Definitions.h"
 //#include "getGUID.h"
 
+NSString *userPrefsPanelBehaviour = @"Behaviour";
+NSString *userPrefsPanelAuthorizations = @"Authorizations";
+NSString *userPrefsPanelBrowserOptions = @"Browser Options";
+NSString *userPrefsPanelAppIns = @"App-Ins";
 
 typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
     AppInsNotRead         = 0,
@@ -359,24 +363,24 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
 
     // our model will consist of a dictionary with Name/Image key pairs
     [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-                                @"Behaviour", @"description",
+                                userPrefsPanelBehaviour, @"description",
                                 self.behaviourView, @"view",
                                 isLeaf, @"leaf",
                                 nil] ] ;
     [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-                                @"Authorizations", @"description",
+                                userPrefsPanelAuthorizations, @"description",
                                 self.authorizedURLsView, @"view",
                                 isLeaf, @"leaf",
                                 nil] ] ;
 
     [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-                                @"Browser Options", @"description",
+                                userPrefsPanelBrowserOptions, @"description",
                                 self.browserOptionsView, @"view",
                                 isLeaf, @"leaf",
                                 nil] ] ;
     
     [self.prefsTree addObject: [NSDictionary  dictionaryWithObjectsAndKeys:
-                                @"App-Ins", @"description",
+                                userPrefsPanelAppIns, @"description",
                                 self.paymentsView, @"view",
                                 isLeaf, @"leaf",
                                 nil] ] ;
@@ -420,6 +424,19 @@ typedef NS_OPTIONS(NSUInteger, EnumAppIns) {
 
 - (IBAction)restoreProducts:(id)sender {
     [self restoreAcquiredAppIns];
+}
+
+-(void) selectPanel:(NSString *)panelID {
+    NSArray *views = self.prefsTree.content;
+    NSUInteger index = 0;
+    for (NSDictionary *item in views) {
+        if ([[item objectForKey:@"description"] isEqualToString:panelID]) {
+            NSIndexPath *ipath = [NSIndexPath indexPathWithIndex:index];
+            [self.prefsTree setSelectionIndexPath:ipath];
+            break;
+        }
+        index++;
+    }
 }
 
 -(BOOL) duplicatesAuthorized {

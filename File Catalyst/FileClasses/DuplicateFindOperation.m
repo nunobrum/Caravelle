@@ -241,6 +241,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
                 // Then the tree view, that will re-register the parents
                 // Adding the duplicates to the new Tree
                 for (TreeLeaf *item in duplicates) {
+                    [item setTag:tagTreeAuthorized]; // Needed because the parent is not known
                     [roots addTreeItem:item];
                     counter++;
                 }

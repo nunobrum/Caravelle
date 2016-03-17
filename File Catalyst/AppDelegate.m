@@ -73,6 +73,9 @@ NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsi
 NSOperationQueue *browserQueue;    // Queue for directory viewing (High Priority)
 NSOperationQueue *lowPriorityQueue; // Queue for size calculation (Low Priority)
 
+UserPreferencesManager *userPreferenceManager;
+
+
 EnumApplicationMode _application_mode;
 inline EnumApplicationMode application_mode() {
     return _application_mode;
@@ -354,7 +357,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     NSNumber *treeUpdateOperationID;
     DuplicateModeStartWindow *duplicateStartupScreenCtrl; // Duplicates Dialog
     DuplicateFindSettingsViewController *duplicateSettingsWindow;
-    UserPreferencesManager *userPreferenceManager;
     RenameFileDialog *renameFilePanel;
     FileExistsChoice *fileExistsWindow;
     NSMutableArray *pendingOperationErrors;
@@ -379,7 +381,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     {
         self->duplicateSettingsWindow = nil;
         self->duplicateStartupScreenCtrl = nil;
-        self->userPreferenceManager = nil;
         self->renameFilePanel = nil;
         self->fileExistsWindow = nil;
         self->myLeftView = nil;
@@ -390,7 +391,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         operationsQueue   = [[NSOperationQueue alloc] init];
         browserQueue      = [[NSOperationQueue alloc] init];
         lowPriorityQueue  = [[NSOperationQueue alloc] init];
-
+        userPreferenceManager = nil;
+        
         // Browser Queue
         // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
         [browserQueue setMaxConcurrentOperationCount:2];
@@ -893,7 +895,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     // closes the window if the application is OK to terminate
     NSApplicationTerminateReply answer = [self shouldTerminate:sender];
     if (answer==NSTerminateNow) {
-        [self->userPreferenceManager close]; // close the preferences menu when closing main window
+        [userPreferenceManager close]; // close the preferences menu when closing main window
         return YES;
     }
     else if (answer == NSTerminateLater) {
@@ -1100,7 +1102,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 
 -(BOOL) checkAppInDuplicateBlocking {
     if (applicationMode & ApplicationModeDupBrowser) {
-        if ([self->userPreferenceManager duplicatesAuthorized]==NO) {
+        if ([userPreferenceManager duplicatesAuthorized]==NO) {
             NSAlert *buyAppInInfo = [[NSAlert alloc] init];
             [buyAppInInfo addButtonWithTitle:@"OK"];
             // TODO:1.4 Buy Button to open direcly the referred window
@@ -1948,7 +1950,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                  theAction == @selector(contextualCut:) ||
                  theAction == @selector(cut:)
                  ) {
-            if ([self->userPreferenceManager duplicatesAuthorized]==NO) return NO;
+            if ([userPreferenceManager duplicatesAuthorized]==NO) return NO;
         }
     }
 
@@ -2814,7 +2816,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 }
 
 -(NSNumber*) boolAllowDelete {
-    return [NSNumber numberWithBool: ! (((applicationMode & ApplicationModeDupBrowser)!=0) && ([self->userPreferenceManager duplicatesAuthorized]==NO))];
+    return [NSNumber numberWithBool: ! (((applicationMode & ApplicationModeDupBrowser)!=0) && ([userPreferenceManager duplicatesAuthorized]==NO))];
 }
 
 /* invoked by Find Duplicates Dialog on OK Button */

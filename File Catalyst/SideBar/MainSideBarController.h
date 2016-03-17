@@ -13,6 +13,7 @@
 #define SIDE_GROUP_FAVORITES      @"FAVS"
 #define SIDE_GROUP_RECENT_USED    @"MRUS"
 #define SIDE_GROUP_AUTHORIZATIONS @"AUTH"
+#define SIDE_GROUP_APPINS         @"APIN"
 
 @interface MainSideBarController : NSViewController <NSOutlineViewDelegate, NSOutlineViewDataSource, NSMenuDelegate> {
 @private

@@ -7,6 +7,8 @@
 		<string>com.cascode.duplicates2</string>
 		<key>icon</key>
 		<string>duplicatesIcon</string>
+		<key>name</key>
+		<string>Duplicate Finder</string>
 	</dict>
 </array>
 </plist>

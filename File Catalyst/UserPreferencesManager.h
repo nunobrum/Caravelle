@@ -9,6 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #import "AppStoreManager.h"
 
+extern NSString *userPrefsPanelBehaviour;
+extern NSString *userPrefsPanelAuthorizations;
+extern NSString *userPrefsPanelBrowserOptions;
+extern NSString *userPrefsPanelAppIns;
+
 @interface UserPreferencesManager : NSWindowController <NSOutlineViewDelegate, SKProductsRequestDelegate, SKPaymentTransactionObserver> {
 }
 @property (strong) IBOutlet NSOutlineView *outlineView;
@@ -39,7 +44,11 @@
 - (IBAction)buyAppIn:(id)sender;
 - (IBAction)restoreProducts:(id)sender;
 
+-(void) selectPanel:(NSString*) panelID;
 -(BOOL) duplicatesAuthorized;
+-(NSArray*) productIdentifiers;
 
 
 @end
+
+extern UserPreferencesManager *userPreferenceManager;

@@ -12,6 +12,9 @@
 #import "SideBarObject.h"
 #import "RecentlyUsedArray.h"
 #import "TreeManager.h"
+#import "UserPreferencesManager.h"
+
+NSString *AppInToolItem = @"AppInTool";
 
 @implementation MainSideBarController
 
@@ -31,6 +34,7 @@
     [self populateAuthorizations];
     [self populateFavorites];
     [self populateRecentlyUsed];
+    [self populateAppIns];
     
     // The basic recipe for a sidebar. Note that the selectionHighlightStyle is set to NSTableViewSelectionHighlightStyleSourceList in the nib
     [_sidebarOutlineView sizeLastColumnToFit];
@@ -63,8 +67,9 @@
         SideBarObject *item = [_sidebarOutlineView itemAtRow:[_sidebarOutlineView selectedRow]];
         if ([_sidebarOutlineView parentForItem:item] != nil) {
             // Only change things for non-root items (root items can be selected, but are ignored)
-            if ([[(SideBarObject*)item objValue] isKindOfClass:[TreeItem class]]) {
-                TreeItem *tItem = (TreeItem*)[(SideBarObject*)item objValue];
+            id objectValue = [(SideBarObject*)item objValue];
+            if ([objectValue isKindOfClass:[TreeItem class]]) {
+                TreeItem *tItem = (TreeItem*) objectValue;
                 
                 NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                                       [NSArray arrayWithObject:tItem], kDFOFilesKey,
@@ -144,9 +149,16 @@
         if ([itObj.objValue isKindOfClass: [TreeItem class]]) {
             [result setToolTip: [(TreeItem*)itObj.objValue path]];
             result.button.target = self;
-            result.button.action = @selector(buttonClicked:);
+            result.button.action = @selector(removeItemOrder:);
             [result.button setImage:[NSImage imageNamed:@"StopButton"]];
             //[[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
+            [result.button setBezelStyle:NSInlineBezelStyle];
+            [result.button sizeToFit];
+        }
+        else if ([itObj.objValue isEqual:AppInToolItem]) {
+            result.button.target = self;
+            result.button.action = @selector(buyAppIn:);
+            [result.button setTitle:@"BUY"];
             [result.button setBezelStyle:NSInlineBezelStyle];
             [result.button sizeToFit];
         }
@@ -156,7 +168,7 @@
     }
 }
 
-- (void)buttonClicked:(id)sender {
+- (void)removeItemOrder:(id)sender {
     // Example target action for the button
     NSInteger row = [_sidebarOutlineView rowForView:sender];
     if (row != -1) {
@@ -165,15 +177,15 @@
         if (parent != nil) {
             // Only change things for non-root items (root items can be selected, but are ignored)
             if ([parent.objValue isEqualTo:SIDE_GROUP_FAVORITES]) {
-                //NSLog(@"MainSideBarController.buttonClicked: Deleteing Favorite");
+                //NSLog(@"MainSideBarController.removeItemOrder: Deleteing Favorite");
                 [self deleteFavorite:item];
             }
             else if ([parent.objValue isEqualTo:SIDE_GROUP_RECENT_USED]) {
-                //NSLog(@"MainSideBarController.buttonClicked: Deleting Recently Used");
+                //NSLog(@"MainSideBarController.removeItemOrder: Deleting Recently Used");
                 [self deleteRecentlyUsed:item];
             }
             else if ([parent.objValue isEqualTo:SIDE_GROUP_AUTHORIZATIONS]) {
-                //NSLog(@"MainSideBarController.buttonClicked:  Deleting Authorizations");
+                //NSLog(@"MainSideBarController.removeItemOrder:  Deleting Authorizations");
                 [self deleteAuthorization:item];
             }
             [parent.children removeObject:item];
@@ -188,6 +200,11 @@
             NSLog(@"Change view to %@", item);
         }
     }
+}
+
+-(void) buyAppIn:(id) sender {
+    [userPreferenceManager showWindow:nil];
+    [userPreferenceManager selectPanel:userPrefsPanelAppIns];
 }
 
 - (IBAction)sidebarMenuDidChange:(id)sender {
@@ -304,6 +321,27 @@
             [_topLevelItems addObject:favItem];
         }
     }
+}
+
+-(void) populateAppIns {
+    
+    NSArray *appInsDicts = [userPreferenceManager productIdentifiers];
+    NSMutableArray *appIns = [NSMutableArray arrayWithCapacity:[appInsDicts count]];
+    
+    for (NSDictionary *appInDict in appInsDicts) {
+        SideBarObject *item = [[SideBarObject alloc] init];
+        // TODO:2.0 polulate the name with the name from the AppStore.
+        item.title = [appInDict objectForKey:@"name"];
+        NSString *imageName = [appInDict objectForKey:@"icon"];
+        item.image = [NSImage imageNamed:imageName];
+        item.objValue = AppInToolItem;
+        [appIns addObject:item];
+    }
+    SideBarObject *appInItem = [[SideBarObject alloc] init];
+    appInItem.title = @"App-Ins";
+    appInItem.objValue = SIDE_GROUP_APPINS;
+    appInItem.children = appIns;
+    [_topLevelItems addObject:appInItem];
 }
 
 -(void) deleteFavorite:(SideBarObject*) item {
