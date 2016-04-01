@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -409,12 +409,13 @@ CA
                         <subviews>
                             <button toolTip="Send to Recycle Bin" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3l9-hq-0eM">
                                 <rect key="frame" x="742" y="3" width="81" height="19"/>
-                                <buttonCell key="cell" type="roundRect" title="Delete" alternateTitle="Trash" bezelStyle="roundedRect" image="PRO" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
+                                <buttonCell key="cell" type="roundRect" title="Delete" alternateTitle="Trash" bezelStyle="roundedRect" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jBQ-t8-19b">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="cellTitle"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="toolbarDelete:" target="494" id="X23-VH-ah0"/>
+                                    <binding destination="494" name="image" keyPath="self.appInImage" id="abQ-1w-NTZ"/>
                                     <binding destination="494" name="enabled" keyPath="self.boolAllowDelete" id="KIf-2u-hhd"/>
                                 </connections>
                             </button>
@@ -742,24 +743,6 @@ CA
                                     <action selector="viewTypeChanged:" target="494" id="Pgk-fb-Mh5"/>
                                 </connections>
                             </segmentedControl>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="P7k-cG-lxo">
-                                <rect key="frame" x="509" y="1" width="264" height="32"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="lessThanOrEqual" priority="100" constant="140" id="Tu0-yr-HOl"/>
-                                </constraints>
-                                <buttonCell key="cell" type="push" title="Exit Duplicates" bezelStyle="rounded" image="duplicatesIcon" imagePosition="left" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YpS-6z-ka5">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="exitButton:" target="494" id="Fci-Nl-txD"/>
-                                    <binding destination="494" name="hidden" keyPath="self.boolDuplicateModeActive" id="BIY-yi-NSD">
-                                        <dictionary key="options">
-                                            <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                        </dictionary>
-                                    </binding>
-                                </connections>
-                            </button>
                             <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5de-cw-kiE">
                                 <rect key="frame" x="85" y="6" width="65" height="24"/>
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="G8h-9E-77b">
@@ -791,7 +774,6 @@ CA
                             <constraint firstItem="Bii-Yd-WT4" firstAttribute="leading" secondItem="l3N-JB-c9m" secondAttribute="leading" constant="20" symbolic="YES" id="OMy-wC-W8z"/>
                             <constraint firstAttribute="trailing" secondItem="v0W-ls-fHr" secondAttribute="trailing" constant="20" id="Pv0-B0-2aJ"/>
                             <constraint firstAttribute="centerY" secondItem="u5A-Di-okM" secondAttribute="centerY" id="TUB-Ui-V9C"/>
-                            <constraint firstItem="P7k-cG-lxo" firstAttribute="leading" secondItem="urp-yc-gQO" secondAttribute="trailing" constant="16" id="Zr3-hM-yxP"/>
                             <constraint firstAttribute="centerY" secondItem="Bii-Yd-WT4" secondAttribute="centerY" id="b3b-TB-x4J"/>
                             <constraint firstAttribute="centerY" secondItem="S4e-Ro-5Lx" secondAttribute="centerY" id="clg-oe-kta"/>
                             <constraint firstAttribute="centerY" secondItem="urp-yc-gQO" secondAttribute="centerY" id="csj-2E-k0B"/>
@@ -799,7 +781,6 @@ CA
                             <constraint firstItem="u5A-Di-okM" firstAttribute="leading" secondItem="S4e-Ro-5Lx" secondAttribute="trailing" constant="8" symbolic="YES" id="dnb-sx-OH1"/>
                             <constraint firstItem="L7s-hR-NZP" firstAttribute="centerY" secondItem="l3N-JB-c9m" secondAttribute="centerY" id="fqs-k9-HG7"/>
                             <constraint firstItem="685-pk-2bz" firstAttribute="top" secondItem="l3N-JB-c9m" secondAttribute="top" constant="36" id="il6-Bv-eOs"/>
-                            <constraint firstAttribute="centerY" secondItem="P7k-cG-lxo" secondAttribute="centerY" id="j1s-pY-Me3"/>
                             <constraint firstItem="fsd-Du-IYs" firstAttribute="leading" secondItem="L7s-hR-NZP" secondAttribute="trailing" constant="16" id="k1f-xE-GAo"/>
                             <constraint firstAttribute="centerY" secondItem="5de-cw-kiE" secondAttribute="centerY" id="uKP-oG-GEk"/>
                             <constraint firstItem="L7s-hR-NZP" firstAttribute="leading" secondItem="u5A-Di-okM" secondAttribute="trailing" constant="8" symbolic="YES" id="ytq-tG-PiF"/>
@@ -915,7 +896,6 @@ CA
         <image name="StopButton" width="11" height="11"/>
         <image name="UnderConstruction20" width="20" height="18"/>
         <image name="dualPane" width="19" height="16"/>
-        <image name="duplicatesIcon" width="128" height="128"/>
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>
         <image name="redo16" width="16" height="16"/>

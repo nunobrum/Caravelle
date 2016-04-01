@@ -67,6 +67,7 @@ NSString const *opNewFolder = @"NewFolderOperation";
 NSString const *opRename = @"RenameOperation";
 NSString const *opDuplicateFind = @"DuplicateFindOperation";
 NSString const *opFlatOperation = @"com.cascode.op.flat";
+NSString const *opChangeMode    = @"com.cascode.op.changemode";
 
 NSFileManager *appFileManager;
 NSOperationQueue *operationsQueue;         // queue of NSOperations (1 for parsing file system, 2+ for loading image files)
@@ -419,7 +420,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         isApplicationTerminating = NO; // to inform that the application should quit after all processes are finished.
         isWindowClosing = NO;
         //FSMonitorThread = [[FileSystemMonitoring alloc] init];
-
+        self.appInImage = nil; //[NSImage imageNamed:@"PRO"];
 	}
 	return self;
 }
@@ -436,7 +437,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [(BrowserController*)view loadPreferences];
     [(BrowserController*)view setFlatView:NO];
     
-    [(BrowserController*)view addTreeRoot: item];
+    [(BrowserController*)view setRoots: [NSArray arrayWithObject:item]];
     [(BrowserController*)view selectFirstRoot]; // This calls a refresh
     //[(BrowserController*)view refresh];
     
@@ -1822,7 +1823,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView];
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
-        
+         self.appInImage = [NSImage imageNamed:@"PRO"];
     }
     else if (newMode == ApplicationModeDupDual) {
         [self makeView1:@"DuplicateMaster" view2:@"DuplicateDetail"];
@@ -1858,6 +1859,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [myLeftView stopBusyAnimations];
         [self focusOnView:myLeftView]; // Changing selected
         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
+         self.appInImage = [NSImage imageNamed:@"PRO"];
     }
     [self.toolbarAppModeSelect setSelectedSegment: segmentForApplicationMode(applicationMode)];
     
@@ -2266,6 +2268,15 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 -(void) startOperationHandler: (NSNotification*) note {
 
     NSString *operation = [[note userInfo] objectForKey:kDFOOperationKey];
+    if ([operation isEqualTo:opChangeMode]) {
+        // message that probably came from the side bar. Will need to switch mode.
+        // at this time I know that it must be from Duplicate Finder Mode.
+        // Later this may come from other modes. At that point will have to
+        // add another parameter to the dictionary to inform what mode to target
+        [self setBoolDuplicateModeActive:@0];
+        operation = (NSString*)opOpenOperation; // This will make the folder to open
+    }
+    
     if ([operation isEqualTo:opOpenOperation]) {
         NSArray *receivedItems = [[note userInfo] objectForKey:kDFOFilesKey];
         BOOL oneFolder=YES;
@@ -2277,7 +2288,15 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             else if ([node isFolder] && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View
                 /* This also sets the node for Table Display and path bar */
-                [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
+                TreeItem *root = [(BrowserController*)self.selectedView getRootWithURL:node.url];
+                if (root) {
+                    // the folder already exist so, only needs to be selected
+                    [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
+                }
+                else {
+                    [(BrowserController*)self.selectedView setRoots:[NSArray arrayWithObject:node]];
+                    [(BrowserController*)self.selectedView selectFirstRoot];
+                }
                 oneFolder = NO; /* Only one Folder can be Opened */
             }
             else
@@ -2799,14 +2818,19 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             duplicateSettingsWindow =[[DuplicateFindSettingsViewController alloc] initWithWindowNibName:@"DuplicatesFindSettings"];
         
         // Setting the current node in the list
-        NSMutableArray *selectedNodes;
-        selectedNodes = [NSMutableArray arrayWithObject:[myLeftView homePath]]; // Prefering this form since the url can be nil
-        if (applicationMode == ApplicationMode2Views) {
-            if (path_relation([myLeftView homePath],[myRightView homePath]) == pathsHaveNoRelation)
-                [selectedNodes addObject:[myRightView homePath]];
+        NSString *leftpath = [myLeftView homePath];
+        if (leftpath) {
+            NSMutableArray *selectedNodes;
+            selectedNodes = [NSMutableArray arrayWithObject:leftpath]; // Prefering this form since the url can be nil
+            
+            if (applicationMode == ApplicationMode2Views) {
+                NSString *rightpath = [myRightView homePath];
+                if (rightpath!=nil && path_relation([myLeftView homePath],rightpath) == pathsHaveNoRelation)
+                    [selectedNodes addObject:rightpath];
+            }
+            [duplicateSettingsWindow showWindow:self];
+            [self->duplicateSettingsWindow setPaths:selectedNodes];
         }
-        [duplicateSettingsWindow showWindow:self];
-        [self->duplicateSettingsWindow setPaths:selectedNodes];
         [self setApplicationMode: (applicationMode|ApplicationModeDupStarted)];
     }
     else {
@@ -2883,6 +2907,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             default:
                 newMode = applicationMode;
         }
+        self.appInImage = nil;
         [self setApplicationModeEnum:newMode];
         [self goHome:myLeftView];
         if (myRightView)

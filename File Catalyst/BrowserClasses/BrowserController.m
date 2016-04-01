@@ -1969,11 +1969,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 
 -(NSString*) homePath {
-    TreeItem * selected;
-    if ([self treeViewCollapsed]) {
-        selected = self->_treeNodeSelected;
-    }
-    else {
+    TreeItem * selected = self->_treeNodeSelected;
+    if (selected == nil) {
         selected = self->_rootNodeSelected;
     }
     

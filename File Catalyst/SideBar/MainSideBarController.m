@@ -13,6 +13,7 @@
 #import "RecentlyUsedArray.h"
 #import "TreeManager.h"
 #import "UserPreferencesManager.h"
+#import "AppDelegate.h"
 
 NSString *AppInToolItem = @"AppInTool";
 
@@ -71,17 +72,47 @@ NSString *AppInToolItem = @"AppInTool";
             if ([objectValue isKindOfClass:[TreeItem class]]) {
                 TreeItem *tItem = (TreeItem*) objectValue;
                 
-                NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      [NSArray arrayWithObject:tItem], kDFOFilesKey,
-                                      opOpenOperation, kDFOOperationKey,
-                                      self, kDFOFromViewKey,
-                                      nil];
-                [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+                // Will check if in Duplicates mode. If so, needs to warn that it will exit from duplicates Mode.
+                if (applicationMode & ApplicationModeDupBrowser) {
+                    NSAlert *alert = [[NSAlert alloc] init];
+                    [alert setMessageText:@"Exit Duplicate Mode ?" ];
+                    [alert addButtonWithTitle:@"OK"];
+                    [alert addButtonWithTitle:@"Cancel"];
+                    [alert setInformativeText:@"This will exit from Duplicate Mode"];
+                    [alert setAlertStyle:NSWarningAlertStyle];
+                    [alert setIcon:[NSImage imageNamed:@"duplicatesIcon"]];
+                    [alert beginSheetModalForWindow:self.view.window completionHandler:^(NSModalResponse returnCode) {
+                        //NSLog(@"Alert return code :%ld", (long)returnCode);
+                        if (returnCode== 1000) { // OK
+                            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                  [NSArray arrayWithObject:tItem], kDFOFilesKey,
+                                                  opChangeMode, kDFOOperationKey,
+                                                  self, kDFOFromViewKey,
+                                                  nil];
+                            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+                        }
+                    }];
+                }
+                else {
+                    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          [NSArray arrayWithObject:tItem], kDFOFilesKey,
+                                          opOpenOperation, kDFOOperationKey,
+                                          self, kDFOFromViewKey,
+                                          nil];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+                }
             }
-        }
-        else {
-            NSLog(@"Change view to %@", item);
             
+            else if ([item.objValue isEqual:AppInToolItem]) {
+                // It is selecting an AppIn
+                // TODO:1.3.9 will verify which App-In is concerned.
+                [(AppDelegate*)[NSApp delegate] setBoolDuplicateModeActive: @1];
+                
+            }
+            else {
+                NSLog(@"Change view to %@", item);
+                
+            }
         }
     }
 }

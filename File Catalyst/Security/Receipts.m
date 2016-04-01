@@ -104,7 +104,7 @@ int validateAppReceipt () {
     
     if (certificateData )
     {
-        static int verified = 1;
+        int verified = 1;
         int result = 0;
         OpenSSL_add_all_digests(); // Required for PKCS7_verify to work
         X509_STORE *store = X509_STORE_new();

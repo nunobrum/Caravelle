@@ -126,5 +126,9 @@
 // Used to annonce change of state : willChange/didChange
 #define BOOL_ALLOW_DUPLICATE @"boolAllowDelete"
 
+-(NSNumber*) boolDuplicateModeActive;
+-(void) setBoolDuplicateModeActive:(NSNumber*) mode;
+
+@property NSImage *appInImage;
 
 @end

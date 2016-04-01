@@ -38,6 +38,7 @@ extern NSString const *opRename;
 extern NSString const *opSendRecycleBinOperation;
 extern NSString const *opDuplicateFind;
 extern NSString const *opFlatOperation;
+extern NSString const *opChangeMode;
 
 extern NSString *notificationStatusUpdate;
 extern NSString *notificationViewChanged;
@@ -226,6 +227,7 @@ typedef NS_ENUM(NSUInteger, EnumContextualMenuItemTags)  {
     menuClipCopyName = 0x0320,
     menuClipPaste    = 0x0330,
     menuNewFolder    = 0x0400,
+    menuBrowsePackage= 0x0410,
     //menuNewFile,
     menuEnd          = 0xffff
     
