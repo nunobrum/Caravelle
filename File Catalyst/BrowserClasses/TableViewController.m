@@ -144,6 +144,9 @@
             if ([theFile hasTags:tagTreeItemDropped+tagTreeItemToMove]) {
                 [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or moved
             }
+            else if ([theFile hasTags:tagTreeAuthorized]==NO) {
+                [cellView.textField setTextColor:[NSColor blueColor]]; // Sets a blue color
+            }
             else {
                 // Set color back to normal
                 [cellView.textField setTextColor:foreground];
@@ -367,6 +370,12 @@
     if (columns) {
         [self setupColumns:columns];
     }
+    NSArray *widths = [preferences objectForKey:USER_DEF_TABLE_VIEW_COLUMNS_WIDTH];
+    for (NSInteger i=0; i < [widths count]; i++) {
+        NSTableColumn *column = [[[self myTableView] tableColumns] objectAtIndex:i];
+        CGFloat width = [(NSNumber*)[widths objectAtIndex:i] floatValue];
+        [column setWidth:width];
+    }
     //[self.myTableView setUsesAlternatingRowBackgroundColors:[[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_TABLE_ALTERNATE_ROW]];
 }
 
@@ -398,6 +407,8 @@
     NSArray *colIDs = [self columns];
     if (colIDs) {
         [preferences setObject:colIDs forKey:USER_DEF_TABLE_VIEW_COLUMNS];
+        NSArray *widths = [[self.myTableView tableColumns] valueForKeyPath:@"@unionOfObjects.width"];
+        [preferences setObject:widths forKey:USER_DEF_TABLE_VIEW_COLUMNS_WIDTH];
     }
 }
 
@@ -683,12 +694,7 @@
     
     
     [super setCurrentNode:branch];
-    if (branch==nil) {
-        // Removing everything
-        self->_displayedItems = nil;
-    }
-    else {
-    }
+    [self.myTableView reloadData];
 }
 
 

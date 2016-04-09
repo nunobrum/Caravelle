@@ -239,8 +239,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     [self didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     TreeItem *cursor = self->_parent;
     while (cursor!=nil) {
-        [cursor willChangeValueForKey:kvoTreeBranchPropertyChildren];
-        [cursor didChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
+        [cursor willChangeValueForKey:kvoTreeBranchPropertySize];
+        [cursor didChangeValueForKey:kvoTreeBranchPropertySize];  // This will inform the observer about change
         cursor = cursor->_parent;
     }
 }
@@ -1558,12 +1558,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 // trying to invalidate all existing tree and lauching a refresh on the views
 -(void) forceRefreshOnBranch {
-    if (self->_children!=nil) {
+    if (self->_children!=nil && [self hasTags:tagTreeItemDirty]==NO) { // Useless to propagate to where is already dirty
         [self willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
         @synchronized(self) {
             [self setTag:tagTreeItemDirty];
             for (TreeItem *item in self->_children) {
-                if ([item isFolder]) {
+                if ([item isFolder] && [item hasTags:tagTreeItemDirty]==NO) { // Useless to propagate to where is already dirty
                     [(TreeBranch*)item forceRefreshOnBranch];
                 }
             }

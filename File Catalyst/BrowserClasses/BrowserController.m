@@ -215,7 +215,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     CGFloat constrainedCoordinate = proposedCoordinate;
     if (index == 0)
     {
-        constrainedCoordinate = proposedCoordinate + kMinContrainValue;
+        if (constrainedCoordinate < kMinContrainValue) {
+            constrainedCoordinate = kMinContrainValue;
+        }
     }
     //NSLog(@"View: %@ Index: %ld MinCoordinate: %f",_viewName, (long)index, proposedCoordinate);
     return constrainedCoordinate;
@@ -228,12 +230,17 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 - (CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedCoordinate ofSubviewAt:(NSInteger)index
 {
     CGFloat constrainedCoordinate = proposedCoordinate;
-    if (index == 0 && [self.detailedViewController isKindOfClass:[IconViewController class]]) {
-        CGFloat detailedWidth = [[[splitView subviews] objectAtIndex:1] frame].size.width;
-        detailedWidth = floorf(detailedWidth / ICON_WIDTH + 0.4999) * ICON_WIDTH;
-        NSLayoutConstraint *constraint =[(IconViewController*)self.detailedViewController viewWidthConstraint];
-        [constraint setConstant:detailedWidth];
-        //NSLog(@"View: %@ Index: %ld MaxCoordinate: %f Constraint: %f",_viewName, (long) index, proposedCoordinate, detailedWidth);
+    if (index == 0) {
+        if ([self.detailedViewController isKindOfClass:[IconViewController class]]) {
+            CGFloat detailedWidth = [[[splitView subviews] objectAtIndex:1] frame].size.width;
+            detailedWidth = floorf(detailedWidth / ICON_WIDTH + 0.4999) * ICON_WIDTH;
+            NSLayoutConstraint *constraint =[(IconViewController*)self.detailedViewController viewWidthConstraint];
+            [constraint setConstant:detailedWidth];
+            //NSLog(@"View: %@ Index: %ld MaxCoordinate: %f Constraint: %f",_viewName, (long) index, proposedCoordinate, detailedWidth);
+        }
+        // This is to insure a minimum for the detailed view
+        if (constrainedCoordinate> kMinContrainValue) constrainedCoordinate -=kMinContrainValue;
+        
     }
     return constrainedCoordinate;
 }
@@ -917,19 +924,30 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void) setTreeViewCollapsed:(BOOL) collapsed {
-    if (collapsed)
-        // TODO:1.4 Save width in preferences @"TreeWidth"
+    if (collapsed) {
+        // Save width in preferences @"TreeWidth"
+        NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
+        CGFloat width = NSWidth([firstView bounds]);
+        if (width<150) width = 150;
+        else if (width>500) width=500;
+        [self.preferences setObject:[NSNumber numberWithFloat:width] forKey:USER_DEF_TREE_WIDTH];
         
         [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
+    }
     else {
-        // TODO:1.4 Get this from user defaults
+        // TGet this from user defaults
         CGFloat width = 200.0;
-        NSNumber *prefWidth =[self.preferences objectForKey:@"TreeWidth"];
+        NSNumber *prefWidth =[self.preferences objectForKey:USER_DEF_TREE_WIDTH];
         if (prefWidth != nil) {
             width = [prefWidth floatValue];
+            if (width<150) width = 150;
+            else if (width>500) width=500;
         }
         [self->_mySplitView setPosition:width ofDividerAtIndex:0];
+        //NSLog(@"setTreeViewCollapsed: width %@, wfc %f", prefWidth, width);
+        
     }
+    [self->_mySplitView adjustSubviews];
     [self.viewOptionsSwitches setSelected:!collapsed forSegment:BROWSER_VIEW_OPTION_TREE_ENABLE];
 }
 
@@ -968,16 +986,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     BOOL isSelected = [self.viewOptionsSwitches isSelectedForSegment:selectedSegment];
     if (selectedSegment==BROWSER_VIEW_OPTION_TREE_ENABLE) {
         // TODO:? Animate collapsing and showing of the treeView
-        if (isSelected) {
-            // Adding the tree view
-            [self->_mySplitView setPosition:200 ofDividerAtIndex:0];
-            //[self->_myTreeViewEnableButton setSelected:NO forSegment:0];
-        }
-        else {
-            // Collapsing the tree view
-            [self->_mySplitView setPosition:0 ofDividerAtIndex:0];
-            //[self->_myTreeViewEnableButton setSelected:YES forSegment:0];
-        }
+        [self setTreeViewCollapsed:!isSelected];
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_TreeCollapsed forKey:kViewChangedWhatKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
         
@@ -1397,10 +1406,6 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         self->_viewName = viewName;
         [self.detailedViewController setName:viewName twinName:twinName];
         // Setting the AutoSave Settings
-        
-        NSString *viewTypeStr = [viewName stringByAppendingString: @"Preferences"];
-        [self.preferences removeAllObjects]; // This can pose problems if ever bindings are used.
-        [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
         [self loadPreferences];
     }
     
@@ -1460,6 +1465,10 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             // Saving the treeCollapsed, so that it can be recovered when the new view is loaded
             BOOL treeVisble = ![self treeViewCollapsed];
             [self.preferences setObject:[NSNumber numberWithBool:treeVisble] forKey: USER_DEF_TREE_VISIBLE ];
+            NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
+            CGFloat width = NSWidth([firstView bounds]);
+            //NSLog(@"setViewType savePreferences: %f", width);
+            [self.preferences setObject:[NSNumber numberWithFloat:width] forKey:USER_DEF_TREE_WIDTH];
         }
         [self.detailedViewController unregisterDraggedTypes];
         
@@ -1527,16 +1536,26 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     }
     
     [self.preferences setObject:[NSNumber numberWithBool:self.treeViewCollapsed==NO] forKey:USER_DEF_TREE_VISIBLE];
+    NSView *firstView = [[self->_mySplitView subviews] objectAtIndex:0];
+    CGFloat width = NSWidth([firstView bounds]);
+    if (width<150) width = 150;
+    else if (width>500) width=500;
+    [self.preferences setObject:[NSNumber numberWithFloat:width] forKey:USER_DEF_TREE_WIDTH];
     
     NSString *prefKey = [self.viewName stringByAppendingString:@"Preferences"];
     [[NSUserDefaults standardUserDefaults] setObject:self.preferences forKey:prefKey];
+    //NSLog(@"savePreferences:%@ width:%f", prefKey, width);
+    
 }
 
 -(void) loadPreferences {
     //NSLog(@"BrowserController.loadPreferences %@", self->_viewName);
     if (self->_viewName == nil) // Sanity Check
         return;
-    
+    NSString *viewTypeStr = [self->_viewName stringByAppendingString: @"Preferences"];
+    [self.preferences removeAllObjects]; // This can pose problems if ever bindings are used.
+    [self.preferences addEntriesFromDictionary:[[NSUserDefaults standardUserDefaults] dictionaryForKey:viewTypeStr]];
+    //NSLog(@"loadPreferences: %@", viewTypeStr);
     [self.detailedViewController loadPreferencesFrom:self.preferences ];
     [self setTreeViewCollapsed: NO==[[self.preferences objectForKey: USER_DEF_TREE_VISIBLE ] boolValue]];
 }
@@ -1604,7 +1623,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void) setRoots:(NSArray*) rootDirectories {
-    [BaseDirectories releaseChildren];
+    [self removeAll];
+    [self setFlatView:NO]; // Cancels Flat View to avoid problems
     for (TreeItem* root in rootDirectories) {
         [BaseDirectories addTreeItem:root];
     }

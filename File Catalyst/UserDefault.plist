@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>ApplicationBehaviour</key>
-	<integer>0</integer>
+	<integer>1</integer>
 	<key>DisplayFunctionBar</key>
 	<true/>
 	<key>LeftPanelVisible</key>
@@ -59,11 +59,19 @@
 		<integer>1</integer>
 		<key>TreeVisible</key>
 		<false/>
+		<key>TreeWidth</key>
+		<integer>120</integer>
 		<key>TableColumns</key>
 		<array>
 			<string>COL_NAME</string>
 			<string>COL_KIND</string>
 			<string>COL_DATE_MODIFIED</string>
+		</array>
+		<key>TableColumnsWidth</key>
+		<array>
+			<integer>200</integer>
+			<integer>180</integer>
+			<integer>100</integer>
 		</array>
 	</dict>
 	<key>BrowserRightHomeDir</key>
@@ -74,11 +82,19 @@
 		<integer>1</integer>
 		<key>TreeVisible</key>
 		<false/>
+		<key>TreeWidth</key>
+		<integer>120</integer>
 		<key>TableColumns</key>
 		<array>
 			<string>COL_NAME</string>
 			<string>COL_KIND</string>
 			<string>COL_DATE_MODIFIED</string>
+		</array>
+		<key>TableColumnsWidth</key>
+		<array>
+			<integer>200</integer>
+			<integer>180</integer>
+			<integer>100</integer>
 		</array>
 	</dict>
 	<key>SinglePreferences</key>
@@ -87,12 +103,21 @@
 		<integer>1</integer>
 		<key>TreeVisible</key>
 		<true/>
+		<key>TreeWidth</key>
+		<integer>120</integer>
 		<key>TableColumns</key>
 		<array>
 			<string>COL_NAME</string>
 			<string>COL_SIZE</string>
 			<string>COL_KIND</string>
 			<string>COL_DATE_MODIFIED</string>
+		</array>
+		<key>TableColumnsWidth</key>
+		<array>
+			<integer>200</integer>
+			<integer>100</integer>
+			<integer>180</integer>
+			<integer>100</integer>
 		</array>
 	</dict>
 </dict>

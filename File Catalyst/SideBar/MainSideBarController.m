@@ -181,6 +181,7 @@ NSString *AppInToolItem = @"AppInTool";
             [result setToolTip: [(TreeItem*)itObj.objValue path]];
             result.button.target = self;
             result.button.action = @selector(removeItemOrder:);
+            [result.button setTitle:@""];
             [result.button setImage:[NSImage imageNamed:@"StopButton"]];
             //[[result.button cell] setHighlightsBy:NSPushInCellMask|NSChangeBackgroundCellMask];
             [result.button setBezelStyle:NSInlineBezelStyle];
@@ -190,6 +191,7 @@ NSString *AppInToolItem = @"AppInTool";
             result.button.target = self;
             result.button.action = @selector(buyAppIn:);
             [result.button setTitle:@"BUY"];
+            [result.button setImage:nil];
             [result.button setBezelStyle:NSInlineBezelStyle];
             [result.button sizeToFit];
         }

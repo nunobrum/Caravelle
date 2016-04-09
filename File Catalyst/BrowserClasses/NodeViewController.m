@@ -130,6 +130,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     [self unobserveItem:self.currentNode];
 
     self->_currentNode = branch;
+    [self->_displayedItems removeAllObjects];
     if (branch!=nil) {
         [self observeItem:self.currentNode];
         [branch refresh];
@@ -435,14 +436,16 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             }
         }
         
-        // Adding the Folders First Sort
-        // TODO: This is silly to be done all the time, but at leat it assures that its not
-        // overriden by other sorts. Find another way to do this
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_FOLDERS_FIRST]) {
-            [self makeSortOnFieldID:SORT_FOLDERS_FIRST_FIELD_ID ascending:YES grouping:NO];
+        if (self.foldersInTable==YES) {
+            // Adding the Folders First Sort
+            // TODO: This is silly to be done all the time, but at leat it assures that its not
+            // overriden by other sorts. Find another way to do this
+            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_FOLDERS_FIRST]) {
+                [self makeSortOnFieldID:SORT_FOLDERS_FIRST_FIELD_ID ascending:YES grouping:NO];
+            }
+            else
+                [self removeSortOnField:SORT_FOLDERS_FIRST_FIELD_ID];
         }
-        else
-            [self removeSortOnField:SORT_FOLDERS_FIRST_FIELD_ID];
         
         // Sort Data
         if ((self.sortAndGroupDescriptors!=nil) && ([self.sortAndGroupDescriptors count] > 0)) {
@@ -466,7 +469,8 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         }
         
         // Adding the parent directory as .. if requested
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY]) {
+        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] &&
+            self.foldersInTable==YES) {
             DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
             if (dummyParent != nil)
                 [tableData insertObject:dummyParent atIndex:0];

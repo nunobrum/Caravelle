@@ -647,8 +647,8 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     self.BrowserSplitView = [[NSSplitView alloc] init];
     [self.BrowserSplitView setVertical:YES];
     [self.BrowserSplitView setDividerStyle:NSSplitViewDividerStylePaneSplitter];
-    [self.BrowserSplitView setContentCompressionResistancePriority:500 forOrientation:NSLayoutConstraintOrientationVertical];
-    [self.BrowserSplitView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable ];
+    [self.BrowserSplitView setContentCompressionResistancePriority:500 forOrientation:NSLayoutConstraintOrientationHorizontal];
+    //[self.BrowserSplitView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable ];
     [self.BrowserSplitView setAutoresizesSubviews:YES];
 
     [self.ContentSplitView addSubview:self.BrowserSplitView];
@@ -2294,8 +2294,12 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                     [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
                 }
                 else {
-                    [(BrowserController*)self.selectedView setRoots:[NSArray arrayWithObject:node]];
-                    [(BrowserController*)self.selectedView selectFirstRoot];
+                    // It does not exist on the Outline View, will get the folder from the TreeManager
+                    TreeItem *root = [appTreeManager addTreeItemWithURL:node.url askIfNeeded:YES];
+                    if (root!=nil) {
+                        [(BrowserController*)self.selectedView setRoots:[NSArray arrayWithObject:root]];
+                        [(BrowserController*)self.selectedView selectFirstRoot];
+                    }
                 }
                 oneFolder = NO; /* Only one Folder can be Opened */
             }

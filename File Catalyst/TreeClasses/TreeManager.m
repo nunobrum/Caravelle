@@ -287,19 +287,20 @@ TreeManager *appTreeManager;
         }
 
         if  (itemToRefresh != nil) { // Its already being monitored
-            BOOL scanSubdirs = (flags &
-                                (kFSEventStreamEventFlagMustScanSubDirs |
-                                 kFSEventStreamEventFlagUserDropped |
-                                 kFSEventStreamEventFlagKernelDropped))!=0;
-            if (scanSubdirs) {
+            if (flags & kFSEventStreamEventFlagMustScanSubDirs) {
                 //NSLog(@"TreeManager.fileSystemChangePath: - System is asking a full rescan of the tree:\n%@", changedPath);
-
-                if ([itemToRefresh respondsToSelector:@selector(forceRefreshOnBranch)]) {
-                    [itemToRefresh forceRefreshOnBranch];
-                }
-                else {
+                if (flags & kFSEventStreamEventFlagKernelDropped) {
+                    if ([itemToRefresh respondsToSelector:@selector(forceRefreshOnBranch)]) {
+                        [itemToRefresh forceRefreshOnBranch];
+                    }
+                    else {
                         NSLog(@"TreeManager:fileSystemChangePath: Not implemented ! Not expected to receive non branches.\nReceived ""%@""", changedPath);
                     }
+                }
+                else if (flags & kFSEventStreamEventFlagUserDropped) {
+                    // TODO:!!!!!!!! Need to find a better solution. The display is taking too long and messages are being dropped.
+                    NSLog(@"TreeManager:fileSystemChangePath: Lost update in ""%@"". The update is taking too long. Dropping refresh. Will be fixed in next version", changedPath);
+                }
             }
             else
             {
@@ -451,7 +452,7 @@ TreeManager *appTreeManager;
     NSString *title = [NSString stringWithFormat:@"Caravelle was requested to access to Folder\n%@", friendlyTitle];
     
     [alert setMessageText:title];
-    [alert setInformativeText:@"Caravelle respects Apple security guidelines, and in order to proceed it requires you to formally grant access to the folder indicated. Accesses can be revoked in the preferences panel."];
+    [alert setInformativeText:@"Caravelle respects Apple security guidelines, so in order to proceed, user must formally grant access to the folder indicated by using the system Open Dialog. Accesses can be revoked in the preferences panel or in the Side Panel."];
     
     [alert setAlertStyle:NSWarningAlertStyle];
     NSModalResponse reponse = [alert runModal];

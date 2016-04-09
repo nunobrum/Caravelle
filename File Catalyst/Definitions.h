@@ -103,6 +103,7 @@ extern const CFStringRef kTreeItemDropUTI;
 // View Preferences
 #define USER_DEF_PANEL_VIEW_TYPE @"ViewType"
 #define USER_DEF_TABLE_VIEW_COLUMNS @"TableColumns"
+#define USER_DEF_TABLE_VIEW_COLUMNS_WIDTH @"TableColumnsWidth"
 #define USER_DEF_TREE_VISIBLE @"TreeVisible"
 #define USER_DEF_TREE_WIDTH   @"TreeWidth"
 #define USER_DEF_SORT_KEYS    @"SortKeys"
