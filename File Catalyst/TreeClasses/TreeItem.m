@@ -72,6 +72,7 @@
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
+        self->_url = nil;
         self->_tag = 0;
         self->_parent = parent;
         self.nameCache = nil;
@@ -142,12 +143,14 @@
     // The tags shoud be set here accordingly to the information got from URL
     // TODO:1.3.3 When the Icon View is changed to a data Delegate model instead of the ArrayController, the "name" notification can be removed.
     [self willChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change
+    BOOL do_notify = (self->_url!=nil);
     self->_url = url;
     self->_nameCache = nil; // Will force update in the next call to name
     [self updateFileTags];
     //[self didChangeValueForKey:@"url"];
     [self didChangeValueForKey:@"name"]; // This assures that the IconView is informed of the change.
-    [self notifyChange];
+    if (do_notify) // This is to avoid repeated refreshes at the parent.
+        [self notifyChange];
 }
 
 -(NSURL*) url {
