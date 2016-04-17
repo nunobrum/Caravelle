@@ -112,6 +112,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 -(void)viewDidLoad {
     self->_treeCollapseDetector = [self treeViewCollapsed];
+    //NSLog(@"BrowserController.viewDidLoad");
+    //[self loadPreferences];
 }
 
 - (void)dealloc {
@@ -531,6 +533,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                              types:(NSArray *)types
 {
     NSArray *selectedFiles = [self getSelectedItemsForContextualMenu1];
+    //NSLog(@"Write to Paste Board");
+    //DebugPBoard(pboard);
     return writeItemsToPasteboard(selectedFiles, pboard, types);
 }
 
@@ -1568,7 +1572,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(void) refresh {
     // Refresh first the Roots, deletes the ones tagged for deletion
     NSUInteger idx=0;
-    while (idx < [BaseDirectories numberOfBranchesInNode]) {
+    NSUInteger numberOfBranches = [BaseDirectories numberOfBranchesInNode];
+    while (idx < numberOfBranches) {
         // Ideally this should pass to the TreeClasses. Keeping it here for the time being.
         TreeBranch *tree = [BaseDirectories branchAtIndex:idx];
         if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
@@ -1589,7 +1594,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         }
     }
 
-    if ([BaseDirectories numberOfBranchesInNode]==1) {
+    if (numberOfBranches==1) {
         // Expand the Root Node
         id itemToExpand = [BaseDirectories branchAtIndex:0];
         if (itemToExpand)

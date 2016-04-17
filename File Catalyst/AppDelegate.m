@@ -648,7 +648,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [self.BrowserSplitView setVertical:YES];
     [self.BrowserSplitView setDividerStyle:NSSplitViewDividerStylePaneSplitter];
     [self.BrowserSplitView setContentCompressionResistancePriority:200 forOrientation:NSLayoutConstraintOrientationHorizontal];
-    //[self.BrowserSplitView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable ];
+    [self.BrowserSplitView setAutoresizingMask: NSViewHeightSizable|NSViewWidthSizable ];
     [self.BrowserSplitView setAutoresizesSubviews:YES];
 
     [self.ContentSplitView addSubview:self.BrowserSplitView];

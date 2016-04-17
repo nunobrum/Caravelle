@@ -195,7 +195,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 
-// Menu support
+#pragma mark - Menu support
 -(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag {
     BOOL answer;
     switch (tag) {
@@ -1189,6 +1189,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  node is expandable. It is preferable to assume as yes and later correct. */
 -(BOOL) isExpandable {
     if ((self->_children!=nil) && ([self numberOfBranchesInNode]!=0))
+        return YES;
+    return NO;
+}
+
+-(BOOL) hasChildren {
+    if ((self->_children!=nil) && ([self numberOfItemsInNode]!=0))
         return YES;
     return NO;
 }
