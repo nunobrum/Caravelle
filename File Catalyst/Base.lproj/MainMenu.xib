@@ -659,7 +659,7 @@ CA
                             </segmentedControl>
                             <popUpButton toolTip="Actions" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="fsd-Du-IYs">
                                 <rect key="frame" x="381" y="5" width="53" height="26"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" selectedItem="wsl-HW-Rax" id="Qc6-E4-OxL">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" inset="2" pullsDown="YES" id="Qc6-E4-OxL">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="menu"/>
                                     <menu key="menu" id="7tR-Hd-XDV">
@@ -881,7 +881,7 @@ CA
             <connections>
                 <outlet property="delegate" destination="-2" id="SZc-fl-8d1"/>
             </connections>
-            <point key="canvasLocation" x="333" y="-350.5"/>
+            <point key="canvasLocation" x="433" y="-127.5"/>
         </menu>
     </objects>
     <resources>

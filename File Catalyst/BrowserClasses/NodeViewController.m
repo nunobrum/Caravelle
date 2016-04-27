@@ -183,7 +183,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 
 #pragma mark - Menu Support 
 
-//// TODO: 1.4 Make a Full programatic menu
+// Make a Full programatic menu
 -(void) menuNeedsUpdate:(NSMenu*) menu {
     //NSLog(@"NodeViewController.menuNeedsUpdate");
     // tries a contextual excluding the click in blank space

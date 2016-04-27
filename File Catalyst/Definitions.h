@@ -109,6 +109,7 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_SORT_KEYS    @"SortKeys"
 #define USER_DEF_LEFT_PANEL_VISIBLE @"LeftPanelVisible"
 #define USER_DEF_LEFT_PANEL_SIZE    @"LeftPanelSize"
+#define USER_DEF_LEFT_VIEW_SIZE     @"LeftViewWidth"
 
 #define USER_DEF_DUPLICATE_CLASSIC_VIEW @"DuplicateClassicView"
 

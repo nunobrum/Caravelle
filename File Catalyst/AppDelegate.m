@@ -522,6 +522,10 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             }
             [myRightView savePreferences];
         }
+        
+        // Store the width
+        CGFloat width = NSWidth([[[self.BrowserSplitView subviews] firstObject] bounds]);
+        [[NSUserDefaults standardUserDefaults] setFloat:width forKey:USER_DEF_LEFT_VIEW_SIZE];
     }
     BOOL sideCollapsed = [self.ContentSplitView isSubviewCollapsed: self->sideBarController.view] ;
     [[NSUserDefaults standardUserDefaults] setBool:(sideCollapsed==NO) forKey:USER_DEF_LEFT_PANEL_VISIBLE];
@@ -639,6 +643,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
                              returnTypes:returnTypes];
 
     _application_mode = [[NSUserDefaults standardUserDefaults] integerForKey:USER_DEF_APP_VIEW_MODE];
+    
+    
+    [self.myWindow setFrameAutosaveName:@"CRVLMainWindowSize"];
+    NSSize windowSize = self.myWindow.frame.size;
+    //NSLog(@"Saved Window Size %f,%f", windowSize.width, windowSize.height);
 
     
     sideBarController = [[MainSideBarController alloc] initWithNibName:@"MainSideBarView" bundle:nil ];
@@ -675,8 +684,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     //                                                               options:0 metrics:nil views:viewsDictionary];
     //[myLeftView.view addConstraints:constraints];
     
-        if (applicationMode == ApplicationMode2Views) {
+    if (applicationMode == ApplicationMode2Views) {
         [self makeView1:@"Left" view2:@"Right"];
+        // repositions the splitter.
+        CGFloat dividerPosition = [[NSUserDefaults standardUserDefaults] floatForKey:USER_DEF_LEFT_VIEW_SIZE];
+        if (dividerPosition!=0) {
+            [self.BrowserSplitView setPosition:dividerPosition ofDividerAtIndex:0];
+        }
     }
     else if (applicationMode == ApplicationMode1View) {
         [self makeView1:@"Single" view2:nil];
@@ -693,6 +707,13 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     BOOL sideBarVisible = [[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_LEFT_PANEL_VISIBLE];
     [self.toolbarFunctionBarSelect setSelected:sideBarVisible forSegment:MAIN_VIEW_OPTION_VISIBLE_SIDEBAR];
     [self setDisplaySideBar:sideBarVisible];
+    
+    // Corrects the problem with the expansion of the window
+    
+    if (windowSize.height!=0 && windowSize.width!=0)
+    {
+        [self.myWindow setContentSize:windowSize];
+    }
 
     // Make a default focus
     self->_selectedView = myLeftView;
@@ -930,6 +951,25 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 }
 
 #pragma mark - NSMenuDelegate
+
+// Will get this from the NodeViewController
+extern EnumContextualMenuItemTags viewMenuFiles[];
+extern EnumContextualMenuItemTags viewMenuNoFiles[];
+
+// Make a Full programatic menu
+-(void) menuNeedsUpdate:(NSMenu*) menu {
+    //NSLog(@"NodeViewController.menuNeedsUpdate");
+    // tries a contextual excluding the click in blank space
+    [menu removeAllItems];
+    NSArray *itemsSelected = [[self selectedView] getSelectedItemsForContextualMenu2];
+    if (itemsSelected==nil) {
+        itemsSelected = [[self selectedView] getSelectedItemsForContextualMenu1];
+        updateContextualMenu(menu, itemsSelected, viewMenuNoFiles);
+    }
+    else {
+        updateContextualMenu(menu, itemsSelected, viewMenuFiles);
+    }
+}
 
 - (BOOL)menuHasKeyEquivalent:(NSMenu *)menu
                     forEvent:(NSEvent *)event
@@ -1629,7 +1669,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         [self.ContentSplitView setPosition:width ofDividerAtIndex:0];
     }
     else {
-        // TODO:1.4 Save width in preferences @"TreeWidth"
+        // Save width in preferences @"TreeWidth"
         NSInteger width = NSWidth([(NSView*)[[self.ContentSplitView subviews] objectAtIndex:0] bounds]);
         [[NSUserDefaults standardUserDefaults] setInteger:width forKey:USER_DEF_LEFT_PANEL_SIZE];
         [self.ContentSplitView setPosition:0 ofDividerAtIndex:0];
