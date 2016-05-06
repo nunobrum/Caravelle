@@ -10,15 +10,17 @@
 #import "MyDirectoryEnumerator.h"
 #import "TreeBranch_TreeBranchPrivate.h"
 
-@implementation ExpandFolders
+@implementation ExpandFolders {
+    NSUInteger numberOfFiles;
+}
 
 -(NSString*) statusText {
    
-    return [NSString stringWithFormat:@"Flattening...%lu files indexed ", statusCount];
+    return [NSString stringWithFormat:@"Flattening Folder...%lu files indexed ", numberOfFiles];
 }
 
 -(void) main {
-    
+    numberOfFiles = 0;
     NSMutableArray *undeveloppedFolders = [[NSMutableArray alloc] init];
     TreeBranch *itemToFlat = [_taskInfo objectForKey:kDFODestinationKey];
     [itemToFlat harverstUndeveloppedFolders: undeveloppedFolders];
@@ -41,8 +43,8 @@
             
             
             for (NSURL *theURL in dirEnumerator) {
-                statusCount++;
-                if (statusCount%1000==0) {
+                numberOfFiles++;
+                if (numberOfFiles%1000==0) {
                     if (self.isCancelled) {
                         break;
                     }
@@ -120,8 +122,15 @@
     
     // If not OK Will have to cancel the flat View. OK Will clear the operating status message.
     NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
+    NSString *statusText;
+    if ([self isCancelled])
+        statusText = @"Flat View Aborted";
+    else
+        statusText = nil; // Cancel any existing text
+    
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                           OK, kDFOOkKey,
+                          statusText, kDFOStatusKey,
                           nil];
     [_taskInfo addEntriesFromDictionary:info];
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];

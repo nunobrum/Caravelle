@@ -20,8 +20,7 @@ extern NSString *kDFOFilesKey;
 
 extern NSString *kDFOErrorKey;
 extern NSString *kDFOOkKey;
-extern NSString *kDFOOkCountKey;
-extern NSString *kDFOStatusCountKey;
+extern NSString *kDFOStatusKey;
 extern NSString *kDFOFromViewKey;
 
 /* Used for the Duplicate Find Options */

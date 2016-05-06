@@ -8,6 +8,7 @@
 
 #import "AppOperation.h"
 
-@interface FileOperation : AppOperation
-
+@interface FileOperation : AppOperation {
+    NSUInteger fileOKCount;
+}
 @end

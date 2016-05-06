@@ -36,17 +36,26 @@ static NSUInteger appOperationCounter = 0;
         _operationID = [NSNumber numberWithInteger: appOperationCounter];
         //[_taskInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:operationCount forKey:kOperationCountKey]];
         _taskInfo[kOperationCountKey] = _operationID;
-        statusCount = 0;
     }
     return self;
 }
 
 -(NSString*) statusText {
-    return [NSString stringWithFormat:@"%lu Files", statusCount];
+    return @"...";
 }
 
 -(NSDictionary*) info {
     return _taskInfo;
+}
+
+-(void) send_notification:(NSDictionary*)info {
+    [_taskInfo addEntriesFromDictionary:info];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationFinishedOperation object:nil userInfo:_taskInfo];
+}
+
+-(void) main {
+    // Send a fail
+    [self send_notification:[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:kDFOOkKey]];
 }
 
 @end

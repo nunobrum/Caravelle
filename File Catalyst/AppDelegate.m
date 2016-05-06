@@ -49,8 +49,7 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
-NSString *kDFOOkCountKey = @"OkCountKey";
-NSString *kDFOStatusCountKey = @"StatusCountKey";
+NSString *kDFOStatusKey = @"StatusKey";
 NSString *kDFOFromViewKey = @"FromObjectKey";
 
 #ifdef USE_UTI
@@ -2426,84 +2425,13 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
 
         if ([pendingStatusMessages count]>=1) { // This was called from the notifications finished, and there is only one message pending
             // Make Status Update here
-            NSString *statusText=nil;
-
+            
             NSDictionary *info = [pendingStatusMessages firstObject];
             [pendingStatusMessages removeObjectAtIndex:0];
             //NSUInteger num_files = [[info objectForKey:kDFOFilesKey] count];
-            NSString *operation = [info objectForKey:kDFOOperationKey];
+            
             BOOL OK = [[info objectForKey:kDFOOkKey] boolValue];
-            // TODO:1.3.3 The FileOperations should generate their own messages to display here.
-            // Its more correct in an object oriented perspective. File Operations should also be subclassed.
-            // the main on the File Operations is becomming a big mess
-            // Also, make sure that the URL vs TreeItem recovery is done in the FileUtils.
-            if ([operation isEqualTo:opCopyOperation]) {
-                if (OK)
-                    statusText  = [NSString stringWithFormat:@"%lu Files copied",
-                                   statusFilesCopied];
-                else
-                    statusText = @"Copy Failed";
-
-            }
-            else if ([operation isEqualTo:opMoveOperation]) {
-                if (OK)
-                    statusText  = [NSString stringWithFormat:@"%lu Files moved",
-                                   statusFilesMoved];
-                else
-                    statusText = @"Move Failed";
-            }
-            else if ([operation isEqualTo:opSendRecycleBinOperation]) {
-                if (OK)
-                    statusText  = [NSString stringWithFormat:@"%@ Files Trashed",
-                                   [info objectForKey:kDFOOkCountKey]];
-                else
-                    statusText = @"Trash Failed";
-
-            }
-            else if ([operation isEqualTo:opEraseOperation]) {
-                if (OK)
-                    statusText  = [NSString stringWithFormat:@"%lu Files Trashed",
-                                   statusFilesDeleted];
-                else
-                    statusText = @"Trash Failed";
-
-            }
-            else if ([operation isEqualTo:opRename]) {
-                if (!OK) {
-                    statusText = @"Rename Failed";
-                }
-                else {
-                    NSInteger count = [[info objectForKey:kDFOOkCountKey] integerValue];
-                    statusText  = [NSString stringWithFormat:@"%lu Files renamed", count];
-                }
-            }
-            else if ([operation isEqualTo:opNewFolder]) {
-                if (!OK) {
-                    statusText = @"New Folder creation failed";
-                }
-                else
-                    statusText = @"Folder Created";
-            }
-            else if ([operation isEqualTo:opDuplicateFind]) {
-                if (!OK)
-                    statusText = @"Duplicate Find Aborted";
-                else {
-                    NSInteger count = [(NSArray*)[info objectForKey:kDuplicateList] count];
-                    if (count==0)
-                        statusText = @"No Duplicates Found";
-                    else
-                        statusText = [NSString stringWithFormat:@"%ld Duplicates Found", count];
-                }
-            }
-            else if ([operation isEqualTo:opFlatOperation]) {
-                if (!OK)
-                    statusText = @"Flat View Aborted";
-                else
-                    statusText = nil; // Cancel any existing text
-            }
-            else {
-                NSLog(@"AppDelegate._operationsInfoFired: Unkown operation"); // Unknown operation
-            }
+            NSString *statusText = [info objectForKey:kDFOStatusKey];
 
             if (!OK) {
                 [self.statusProgressLabel setTextColor:[NSColor redColor]];
@@ -2534,25 +2462,10 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
     }
     else {
         // Get from Operation the status Text
-        NSString *status = @"Internal Error";
         NSArray *operations = [operationsQueue operations];
         NSOperation *currOperation = operations[0];
-        if ([currOperation isKindOfClass:[FileOperation class]]) { // TODO:1.3.3 This should be moved to File Operations statusText Selector
-            NSString *op = [[(FileOperation*)currOperation info] objectForKey:kDFOOperationKey];
-            
-            if ([op isEqualTo:opCopyOperation]) {
-                status = [NSString stringWithFormat:@"Copying...%ld", statusFilesCopied];
-            }
-            else if ([op isEqualTo:opMoveOperation]) {
-                status = [NSString stringWithFormat:@"Moving...%ld", statusFilesMoved];
-            }
-            else if ([op isEqualTo:opSendRecycleBinOperation]) {
-                status = [NSString stringWithFormat:@"Trashing...%ld", statusFilesDeleted];
-            }
-        }
-        else if ([currOperation isKindOfClass:[AppOperation class]]) {
-            status = [(AppOperation*)currOperation statusText];
-        }
+        NSString *status = [(AppOperation*)currOperation statusText];
+        
         [self.statusProgressLabel setTextColor:[NSColor blueColor]];
         [self.statusProgressLabel setStringValue:status];
     }

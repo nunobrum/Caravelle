@@ -24,7 +24,15 @@ NSString *kMinSizeFilter   = @"MinSizeFilter";
 NSString *kStartDateFilter = @"StartDateFilter";
 NSString *kEndDateFilter   = @"EndDateFilter";
 
+typedef NS_ENUM(NSInteger, EnumDuplicateFindPhase) {
+    EnumDuplicateOp_Starting = 0,
+    EnumDuplicateOp_Indexing,
+    EnumDuplicateOp_Comparing,
+    EnumDuplicateOp_CreatingView
+};
+
 @interface DuplicateFindOperation () {
+    EnumDuplicateFindPhase opPhase;
     NSUInteger dupCounter;
     NSUInteger counter, totalCounter;
     unsigned long long sizeCounter, totalSize, duplicateSize;
@@ -35,18 +43,18 @@ NSString *kEndDateFilter   = @"EndDateFilter";
 @implementation DuplicateFindOperation
 
 -(NSString*) statusText {
-    if (statusCount==1) {
+    if (opPhase == EnumDuplicateOp_Indexing) {
         NSString *sizeFormatted = [NSByteCountFormatter stringFromByteCount:sizeCounter countStyle:NSByteCountFormatterCountStyleFile];
         return [NSString stringWithFormat:@"Indexed %lu files, total size %@ ", counter, sizeFormatted];
     }
-    else if (statusCount==2) {
+    else if (opPhase == EnumDuplicateOp_Comparing) {
         // The math below : it makes a half of the size percentage and a half of the file count percentage
         // just one or the other doesn't look very real on the progress
         float percent = 50.0 * sizeCounter / totalSize + 50.0 * counter/totalCounter;
         NSString *sizeFormatted = [NSByteCountFormatter stringFromByteCount:duplicateSize countStyle:NSByteCountFormatterCountStyleFile];
         return [NSString stringWithFormat:@"Comparing...%3.1f%%, %lu duplicates found, total size %@", percent, dupCounter, sizeFormatted]; // One is subtracted since the counter is initialized as 1.
     }
-    else if (statusCount==3) {
+    else if (opPhase == EnumDuplicateOp_CreatingView) {
         float percent = 100.0 * counter / totalCounter;
         return [NSString stringWithFormat:@"Creating Tree %3.1f%%", percent];
     }
@@ -58,7 +66,8 @@ NSString *kEndDateFilter   = @"EndDateFilter";
     sizeCounter = 0;
     totalSize = 0;
     duplicateSize = 0;
-    statusCount=1; // Indicates the first Phase
+    opPhase = EnumDuplicateOp_Indexing; // Indicates the first Phase
+    
     NSArray *paths = [_taskInfo objectForKey: kRootPathKey];
     TreeCollection *roots = nil;
     filterBranch *filterRoot = nil;
@@ -137,7 +146,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
             sizeCounter = 0;
             totalCounter = counter;
             counter=0;
-            statusCount = 2; // Second Phase
+            opPhase = EnumDuplicateOp_Comparing; // Second Phase
             
             NSUInteger j;  // Scan index
             BOOL duplicate;
@@ -224,7 +233,7 @@ NSString *kEndDateFilter   = @"EndDateFilter";
         if (![self isCancelled])
         {
             totalCounter = dupCounter;
-            statusCount = 3;
+            opPhase = EnumDuplicateOp_CreatingView;
             //NSLog(@"DuplicateFindOperation: Creating Tree");
             counter = 0;
             if ([duplicates count]!=0) {
@@ -251,11 +260,22 @@ NSString *kEndDateFilter   = @"EndDateFilter";
     }
     
     NSNumber *OK = [NSNumber numberWithBool:![self isCancelled]];
+    NSString *statusText;
+    if ([self isCancelled]) {
+        statusText = @"Duplicate Find Aborted";
+    }
+    else {
+        if (dupCounter==0)
+            statusText = @"No Duplicates Found";
+        else
+            statusText = [NSString stringWithFormat:@"%ld Duplicates Found", dupCounter];
+    }
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
                           OK, kDFOOkKey,
                           duplicates, kDuplicateList,  // pass back to check if user cancelled/started a new scan
                           roots, kRootsList,
                           filterRoot, kRootUnified,
+                          statusText, kDFOStatusKey,
                           nil];
     // for the purposes of this sample, we're just going to post the information
     // out there and let whoever might be interested receive it (in our case its MyWindowController).

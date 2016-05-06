@@ -20,9 +20,6 @@ extern NSString *notificationFinishedOperation;
 @interface AppOperation : NSOperation {
     NSMutableDictionary *_taskInfo;
     NSNumber *_operationID;
-@public
-    NSUInteger statusCount;
-    NSUInteger statusTotal;
 }
 
 @property (readonly) NSNumber* operationID;
@@ -30,6 +27,7 @@ extern NSString *notificationFinishedOperation;
 - (id)initWithInfo:(NSDictionary*)info;
 -(NSString*) statusText;
 -(NSDictionary*) info;
+-(void) send_notification:(NSDictionary*)info;
 
 @end
 
