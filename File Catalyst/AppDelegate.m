@@ -1,4 +1,4 @@
-//
+ //
 //  AppDelegate.m
 //  Caravelle
 //
@@ -366,7 +366,6 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     BOOL isWindowClosing;
     NSInteger generalPasteBoardChangeCount;
     NSInteger statusTimeoutCounter;
-    NSInteger statusFilesMoved,statusFilesCopied,statusFilesDeleted;
     // Duplicate Support
     DuplicateDelegate *duplicateController;
 }
@@ -742,7 +741,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
             TreeScanOperation *Op = [[TreeScanOperation new] initWithInfo: taskInfo];
             treeUpdateOperationID = [Op operationID];
             [operationsQueue addOperation:Op];
-            [self _startOperationBusyIndication:taskInfo];
+            [self Op];
         }*/
         /*if (0) { // TODO:! Testing filter and catalog Branches
             NSURL *url = [NSURL fileURLWithPath:@"/Users/vika/Documents" isDirectory:YES];
@@ -1263,9 +1262,8 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
 }
 
 -(BOOL) startFileOperation:(NSDictionary *) operationInfo {
-    [self _startOperationBusyIndication: operationInfo];
-    // TODO:1.3.3 Divide the operations per classes
     FileOperation *operation = [[FileOperation alloc] initWithInfo:operationInfo];
+    [self _startOperationBusyIndication: operation];
     putInQueue(operation);
     return YES;
 }
@@ -2348,74 +2346,37 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         }
         [self statusUpdate:note]; // Forwards the message to the status update so that status can be updated in open
     }
-    else if (([operation isEqualTo:opCopyOperation]) ||
-        ([operation isEqualTo:opMoveOperation]) ||
-        ([operation isEqualTo:opNewFolder])||
-        ([operation isEqualTo:opRename])) {
-        // Redirects all to file operation
-        [self startFileOperation:[note userInfo]];
-    }
     else if ([operation isEqualTo:opFlatOperation]) {
         ExpandFolders * op = [[ExpandFolders alloc] initWithInfo:[note userInfo]];
         [op setQueuePriority:NSOperationQueuePriorityNormal];
         [op setThreadPriority:0.25];
-        [self _startOperationBusyIndication: [note userInfo]];
+        [self _startOperationBusyIndication: op];
         putInQueue(op);
+    }
+    else {
+        // All others are redirected all to file operation
+        [self startFileOperation:[note userInfo]];
     }
 }
 
--(void) _startOperationBusyIndication:(NSDictionary*) operationInfo {
+-(void) _startOperationBusyIndication:(AppOperation*) appOperation {
     // Displays the first status message
-    NSString *operationStatus = @"...";
-    NSString *operation = [operationInfo objectForKey:kDFOOperationKey];
-    NSInteger count = [[operationInfo objectForKey:kDFOFilesKey] count];
-    // manage the singular vs plural
-    NSString *nItems;
-    if (count == 1) {
-        nItems = @"1 item";
-    }
-    else {
-        nItems = [NSString stringWithFormat:@"%ld items", (long)count];
-    }
-    // TODO:1.3.3 Move this to the File Operations
-    if ([operation isEqualTo:opCopyOperation]) {
-        operationStatus = [NSString stringWithFormat:@"Copying %@",nItems];
-    }
-    else if ([operation isEqualTo:opMoveOperation]) {
-        operationStatus = [NSString stringWithFormat:@"Moving %@",nItems];
-    }
-    else if ([operation isEqualTo:opSendRecycleBinOperation]) {
-        operationStatus = [NSString stringWithFormat:@"Trashing %@",nItems];
-    }
-    else if ([operation isEqualTo:opEraseOperation]) {
-        operationStatus = [NSString stringWithFormat:@"Erasing %@",nItems];
-    }
-    else if ([operation isEqualTo:opRename]) {
-        operationStatus = [NSString stringWithFormat:@"Renaming %@",nItems];
-    }
-    else if ([operation isEqualTo:opNewFolder]) {
-        operationStatus = @"Adding Folder";
-    }
-    else if ([operation isEqualTo:opDuplicateFind]) {
-        operationStatus = @"Starting Duplicate Find";
-    }
-    else if ([operation isEqualTo:opFlatOperation]) {
-        operationStatus = @"Flattening Folder";
-    }
-    else {
-        operationStatus = @"Unknown Operation";
-    }
+    NSString *operationStatus = [appOperation statusText];
+    
     //NSLog(operationStatus);
     [self.statusProgressIndicator setHidden:NO];
     [self.statusProgressIndicator startAnimation:self];
     [self.statusProgressLabel setHidden:NO];
-    [self.statusProgressLabel setTextColor:[NSColor blueColor]];
-    [self.statusProgressLabel setStringValue: operationStatus];
+    if (operationStatus==nil)  {
+        [self.statusProgressLabel setTextColor:[NSColor redColor]];
+        [self.statusProgressLabel setStringValue: @"Internal Error"];
+    }
+    else {
+        [self.statusProgressLabel setTextColor:[NSColor blueColor]];
+        [self.statusProgressLabel setStringValue: operationStatus];
+    }
     [self.statusCancelButton setHidden:NO];
     statusTimeoutCounter = 0;
-    statusFilesCopied = 0;
-    statusFilesDeleted = 0;
-    statusFilesMoved = 0;
     _operationInfoTimer = [NSTimer scheduledTimerWithTimeInterval:1 target:self selector:@selector(_operationsInfoFired:) userInfo:nil repeats:YES];
     
 }
@@ -2817,7 +2778,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         // start the GetPathsOperation with the root path to start the search
         DuplicateFindOperation *dupFindOp = [[DuplicateFindOperation alloc] initWithInfo:notifInfo];
         [operationsQueue addOperation:dupFindOp];	// this will start the "GetPathsOperation"
-        [self _startOperationBusyIndication:notifInfo];
+        [self _startOperationBusyIndication:dupFindOp];
         
         // While the process runs, the user can choose what is the prefered way of displaying
         
@@ -3005,13 +2966,23 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                 NSAssert(NO, @"Invalid Operation");
             }
             // Need to pass the parent folder for the file operations
+            id destination =nil;
             NSURL *destURL = [destinationURL URLByDeletingLastPathComponent];
-
+            if (destURL!=nil) {
+                TreeItem *destinationItem = [appTreeManager getNodeWithURL:destURL];
+                if (destinationItem!=nil) {
+                    destination = destinationItem;
+                }
+                else {
+                    destination = destURL;
+                }
+            }
+            NSAssert(destination!=nil, @"AppDelegate.processNextError: Oops Something funky here. The destination is nil");
             NSArray *items = [NSArray arrayWithObject:sourceURL];
             NSDictionary *taskinfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       op, kDFOOperationKey,
                                       items, kDFOFilesKey,
-                                      destURL, kDFODestinationKey,
+                                      destination, kDFODestinationKey,
                                       new_name, kDFORenameFileKey,
                                       nil];
 
@@ -3044,10 +3015,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         //NSString *operation = [[[error userInfo] objectForKey:@"NSUserStringVariant"] firstObject];
 
         if (error.code==NSFileWriteFileExistsError) { // File already exists
-            if (fileExistsWindow==nil) {
-                fileExistsWindow = [[FileExistsChoice alloc] initWithWindowNibName:@"FileExistsChoice"];
-                [fileExistsWindow loadWindow]; //This is needed to load the window
-            }
+            
             TreeItem *sourceItem=nil, *destItem=nil;
             // Tries to retrieve first from treeManager. Preferred way as parent is taken
             sourceItem = [(TreeManager*)appTreeManager getNodeWithURL:sourceURL];
@@ -3059,9 +3027,25 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                 destItem = [TreeItem treeItemForURL:destinationURL parent:nil];
 
             if (sourceItem!=nil && destItem!=nil) {
-                BOOL OK = [fileExistsWindow makeTableWithSource:sourceItem andDestination:destItem];
-                if (OK) {
-                    [fileExistsWindow displayWindow:self];
+                // If the paths are the same, i.e. the same file, just offer to rename
+                // TODO:!!!! This needs to be moved out of here. This is just an informative window. It can be shown when the problem happens. Can bypass the error processing queue.
+                if ([sourceItem compareTo: destItem]==pathIsSame) {
+                    NSAlert *alert = [[NSAlert alloc] init ];
+                    [alert setMessageText:@"Ooops!"];
+                    [alert addButtonWithTitle:@"OK"];
+                    [alert setInformativeText:@"Target and selected file is the same. Ignoring command"];
+                    [alert setAlertStyle:NSInformationalAlertStyle];
+                    [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
+                }
+                else {
+                    if (fileExistsWindow==nil) {
+                        fileExistsWindow = [[FileExistsChoice alloc] initWithWindowNibName:@"FileExistsChoice"];
+                        [fileExistsWindow loadWindow]; //This is needed to load the window
+                    }
+                    BOOL OK = [fileExistsWindow makeTableWithSource:sourceItem andDestination:destItem];
+                    if (OK) {
+                        [fileExistsWindow displayWindow:self];
+                    }
                 }
             }
             else {
@@ -3131,37 +3115,31 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
     [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
-    statusFilesCopied--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtURL:(NSURL *)srcURL toURL:(NSURL *)dstURL {
     NSArray *note = [NSArray arrayWithObjects:srcURL, dstURL, error, nil];
     [self performSelectorOnMainThread:@selector(mainThreadErrorHandler:) withObject:note waitUntilDone:NO];
-    statusFilesMoved--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error copyingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:copyingItemAtPath:toPath");
-    statusFilesCopied--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error movingItemAtPath:(NSString *)srcPath toPath:(NSString *)dstPath {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:movingItemAtPath:toPath");
-    statusFilesMoved--;
     return NO;
 }
 
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtPath:(NSString *)path {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtPath:toPath");
-    statusFilesDeleted--;
     return NO;
 }
 - (BOOL)fileManager:(NSFileManager *)fileManager shouldProceedAfterError:(NSError *)error removingItemAtURL:(NSURL *)URL {
     NSLog(@"AppDelegate.fileManager:shouldProceedAfterError:removingItemAtURL:toPath");
-    statusFilesDeleted--;
     return NO;
 }
 
@@ -3175,7 +3153,6 @@ shouldCopyItemAtURL:(NSURL *)srcURL
         return NO;
     }
     //NSLog(@"should copy item\n%@ to\n%@", srcURL, dstURL);
-    statusFilesCopied++;
     return YES;
 }
 
@@ -3189,14 +3166,12 @@ shouldMoveItemAtURL:(NSURL *)srcURL
         return NO;
     }
     //NSLog(@"should move item\n%@ to\n%@", srcURL, dstURL);
-    statusFilesMoved++;
     return YES;
 }
 
 -(BOOL) fileManager:(NSFileManager *)fileManager
 shouldRemoveItemAtURL:(NSURL *)URL {
     //NSLog(@"should remove item\n%@", URL);
-    statusFilesDeleted++;
     return YES;
 }
 

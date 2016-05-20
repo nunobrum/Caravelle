@@ -31,8 +31,7 @@ extern NSString *kFileExistsNewFilenameKey;
 @property (strong) IBOutlet NSButton *pbReplace;
 @property (strong) IBOutlet NSButton *pbSkip;
 @property (strong) IBOutlet NSTableView *attributeTableView;
-@property (strong) IBOutlet NSTextField *labelFilesAreTheSame;
-@property (strong) IBOutlet NSTextField *labelKeep;
+
 
 -(void) closeWindow;
 -(void) displayWindow:(id) sender;

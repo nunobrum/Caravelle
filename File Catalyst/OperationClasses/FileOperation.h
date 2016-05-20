@@ -9,6 +9,10 @@
 #import "AppOperation.h"
 
 @interface FileOperation : AppOperation {
+    NSArray *files;
+    NSString *op;
+    NSUInteger fileCount;
     NSUInteger fileOKCount;
+    NSUInteger totalFileCount;
 }
 @end

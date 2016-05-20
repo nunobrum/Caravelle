@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment version="1080" identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -359,7 +359,7 @@ CA
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="95" y="99" width="856" height="660"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="777"/>
             <view key="contentView" id="2038">
                 <rect key="frame" x="0.0" y="0.0" width="856" height="660"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -622,10 +622,10 @@ CA
                                 <segmentedCell key="cell" enabled="NO" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="tYy-rB-lbq">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment toolTip="Undo - Under Development" image="undo16" width="28" enabled="NO">
+                                        <segment toolTip="Undo - Under Development" image="undo" width="28" enabled="NO">
                                             <nil key="label"/>
                                         </segment>
-                                        <segment toolTip="Redo - Under Development" image="redo16" width="28" enabled="NO" tag="1">
+                                        <segment toolTip="Redo - Under Development" image="redo" width="28" enabled="NO" tag="1">
                                             <nil key="label"/>
                                         </segment>
                                     </segments>
@@ -691,7 +691,7 @@ CA
                                 <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="momentary" id="PP7-HO-ZdQ">
                                     <font key="font" metaFont="system"/>
                                     <segments>
-                                        <segment toolTip="Refresh" image="refresh16" width="32">
+                                        <segment toolTip="Refresh" image="refresh32" width="32">
                                             <nil key="label"/>
                                         </segment>
                                     </segments>
@@ -898,10 +898,10 @@ CA
         <image name="dualPane" width="19" height="16"/>
         <image name="mancopy32" width="32" height="32"/>
         <image name="manmove32" width="32" height="32"/>
-        <image name="redo16" width="16" height="16"/>
-        <image name="refresh16" width="16" height="16"/>
+        <image name="redo" width="16" height="16"/>
+        <image name="refresh32" width="16" height="16"/>
         <image name="sideView" width="20" height="20"/>
         <image name="singlePane" width="20" height="20"/>
-        <image name="undo16" width="16" height="16"/>
+        <image name="undo" width="16" height="16"/>
     </resources>
 </document>

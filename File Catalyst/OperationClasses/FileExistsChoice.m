@@ -98,20 +98,6 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
     // Empty table
     [attributesTable removeAllObjects];
 
-    // If the paths are the same, i.e. the same file, just offer to rename
-    if ([source compareTo: dest]==pathIsSame) {
-        [_pbReplace setHidden:YES];
-        [_labelKeep setHidden:YES];
-        [_labelFilesAreTheSame setHidden:NO];
-    }
-    // Put as before
-    else {
-        [_pbReplace setHidden:NO];
-        [_labelKeep setHidden:NO];
-        [_labelFilesAreTheSame setHidden:YES];
-
-    }
-
     // If the file names are the same, create a copy name
     if ([[source name] isEqualToString:[dest name]]) {
         name = duplicateFileNameProposal([dest path]);
@@ -119,6 +105,7 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
     else {
         name = [source name];
     }
+    
     [[self tfFilename] setStringValue: [source path]];
     [[self tfNewFilename] setStringValue:name];
 

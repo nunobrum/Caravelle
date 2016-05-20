@@ -2,11 +2,12 @@
   "images" : [
     {
       "idiom" : "mac",
+      "filename" : "Tornado16.png",
       "scale" : "1x"
     },
     {
       "idiom" : "mac",
-      "filename" : "footprint32.png",
+      "filename" : "Tornado32.png",
       "scale" : "2x"
     }
   ],
