@@ -9,9 +9,6 @@
 #include "Definitions.h"
 #import "AppOperation.h"
 
-// key for obtaining the current scan count
-NSString *kOperationCountKey = @"operationCount";
-
 // key for obtaining the associated TreeRoot
 NSString *kRootPathKey = @"RootPath";
 
@@ -34,8 +31,6 @@ static NSUInteger appOperationCounter = 0;
         _taskInfo = [NSMutableDictionary dictionaryWithDictionary: info];
         appOperationCounter++;
         _operationID = [NSNumber numberWithInteger: appOperationCounter];
-        //[_taskInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObject:operationCount forKey:kOperationCountKey]];
-        _taskInfo[kOperationCountKey] = _operationID;
     }
     return self;
 }

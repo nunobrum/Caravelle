@@ -49,6 +49,7 @@ NSString *kNewFolderKey = @"NewFolderKey";
 NSString *kDFOFilesKey=@"FilesSelected";
 NSString *kDFOErrorKey =@"ErrorKey";
 NSString *kDFOOkKey = @"OKKey";
+NSString *kDFOIDKey = @"IDKey";
 NSString *kDFOStatusKey = @"StatusKey";
 NSString *kDFOFromViewKey = @"FromObjectKey";
 
@@ -3036,6 +3037,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                     [alert setInformativeText:@"Target and selected file is the same. Ignoring command"];
                     [alert setAlertStyle:NSInformationalAlertStyle];
                     [alert beginSheetModalForWindow:[self myWindow] completionHandler:nil];
+                    [pendingOperationErrors removeObjectAtIndex:0];
                 }
                 else {
                     if (fileExistsWindow==nil) {

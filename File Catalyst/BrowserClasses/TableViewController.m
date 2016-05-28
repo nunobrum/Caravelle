@@ -726,6 +726,8 @@
 #ifdef UPDATE_TREE
     // This is not needed if the FSEvents is activated and updates the Tables
     NSPasteboard *pboard = [session draggingPasteboard];
+    //NSLog(@"ended dragging section");
+    //DebugPBoard(pboard);
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     if (operation == (NSDragOperationMove)) {
         [tableView removeRowsAtIndexes:_draggedItemsIndexSet withAnimation:NSTableViewAnimationEffectFade];

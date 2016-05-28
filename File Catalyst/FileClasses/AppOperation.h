@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 
 extern NSString *kModeKey;
-extern NSString *kOperationCountKey;
 extern NSString *kRootPathKey;
 
 extern NSString *notificationFinishedOperation;

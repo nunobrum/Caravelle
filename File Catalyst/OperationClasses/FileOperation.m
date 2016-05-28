@@ -29,10 +29,15 @@
     return self;
 }
 
+-(NSString*) opCode {
+    return op;
+}
+
 -(void) main {
     BOOL  OK = NO;  // Assume it will go wrong until proven otherwise
     BOOL send_notification=YES;
-    fileOKCount = 0;
+    NSMutableArray *filesOK = [NSMutableArray arrayWithCapacity:totalFileCount];
+    
     NSError *error = nil;
     if (![self isCancelled])
 	{
@@ -61,7 +66,7 @@
 
                         BOOL blk_OK = [appFileManager trashItemAtURL:url resultingItemURL:nil error:&loop_error];
                         if (blk_OK) {
-                            fileOKCount++;
+                            [filesOK addObject:item];
 #ifdef UPDATE_TREE
                             if ([item isKindOfClass:[TreeItem class]]) {
                                 [item removeItem];
@@ -81,7 +86,7 @@
                     }
                 }
                 if (OK)
-                    statusText  = [NSString stringWithFormat:@"%ld Files Trashed", (long)fileOKCount];
+                    statusText  = [NSString stringWithFormat:@"%ld Files Trashed", filesOK.count];
                 else
                     statusText = @"Trash Failed";
 
@@ -99,12 +104,16 @@
 #endif //UPDATE_TREE
                     }
                     fileCount++;
-                    if (OK) fileOKCount++;
-                    else break;
+                    if (OK) {
+                        [filesOK addObject:item];
+                    }
+                    else {
+                        break;
+                    }
                     if ([self isCancelled]) break;
                 }
                 if (OK)
-                    statusText  = [NSString stringWithFormat:@"%lu Files Trashed", fileOKCount];
+                    statusText  = [NSString stringWithFormat:@"%lu Files Trashed", filesOK.count];
                 else
                     statusText = @"Trash Failed";
 
@@ -169,7 +178,7 @@
                     }
                     fileCount++;
                     if (OK) {
-                        fileOKCount++;
+                        [filesOK addObject:item];
                     }
                     else break;
                     if ([self isCancelled]) break;
@@ -179,7 +188,7 @@
                         statusText = @"Rename Failed";
                     }
                     else {
-                        statusText  = [NSString stringWithFormat:@"%lu Files renamed", fileOKCount];
+                        statusText  = [NSString stringWithFormat:@"%lu Files renamed", filesOK.count];
                     }
                 }
                 else if ([op isEqualTo:opNewFolder]) {
@@ -211,7 +220,7 @@
                                 else if ([item isKindOfClass:[TreeItem class]])
                                     newURL = copyFileToDirectory([item url], [dest url], newName, error);
                                 if (newURL) {
-                                    fileOKCount++;
+                                    [filesOK addObject:item];
 #ifdef UPDATE_TREE
                                     [dest addURL:newURL];
 #endif //UPDATE_TREE
@@ -230,7 +239,7 @@
                                 if ([item isKindOfClass:[NSURL class]]) {
                                     newURL = moveFileToDirectory(item, [dest url], newName, error);
                                     if (newURL) {
-                                        fileOKCount++;
+                                        [filesOK addObject:item];
 #ifdef UPDATE_TREE
                                         [dest addURL:newURL];
 #endif //UPDATE_TREE
@@ -244,7 +253,7 @@
                                 else if ([item isKindOfClass:[TreeItem class]]) {
                                     newURL = moveFileToDirectory([item url], [dest url], newName, error);
                                     if (newURL) {
-                                        fileOKCount++;
+                                        [filesOK addObject:item];
 #ifdef UPDATE_TREE
                                         [dest addURL:newURL];
                                         // Remove itself from the former parent
@@ -266,7 +275,7 @@
                                 if ([item isKindOfClass:[NSURL class]]) {
                                     newURL = replaceFileWithFile(item, [dest url], newName, error);
                                     if (newURL) {
-                                        fileOKCount++;
+                                        [filesOK addObject:item];
 #ifdef UPDATE_TREE
                                         [dest addURL:newURL];
 #endif //UPDATE_TREE
@@ -280,7 +289,7 @@
                                 else if ([item isKindOfClass:[TreeItem class]]) {
                                     newURL = replaceFileWithFile([item url], [dest url], newName, error);
                                     if (newURL) {
-                                        fileOKCount++;
+                                        [filesOK addObject:item];
 #ifdef UPDATE_TREE
                                         [dest addURL:newURL];
                                         // Remove itself from the former parent
@@ -313,8 +322,9 @@
                             else if ([item isKindOfClass:[TreeItem class]])
                                 newURL = copyFileToDirectory([item url], dest, newName, error);
 
-                            if (newURL)
-                                fileOKCount++;
+                            if (newURL) {
+                                [filesOK addObject:item];
+                            }
                             else {
                                 OK = NO;
                                 break;
@@ -333,8 +343,9 @@
                                 newURL = moveFileToDirectory([item url], dest, newName, error);
                             }
 
-                            if (newURL)
-                                fileOKCount++;
+                            if (newURL) {
+                                [filesOK addObject:item];
+                            }
                             else {
                                 OK = NO;
                                 break;
@@ -354,8 +365,9 @@
                             else if ([item isKindOfClass:[TreeItem class]]) {
                                 newURL = replaceFileWithFile([item url], dest, newName, error);
                             }
-                            if (newURL)
-                                fileOKCount++;
+                            if (newURL) {
+                                [filesOK addObject:item];
+                            }
                             else {
                                 OK = NO;
                                 break;
@@ -382,7 +394,7 @@
                         strFiles = [NSString stringWithFormat:@"%@ was", name];
                     }
                     else {
-                        strFiles = [NSString stringWithFormat:@"%lu files were", fileOKCount];
+                        strFiles = [NSString stringWithFormat:@"%lu files were", filesOK.count];
                     }
                 }
                 if ([op isEqualTo:opCopyOperation]) {
@@ -408,11 +420,12 @@
 
             // Sending notification to AppDelegate
             if (send_notification) {
-                NSDictionary *OKError = [NSDictionary dictionaryWithObjectsAndKeys:
+                [_taskInfo addEntriesFromDictionary:[NSDictionary dictionaryWithObjectsAndKeys:
+                                         filesOK, kDFOFilesKey,
                                          [NSNumber numberWithBool:OK], kDFOOkKey,
                                          statusText, kDFOStatusKey,
-                                         error, kDFOErrorKey, nil];
-                [self send_notification: OKError];
+                                         error, kDFOErrorKey, nil]];
+                [self send_notification: _taskInfo];
             }
         }
     }

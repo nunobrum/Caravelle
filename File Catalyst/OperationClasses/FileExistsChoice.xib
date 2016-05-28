@@ -26,7 +26,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="559" height="270"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6gi-MT-tDB">
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6gi-MT-tDB">
                         <rect key="frame" x="20" y="19" width="75" height="19"/>
                         <buttonCell key="cell" type="roundRect" title="Rename to" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7Vv-bR-cJO">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -36,8 +36,8 @@
                             <action selector="actionRename:" target="-2" id="LsU-f3-ybx"/>
                         </connections>
                     </button>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oWX-a1-P95">
-                        <rect key="frame" x="20" y="57" width="519" height="19"/>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oWX-a1-P95">
+                        <rect key="frame" x="20" y="49" width="519" height="19"/>
                         <buttonCell key="cell" type="roundRect" title="Overwrite" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="s1i-93-epH">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="cellTitle"/>
@@ -46,7 +46,7 @@
                             <action selector="actionOverwrite:" target="-2" id="ILp-e8-G2e"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4YS-iz-fdA">
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4YS-iz-fdA">
                         <rect key="frame" x="18" y="243" width="29" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="File:" id="uDF-Uf-x7K">
                             <font key="font" metaFont="system"/>
@@ -54,26 +54,16 @@
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-x5-Kqi" userLabel="fileName">
-                        <rect key="frame" x="65" y="243" width="475" height="17"/>
+                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="eCb-x5-Kqi" userLabel="fileName">
+                        <rect key="frame" x="51" y="243" width="490" height="17"/>
                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Filename" id="Dgp-PM-NdJ">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <button horizontalHuggingPriority="249" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="CrI-g6-RFo">
-                        <rect key="frame" x="20" y="83" width="519" height="19"/>
-                        <buttonCell key="cell" type="roundRect" title="Skip" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="cellTitle"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="actionSkip:" target="-2" id="kDa-aP-3Jr"/>
-                        </connections>
-                    </button>
-                    <textField horizontalHuggingPriority="200" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="46t-3o-bfE">
-                        <rect key="frame" x="104" y="20" width="435" height="22"/>
+                    <textField horizontalHuggingPriority="200" verticalHuggingPriority="750" horizontalCompressionResistancePriority="500" translatesAutoresizingMaskIntoConstraints="NO" id="46t-3o-bfE">
+                        <rect key="frame" x="103" y="20" width="436" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="jAu-fO-Wdz">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -84,14 +74,14 @@
                             <outlet property="delegate" destination="-2" id="LCW-51-C2R"/>
                         </connections>
                     </textField>
-                    <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="41h-lJ-4D4">
-                        <rect key="frame" x="20" y="110" width="519" height="125"/>
-                        <clipView key="contentView" ambiguous="YES" id="vln-ox-Jax">
-                            <rect key="frame" x="1" y="0.0" width="517" height="124"/>
+                    <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="41h-lJ-4D4">
+                        <rect key="frame" x="20" y="102" width="519" height="133"/>
+                        <clipView key="contentView" id="vln-ox-Jax">
+                            <rect key="frame" x="1" y="0.0" width="517" height="132"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="AvY-I2-Ify" viewBased="YES" id="OGp-WJ-OP7">
-                                    <rect key="frame" x="0.0" y="0.0" width="517" height="101"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="517" height="109"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -209,7 +199,7 @@
                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </clipView>
                         <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="K3D-CL-Hma">
-                            <rect key="frame" x="1" y="119" width="223" height="15"/>
+                            <rect key="frame" x="1" y="7" width="0.0" height="16"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                         <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="FZp-TQ-EdX">
@@ -221,7 +211,39 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </tableHeaderView>
                     </scrollView>
+                    <button horizontalHuggingPriority="249" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CrI-g6-RFo">
+                        <rect key="frame" x="20" y="75" width="519" height="19"/>
+                        <buttonCell key="cell" type="roundRect" title="Skip" bezelStyle="roundedRect" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="reP-fl-UQt">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="cellTitle"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="actionSkip:" target="-2" id="kDa-aP-3Jr"/>
+                        </connections>
+                    </button>
                 </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="46t-3o-bfE" secondAttribute="bottom" constant="20" symbolic="YES" id="6Ze-x1-u67"/>
+                    <constraint firstItem="6gi-MT-tDB" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="8xm-ib-sqa"/>
+                    <constraint firstAttribute="trailing" secondItem="41h-lJ-4D4" secondAttribute="trailing" constant="20" symbolic="YES" id="96n-bK-JZV"/>
+                    <constraint firstItem="oWX-a1-P95" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="BEe-LA-nOS"/>
+                    <constraint firstItem="CrI-g6-RFo" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="Dg4-K8-fzt"/>
+                    <constraint firstItem="oWX-a1-P95" firstAttribute="top" secondItem="CrI-g6-RFo" secondAttribute="bottom" constant="8" symbolic="YES" id="G50-CD-mhI"/>
+                    <constraint firstItem="CrI-g6-RFo" firstAttribute="top" secondItem="41h-lJ-4D4" secondAttribute="bottom" constant="8" symbolic="YES" id="M5F-HK-uSq"/>
+                    <constraint firstItem="41h-lJ-4D4" firstAttribute="top" secondItem="eCb-x5-Kqi" secondAttribute="bottom" constant="8" symbolic="YES" id="PCO-uW-it5"/>
+                    <constraint firstItem="46t-3o-bfE" firstAttribute="top" secondItem="oWX-a1-P95" secondAttribute="bottom" constant="8" symbolic="YES" id="RFH-Gz-qpu"/>
+                    <constraint firstItem="4YS-iz-fdA" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="UMb-4Z-CHq"/>
+                    <constraint firstAttribute="trailing" secondItem="CrI-g6-RFo" secondAttribute="trailing" constant="20" symbolic="YES" id="Uyo-n4-EXz"/>
+                    <constraint firstAttribute="trailing" secondItem="46t-3o-bfE" secondAttribute="trailing" constant="20" symbolic="YES" id="YbS-4D-WUx"/>
+                    <constraint firstItem="4YS-iz-fdA" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="10" id="YkD-2b-HHa"/>
+                    <constraint firstAttribute="bottom" secondItem="6gi-MT-tDB" secondAttribute="bottom" constant="20" symbolic="YES" id="bZW-IC-cQh"/>
+                    <constraint firstAttribute="trailing" secondItem="oWX-a1-P95" secondAttribute="trailing" constant="20" symbolic="YES" id="cUs-An-Yqa"/>
+                    <constraint firstItem="41h-lJ-4D4" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" constant="20" symbolic="YES" id="eig-hN-zvi"/>
+                    <constraint firstItem="eCb-x5-Kqi" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" constant="10" id="fBO-AJ-FrP"/>
+                    <constraint firstAttribute="trailing" secondItem="eCb-x5-Kqi" secondAttribute="trailing" constant="20" symbolic="YES" id="hTP-lq-D0d"/>
+                    <constraint firstItem="eCb-x5-Kqi" firstAttribute="leading" secondItem="4YS-iz-fdA" secondAttribute="trailing" constant="8" symbolic="YES" id="rtA-e0-xGj"/>
+                    <constraint firstItem="46t-3o-bfE" firstAttribute="leading" secondItem="6gi-MT-tDB" secondAttribute="trailing" constant="8" symbolic="YES" id="z5p-Je-I4N"/>
+                </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="J8i-Hm-kjV"/>

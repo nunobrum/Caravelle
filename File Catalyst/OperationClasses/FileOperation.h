@@ -12,7 +12,9 @@
     NSArray *files;
     NSString *op;
     NSUInteger fileCount;
-    NSUInteger fileOKCount;
     NSUInteger totalFileCount;
 }
+
+-(NSString*) opCode;
+
 @end

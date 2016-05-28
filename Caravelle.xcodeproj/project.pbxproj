@@ -44,8 +44,6 @@
 		3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675718F87C2F0080C4FC /* MainMenu.xib */; };
 		3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675A18F87C2F0080C4FC /* Images.xcassets */; };
 		3CEA676318F87C2F0080C4FC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA674218F87C2F0080C4FC /* Cocoa.framework */; };
-		3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA676918F87C2F0080C4FC /* InfoPlist.strings */; };
-		3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */; };
 		3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E31ACFB03900E09A85 /* IconView.xib */; };
 		3CEB61E71ACFB03900E09A85 /* IconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEB61E51ACFB03900E09A85 /* IconViewController.m */; };
 		3CEB61EB1ACFCE7400E09A85 /* TableViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEB61E81ACFCE7400E09A85 /* TableViewController.xib */; };
@@ -82,6 +80,7 @@
 		BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2728CB1C68ECC2001EAA0E /* SidebarTableCellView.m */; };
 		BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */; };
 		BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
+		BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BC33F2AA1CDE36B500EBDD8F /* OperationManager.m */; };
 		BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */; };
 		BC3FFB581C77F64A003FB6F5 /* RecentlyUsedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
@@ -92,7 +91,6 @@
 		BC6F02D41C712A8C0090BF9A /* SideBarObject.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6F02D31C712A8C0090BF9A /* SideBarObject.m */; };
 		BC6F02D61C7135750090BF9A /* MAC_Address.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6F02D51C7135750090BF9A /* MAC_Address.m */; };
 		BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
-		BC95688E1C484EB100DAB21A /* CaravelaTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC95688D1C484EB100DAB21A /* CaravelaTests.m */; };
 		BC9568991C484EB200DAB21A /* CaravelaUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = BC9568981C484EB200DAB21A /* CaravelaUITests.m */; };
 		BC9568A81C484F9C00DAB21A /* Payload.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370B1BA940AD00B1DAA9 /* Payload.c */; };
 		BC9568A91C484F9C00DAB21A /* xer_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37171BA940AD00B1DAA9 /* xer_decoder.c */; };
@@ -319,9 +317,6 @@
 		3CEA675818F87C2F0080C4FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		3CEA675A18F87C2F0080C4FC /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		3CEA676018F87C2F0080C4FC /* CaravelleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		3CEA676818F87C2F0080C4FC /* CaravelleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CaravelleTests-Info.plist"; sourceTree = "<group>"; };
-		3CEA676A18F87C2F0080C4FC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = File_CatalystTests.m; sourceTree = "<group>"; };
 		3CEB61E31ACFB03900E09A85 /* IconView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = IconView.xib; path = BrowserClasses/IconView.xib; sourceTree = "<group>"; };
 		3CEB61E41ACFB03900E09A85 /* IconViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconViewController.h; path = BrowserClasses/IconViewController.h; sourceTree = "<group>"; };
 		3CEB61E51ACFB03900E09A85 /* IconViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = IconViewController.m; path = BrowserClasses/IconViewController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -383,6 +378,8 @@
 		BC27BFE61B5C13F9001AE181 /* CalcFolderSizes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CalcFolderSizes.m; sourceTree = "<group>"; };
 		BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExpandFolders.h; sourceTree = "<group>"; };
 		BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpandFolders.m; sourceTree = "<group>"; };
+		BC33F2A91CDE36B500EBDD8F /* OperationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperationManager.h; sourceTree = "<group>"; };
+		BC33F2AA1CDE36B500EBDD8F /* OperationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OperationManager.m; sourceTree = "<group>"; };
 		BC3FFB531C77E645003FB6F5 /* MYFIFOArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MYFIFOArray.h; path = "File Catalyst/SideBar/MYFIFOArray.h"; sourceTree = SOURCE_ROOT; };
 		BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYFIFOArray.m; path = "File Catalyst/SideBar/MYFIFOArray.m"; sourceTree = SOURCE_ROOT; };
 		BC3FFB561C77F64A003FB6F5 /* RecentlyUsedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyUsedArray.h; path = "File Catalyst/SideBar/RecentlyUsedArray.h"; sourceTree = SOURCE_ROOT; };
@@ -401,17 +398,7 @@
 		BC6F02D71C7135B50090BF9A /* MAC_Address.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MAC_Address.h; path = Security/MAC_Address.h; sourceTree = "<group>"; };
 		BC766D721BBED721004AA9BC /* TreeBranchCatalyst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeBranchCatalyst.h; sourceTree = "<group>"; };
 		BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeBranchCatalyst.m; sourceTree = "<group>"; };
-		BC9568761C484EB100DAB21A /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		BC9568771C484EB100DAB21A /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		BC95687A1C484EB100DAB21A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		BC95687C1C484EB100DAB21A /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		BC95687D1C484EB100DAB21A /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		BC95687F1C484EB100DAB21A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BC9568821C484EB100DAB21A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		BC9568841C484EB100DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC9568891C484EB100DAB21A /* CaravelaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC95688D1C484EB100DAB21A /* CaravelaTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaravelaTests.m; sourceTree = "<group>"; };
-		BC95688F1C484EB200DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC9568941C484EB200DAB21A /* CaravelaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CaravelaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC9568981C484EB200DAB21A /* CaravelaUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CaravelaUITests.m; sourceTree = "<group>"; };
 		BC95689A1C484EB200DAB21A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -609,6 +596,8 @@
 				3C980EAF1A1CDF8500F70DCB /* FileSystemMonitoring.m */,
 				BC27BFE81B5C46BC001AE181 /* ExpandFolders.h */,
 				BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */,
+				BC33F2A91CDE36B500EBDD8F /* OperationManager.h */,
+				BC33F2AA1CDE36B500EBDD8F /* OperationManager.m */,
 			);
 			name = OperationClasses;
 			path = FileClasses;
@@ -619,9 +608,6 @@
 			children = (
 				3C8960221A9A9AB700458013 /* Caravelle.entitlements */,
 				3CEA674818F87C2F0080C4FC /* Sources */,
-				3CEA676618F87C2F0080C4FC /* File CatalystTests */,
-				BC9568751C484EB100DAB21A /* Caravela */,
-				BC95688C1C484EB100DAB21A /* CaravelaTests */,
 				BC9568971C484EB200DAB21A /* CaravelaUITests */,
 				3CEA674118F87C2F0080C4FC /* Frameworks */,
 				3CEA674018F87C2F0080C4FC /* Products */,
@@ -710,24 +696,6 @@
 				3CD788AA19D9C7E80042E8B9 /* UserDefault.plist */,
 				3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */,
 				BC08C9AD1B79535C00D12486 /* payplugins.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		3CEA676618F87C2F0080C4FC /* File CatalystTests */ = {
-			isa = PBXGroup;
-			children = (
-				3CEA676C18F87C2F0080C4FC /* File_CatalystTests.m */,
-				3CEA676718F87C2F0080C4FC /* Supporting Files */,
-			);
-			path = "File CatalystTests";
-			sourceTree = "<group>";
-		};
-		3CEA676718F87C2F0080C4FC /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				3CEA676818F87C2F0080C4FC /* CaravelleTests-Info.plist */,
-				3CEA676918F87C2F0080C4FC /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -886,38 +854,6 @@
 			);
 			name = SideBar;
 			path = FileClasses;
-			sourceTree = "<group>";
-		};
-		BC9568751C484EB100DAB21A /* Caravela */ = {
-			isa = PBXGroup;
-			children = (
-				BC9568761C484EB100DAB21A /* AppDelegate.h */,
-				BC9568771C484EB100DAB21A /* AppDelegate.m */,
-				BC95687C1C484EB100DAB21A /* ViewController.h */,
-				BC95687D1C484EB100DAB21A /* ViewController.m */,
-				BC95687F1C484EB100DAB21A /* Assets.xcassets */,
-				BC9568811C484EB100DAB21A /* Main.storyboard */,
-				BC9568841C484EB100DAB21A /* Info.plist */,
-				BC9568791C484EB100DAB21A /* Supporting Files */,
-			);
-			path = Caravela;
-			sourceTree = "<group>";
-		};
-		BC9568791C484EB100DAB21A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				BC95687A1C484EB100DAB21A /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		BC95688C1C484EB100DAB21A /* CaravelaTests */ = {
-			isa = PBXGroup;
-			children = (
-				BC95688D1C484EB100DAB21A /* CaravelaTests.m */,
-				BC95688F1C484EB200DAB21A /* Info.plist */,
-			);
-			path = CaravelaTests;
 			sourceTree = "<group>";
 		};
 		BC9568971C484EB200DAB21A /* CaravelaUITests */ = {
@@ -1176,7 +1112,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CEA676B18F87C2F0080C4FC /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1288,6 +1223,7 @@
 				3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */,
 				BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */,
 				3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */,
+				BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */,
 				BCEB37221BA940AD00B1DAA9 /* BIT_STRING.c in Sources */,
 				BC6F02D41C712A8C0090BF9A /* SideBarObject.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,
@@ -1325,7 +1261,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3CEA676D18F87C2F0080C4FC /* File_CatalystTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1333,7 +1268,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC95688E1C484EB100DAB21A /* CaravelaTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1466,22 +1400,6 @@
 				3CEA675818F87C2F0080C4FC /* Base */,
 			);
 			name = MainMenu.xib;
-			sourceTree = "<group>";
-		};
-		3CEA676918F87C2F0080C4FC /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				3CEA676A18F87C2F0080C4FC /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		BC9568811C484EB100DAB21A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BC9568821C484EB100DAB21A /* Base */,
-			);
-			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

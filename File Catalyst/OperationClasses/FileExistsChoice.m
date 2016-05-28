@@ -20,9 +20,11 @@ NSString *kFileExistsNewFilenameKey = @"NewFilename";
 #define COL_SOURCE @"source"
 #define COL_DEST @"destination"
 
-NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED" };
+NSString * const mandatoryFields[] = { @"COL_LOCATION", @"COL_SIZE", @"COL_DATE_MODIFIED" };
 
-@interface FileExistsChoice ()
+@interface FileExistsChoice () {
+    BOOL _textHadEdits;
+}
 
 @end
 
@@ -36,6 +38,7 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
         windowNibName = @"FileExistsChoice";
     self = [super initWithWindowNibName:windowNibName];
     _pendingUserDecision = NO;
+    _textHadEdits = NO;
     return self;
 }
 
@@ -171,8 +174,14 @@ NSString * const mandatoryFields[] = { @"COL_PATH", @"COL_SIZE", @"COL_DATE_MODI
 {
     //NSLog(@"Selector method is (%@)", NSStringFromSelector( commandSelector ) );
     if (commandSelector == @selector(cancelOperation:)) {
-        // In cancel close the dialog
-        [self actionSkip:nil];
+        if (_textHadEdits) {
+            NSLog(@"Will reposition old name");
+            //TODO:!!!!!! See above
+        }
+        else {
+            // If no edits : close the dialog
+            [self actionSkip:nil];
+        }
     }
 
     return NO;
