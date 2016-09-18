@@ -681,8 +681,9 @@
         NSArray *operations = [lowPriorityQueue operations];
         for (NSOperation *op in operations) {
             if ([op isKindOfClass:[CalcFolderSizes class]]) {
+                NSLog(@"Debug THIS");
                 TreeBranch *tb = [(CalcFolderSizes*)op item];
-                if (![tb containedInURL:branch.url]) {
+                if ([tb relationTo:branch] == pathIsParent) {
                     [op cancel];
                     [tb sizeCalculationCancelled];
                 }

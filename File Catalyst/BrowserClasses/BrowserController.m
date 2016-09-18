@@ -53,7 +53,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil; {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    self->BaseDirectories = [[TreeCollection new] initWithURL:nil parent:nil];
+    self->_baseDirectories = [[TreeCollection new] init];
     self->extendedSelection = nil; // Used in the extended selection mode
     self->_focusedView = nil;
     self->_viewMode = BViewModeVoid; // This is an invalid view mode. This forces the App to change it.
@@ -135,11 +135,11 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
  It protects that two equal URLS are not placed in a sequence.
  When the user navigates backward pointer moves back. When a forward is the requested,
  the pointer is moved forward. */
--(void) mruSet:(NSURL*) url {
+-(void) mruSet:(TreeBranch*) node {
     if(_viewMode!=BViewBrowserMode)
         return; // Sanity check. Needed for the Duplicate Mode.
     
-    if (url==nil)
+    if (node==nil)
         return; // Second sanity check. URL cannot be null
     
     // gets the pointer to the last position
@@ -147,19 +147,19 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
     // if its the first just adds it
     if (mruCount==0) {
-        [_mruLocation addObject:url];
+        [_mruLocation addObject:node];
         // Enable the back Button
         [self.mruBackForwardControl setEnabled:YES forSegment:0];
     }
     // Then checking if its changing
-    else if (![url isEqual:_mruLocation[_mruPointer]]) { // Don't want two URLS repeated in a sequence
+    else if (![node isEqual:_mruLocation[_mruPointer]]) { // Don't want two nodes repeated in a sequence
         _mruPointer++;
         if (_mruPointer < mruCount) { // There where back movements before
-            if (pathIsSame != url_relation(url, _mruLocation[_mruPointer]) ) { // not just moving forward
+            if (NO == [node isEqual: _mruLocation[_mruPointer]]) { // not just moving forward
                 NSRange follwingMRUs;
                 follwingMRUs.location = _mruPointer+1;
                 follwingMRUs.length = mruCount - _mruPointer - 1;
-                _mruLocation[_mruPointer] = url;
+                _mruLocation[_mruPointer] = node;
                 if (follwingMRUs.length!=0) {
                     [_mruLocation removeObjectsInRange:follwingMRUs];
                 }
@@ -169,7 +169,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             // There is no else : on else We are just moving forward
         }
         else {
-            [_mruLocation addObject:url]; // Adding to the last position
+            [_mruLocation addObject:node]; // Adding to the last position
             // Enable the back Button
             [self.mruBackForwardControl setEnabled:YES forSegment:0];
         }
@@ -276,7 +276,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
     if(item==nil) {
-        return [BaseDirectories numberOfBranchesInNode];
+        return [_baseDirectories numberOfBranchesInNode];
     }
     else {
         // Returns the total number of leafs
@@ -287,7 +287,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     TreeItem * ret;
     if (item==nil || [item isKindOfClass:[NSMutableArray class]])
-        ret = [BaseDirectories branchAtIndex:index];
+        ret = [_baseDirectories branchAtIndex:index];
     else {
         ret = [item branchAtIndex:index];
     }
@@ -312,29 +312,28 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     return item;
 }
 
-- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)item {
+- (NSView *)outlineView:(NSOutlineView *)outlineView viewForTableColumn:(NSTableColumn *)tableColumn item:(id)it {
     NSTableCellView *cellView=nil;
+    TreeItem *item = it;
 
     if ([[tableColumn identifier] isEqualToString:COL_FILENAME]) {
         if ([item isFolder]) { // it is a directory
+            TreeBranch *item = it;
             if (_viewMode!=BViewBrowserMode) {
                 NSString *subTitle;
                 NSString *sizeString;
                 long fileCount=0;
-                if ([item respondsToSelector:@selector(numberOfLeafsInBranch)]) {
-                    fileCount = [item numberOfLeafsInBranch];
-                }
-                long long sizeOfFilesInBranch = -1;
-                if ([item respondsToSelector:@selector(exactSize)]) {
-                    sizeOfFilesInBranch = [[item exactSize] longLongValue];
-                }
-                if (sizeOfFilesInBranch==-1) // Undefined
+                fileCount = [item numberOfLeafsInBranch];
+
+                NSNumber *nSizeOfFilesInBranch = [item exactSize];
+                
+                if (nSizeOfFilesInBranch==nil) // Undefined
                     sizeString = @"--";
                 else {
                     // !! Beware to change this if ever the transformer changes
-                    //NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:@"size"];
-                    //sizeString = [trans transformedValue:sizeOfFilesInBranch];
-                    sizeString = [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile];
+                    NSValueTransformer *trans=[NSValueTransformer valueTransformerForName:@"size"];
+                    sizeString = [trans transformedValue:nSizeOfFilesInBranch];
+                    //sizeString = [NSByteCountFormatter stringFromByteCount:sizeOfFilesInBranch countStyle:NSByteCountFormatterCountStyleFile];
                 }
                 cellView= [outlineView makeViewWithIdentifier:@"CatalystView" owner:self];
                 if (fileCount==0)
@@ -352,7 +351,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             }
 
             // Display the directory name followed by the number of files inside
-            NSImage *icon =  [(TreeBranch*)item image];
+            NSImage *icon =  [item image];
             [[cellView imageView] setImage:icon];
             [[cellView textField] setStringValue:[item name]];
 
@@ -730,32 +729,13 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         else {
             node = [branch parent];
         }
-        if ([node respondsToSelector:@selector(url)]) {
-            NSURL *url = [node url];
-            
-            // if the flat view is set, if outside of the current node, launch an expand Tree
-            if (self.flatView && [node canAndNeedsFlat]) {
-                // Assumes a change is needed
-                enumPathCompare comp = pathsHaveNoRelation;
-                
-                // then checks whether is not needed
-                if ([_treeNodeSelected respondsToSelector:@selector(url)]) {
-                    comp = url_relation(url, [(id)_treeNodeSelected url]);
-                }
-                if (comp ==pathIsParent || comp == pathsHaveNoRelation) {
-                    // Send notification to request Expansion
-                    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                          opFlatOperation, kDFOOperationKey,
-                                          self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
-                                          node, kDFODestinationKey, // This has to be placed in last because it can be nil
-                                          nil];
-                    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
-                }
-            }
-            [self setPathBarToItem:node];
-            
-            [self mruSet:url];
+        // if the flat view is set, if outside of the current node, launch an expand Tree
+        if (self.flatView && [node relationTo:_treeNodeSelected]==pathIsParent && [node canAndNeedsFlat]) {
+            [node requestFlatForView:self];
         }
+    
+        [self setPathBarToItem:node];
+        [self mruSet:node];
         [self.detailedViewController setCurrentNode:node];
         _treeNodeSelected = node;
     }
@@ -778,16 +758,14 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                                           [self.myPathBarControl pathComponentCells]];
     NSUInteger currSize = [pathComponentCells count];
 
-    NSArray *pathComponents = [[item url] pathComponents];
+    NSArray *pathComponents = [item pathComponents];
     NSPathComponentCell *cell;
     NSRange rng;
-    NSUInteger rootLevel = [[[_rootNodeSelected path] pathComponents] count];
-    //piconSize.height =12;
-    //piconSize.width = 12;
+    NSUInteger rootLevel = [_rootNodeSelected pathLevel];
+    
     rng.location=0;
     rng.length = 0;
 
-    NSString *title;
     NSInteger i = 0;
     NSUInteger j;
     NSArray *menuItems = [_myPathPopDownMenu itemArray];
@@ -800,16 +778,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         [menu setHidden:YES];
         [menu setTag:-5]; //  tag < 0 is define as do nothing
     }
-    for (NSString *dirname in pathComponents) {
+    for (NSString *title in pathComponents) {
         rng.length++;
-        if (rng.length==1) {
-            NSURL *rootURL = [NSURL fileURLWithPath:pathComponents[0]];
-            NSDictionary *diskInfo = getDiskInformation(rootURL);
-            title = diskInfo[@"DAVolumeName"];
-        }
-        else {
-            title = dirname;
-        }
+        
         NSURL *newURL = [NSURL fileURLWithPathComponents: [pathComponents subarrayWithRange:rng]];
         NSImage *icon =[[NSWorkspace sharedWorkspace] iconForFile:[newURL path]];
 
@@ -883,9 +854,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         NSUInteger index = [rowsSelected firstIndex];
         TreeItem * node = [_myOutlineView itemAtRow:index];
         if ([node isFolder]) { // It is a Folder : Will make it a root
-            if ([BaseDirectories replaceItem:_rootNodeSelected with:node]) {
+            if ([_baseDirectories replaceItem:_rootNodeSelected with:node]) {
                 /* This is needed to force the update of the path bar on setPathBarToItem.
-                 other wise the pathupdate will not be done, since the OutlineViewSelectionDidChange,
+                 otherwise the pathupdate will not be done, since the OutlineViewSelectionDidChange,
                  that was called prior to this method will update _treeNodeSelected. */
                 _treeNodeSelected = nil;
                 [self selectFolderByItem:node];
@@ -1041,7 +1012,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         NSInteger menutag = [(NSPopUpButton*)sender selectedTag];
         if (menutag>=0) { // if it is less than 0 it doesn't do anything
             NSRange rng = {0, menutag+1};
-            NSArray *pathComponents = [[_rootNodeSelected url] pathComponents];
+            NSArray *pathComponents = [_rootNodeSelected pathComponents];
             newURL = [NSURL fileURLWithPathComponents:[pathComponents subarrayWithRange:rng ]];
         }
     }
@@ -1049,25 +1020,26 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         NSPathComponentCell *selectedPath =[_myPathBarControl clickedPathComponentCell];
         newURL = [selectedPath URL];
     }
+
+    
     /* Gets the clicked Cell */
     if (newURL!=nil) {
-        TreeBranch *node = [self getItemByURL: newURL];
-        if (NULL == node ) {
-            /* The path is not contained existing roots */
-            if (_viewMode==BViewBrowserMode) {
-                /* Will get a new node from shared tree Manager and add it to the root */
-                /* This addTreeBranchWith URL will retrieve from the treeManager if not creates it */
-                node = [appTreeManager addTreeItemWithURL:newURL askIfNeeded:YES];
-                if (node) { // sanity check
-                    [BaseDirectories removeItemAtIndex:0];
-                    [self addTreeRoot:node];
-                }
-                else { // if it doesn't exist then put it back as it was
-                    node = [BaseDirectories branchAtIndex:0];
-                }
+        TreeItem *node = [_baseDirectories getNodeWithURL: newURL];
+        if (NULL == node || NO==[node isFolder]) {
+            /* The path is not contained existing roots or it can't be opened here */
+            // Send notification for Open
+            node = [appTreeManager addTreeItemWithURL:newURL askIfNeeded:YES];
+            if (node) { // sanity check
+                
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                      @[node], kDFOFilesKey,
+                                      opOpenOperation, kDFOOperationKey,
+                                      self, kDFOFromViewKey,
+                                      nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:userInfo];
             }
         }
-        if (NULL != node){
+        else {
             [self selectFolderByItem:node];
         }
     }
@@ -1156,7 +1128,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             NSUInteger level = [_myOutlineView levelForRow:row];
 
             if (level==0) { // Its on the root
-                [BaseDirectories removeChild:object];
+                [_baseDirectories removeChild:object];
 
             }
 
@@ -1213,7 +1185,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             //NSLog(@"Reloading Released %@", [object path]);
 
             // Tries to jump into a valid parent
-            TreeItem *parent = [(TreeItem*)object parent];
+            TreeBranch *parent = [object parent];
             while (parent !=nil && [parent hasTags:tagTreeItemRelease]){
                 parent = [parent parent];
             }
@@ -1221,21 +1193,21 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 // found a parent, try to select it
                 BOOL OK = [self selectFolderByItem:parent];
                 if (!OK) {
-                    [self addTreeRoot:(TreeBranch*)parent];
+                    [self addTreeRoot:parent];
                     [self selectFolderByItem:parent];
                 }
             }
             else {
                 // parent not found. Detect if the root has disappeard
                 if ([_rootNodeSelected hasTags:tagTreeItemRelease]) {
-                    NSUInteger idx = [BaseDirectories indexOfItem:_rootNodeSelected];
-                    [BaseDirectories removeItemAtIndex:idx];
-                    if ([BaseDirectories numberOfItemsInNode]>0) {
+                    NSUInteger idx = [_baseDirectories indexOfItem:_rootNodeSelected];
+                    [_baseDirectories removeItemAtIndex:idx];
+                    if ([_baseDirectories numberOfItemsInNode]>0) {
                         if (idx>0)
                             idx--;
                         else
                             idx=0;
-                        [self selectFolderByItem:[BaseDirectories itemAtIndex:idx]];
+                        [self selectFolderByItem:[_baseDirectories itemAtIndex:idx]];
                     }
                     else {
                         // Nothing else to do. Just clear the View
@@ -1572,12 +1544,12 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(void) refresh {
     // Refresh first the Roots, deletes the ones tagged for deletion
     NSUInteger idx=0;
-    NSUInteger numberOfBranches = [BaseDirectories numberOfBranchesInNode];
+    NSUInteger numberOfBranches = [_baseDirectories numberOfBranchesInNode];
     while (idx < numberOfBranches) {
         // Ideally this should pass to the TreeClasses. Keeping it here for the time being.
-        TreeBranch *tree = [BaseDirectories branchAtIndex:idx];
+        TreeBranch *tree = [_baseDirectories branchAtIndex:idx];
         if ([tree hasTags:tagTreeItemRelease]) {  // Deletes the ones tagged for deletion.
-            [BaseDirectories removeItemAtIndex:idx];
+            [_baseDirectories removeItemAtIndex:idx];
         }
         else { // Refreshes all the others
             // [tree setTag:tagTreeItemDirty];  // Only treeManager and operations should make items dirty
@@ -1588,7 +1560,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     // Then the observed items
     for (TreeBranch *tree in _observedVisibleItems) {
         // But avoiding repeating the refreshes already done
-        if ([BaseDirectories indexOfItem:tree ]==NSNotFound) {
+        if ([_baseDirectories indexOfItem:tree ]==NSNotFound) {
             // [tree setTag:tagTreeItemDirty]; // Only treeManager and operations should make items dirty
             [tree refresh];
         }
@@ -1596,7 +1568,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
     if (numberOfBranches==1) {
         // Expand the Root Node
-        id itemToExpand = [BaseDirectories branchAtIndex:0];
+        id itemToExpand = [_baseDirectories branchAtIndex:0];
         if (itemToExpand)
             [_myOutlineView expandItem:itemToExpand];
         else
@@ -1614,7 +1586,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 -(void) addTreeRoot:(TreeBranch*)theRoot {
     if (theRoot!=nil) {
-        [BaseDirectories addTreeItem: theRoot];
+        [_baseDirectories addTreeItem: theRoot];
         
         /* Refresh the Trees so that the trees are displayed */
         //[self refreshTrees];
@@ -1624,19 +1596,19 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void) addFileCollection:(FileCollection*) collection {
-    [BaseDirectories addFileCollection:collection];
+    [_baseDirectories addFileCollection:collection];
 }
 
 -(void) setRoots:(NSArray*) rootDirectories {
     [self removeAll];
     [self setFlatView:NO]; // Cancels Flat View to avoid problems
     for (TreeItem* root in rootDirectories) {
-        [BaseDirectories addTreeItem:root];
+        [_baseDirectories addTreeItem:root];
     }
 }
 
 -(NSArray*) roots {
-    return [BaseDirectories branchesInNode];
+    return [_baseDirectories branchesInNode];
 }
 
 //-(void) removeRootWithIndex:(NSInteger)index {
@@ -1644,15 +1616,15 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 //}
 
 -(void) removeRoot: (TreeBranch*) root {
-    [BaseDirectories removeChild:root];
+    [_baseDirectories removeChild:root];
 }
 
 -(void) removeAll {
-    if (BaseDirectories==nil)
-        BaseDirectories = [[TreeCollection alloc] initWithURL:nil parent:nil];
+    if (_baseDirectories==nil)
+        _baseDirectories = [[TreeCollection alloc] initWithURL:nil parent:nil];
     else {
         [self unobserveAll];
-        [BaseDirectories releaseChildren];
+        [_baseDirectories releaseChildren];
     }
     if (self.detailedViewController!=nil)
         [self.detailedViewController setCurrentNode:nil]; // This cleans the view
@@ -1774,8 +1746,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 
 -(TreeBranch*) selectFirstRoot {
-    if (BaseDirectories!=nil && [BaseDirectories numberOfBranchesInNode]>=1) {
-        TreeBranch *root = [BaseDirectories branchAtIndex:0];
+    if (_baseDirectories!=nil && [_baseDirectories numberOfBranchesInNode]>=1) {
+        TreeBranch *root = [_baseDirectories branchAtIndex:0];
         _rootNodeSelected = root;
         [self selectFolderByItem:root];
         [self stopBusyAnimations];
@@ -1786,11 +1758,12 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
-    if (BaseDirectories!=nil && [BaseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
-        NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+    NSLog(@"Debug this");
+    if (_baseDirectories!=nil && [_baseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
+        NSEnumerator *enumerator = [_baseDirectories itemsInNodeEnumerator];
         TreeBranch* root;
         while (root = [enumerator nextObject]) {
-            if ([root canContainURL:[treeNode url]]){ // Search for Root Node
+            if ([root relationTo:treeNode] != pathIsParent){ // Search for Root Node
                 _rootNodeSelected = root;
                 TreeBranch *lastBranch = nil;
                 NSArray *treeComps= [treeNode treeComponentsToParent:root];
@@ -1816,55 +1789,24 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     return NO;
 }
 
--(BOOL) selectFolderByURL:(NSURL*)theURL {
-    TreeItem *item = [self getItemByURL:theURL];
-    if (item==nil) {
-        if (_viewMode == BViewBrowserMode) {
-            // Replaces current root
-            item = [appTreeManager addTreeItemWithURL:theURL askIfNeeded:YES];
-            if (item != nil) {
-                [BaseDirectories addTreeItem:item];
-                return [self selectFolderByItem:item];
-            }
-        }
-    }
-    else {
-        return [self selectFolderByItem:item];
-    }
-    return NO;
-}
+//-(BOOL) selectFolderByURL:(NSURL*)theURL {
+//    TreeItem *item = [self getItemByURL:theURL];
+//    if (item==nil) {
+//        if (_viewMode == BViewBrowserMode) {
+//            // Replaces current root
+//            item = [appTreeManager addTreeItemWithURL:theURL askIfNeeded:YES];
+//            if (item != nil) {
+//                [_baseDirectories addTreeItem:item];
+//                return [self selectFolderByItem:item];
+//            }
+//        }
+//    }
+//    else {
+//        return [self selectFolderByItem:item];
+//    }
+//    return NO;
+//}
 
--(TreeBranch*) getRootWithURL:(NSURL*)theURL {
-    if (theURL==nil)
-        return NULL;
-    
-    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
-    TreeBranch* root;
-    while (root = [enumerator nextObject]) {
-        /* Checks if rootPath in root */
-        if ([root canContainURL:theURL]) {
-            /* The URL is already contained in this tree */
-            return root;
-        }
-    }
-    return NULL;
-    
-}
-
--(TreeItem*) getItemByURL:(NSURL*)theURL {
-    if (theURL==nil)
-        return NULL;
-    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
-    TreeBranch* root;
-    while (root = [enumerator nextObject]) {
-        /* Checks if rootPath in root */
-        if ([root canContainURL:theURL]) {
-            /* The URL is already contained in this tree */
-            return [root getNodeWithURL:theURL];
-        }
-    }
-    return NULL;
-}
 
 -(void) stopBusyAnimations {
     [_myOutlineProgressIndicator setHidden:YES];
@@ -1947,8 +1889,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(void) backSelectedFolder {
     if (_mruPointer>0) {
         _mruPointer--;
-        NSURL *url = _mruLocation[_mruPointer];
-        [self selectFolderByURL:url];
+        TreeItem *node = _mruLocation[_mruPointer];
+        [self selectFolderByItem:node];
         // Enable the forward Button
         [self.mruBackForwardControl setEnabled:YES forSegment:1];
     }
@@ -1961,8 +1903,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(void) forwardSelectedFolder {
     if (_mruPointer < [_mruLocation count]-1) {
         _mruPointer++;
-        NSURL *url = _mruLocation[_mruPointer];
-        [self selectFolderByURL:url];
+        TreeItem *node = _mruLocation[_mruPointer];
+        [self selectFolderByItem:node];
         // Enable the Back Button
         [self.mruBackForwardControl setEnabled:YES forSegment:0];
     }
@@ -1981,14 +1923,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     else {
         selected = self->_rootNodeSelected;
     }
-    
-    if ([selected respondsToSelector:@selector(url)]) {
-        NSURL *url = [selected url];
-        if ([[url pathComponents] count]==1)
-            return pathFriendly(url);
-        return [url lastPathComponent];
-    }
-    // When all else fails
+
     return [selected name];
 }
 
@@ -2007,7 +1942,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(NSString*) debugDescription {
-    return [NSString stringWithFormat:@"Browser Controller(%@) root:%@ selected:%@", self->_viewName, self->BaseDirectories, self->_treeNodeSelected ];
+    return [NSString stringWithFormat:@"Browser Controller(%@) root:%@ selected:%@", self->_viewName, self->_baseDirectories, self->_treeNodeSelected ];
 }
 
 @end

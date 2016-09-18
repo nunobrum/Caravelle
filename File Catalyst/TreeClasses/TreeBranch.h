@@ -76,8 +76,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(BOOL) isExpandable;
 
 -(TreeItem*) childWithName:(NSString*) name class:(id)cls;
--(TreeItem*) childWithURL:(NSURL*)url;
--(TreeItem*) childContainingURL:(NSURL*)url;
+//-(TreeItem*) childWithURL:(NSURL*)url;
+//-(TreeItem*) childContainingURL:(NSURL*)url;
+-(TreeItem*) getNodeWithPathComponents:(NSArray*) pComp;
 -(TreeItem*) getNodeWithURL:(NSURL*)url;
 -(TreeItem*) getNodeWithPath:(NSString*)path;
 -(TreeItem*) addURL:(NSURL*)theURL;
@@ -98,7 +99,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(void) calculateSize;
 -(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;
 -(void) sizeCalculationCancelled;
-
+-(void) requestFlatForView:(id)view;
 
 -(void) notifyDidChangeTreeBranchPropertyChildren;
 

@@ -16,7 +16,6 @@
 
 -(instancetype) initWithURL:(NSURL*)url parent:(TreeBranch*)parent {
     self = [super initWithURL:url parent:parent];
-    self.nameCache = url.lastPathComponent;
     return self;
 }
 
@@ -29,19 +28,6 @@
     return [super treeItemForURL:url parent:parent];
 }
 
--(void) setName:(NSString*)name {
-    self.nameCache = name;
-}
-
--(NSString*) name {
-    if (self.nameCache==nil) {
-        if (self.url!=nil) {
-            self.nameCache = self.url.lastPathComponent;
-        }
-        NSLog(@"TreeBranchCatalyst.name WARNING:going to return NULL");
-    }
-    return self.nameCache;
-}
 
 -(BOOL) needsSizeCalculation {
     return NO;
@@ -53,14 +39,16 @@
             self->_children = [[NSMutableArray alloc] init];
     }
     TreeBranchCatalyst *cursor = self;
-    NSArray *pcomps = [newItem.url pathComponents];
-    unsigned long level = [[_url pathComponents] count];
+    NSArray *pcomps = [newItem pathComponents];
+    unsigned long level = [[self pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
-        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        TreeBranchCatalyst *child = (TreeBranchCatalyst*)[cursor childContainingURL:pathURL];
+        TreeBranchCatalyst *child = (TreeBranchCatalyst*)[cursor childWithName:pcomps[level] class:[TreeBranchCatalyst class]];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
+            
+            NSURL *pathURL = [getURL(cursor) URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
+
             child = [[TreeBranchCatalyst alloc] initWithURL:pathURL parent:cursor];
             if (child!=nil) {
                 @synchronized(cursor) {
@@ -80,7 +68,7 @@
         }
         else {
             // Will ignore this child
-            NSLog(@"TreeBranchCatalyst._addTreeItem: Error:%@ can't be added to %@", newItem.url, pathURL);
+            NSLog(@"TreeBranchCatalyst._addTreeItem: Error:%@ can't be added to %@", newItem, cursor);
             return NO;
         }
         level++;
@@ -162,7 +150,7 @@
                         is_dirty = YES;
                     }
                     // at this point the files should be marked as released
-                    else if (fileExistsOnPath([item path])==NO) { // Safefy check
+                    else if (fileURLlExists(getURL(item))==NO) { // Safefy check
                         [item removeItem];  // This assures that its removal from duplicates chains is completed. And also from registered parent
                         [self->_children removeObject:item];
                         is_dirty = YES;
@@ -195,7 +183,7 @@
     BOOL is_dirty = NO;
     while ( index < [_children count]) {
         TreeItem *item = self->_children[index];
-        if ([item isKindOfClass:[TreeLeaf class]] && ([item hasDuplicates]==NO)) {
+        if ([item isKindOfClass:[TreeLeaf class]] && ([(TreeLeaf*)item hasDuplicates]==NO)) {
             [self->_children removeObjectAtIndex:index];
             is_dirty = YES;
         }
@@ -229,7 +217,7 @@
 }
 
 -(NSString*) debugDescription {
-    return [NSString stringWithFormat:@"%@|name:%@", super.debugDescription, self.nameCache];
+    return [NSString stringWithFormat:@"%@|name:%@", super.debugDescription, self.name];
 }
 
 @end

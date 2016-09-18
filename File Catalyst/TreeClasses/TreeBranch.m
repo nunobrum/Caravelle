@@ -51,13 +51,13 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     for (TreeItem *item in itemArray) {
         if (common_path==nil)
         {
-            common_path = [[item url] pathComponents];
+            common_path = [item pathComponents];
             ci = [common_path count]-1; /* This will exclude the file name */
         }
         else
         {
             NSInteger i;
-            file_path = [[item url] pathComponents];
+            file_path = [item pathComponents];
             if ([file_path count]<ci)
                 ci = [file_path count];
             for (i=0; i< ci; i++) {
@@ -291,7 +291,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(BOOL) moveChild:(TreeItem*)item {
-    TreeBranch *old_parent = (TreeBranch*)[item parent];
+    TreeBranch *old_parent = [item parent];
     [self addChild:item];
     if (old_parent) { // Remove from old parent
         [old_parent removeChild:item];
@@ -340,6 +340,17 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 #pragma mark -
 #pragma mark chidren access
 
+-(TreeItem*) childWithName:(NSString*) name {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if ([[item name] isEqualToString: name]) {
+                return item;
+            }
+        }
+    }
+    return nil;
+}
+
 -(TreeItem*) childWithName:(NSString*) name class:(id)cls {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
@@ -352,42 +363,43 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 
--(TreeItem*) childWithURL:(NSURL*) aURL {
-    @synchronized(self) {
-        for (TreeItem *item in self->_children) {
-            if ([[item url] isEqual:aURL]) {
-                return item;
-            }
-        }
-    }
-    return nil;
-}
-
--(TreeItem*) childContainingURL:(NSURL*) aURL {
-    @synchronized(self) {
-        if ([self canContainURL:aURL]) {
-            for (TreeItem *item in self->_children) {
-                if ([item canContainURL:aURL]) {
-                    return item;
-                }
-            }
-        }
-    }
-    return nil;
-}
-
--(TreeItem*) childContainingPath:(NSString*) aPath {
-    @synchronized(self) {
-        if ([self canContainPath:aPath]) {
-            for (TreeItem *item in self->_children) {
-                if ([item canContainPath:aPath]) {
-                    return item;
-                }
-            }
-        }
-    }
-    return nil;
-}
+//-(TreeItem*) childWithURL:(NSURL*) aURL {
+//    @synchronized(self) {
+//        for (TreeItem *item in self->_children) {
+//            NSURL *itemURL = URL(item);
+//            if ([itemURL isEqual:aURL]) {
+//                return item;
+//            }
+//        }
+//    }
+//    return nil;
+//}
+//
+//-(TreeItem*) childContainingURL:(NSURL*) aURL {
+//    @synchronized(self) {
+//        if ([self canContainURL:aURL]) {
+//            for (TreeItem *item in self->_children) {
+//                if ([item.reprObj canContainURL:aURL]) {
+//                    return item;
+//                }
+//            }
+//        }
+//    }
+//    return nil;
+//}
+//
+//-(TreeItem*) childContainingPath:(NSString*) aPath {
+//    @synchronized(self) {
+//        if ([self canContainPath:aPath]) {
+//            for (TreeItem *item in self->_children) {
+//                if ([item canContainPath:aPath]) {
+//                    return item;
+//                }
+//            }
+//        }
+//    }
+//    return nil;
+//}
 
 -(NSInteger) indexOfItem:(TreeItem*)item {
     return [_children indexOfObject:item];
@@ -577,7 +589,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         [self didChangeValueForKey:kvoTreeBranchPropertySize];
         // and propagates to parent
         if (self->_parent)
-            [(TreeBranch*)self->_parent _propagateSize];
+            [self->_parent _propagateSize];
     }
 }
 
@@ -592,7 +604,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
     [self didChangeValueForKey:kvoTreeBranchPropertySize];
     if (self->_parent) {
-        [(TreeBranch*)self->_parent _propagateSize];
+        [self->_parent _propagateSize];
         // This will trigger a kvoTreeBranchPropertySize from the parent in case of
         // completion of the directory size computation
     }
@@ -606,7 +618,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         [self didChangeValueForKey:kvoTreeBranchPropertySize];
         // and propagates to parent
         if (self->_parent) {
-            [(TreeBranch*)self->_parent sizeCalculationCancelled];
+            [self->_parent sizeCalculationCancelled];
         }
     }
 }
@@ -760,6 +772,16 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
+-(void) requestFlatForView:(id)view {
+    // Send notification to request Expansion
+    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                          opFlatOperation, kDFOOperationKey,
+                          view, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
+                          self, kDFODestinationKey, // This has to be placed in last because it can be nil
+                          nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:view userInfo:info];
+}
+
 
 #pragma mark -
 #pragma mark Tree Access
@@ -767,61 +789,91 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  * All these methods must be changed for recursive in order to support the searchBranches
  */
 
--(TreeItem*) getNodeWithURL:(NSURL*)url {
-    //NSLog(@"TreeBranch.getNodeWithURL:(%@)", url);
-    if ([[self url] isEqual:url])
-        return self;
-    else {
-        id child = [self childContainingURL:url];
-        if (child!=nil) {
-            if ([child isFolder]) {
-                return [(TreeBranch*)child getNodeWithURL:url];
-            }
+-(TreeItem*) getNodeWithPathComponents:(NSArray*) pComp {
+    NSLog(@"DEBUG;TreeBranch._getNodeWithPathComponents:(%@)", pComp);
+    
+    NSArray *cpself = [self pathComponents];
+    
+    NSUInteger cpsc = [cpself count];
+    NSUInteger cpuc = [pComp count];
+    if (cpsc> cpuc) // Sanity check, if the given url has less path components that itself, it can't possibly contain it
+        return nil;
+    
+    NSUInteger i;
+    for (i = 0 ; i < cpsc ; i++) {
+        if (NO == [cpself[i] isEqualToString:pComp[i]]) {
+            return nil;
         }
-        return child;
     }
+    TreeBranch *cursor = self;
+    while (i < cpuc && cursor != nil) {
+        cursor = (TreeBranch*)[cursor childWithName:pComp[i++] class:[TreeBranch class]];
+    }
+    if( i == cpuc-1) // discounts 1 because of tree branch class condition
+        return [cursor childWithName:pComp[i]];
+    else
+        return cursor;
+}
+
+-(TreeItem*) _huntPathComponents:(NSArray*) pComp {
+    NSLog(@"DEBUG;TreeBranch._huntPathComponents:(%@)", pComp);
+    
+    NSArray *cpself = [self pathComponents];
+    
+    NSUInteger cpsc = [cpself count];
+    NSUInteger cpuc = [pComp count];
+    if (cpsc> cpuc) // Sanity check, if the given url has less path components that itself, it can't possibly contain it
+        return nil;
+    
+    NSUInteger i;
+    for (i = 0 ; i < cpsc ; i++) {
+        if (NO == [cpself[i] isEqualToString:pComp[i]]) {
+            return nil;
+        }
+    }
+    TreeBranch *cursor = self;
+    while (i < cpuc) {
+        id temp = (TreeBranch*)[cursor childWithName:pComp[i]];
+        if (temp==nil) {
+            return cursor;
+        }
+        cursor = temp;
+        i++;
+    }
+    return cursor;
+}
+
+-(TreeItem*) getNodeWithURL:(NSURL*)url {
+    NSArray *urlComponents = [url pathComponents];
+    return [self getNodeWithPathComponents:urlComponents];
+    
 }
 
 -(TreeItem*) getNodeWithPath:(NSString*)path {
     //NSLog(@"TreeBranch.getNodeWithURL:(%@)", url);
-    if ([[self path] isEqualToString:path])
-        return self;
-    else {
-        id child = [self childContainingPath:path];
-        if (child!=nil) {
-            if ([child isFolder]) {
-                return [(TreeBranch*)child getNodeWithPath:path];
-            }
-        }
-        return child;
-    }
+    return [self getNodeWithPathComponents:path.pathComponents];
 }
 
 
 -(TreeItem*) addURL:(NSURL*)theURL {
-    id child = [self childContainingURL:theURL];
-    if (child!=nil) {
-
-        // If it is still a branch
-        if ([child isFolder]) {
-            return [(TreeBranch*)child addURL:theURL];
-        }
+    NSLog(@"DEBUG THIS");
+    NSArray *pcomps = [theURL pathComponents];
+    id child = [self _huntPathComponents:pcomps];
+    if (child == nil) {
+        // Can't be added here
+        return nil;
+    }
+    else {
         // if it is a Leaf, it should be it. Test to make sure.
-        else if ([[child path] isEqualToString:[theURL path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
+        if ([[child path] isEqualToString:[theURL path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
             return child;
-        }
-        else {
-            NSLog(@"TreeBranch.addURL: Failed to add URL(%@) to %@",theURL, [self url]);
-            assert(NO);
-            return nil;
         }
     }
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
     }
-    NSArray *pcomps = [theURL pathComponents];
-    unsigned long level = [[_url pathComponents] count];
+    unsigned long level = [[self pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     if (level < leaf_level) {
         NSURL *pathURL = [self.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
@@ -837,9 +889,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         return newObj; /* Stops here Nothing More to Add */
     }
     else if ([[self path] isEqualToString:[theURL path]]) { // Avoiding NSURL isEqualTo: since it can cause problems with bookmarked URLs
-        return self; // This condition is equal to level-1==leaf_level
+            return self; // This condition is equal to level-1==leaf_level
     }
-    NSLog(@"TreeBranch.addURL: URL(%@) is not added to self(%@)", theURL, self->_url);
+    NSLog(@"TreeBranch.addURL: URL(%@) is not added to self(%@)", theURL, self);
     return nil;
 }
 
@@ -908,20 +960,22 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //}
 
 -(BOOL) addTreeItem:(TreeItem*) newItem {
+    NSLog(@"DEBUG THIS");
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
     }
     TreeBranch *cursor = self;
-    NSArray *pcomps = [newItem.url pathComponents];
-    unsigned long level = [[_url pathComponents] count];
+    NSArray *pcomps = [newItem pathComponents];
+    unsigned long level = [[self pathComponents] count];
     unsigned long leaf_level = [pcomps count]-1;
     while (level < leaf_level) {
-        NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
-        TreeItem *child = [cursor childContainingURL:pathURL];
+        TreeItem *child = [cursor childWithName:pcomps[level] class:[TreeBranch class]];
         if (child==nil) {/* Doesnt exist or if existing is not branch*/
             /* This is a new Branch Item that will contain the URL*/
+            NSURL *pathURL = [cursor.url URLByAppendingPathComponent:pcomps[level] isDirectory:YES];
             child = [TreeItem treeItemForURL:pathURL parent:cursor];
+                
             if (child!=nil) {
                 @synchronized(cursor) {
                     [cursor->_children addObject:child];
@@ -940,7 +994,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         }
         else {
             // Will ignore this child
-            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", newItem.url, pathURL);
+            NSLog(@"TreeBranch._addURLnoRecurr: Error:%@ can't be added to %@", newItem, cursor);
             return NO;
         }
         level++;
@@ -1662,7 +1716,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     BOOL fireNotfication = NO;
     NSString const *strOperation;
     NSPasteboard *pboard = [info draggingPasteboard];
-    NSLog(@"treeBranch %@, accept drop", self.path);
+    NSLog(@"DEBUG THIS");
+    NSLog(@"treeBranch %@, accept drop", self);
     DebugPBoard(pboard);
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
     
@@ -1700,7 +1755,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
                               files, kDFOFilesKey,
                               strOperation, kDFOOperationKey,
                               self, kDFODestinationKey,
-                              //fromObject, kFromObjectKey,
+                              fromObject, kDFOFromViewKey,
                               nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:fromObject userInfo:info];
     }

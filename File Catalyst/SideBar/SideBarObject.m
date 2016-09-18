@@ -10,4 +10,11 @@
 
 @implementation SideBarObject
 
+-(NSString*) hint {
+    if ([self->_objValue respondsToSelector:@selector(hint)]) {
+        return [self->_objValue performSelector:@selector(hint)];
+    }
+    return @"";
+}
+
 @end

@@ -192,7 +192,7 @@
         _tag &= ~tagTreeItemHidden;
     
     if (self->_parent) {
-        _tag |= (self->_parent->_tag & tagTreeAuthorized); // If parent is authorized, this item is also authorized.
+        _tag |= (self->_parent.tag & tagTreeAuthorized); // If parent is authorized, this item is also authorized.
     }
     
 }
@@ -222,16 +222,15 @@
         operation = opRename;
     }
     self.nameCache = newName;
-    NSArray *items = [NSArray arrayWithObject:self];
-
-    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                          items, kDFOFilesKey,
-                          operation, kDFOOperationKey,
-                          newName, kDFORenameFileKey,
-                          self->_parent, kDFODestinationKey,
-                          //self, kFromObjectKey,
-                          nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+    
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              @[self], kDFOFilesKey,
+                              operation, kDFOOperationKey,
+                              newName, kDFORenameFileKey,
+                              self->_parent, kDFODestinationKey,
+                              //self, kFromObjectKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
 }
 
@@ -441,7 +440,8 @@
     return nil;
 }
 
-
+// Tree Integration
+#pragma mark - Tree Access
 
 -(TreeItem*) root {
     TreeItem *cursor = self;
@@ -449,6 +449,62 @@
         cursor=cursor->_parent;
     }
     return cursor;
+}
+
+-(NSArray*) pathComponents {
+    return [self.url pathComponents];
+}
+
+-(NSInteger) pathLevel {
+    NSLog(@"DEBUG THIS");
+    NSUInteger answer = 0;
+    TreeItem *cursor = self;
+    do {
+        answer++;
+        cursor=cursor->_parent;
+    } while (cursor != nil);
+    NSArray *rootPath = [cursor pathComponents];
+    answer += [rootPath count];
+    
+    return answer;
+}
+
+
+/* This routine has two modes of working. 
+ If level is negative it uses a relative level reference and descends <level>
+ if level is positive, it is an absolute reference */
+-(TreeBranch*) parentAtLevel:(NSInteger)level {
+    NSLog(@"DEBUG THIS");
+    TreeBranch *cursor = self.parent;
+    if (level<0) {
+        while (level<0 && cursor!=nil) {
+            cursor=cursor.parent;
+            level++;
+        }
+        return cursor; // This will return nil if not found
+    }
+    else {
+        NSInteger l=1;
+        while (cursor!=nil) {
+            cursor=cursor.parent;
+            l++;
+        }
+        NSArray *rootPath = [cursor pathComponents];
+        l += [rootPath count];
+        
+        if (l>level) return nil;
+        l = l-level;
+        cursor = self.parent;
+        while (l--) {
+            cursor = cursor.parent;
+        }
+        return cursor;
+    }
+}
+
+
+-(enumPathCompare) relationTo:(TreeItem *)other {
+    return pathCompRelation(self.pathComponents, other.pathComponents);
 }
 
 -(void) notifyChange {
@@ -493,7 +549,7 @@
 
 -(BOOL) removeItem {
     if (_parent) {
-        [(TreeBranch*)_parent removeChild:self];
+        [_parent removeChild:self];
     }
     [self deinit];
     return YES;
@@ -527,59 +583,11 @@
 }
 
 #pragma mark -
-#pragma mark URL comparison methods
-
--(enumPathCompare) relationToPath:(NSString*) otherPath {
-    return path_relation([self path], otherPath);
-}
-
--(enumPathCompare) compareTo:(TreeItem*) otherItem {
-    return [self relationToPath:[otherItem path]];
-}
-
-/* This is a test if it can contain the URL */
--(BOOL) canContainPath:(NSString*)path {
-    NSArray *cpself = [[self path] pathComponents];
-    NSArray *cppath = [path pathComponents];
-    NSUInteger cpsc = [cpself count];
-    if (cpsc> [cppath count])
-        return NO;
-    for (NSUInteger i = 0 ; i < cpsc ; i++) {
-        if (NO == [cpself[i] isEqualToString:cppath[i]]) {
-            return NO;
-        }
-    }
-    return YES;
-}
-
--(BOOL) containedInPath: (NSString*) path {
-    NSArray *cpself = [[self path] pathComponents];
-    NSArray *cppath = [path pathComponents];
-    NSUInteger cppc = [cppath count];
-    if (cppc> [cpself count])
-        return NO;
-    for (NSUInteger i = 0 ; i < cppc ; i++) {
-        if (NO == [cppath[i] isEqualToString:cpself[i]]) {
-            return NO;
-        }
-    }
-    return YES;
-}
-/* This is a test if it can contain the URL */
--(BOOL) canContainURL:(NSURL*)url {
-    return [self canContainPath:[url path]];
-}
-
--(BOOL) containedInURL: (NSURL*) url {
-    return [self containedInPath:[url path]];
-
-}
-#pragma mark -
 #pragma mark NSPasteboardWriting support
 
 
 //TODO:1.3.3 Try to pass NSFilenamePboardType to see if drag to recycle bin can be executed
-- (NSArray *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
+- (NSArray<NSString *> *)writableTypesForPasteboard:(NSPasteboard *)pasteboard {
 #ifdef USE_UTI
     /* Adding the TreeType */
     NSMutableArray *answer =[NSMutableArray arrayWithObject:(__bridge id)kTreeItemDropUTI];
@@ -598,7 +606,7 @@
     }
     else
 #endif
-    answer = [self.url pasteboardPropertyListForType:type];
+        answer = [self.url pasteboardPropertyListForType:type];
     return answer;
 }
 
@@ -611,18 +619,18 @@
     }
     else
 #endif
-    if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
-        answer = [self.url writingOptionsForType:type pasteboard:pasteboard];
-    } else {
-        answer = 0;
-    }
+        if ([self.url respondsToSelector:@selector(writingOptionsForType:pasteboard:)]) {
+            answer = [self.url writingOptionsForType:type pasteboard:pasteboard];
+        } else {
+            answer = 0;
+        }
     return answer;
 }
 
 #pragma mark -
 #pragma mark  NSPasteboardReading support
 
-+ (NSArray *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
++ (NSArray<NSString *> *)readableTypesForPasteboard:(NSPasteboard *)pasteboard {
     //return [NSArray arrayWithObjects: //(id)kUTTypeFolder, (id)kUTTypeFileURL, (id)kUTTypeItem,
     //        (id)NSFilenamesPboardType, (id)NSURLPboardType, OwnUTITypes nil];
     return [NSURL readableTypesForPasteboard:pasteboard];
@@ -640,7 +648,7 @@
         // If a custom UTI is ever considered, write the Write to pasteboard
         return propertyList; // If ever the custom UTI is created. Check if this works
     }
-    else 
+    else
 #endif
     {
         // We only have URLs accepted. Create the URL

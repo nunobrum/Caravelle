@@ -30,19 +30,20 @@
     TreeItem *target;
     if (item->_parent) {
         target = item->_parent;
-        url = item->_parent.url;
+        url = getURL(item->_parent);
         if (url==nil) {
             return nil;
         }
     }
     else {
-        if (item.url==nil) {
+        url = getURL(item);
+        if (url==nil) {
             return nil;
         }
-        if ([[item.url pathComponents] count]==1) {
+        if ([[url pathComponents] count]==1) {
             return nil;
         }
-        url = [item.url URLByDeletingLastPathComponent];
+        url = [url URLByDeletingLastPathComponent];
         target = [appTreeManager addTreeItemWithURL:url askIfNeeded:NO];
     }
     
@@ -52,8 +53,22 @@
     }
     //else
     //    NSLog(@"DummyBranch.parentFor: couldnt find the target %@", url);
-    [answer setNameCache:@".."];
+    [answer setName:@".."];
     return answer;
+}
+
+-(NSArray *) treeComponents {
+    if (self.target != nil)
+        return [self.target treeComponents];
+    else
+        return nil;
+}
+
+-(NSArray *) treeComponentsToParent:(id)parent {
+    if (self.target != nil)
+        return [self.target treeComponentsToParent:parent];
+    else
+        return nil;
 }
 
 -(TreeItemTagEnum) tag {
@@ -64,8 +79,16 @@
     return ((self.target.tag  | tagTreeItemReadOnly) & tag)!=0 ? YES : NO;
 }
 
+// The following method assures that nothing is done in the dummy class.
+// The super class has an implementation on newName that is used to rename or create files.
 -(NSString*) name {
+    if (self.nameCache==nil) {
+        return self.target.name;
+    }
     return self.nameCache;
+}
+-(void) setName:(NSString*)newName {
+    self.nameCache = newName;
 }
 
 -(BOOL) needsSizeCalculation {

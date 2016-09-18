@@ -1218,12 +1218,12 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
     // TODO:1.4 Option for the rename, on the table or on a dedicated dialog
     if (numberOfFiles == 1) {
         TreeItem *selectedFile = [selectedFiles firstObject];
-        NSString *oldFilename = [[selectedFile path] lastPathComponent];
         if (1) { // Rename done in place // TODO:1.4 Put this is a USer Configuration
             [[self selectedView] startEditItemName:selectedFile];
         }
         // Using a dialog Box
         else {
+            NSString *oldFilename = [selectedFile name];
             // If only one file, with edit with RenameFileDialog
             if (renameFilePanel==nil)
                 renameFilePanel =[[RenameFileDialog alloc] initWithWindowNibName:@"RenameFileDialog"];
@@ -1436,7 +1436,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
 
     NSPasteboard *clipboard = [NSPasteboard generalPasteboard];
     NSArray *files = get_clipboard_files(clipboard);
-
+    
     if (files!=nil && [files count]>0) {
         if (isCutPending) {
             if (generalPasteBoardChangeCount == [clipboard changeCount]) {
@@ -2326,10 +2326,11 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
             else if ([node isFolder] && oneFolder==YES) { // It is a directory
                 // Going to open the Select That directory on the Outline View
                 /* This also sets the node for Table Display and path bar */
-                TreeItem *root = [(BrowserController*)self.selectedView getRootWithURL:node.url];
+                
+                TreeItem *root = [[(BrowserController*)self.selectedView baseDirectories] getRootWithNode:node];
                 if (root) {
                     // the folder already exist so, only needs to be selected
-                    [(BrowserController*)self.selectedView selectFolderByURL:node.url]; // URL is preferred so that the climb to parent folder works
+                    [(BrowserController*)self.selectedView selectFolderByItem:node]; // URL is preferred so that the climb to parent folder works
                 }
                 else {
                     // It does not exist on the Outline View, will get the folder from the TreeManager
@@ -2339,7 +2340,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                         [(BrowserController*)self.selectedView selectFirstRoot];
                     }
                 }
-                oneFolder = NO; /* Only one Folder can be Opened */
+                oneFolder = NO; /* Only the first Folder will be Opened */
             }
             else
                 NSLog(@"AppDelegate.startOperationHandler: - Unknown Class '%@'", [node className]);
@@ -2633,7 +2634,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
             }
             else {
                 /* Whether it will present a treeView */
-                for (TreeBranch *r in duplicateController.rootsWithDuplicates.branchesInNode) {
+                for (TreeBranch *r in duplicateController.rootsWithDuplicates.roots) {
                     [myRightView addTreeRoot:[[TreeBranchCatalyst alloc] initWithURL:r.url parent:nil]];
                 }
                 [myRightView addFileCollection: collectedDuplicates];
@@ -2652,7 +2653,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         NSInteger num_directories=0;
         
         if ([selectedFiles count]==0) {
-            statusText = [NSString stringWithFormat:@"No Files Selected"];
+            statusText = @"No Files Selected";
         }
         else if ([selectedFiles count] == 1) {
             TreeItem *item = [selectedFiles objectAtIndex:0];
@@ -2681,13 +2682,15 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         }
         else {
             for (TreeItem *item in selectedFiles ) {
+                NSNumber *nssize = item.exactSize;
+                long long int lsize = [nssize longLongValue];
                 if ([item isLeaf]) {
                     num_files++;
-                    files_size += [[(TreeLeaf*)item exactSize] longLongValue];
+                    files_size += lsize;
                 }
                 else if ([item isFolder]) {
                     num_directories++;
-                    folders_size += [[(TreeBranch*)item exactSize] longLongValue];
+                    folders_size += lsize;
                 }
             }
 
@@ -3030,7 +3033,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
             if (sourceItem!=nil && destItem!=nil) {
                 // If the paths are the same, i.e. the same file, just offer to rename
                 // TODO:!!!! This needs to be moved out of here. This is just an informative window. It can be shown when the problem happens. Can bypass the error processing queue.
-                if ([sourceItem compareTo: destItem]==pathIsSame) {
+                if ([sourceItem relationTo: destItem]==pathIsSame) {
                     NSAlert *alert = [[NSAlert alloc] init ];
                     [alert setMessageText:@"Ooops!"];
                     [alert addButtonWithTitle:@"OK"];

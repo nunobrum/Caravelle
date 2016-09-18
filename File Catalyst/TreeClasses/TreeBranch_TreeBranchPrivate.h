@@ -29,6 +29,17 @@
 
 -(NSInteger) _releaseReleasedChildren;
 
+/*
+ * URL Comparison methods
+ */
+
+-(enumPathCompare) relationToPath:(NSString*) otherPath;
+-(enumPathCompare) compareTo:(TreeItem*) otherItem;
+-(BOOL) canContainPath:(NSString*)path;
+-(BOOL) containedInPath: (NSString*) path;
+-(BOOL) canContainURL:(NSURL*)url;
+-(BOOL) containedInURL:(NSURL*) url;
+
 @end
 
 

@@ -26,8 +26,10 @@ typedef NS_ENUM(NSInteger, enumPathCompare) {
     pathIsSame = 0,
     pathsHaveNoRelation = 1,
     pathIsParent = 2,
-    pathIsChild = 3
+    pathIsChild = 4
 };
+
+enumPathCompare pathCompRelation(NSArray *pathComponents, NSArray *otherPathComponents);
 enumPathCompare path_relation(NSString *aPath, NSString* otherPath);
 enumPathCompare url_relation(NSURL *aURL, NSURL* otherURL);
 
@@ -58,6 +60,8 @@ BOOL createDirectoryAtURL(NSString *name, NSURL *parent, NSError *error);
 extern NSDictionary *getDiskInformation(NSURL *diskPath);
 extern NSString *mediaNameFromURL(NSURL *rootURL);
 extern NSString *pathFriendly(NSURL*url);
+
+extern NSURL *getURL(id object);
 
 /*
  * MD5 Calculation

@@ -42,7 +42,7 @@ extern NSString const *opChangeMode;
 
 extern NSString *notificationStatusUpdate;
 extern NSString *notificationViewChanged;
-extern NSString *kViewChangedWhatKey;
+extern NSString *kViewChangedWhatKey; //TODO:!!!!!! What is this ?
 
 //#define USE_UTI
 #ifdef USE_UTI

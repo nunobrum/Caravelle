@@ -81,7 +81,7 @@ TreeManager *appTreeManager;
     // TODO:!!!!! Use @synchronized clauses here.
     while (index < [self->iArray count]) {
         TreeBranch *item = self->iArray[index];
-        enumPathCompare comparison = [item relationToPath:[url path]];
+        enumPathCompare comparison = url_relation(item.url, url);
         if (comparison == pathIsSame) {
             return item;
         }
@@ -112,7 +112,7 @@ TreeManager *appTreeManager;
                 // If the path is a parent, then inherently it should be a Branch
                 answer = (TreeBranch*)[self sandboxTreeItemFromURL:url askIfNeeded:askIfNeeded];
                 if (answer!=nil) {
-                    BOOL OK = [self addTreeItem:item To:(TreeBranch*)answer];
+                    BOOL OK = [self addTreeItem:item To:answer];
                     if (OK) {
                         // answer can now replace item in iArray.
                         @synchronized(self) {
@@ -130,7 +130,7 @@ TreeManager *appTreeManager;
             }
             else {
                 // In this case, what happens is that the item can be removed and added into answer
-                BOOL OK = [self addTreeItem:item To:(TreeBranch*)answer];
+                BOOL OK = [self addTreeItem:item To:answer];
                 if (OK) {
                     // answer can now replace item in iArray.
                     @synchronized(self) {
@@ -178,8 +178,8 @@ TreeManager *appTreeManager;
     TreeItem *answer=nil;
     @synchronized(self) {
         for (TreeBranch *item in self->iArray) {
-            if ([item canContainURL:url]) {
-                answer = [item getNodeWithURL:url];
+            answer = [item getNodeWithURL:url];
+            if (answer != nil) {
                 break;
             }
         }
@@ -191,8 +191,8 @@ TreeManager *appTreeManager;
     TreeItem *answer=nil;
     @synchronized(self) {
         for (TreeBranch *item in self->iArray) {
-            if ([item canContainPath:path]) {
-                answer = [item getNodeWithPath:path];
+            answer = [item getNodeWithPath:path];
+            if (answer != nil) {
                 break;
             }
         }
@@ -201,7 +201,7 @@ TreeManager *appTreeManager;
 }
 
 -(BOOL) addTreeItem:(TreeItem*)node To:(TreeBranch*)destination{
-    if ([destination canContainURL:[node url]]) {
+    if (([destination relationTo:node] & (pathIsSame+pathIsChild)) != 0) {
         NSUInteger level = [[[destination url] pathComponents] count]; // Get the level of the root;
         NSArray *pathComponents = [[node url] pathComponents];
         NSUInteger top_level = [pathComponents count]-1;

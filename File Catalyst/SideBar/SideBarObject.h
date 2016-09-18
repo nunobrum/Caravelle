@@ -15,4 +15,6 @@
 @property NSObject *objValue;
 @property NSMutableArray *children;
 
+-(NSString*) hint;
+
 @end

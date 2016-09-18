@@ -19,7 +19,7 @@
 
 #pragma mark overriden methods
 // This method is overriden so that the url attribute can be set with the parents url
--(void) setParent:(TreeItem *)parent;
+-(void) setParent:(TreeBranch *)parent;
 -(TreeItem*) addURL:(NSURL*)theURL;
 -(BOOL) canContainURL:(NSURL *)url;
 

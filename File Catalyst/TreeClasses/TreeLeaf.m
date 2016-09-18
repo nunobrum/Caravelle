@@ -236,7 +236,7 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
     if (dupInfo)
         return [NSNumber numberWithInteger:dupInfo->dupGroup];
     else
-        return [super duplicateGroup];
+        return nil;
 }
 
 

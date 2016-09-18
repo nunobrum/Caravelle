@@ -27,6 +27,7 @@
 -(void) resetDuplicates;
 -(void) setDuplicateRefreshCount:(NSInteger)count;
 -(NSInteger) duplicateRefreshCount;
+-(BOOL) hasDuplicates;
 
 
 @end

@@ -81,9 +81,11 @@
 // This way of operation avoid having to compare each found duplicate with the existing
 // collecting set.
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount {
+    NSLog(@"DEBUG THIS");
     FileCollection *newCollection = [[FileCollection new] init];
+    NSArray *pathComponents = [path pathComponents];
     for (TreeLeaf *finfo in fileArray) {
-        enumPathCompare test = path_relation(path, finfo.path);
+        enumPathCompare test = pathCompRelation(pathComponents, [finfo pathComponents]);
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
             if (cursor==nil) {
@@ -108,9 +110,11 @@
 // This selector returns all the "brothers" of the duplicate files in a given path
 // See duplicatesInPath:dCounter for more information on the operation.
 -(FileCollection*) duplicatesOfPath:(NSString*) path dCounter:(NSUInteger)dCount {
+    NSLog(@"DEBUG THIS");
     FileCollection *newCollection = [[FileCollection new] init];
+    NSArray *pathComponents = [path pathComponents];
     for (TreeLeaf *finfo in fileArray) {
-        enumPathCompare test = path_relation(path, finfo.path);
+        enumPathCompare test = pathCompRelation(pathComponents, [finfo pathComponents]);
         if (test == pathIsChild || test == pathIsSame) {
             TreeLeaf *cursor=[finfo nextDuplicate];
             if (cursor==nil) {
@@ -118,7 +122,7 @@
             }
             else {
                 while (cursor!=finfo) {
-                    test = path_relation(path, cursor.path);
+                    test = pathCompRelation(pathComponents, [cursor pathComponents]);
                     if (test != pathIsChild && test != pathIsSame) {
                         if ([cursor duplicateRefreshCount]!=dCount) {
                             [newCollection addFile:cursor];

@@ -18,5 +18,6 @@
 -(NSArray*) roots; // Directly returns the children
 
 -(void) addFileCollection:(FileCollection*)collection;
+-(TreeBranch*) getRootWithNode:(TreeItem*)node;
 
 @end

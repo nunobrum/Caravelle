@@ -178,7 +178,7 @@ NSString *AppInToolItem = @"AppInTool";
         result.imageView.image = itObj.image;
         result.objectValue = itObj.objValue;
         if ([itObj.objValue isKindOfClass: [TreeItem class]]) {
-            [result setToolTip: [(TreeItem*)itObj.objValue path]];
+            [result setToolTip: [(TreeItem*)itObj hint]];
             result.button.target = self;
             result.button.action = @selector(removeItemOrder:);
             [result.button setTitle:@""];

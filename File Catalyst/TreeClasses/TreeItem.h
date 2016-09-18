@@ -50,14 +50,16 @@ typedef NS_ENUM(NSInteger, ItemType) {
 
 @end
 
+@class TreeBranch;
+
 
 @interface TreeItem : NSObject <NSPasteboardWriting, NSPasteboardReading> {
     NSURL           *_url;
     TreeItemTagEnum _tag;
-    TreeItem __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
+    TreeBranch __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
 }
 
-@property (weak) TreeItem           *parent;
+@property (weak) TreeBranch           *parent;
 @property NSString *nameCache; // This is to lower memory allocation calls, for each name call, a new CFString was being allocated
 
 -(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent;
@@ -121,14 +123,6 @@ typedef NS_ENUM(NSInteger, ItemType) {
 /*
  * URL Comparison methods
  */
-
--(enumPathCompare) relationToPath:(NSString*) otherPath;
--(enumPathCompare) compareTo:(TreeItem*) otherItem;
--(BOOL) canContainPath:(NSString*)path;
--(BOOL) containedInPath: (NSString*) path;
--(BOOL) canContainURL:(NSURL*)url;
--(BOOL) containedInURL:(NSURL*) url;
-
 /*
  * Coding Compliant methods
  */
@@ -152,6 +146,13 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) hasChildren; // has physical children but does not display as folders.
 -(BOOL) isSelectable;
 -(BOOL) canAndNeedsFlat;
+
+
+// Tree Integration
+-(NSArray*) pathComponents;
+-(NSInteger) pathLevel;
+-(TreeBranch*) parentAtLevel:(NSInteger)level;
+-(enumPathCompare) relationTo:(TreeItem*)other;
 
 // Menu support
 -(BOOL) respondsToMenuTag:(EnumContextualMenuItemTags)tag;

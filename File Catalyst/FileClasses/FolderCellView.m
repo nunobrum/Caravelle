@@ -22,10 +22,6 @@
     return self;
 }
 
--(void) setURL:(NSURL *)folderURL {
-    self->url = folderURL;
-}
-
 //- (void)drawRect:(NSRect)dirtyRect
 //{
 //    // Drawing code here.

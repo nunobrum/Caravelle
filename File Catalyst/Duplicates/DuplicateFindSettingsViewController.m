@@ -77,7 +77,7 @@ NSString *notificationStartDuplicateFind = @"StartDuplicateFind";
         // register it with the name that we refer to it with
         [NSValueTransformer setValueTransformer:fToCTransformer
                                         forName:@"ValueToBoolean"];
-        self->CPaths = [[TreeCollection alloc] initWithURL:nil parent:nil];
+        self->CPaths = [[TreeCollection alloc] init];
         
     }
     return self;

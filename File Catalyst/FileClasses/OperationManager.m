@@ -43,18 +43,11 @@
         // Move From destination to Source
         NSMutableArray *files = opToUndo[kDFOFilesKey];
         id destItem = opToUndo[kDFODestinationKey];
-        NSURL *destURL;
-        if ([destItem isKindOfClass:[TreeItem class]])
-            destURL = [(TreeItem*)destItem url];
-        else
-            destURL = destItem;
+        NSURL *destURL = getURL(destItem);
         
         for (NSUInteger i=0; i < files.count; i++) {
-            NSURL *url;
-            if ([files[i] isKindOfClass:[TreeItem class]])
-                url = [(TreeItem*)files[i] url];
-            else
-                url = files[i];
+            NSURL *url =getURL(files[i]);
+            
             NSURL *sourceURL = [destURL URLByAppendingPathComponent:url.lastPathComponent];
             files[i] = sourceURL;
         }
@@ -68,12 +61,8 @@
         // Erase Created Folder
         NSString *newName = [taskInfo objectForKey:kDFORenameFileKey];
         id destObj = [taskInfo objectForKey:kDFODestinationKey];
-        NSURL *parentURL;
-        if ([destObj isKindOfClass:[TreeItem class]]) {
-            parentURL = [(TreeItem*)destObj url];
-        }
-        else
-            parentURL = destObj;
+        NSURL *parentURL = getURL(destObj);
+        
         NSURL *folderToDelete = [parentURL URLByAppendingPathComponent:newName isDirectory:YES];
         taskInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                     opSendRecycleBinOperation, kDFOOperationKey,
@@ -84,12 +73,8 @@
         // Erase Created Folder
         NSString *newName = [taskInfo objectForKey:kDFORenameFileKey];
         id destObj = [taskInfo objectForKey:kDFODestinationKey];
-        NSURL *parentURL;
-        if ([destObj isKindOfClass:[TreeItem class]]) {
-            parentURL = [(TreeItem*)destObj url];
-        }
-        else
-            parentURL = destObj;
+        NSURL *parentURL = getURL(destObj);
+        
         NSURL *fileToRename = [parentURL URLByAppendingPathComponent:newName];
         NSString *originalName;
         id orig = taskInfo[kDFOFilesKey];

@@ -24,7 +24,7 @@
     @synchronized(self) {
         while (index < [self->_children count]) {
             TreeBranchCatalyst *child = self->_children[index];
-            enumPathCompare comparison = [child relationToPath:item.path];
+            enumPathCompare comparison = [child relationTo:item];
             if (comparison == pathIsSame) {
                 // No need to add, its already present
                 OK = YES;
@@ -75,23 +75,19 @@
             if ([item isLeaf]) {
                 // Creates the parent
                 NSURL *par_url = [item.url URLByDeletingLastPathComponent];
-                TreeBranchCatalyst *parent = [[TreeBranchCatalyst alloc] initWithURL:par_url parent:self];
+                    TreeBranchCatalyst *parent = [[TreeBranchCatalyst alloc] initWithURL:par_url parent:self];
                 
-                //NSLog(@"TreeCollection.addTreeItem: Adding %@ and %@", parent, item);
+                    //NSLog(@"TreeCollection.addTreeItem: Adding %@ and %@", parent, item);
                 
-                [self->_children addObject:parent];
-                [parent addTreeItem:item];
-            }
+                    [self->_children addObject:parent];
+                    [parent addTreeItem:item];
+                }
             else {
                 //NSLog(@"TreeCollection.addTreeItem: Adding %@", item);
                 [self->_children addObject:item];
             }
             OK = YES;
         }
-    }
-    if (OK) {
-        [self willChangeValueForKey:kvoTreeBranchPropertyChildren];
-        [self notifyDidChangeTreeBranchPropertyChildren];  // This will inform the observer about change
     }
     return OK;
 }
@@ -104,5 +100,70 @@
     }
 }
 
+-(TreeBranch*) getRootWithNode:(TreeItem*)node {
+        if (node==nil)
+            return NULL;
+    
+        for (TreeBranch* root in self->_children) {
+            /* Checks if rootPath in root */
+            enumPathCompare comp = [root relationTo:node];
+            if ((comp == pathIsChild) || (comp==pathIsSame)) {
+                /* The URL is already contained in this tree */
+                return root;
+            }
+        }
+        return NULL;
+
+}
+
+-(TreeItem*) getNodeWithURL:(NSURL*)url {
+    if (url==nil)
+        return NULL;
+    
+    for (TreeBranch* root in self->_children) {
+        /* Checks if rootPath in root */
+        enumPathCompare comp = url_relation(root.url, url);
+        if (comp ==pathIsSame) {
+            return root;
+        }
+        else if (comp == pathIsChild) {
+            /* The URL is already contained in this tree */
+            return [root getNodeWithURL:url];
+        }
+    }
+    return NULL;
+}
+
+//-(TreeBranch*) getRootWithURL:(NSURL*)theURL {
+//    if (theURL==nil)
+//        return NULL;
+//
+//    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+//    TreeBranch* root;
+//    while (root = [enumerator nextObject]) {
+//        /* Checks if rootPath in root */
+//        if ([root canContainURL:theURL]) {
+//            /* The URL is already contained in this tree */
+//            return root;
+//        }
+//    }
+//    return NULL;
+//
+//}
+//
+//-(TreeItem*) getItemByURL:(NSURL*)theURL {
+//    if (theURL==nil)
+//        return NULL;
+//    NSEnumerator *enumerator = [BaseDirectories itemsInNodeEnumerator];
+//    TreeBranch* root;
+//    while (root = [enumerator nextObject]) {
+//        /* Checks if rootPath in root */
+//        if ([root canContainURL:theURL]) {
+//            /* The URL is already contained in this tree */
+//            return [root getNodeWithURL:theURL];
+//        }
+//    }
+//    return NULL;
+//}
 
 @end

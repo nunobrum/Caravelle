@@ -20,6 +20,7 @@
     self = [super initWithURL:nil parent:parent]; //Now a nil can't be passed to the initWithURL
     self->_children = nil;
     [self setParent:parent];    // This routine also sets url to be the same of the parent.
+                                // TODO: 2.0 This is maybe no longer needed
                                 // This is needed for compatibility with other methods
                                 // such as childContainingURL. The filter is supposed to be used on
                                 // filters on the contents of a parent.
@@ -57,9 +58,9 @@
     return @"Search Folder";
 }
 
--(void) setParent:(TreeItem *)parent {
+-(void) setParent:(TreeBranch *)parent {
     self->_parent = parent;
-    [self setUrl:[parent url]]; // This is needed for compatibility with other methods
+    // TODO:2.0 see if this is needed [self setUrl:getURL(parent)]; // This is needed for compatibility with other methods
     // such as childContainingURL. The filter is supposed to be used on
     // filters on the contents of a parent.
 }
@@ -164,25 +165,25 @@
     return [self canContainTreeItem:testObj];
 }
 
-/* Redefining this method just for optimization as each
- * iteration will create a test object */
--(TreeItem*) childContainingURL:(NSURL*) aURL {
-    TreeItem *testObj = [TreeItem treeItemForURL:aURL parent:nil];
-    if ([self canContainTreeItem:testObj]) {
-        @synchronized(self) {
-            for (TreeItem *item in self->_children) {
-                if ([item itemType ] == ItemTypeFilter) {
-                    if ([(filterBranch*)item canContainTreeItem:testObj])
-                        return item;
-                }
-                else if ([item canContainURL:aURL]) {
-                    return item;
-                }
-            }
-        }
-    }
-    return nil;
-}
+///* Redefining this method just for optimization as each
+// * iteration will create a test object */
+//-(TreeItem*) childContainingURL:(NSURL*) aURL {
+//    TreeItem *testObj = [TreeItem treeItemForURL:aURL parent:nil];
+//    if ([self canContainTreeItem:testObj]) {
+//        @synchronized(self) {
+//            for (TreeItem *item in self->_children) {
+//                if ([item itemType ] == ItemTypeFilter) {
+//                    if ([(filterBranch*)item canContainTreeItem:testObj])
+//                        return item;
+//                }
+//                else if ([item canContainURL:aURL]) {
+//                    return item;
+//                }
+//            }
+//        }
+//    }
+//    return nil;
+//}
 
 #pragma mark -
 #pragma mask KVO Validation

@@ -24,7 +24,7 @@ extern NSString *kViewChanged_FlatView;
     NSSize iconSize;
     //NSString *_filterText;
     //NSMutableArray *BaseDirectoriesArray;
-    TreeCollection *BaseDirectories;
+    TreeCollection *_baseDirectories;
     EnumBrowserViewMode _viewMode;
     EnumBrowserViewType _viewType;
     NSString * _twinName;
@@ -56,6 +56,7 @@ extern NSString *kViewChanged_FlatView;
 
 @property NSString *viewName;
 @property NSMutableDictionary *preferences;
+@property TreeCollection *baseDirectories;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
@@ -141,9 +142,9 @@ extern NSString *kViewChanged_FlatView;
 
 -(TreeBranch*) selectFirstRoot;
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode;
--(BOOL) selectFolderByURL:(NSURL*)theURL;
--(TreeBranch*) getItemByURL:(NSURL*)theURL;
--(TreeBranch*) getRootWithURL:(NSURL*)theURL;
+//-(BOOL) selectFolderByURL:(NSURL*)theURL;
+//-(TreeBranch*) getItemByURL:(NSURL*)theURL;
+//-(TreeBranch*) getRootWithURL:(NSURL*)theURL;
 -(void) startAllBusyAnimations;
 -(void) stopBusyAnimations;
 //-(NSURL*) getTreeViewSelectedURL;
