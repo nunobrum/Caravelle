@@ -120,13 +120,7 @@
     }
     else {
         
-        NSColor *foreground;
-        if ([theFile hasTags:tagTreeItemMarked]) {
-            foreground = [NSColor redColor];
-        }
-        else {
-            foreground = [NSColor textColor];
-        }
+        
 
         if ([identifier isEqualToString:COL_FILENAME]) {
             // We pass us as the owner so we can setup target/actions into this main controller object
@@ -141,17 +135,7 @@
             cellView.imageView.objectValue = [theFile image];
             
             // Setting the color
-            if ([theFile hasTags:tagTreeItemDropped+tagTreeItemToMove]) {
-                [cellView.textField setTextColor:[NSColor lightGrayColor]]; // Sets grey when the file was dropped or moved
-            }
-            else if ([theFile hasTags:tagTreeAuthorized]==NO) {
-                [cellView.textField setTextColor:[NSColor blueColor]]; // Sets a blue color
-            }
-            else {
-                // Set color back to normal
-                [cellView.textField setTextColor:foreground];
-                
-            }
+            [cellView.textField setTextColor:[theFile textColor]];
         }
     
         else if ([identifier hasPrefix:COL_SIZE]) { // SIZES
@@ -681,7 +665,7 @@
         NSArray *operations = [lowPriorityQueue operations];
         for (NSOperation *op in operations) {
             if ([op isKindOfClass:[CalcFolderSizes class]]) {
-                NSLog(@"Debug THIS");
+                NSLog(@"DEBUG setCurrentNode");
                 TreeBranch *tb = [(CalcFolderSizes*)op item];
                 if ([tb relationTo:branch] == pathIsParent) {
                     [op cancel];

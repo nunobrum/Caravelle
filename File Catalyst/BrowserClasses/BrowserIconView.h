@@ -7,19 +7,21 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "IconViewBox.h"
+#import "FileCollectionViewItem.h"
 
 @interface BrowserIconView : NSCollectionView {
-    IconViewBox * _lastClicked;
+    FileCollectionViewItem * _lastClicked;
 }
 
--(IconViewBox*) iconForEvent:(NSEvent*) theEvent;
--(IconViewBox*) lastClicked;
+-(FileCollectionViewItem*) iconForEvent:(NSEvent*) theEvent;
+-(FileCollectionViewItem*) lastClicked;
 
 - (void)keyDown:(NSEvent *)theEvent;
-- (IBAction)mouseDown:(NSEvent *)theEvent;
-- (IBAction)rightMouseDown:(NSEvent *)theEvent;
+//- (IBAction)mouseDown:(NSEvent *)theEvent;
+//- (IBAction)rightMouseDown:(NSEvent *)theEvent;
 
--(IconViewBox*) iconWithItem:(id) item;
 - (void)cancelOperation:(id)sender;
+
+-(BOOL) startEditInIcon:(FileCollectionViewItem*) icon;
+
 @end

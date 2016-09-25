@@ -475,8 +475,10 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] &&
             self.foldersInTable==YES) {
             DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
-            if (dummyParent != nil)
+            if (dummyParent != nil) {
+                [dummyParent setTag:tagTreeItemReadOnly];
                 [tableData insertObject:dummyParent atIndex:0];
+            }
         }
     }
     self->_displayedItems = tableData;

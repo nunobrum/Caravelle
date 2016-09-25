@@ -66,15 +66,13 @@
 		3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF6C8D819ACA4D100968765 /* DuplicateFindOperation.m */; };
 		3CF8466519EB21FC008C691E /* searchTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466419EB21FB008C691E /* searchTree.m */; };
 		3CF8466819EB30D2008C691E /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
-		3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */; };
-		3CFBF5B91AD5E48E00185505 /* IconCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */; };
-		3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
 		BC07EFAF1BDAA1EF00071193 /* DuplicateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */; };
 		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
 		BC0EBE5C1BA3087A00837EDE /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BC0EBE5B1BA3087A00837EDE /* Receipts.m */; };
+		BC2197101D97CCB3008D8FEC /* FileTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = BC21970F1D97CCB3008D8FEC /* FileTextField.m */; };
 		BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2728C81C68ECC2001EAA0E /* MainSideBarController.m */; };
 		BC2728CD1C68ECC2001EAA0E /* MainSideBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC2728C91C68ECC2001EAA0E /* MainSideBarView.xib */; };
 		BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = BC2728CB1C68ECC2001EAA0E /* SidebarTableCellView.m */; };
@@ -84,6 +82,8 @@
 		BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */; };
 		BC3FFB581C77F64A003FB6F5 /* RecentlyUsedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */; };
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
+		BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */; };
+		BC581BB91D91C64900B66C0E /* FileCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */; };
 		BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
 		BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
 		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
@@ -131,7 +131,6 @@
 		BC9568CC1C484F9C00DAB21A /* TreeBranchCatalyst.m in Sources */ = {isa = PBXBuildFile; fileRef = BC766D731BBED721004AA9BC /* TreeBranchCatalyst.m */; };
 		BC9568CD1C484F9C00DAB21A /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
 		BC9568CE1C484F9C00DAB21A /* INTEGER.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37031BA940AD00B1DAA9 /* INTEGER.c */; };
-		BC9568CF1C484F9C00DAB21A /* IconViewBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */; };
 		BC9568D01C484F9C00DAB21A /* UserPreferencesManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEF82D71A4EDAB20089F42A /* UserPreferencesManager.m */; };
 		BC9568D11C484F9C00DAB21A /* asn_codecs_prim.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */; };
 		BC9568D21C484F9C00DAB21A /* searchTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466419EB21FB008C691E /* searchTree.m */; };
@@ -154,7 +153,6 @@
 		BC9568E31C484F9C00DAB21A /* constraints.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36FF1BA940AD00B1DAA9 /* constraints.c */; };
 		BC9568E41C484F9C00DAB21A /* TreeBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463418F9B86A002B633C /* TreeBranch.m */; };
 		BC9568E51C484F9C00DAB21A /* MyDirectoryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29465518FD8ABE002B633C /* MyDirectoryEnumerator.m */; };
-		BC9568E61C484F9C00DAB21A /* IconCollectionItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */; };
 		BC9568E71C484F9C00DAB21A /* ReceiptAttribute.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37151BA940AD00B1DAA9 /* ReceiptAttribute.c */; };
 		BC9568E81C484F9C00DAB21A /* DuplicateFindSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF645BD19AB6D3B00DD53F5 /* DuplicateFindSettingsViewController.m */; };
 		BC9568E91C484F9C00DAB21A /* AppOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CA7DFC119B5FE9D00600F41 /* AppOperation.m */; };
@@ -189,7 +187,6 @@
 		BC95690B1C484F9C00DAB21A /* GenericFolderIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5B6C11ABF76630065E543 /* GenericFolderIcon.icns */; };
 		BC95690C1C484F9C00DAB21A /* AvailableColumns.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3C84EFE81A0CDDC300ED6392 /* AvailableColumns.plist */; };
 		BC95690D1C484F9C00DAB21A /* GenericDocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3CF5B6C01ABF76620065E543 /* GenericDocumentIcon.icns */; };
-		BC95690E1C484F9C00DAB21A /* IconViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */; };
 		BC95690F1C484F9C00DAB21A /* BrowserView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3C717C05198D54720025E28A /* BrowserView.xib */; };
 		BC9569101C484F9C00DAB21A /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3CEA675718F87C2F0080C4FC /* MainMenu.xib */; };
 		BC9569111C484F9C00DAB21A /* DuplicateModeStartWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AAE1B697095009FD1D8 /* DuplicateModeStartWindow.xib */; };
@@ -353,11 +350,6 @@
 		3CF8466419EB21FB008C691E /* searchTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = searchTree.m; sourceTree = "<group>"; };
 		3CF8466619EB30D2008C691E /* filterBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = filterBranch.h; sourceTree = "<group>"; };
 		3CF8466719EB30D2008C691E /* filterBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = filterBranch.m; sourceTree = "<group>"; };
-		3CFBF5B41AD5DF9E00185505 /* IconViewBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconViewBox.h; path = BrowserClasses/IconViewBox.h; sourceTree = "<group>"; };
-		3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IconViewBox.m; path = BrowserClasses/IconViewBox.m; sourceTree = "<group>"; };
-		3CFBF5B71AD5E48E00185505 /* IconCollectionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconCollectionItem.h; path = BrowserClasses/IconCollectionItem.h; sourceTree = "<group>"; };
-		3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IconCollectionItem.m; path = BrowserClasses/IconCollectionItem.m; sourceTree = "<group>"; };
-		3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IconViewItem.xib; sourceTree = "<group>"; };
 		3CFBF5BC1AD953FC00185505 /* BrowserIconView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserIconView.h; path = BrowserClasses/BrowserIconView.h; sourceTree = "<group>"; };
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FileUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -369,6 +361,8 @@
 		BC08C9AD1B79535C00D12486 /* payplugins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = payplugins.plist; sourceTree = "<group>"; };
 		BC0EBE5A1BA3087A00837EDE /* Receipts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Receipts.h; path = Security/Receipts.h; sourceTree = "<group>"; };
 		BC0EBE5B1BA3087A00837EDE /* Receipts.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Receipts.m; path = Security/Receipts.m; sourceTree = "<group>"; };
+		BC21970E1D97CCB3008D8FEC /* FileTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileTextField.h; path = BrowserClasses/FileTextField.h; sourceTree = "<group>"; };
+		BC21970F1D97CCB3008D8FEC /* FileTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileTextField.m; path = BrowserClasses/FileTextField.m; sourceTree = "<group>"; };
 		BC2728C71C68ECC2001EAA0E /* MainSideBarController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainSideBarController.h; path = "File Catalyst/SideBar/MainSideBarController.h"; sourceTree = SOURCE_ROOT; };
 		BC2728C81C68ECC2001EAA0E /* MainSideBarController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MainSideBarController.m; path = "File Catalyst/SideBar/MainSideBarController.m"; sourceTree = SOURCE_ROOT; };
 		BC2728C91C68ECC2001EAA0E /* MainSideBarView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainSideBarView.xib; path = "File Catalyst/SideBar/MainSideBarView.xib"; sourceTree = SOURCE_ROOT; };
@@ -386,6 +380,9 @@
 		BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecentlyUsedArray.m; path = "File Catalyst/SideBar/RecentlyUsedArray.m"; sourceTree = SOURCE_ROOT; };
 		BC523DD51B594B7C0030C97A /* NumberGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberGrouping.h; path = BrowserClasses/Groupings/NumberGrouping.h; sourceTree = "<group>"; };
 		BC523DD61B594B7C0030C97A /* NumberGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberGrouping.m; path = BrowserClasses/Groupings/NumberGrouping.m; sourceTree = "<group>"; };
+		BC581BB51D91C64900B66C0E /* FileCollectionViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCollectionViewItem.h; path = BrowserClasses/FileCollectionViewItem.h; sourceTree = "<group>"; };
+		BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileCollectionViewItem.m; path = BrowserClasses/FileCollectionViewItem.m; sourceTree = "<group>"; };
+		BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileCollectionViewItem.xib; path = BrowserClasses/FileCollectionViewItem.xib; sourceTree = "<group>"; };
 		BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartupScreen.xib; sourceTree = "<group>"; };
 		BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartupScreenController.h; sourceTree = "<group>"; };
 		BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartupScreenController.m; sourceTree = "<group>"; };
@@ -728,15 +725,15 @@
 			isa = PBXGroup;
 			children = (
 				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
-				3CFBF5BA1AD5E77A00185505 /* IconViewItem.xib */,
 				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
 				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
-				3CFBF5B41AD5DF9E00185505 /* IconViewBox.h */,
-				3CFBF5B51AD5DF9E00185505 /* IconViewBox.m */,
-				3CFBF5B71AD5E48E00185505 /* IconCollectionItem.h */,
-				3CFBF5B81AD5E48E00185505 /* IconCollectionItem.m */,
 				3CFBF5BC1AD953FC00185505 /* BrowserIconView.h */,
 				3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */,
+				BC581BB51D91C64900B66C0E /* FileCollectionViewItem.h */,
+				BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */,
+				BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */,
+				BC21970E1D97CCB3008D8FEC /* FileTextField.h */,
+				BC21970F1D97CCB3008D8FEC /* FileTextField.m */,
 			);
 			name = "Icon View";
 			sourceTree = "<group>";
@@ -1019,7 +1016,7 @@
 		3CEA673718F87C2F0080C4FC /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0720;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Nuno Brum";
 				TargetAttributes = {
 					3CEA673E18F87C2F0080C4FC = {
@@ -1087,6 +1084,7 @@
 				BCADC2451B3BEFB300245F1D /* DropFolderBadgeIcon.icns in Resources */,
 				3CF17D201A17D3910082A9B0 /* FileExistsChoice.xib in Resources */,
 				3CF645BB19AB4A4100DD53F5 /* DuplicatesFindSettings.xib in Resources */,
+				BC581BB91D91C64900B66C0E /* FileCollectionViewItem.xib in Resources */,
 				BC2728CD1C68ECC2001EAA0E /* MainSideBarView.xib in Resources */,
 				3CEA675B18F87C2F0080C4FC /* Images.xcassets in Resources */,
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
@@ -1096,7 +1094,6 @@
 				BCEF55201C72673700E415FE /* AppleIncRootCertificate.cer in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
 				3CF5B6C21ABF76630065E543 /* GenericDocumentIcon.icns in Resources */,
-				3CFBF5BB1AD5E77A00185505 /* IconViewItem.xib in Resources */,
 				3C717C06198D54720025E28A /* BrowserView.xib in Resources */,
 				3CEA675918F87C2F0080C4FC /* MainMenu.xib in Resources */,
 				BC6C2AB01B697095009FD1D8 /* DuplicateModeStartWindow.xib in Resources */,
@@ -1147,7 +1144,6 @@
 				BC95690B1C484F9C00DAB21A /* GenericFolderIcon.icns in Resources */,
 				BC95690C1C484F9C00DAB21A /* AvailableColumns.plist in Resources */,
 				BC95690D1C484F9C00DAB21A /* GenericDocumentIcon.icns in Resources */,
-				BC95690E1C484F9C00DAB21A /* IconViewItem.xib in Resources */,
 				BC95690F1C484F9C00DAB21A /* BrowserView.xib in Resources */,
 				BC9569101C484F9C00DAB21A /* MainMenu.xib in Resources */,
 				BC9569111C484F9C00DAB21A /* DuplicateModeStartWindow.xib in Resources */,
@@ -1202,13 +1198,13 @@
 				BCEB37271BA940AD00B1DAA9 /* der_encoder.c in Sources */,
 				BCEB37251BA940AD00B1DAA9 /* constr_TYPE.c in Sources */,
 				BCEB37201BA940AD00B1DAA9 /* ber_tlv_length.c in Sources */,
+				BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */,
 				3CF5DA861A5F1CA100786D64 /* BrowserTableView.m in Sources */,
 				3CF5DA891A5F269E00786D64 /* BrowserOutlineView.m in Sources */,
 				BC766D741BBED721004AA9BC /* TreeBranchCatalyst.m in Sources */,
 				BC6F02D61C7135750090BF9A /* MAC_Address.m in Sources */,
 				3CF8466819EB30D2008C691E /* filterBranch.m in Sources */,
 				BCEB37281BA940AD00B1DAA9 /* INTEGER.c in Sources */,
-				3CFBF5B61AD5DF9E00185505 /* IconViewBox.m in Sources */,
 				3CEF82D91A4EDAB20089F42A /* UserPreferencesManager.m in Sources */,
 				BCEB371D1BA940AD00B1DAA9 /* asn_codecs_prim.c in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
@@ -1235,13 +1231,13 @@
 				BCEB37261BA940AD00B1DAA9 /* constraints.c in Sources */,
 				3C29463B18F9B86A002B633C /* TreeBranch.m in Sources */,
 				3C29465618FD8ABE002B633C /* MyDirectoryEnumerator.m in Sources */,
-				3CFBF5B91AD5E48E00185505 /* IconCollectionItem.m in Sources */,
 				BCEB37311BA940AD00B1DAA9 /* ReceiptAttribute.c in Sources */,
 				3CF645BE19AB6D3C00DD53F5 /* DuplicateFindSettingsViewController.m in Sources */,
 				3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */,
 				BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */,
 				BCEB372B1BA940AD00B1DAA9 /* OCTET_STRING.c in Sources */,
 				BCEB371E1BA940AD00B1DAA9 /* asn_SET_OF.c in Sources */,
+				BC2197101D97CCB3008D8FEC /* FileTextField.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,
 				BC0EBE5C1BA3087A00837EDE /* Receipts.m in Sources */,
 				BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */,
@@ -1322,7 +1318,6 @@
 				BC9568CC1C484F9C00DAB21A /* TreeBranchCatalyst.m in Sources */,
 				BC9568CD1C484F9C00DAB21A /* filterBranch.m in Sources */,
 				BC9568CE1C484F9C00DAB21A /* INTEGER.c in Sources */,
-				BC9568CF1C484F9C00DAB21A /* IconViewBox.m in Sources */,
 				BC9568D01C484F9C00DAB21A /* UserPreferencesManager.m in Sources */,
 				BC9568D11C484F9C00DAB21A /* asn_codecs_prim.c in Sources */,
 				BC9568D21C484F9C00DAB21A /* searchTree.m in Sources */,
@@ -1345,7 +1340,6 @@
 				BC9568E31C484F9C00DAB21A /* constraints.c in Sources */,
 				BC9568E41C484F9C00DAB21A /* TreeBranch.m in Sources */,
 				BC9568E51C484F9C00DAB21A /* MyDirectoryEnumerator.m in Sources */,
-				BC9568E61C484F9C00DAB21A /* IconCollectionItem.m in Sources */,
 				BC9568E71C484F9C00DAB21A /* ReceiptAttribute.c in Sources */,
 				BC9568E81C484F9C00DAB21A /* DuplicateFindSettingsViewController.m in Sources */,
 				BC9568E91C484F9C00DAB21A /* AppOperation.m in Sources */,
@@ -1418,14 +1412,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -1458,14 +1457,19 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1487,6 +1491,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8VR93E5FNL;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = (
@@ -1497,13 +1502,13 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
+					"/usr/local/src/openssl-1.1.0/include",
 					/opt/local/share/asn1c,
 				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/usr/local/ssl/lib/**",
+					"/usr/local/src/openssl-1.1.0",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1522,19 +1527,20 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 8VR93E5FNL;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "File Catalyst/Caravelle-Prefix.pch";
 				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "APP_IS_SANDBOXED=1";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"~/Google\\ Drive/XCode/openssl/OpenSSL_1_0_2-stable/include",
+					"/usr/local/src/openssl-1.1.0/include",
 					/opt/local/share/asn1c,
 				);
 				INFOPLIST_FILE = "File Catalyst/Caravelle-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"/usr/local/ssl/lib/**",
+					"/usr/local/src/openssl-1.1.0",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";

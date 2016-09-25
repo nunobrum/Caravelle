@@ -1,3 +1,4 @@
+
 //
 //  BrowserIconView.m
 //  Caravelle
@@ -18,17 +19,20 @@
     // Drawing code here.
 }
 
--(IconViewBox*) iconForEvent:(NSEvent*) theEvent {
+-(FileCollectionViewItem*) iconForEvent:(NSEvent*) theEvent {
     NSPoint xy =[theEvent locationInWindow];
     NSPoint x1y1 = [self convertPoint:xy fromView:nil];
-    NSView *view = [self hitTest:x1y1];
-    if ([view isKindOfClass:[IconViewBox class]])
-        return (IconViewBox*)view;
+    NSIndexPath *ipath = [self indexPathForItemAtPoint:x1y1];
+    if (ipath != nil) {
+        id item = [self itemAtIndexPath:ipath];
+        NSAssert([item isKindOfClass:[FileCollectionViewItem class]],@"Expected FileCollectionViewItem class");
+        return (FileCollectionViewItem*) item;
+    }
     else
         return nil;
 }
 
--(IconViewBox*) lastClicked {
+-(FileCollectionViewItem*) lastClicked {
     return self->_lastClicked;
 }
 
@@ -42,6 +46,10 @@
     else {
         if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
             [(IconViewController*)self.delegate lastClick:self];
+            if (self->_lastClicked.isSelected) {
+                [self startEditInIcon:self->_lastClicked];
+                return; // Stop here don't propagete the mouseDown any further
+            }
         }
     }
     [super mouseDown:theEvent];
@@ -85,33 +93,45 @@
     }
 }
 
--(IconViewBox*) iconWithItem:(id) item {
-    for (IconViewBox *icon in [self subviews]) {
-        if ([[icon representedObject] isEqual:item])
-            return icon;
-    }
-    return nil;
-}
-
 - (void)cancelOperation:(id)sender {
     // clean the filter
     [[self delegate] performSelector:@selector(cancelOperation:) withObject:self];
     // and pass the cancel operation upwards anyway
-    //[super cancelOperation:sender];
+    [super cancelOperation:sender];
 }
+
+-(BOOL) startEditInIcon:(FileCollectionViewItem*) icon {
+    NSTextField *textField = [icon textField];
+    NSAssert(textField!=nil, @"IconViewController.startEditItemName: textField not found!");
+    [icon formatSelected:IconInEdition];
+    [self.window makeFirstResponder:textField];
+    // Recuperate the old filename
+    NSString *oldFilename = [textField stringValue];
+    // Select the part up to the extension
+    NSUInteger head_size = [[oldFilename stringByDeletingPathExtension] length];
+    NSRange selectRange = {0, head_size};
+    [[textField currentEditor] setSelectedRange:selectRange];
+    return YES;
+}
+
 
 - (BOOL)becomeFirstResponder {
     // Highlight the selections
-    for (IconViewBox *icon in [self subviews]) {
-        [icon setFillColor:[NSColor alternateSelectedControlColor]];
+    
+    for (NSCollectionViewItem *icon in self.visibleItems) {
+        if (icon.isSelected && [icon isKindOfClass:[FileCollectionViewItem class]]) {
+            [((FileCollectionViewItem*)icon) formatSelected:IconSelected];
+        }
     }
     return [super becomeFirstResponder];
 }
 
 - (BOOL)resignFirstResponder {
     // Set selected fill color to grey
-    for (IconViewBox *icon in [self subviews]) {
-        [icon setFillColor:[NSColor secondarySelectedControlColor]];
+    for (NSCollectionViewItem *icon in self.visibleItems) {
+        if (icon.isSelected && [icon isKindOfClass:[FileCollectionViewItem class]]) {
+            [((FileCollectionViewItem*)icon) formatSelected:IconSelectedInactive];
+        }
     }
     return[super resignFirstResponder];
 }

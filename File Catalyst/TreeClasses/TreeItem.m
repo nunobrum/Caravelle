@@ -329,6 +329,22 @@
     return image;
 }
 
+-(NSColor*) textColor {
+    NSColor *foreground;
+    if ([self hasTags:tagTreeItemMarked]) {
+        foreground = [NSColor redColor];
+    }
+    else if ([self hasTags:tagTreeItemDropped+tagTreeItemToMove]) {
+        foreground = [NSColor lightGrayColor]; // Sets grey when the file was dropped or moved
+    }
+    else if ([self hasTags:tagTreeAuthorized]==NO) {
+        foreground = [NSColor blueColor]; // Sets a blue color
+    }
+    else {
+        foreground = [NSColor textColor];
+    }
+    return foreground;
+}
 
 -(NSNumber*) exactSize {
     NSNumber *exactSize;
@@ -456,13 +472,12 @@
 }
 
 -(NSInteger) pathLevel {
-    NSLog(@"DEBUG THIS");
     NSUInteger answer = 0;
     TreeItem *cursor = self;
-    do {
+    while (cursor->_parent != nil) {
         answer++;
         cursor=cursor->_parent;
-    } while (cursor != nil);
+    }
     NSArray *rootPath = [cursor pathComponents];
     answer += [rootPath count];
     
@@ -474,7 +489,7 @@
  If level is negative it uses a relative level reference and descends <level>
  if level is positive, it is an absolute reference */
 -(TreeBranch*) parentAtLevel:(NSInteger)level {
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG TreeItem.parentAtLevel");
     TreeBranch *cursor = self.parent;
     if (level<0) {
         while (level<0 && cursor!=nil) {

@@ -480,11 +480,11 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         NSArray *itemsSelected = [object getSelectedItems];
         if ([itemsSelected count]==1) {
             // will change the path bar
-            [self setPathBarToItem:[(TreeItem*)itemsSelected[0] parent]];
+            [self setCurrentNode:[(TreeItem*)itemsSelected[0] parent]];
         }
         else {
             // set the PathBar back to the _treeNode
-            [self setPathBarToItem:_treeNodeSelected];
+            [self setCurrentNode:_treeNodeSelected];
         }
     }
     else if (object==self) {
@@ -499,7 +499,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         else
             NSLog(@"BrowserController.selectionDidChangeOn: Branch not found in the tree");
         // set the PathBar back to the _treeNode
-        [self setPathBarToItem:_treeNodeSelected];
+        [self setCurrentNode:_treeNodeSelected];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:notificationStatusUpdate object:object userInfo:nil];
 }
@@ -1409,9 +1409,6 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 didLoadPreferences = NO;
             }
             newController = tableViewController;
-            [self.myGroupingPopDpwnButton setHidden:NO];
-            [self.myColumnsPopDpwnButton  setHidden:NO];
-            [self.viewOptionsSwitches setEnabled:YES forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
             break;
         case BViewTypeBrowser:
             break;
@@ -1424,13 +1421,6 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 didLoadPreferences = NO;
             }
             newController = iconViewController;
-            [self.myGroupingPopDpwnButton setHidden:YES];
-            [self.myColumnsPopDpwnButton  setHidden:YES];
-            // Block Flat view and remove groupings
-            [self.viewOptionsSwitches setEnabled:NO forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
-            [self.viewOptionsSwitches setSelected:NO forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
-            [newController setDisplayFilesInSubdirs:NO];
-            [newController removeGroupings];
             break;
         default:
             break;
@@ -1758,7 +1748,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
-    NSLog(@"Debug this");
+    //NSLog(@"Debug selectFolderByItem");
     if (_baseDirectories!=nil && [_baseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
         NSEnumerator *enumerator = [_baseDirectories itemsInNodeEnumerator];
         TreeBranch* root;

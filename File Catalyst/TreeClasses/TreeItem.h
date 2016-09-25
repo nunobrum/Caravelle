@@ -86,6 +86,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSString*) path ;
 -(NSString*) location;
 -(NSImage*) image;
+-(NSColor*) textColor;
 -(NSNumber*) exactSize;
 -(NSNumber*) allocatedSize;
 -(NSNumber*) totalSize;
