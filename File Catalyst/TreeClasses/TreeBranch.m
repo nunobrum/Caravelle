@@ -790,7 +790,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
  */
 
 -(TreeItem*) getNodeWithPathComponents:(NSArray*) pComp {
-    NSLog(@"DEBUG;TreeBranch._getNodeWithPathComponents:(%@)", pComp);
+    //NSLog(@"DEBUG;TreeBranch._getNodeWithPathComponents:(%@)", pComp);
     
     NSArray *cpself = [self pathComponents];
     
@@ -815,7 +815,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         return cursor;
 }
 
--(TreeItem*) _huntPathComponents:(NSArray*) pComp {
+-(TreeItem*) _nearestItemWithPathComponents:(NSArray*) pComp {
     NSLog(@"DEBUG;TreeBranch._huntPathComponents:(%@)", pComp);
     
     NSArray *cpself = [self pathComponents];
@@ -856,9 +856,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 
 -(TreeItem*) addURL:(NSURL*)theURL {
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG TreeBranch.addURL");
     NSArray *pcomps = [theURL pathComponents];
-    id child = [self _huntPathComponents:pcomps];
+    id child = [self _nearestItemWithPathComponents:pcomps];
     if (child == nil) {
         // Can't be added here
         return nil;
@@ -960,7 +960,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 //}
 
 -(BOOL) addTreeItem:(TreeItem*) newItem {
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG TreeBranch.addTreeItem:");
     @synchronized(self) {
         if (self->_children == nil)
             self->_children = [[NSMutableArray alloc] init];
@@ -1253,8 +1253,14 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NO;
 }
 
--(NSEnumerator*) itemsInNodeEnumerator {
-    return [[ItemEnumerator alloc] initWithParent:self];
+-(NodeEnumerator*) itemsInNodeEnumerator {
+    return [[NodeEnumerator alloc] initWithParent:self];
+}
+
+-(BranchEnumerator*) itemsInBranchEnumeratorTillDepth:(NSInteger)depth {
+    BranchEnumerator *e = [[BranchEnumerator alloc] initWithParent:self];
+    [e setLevel:depth];
+    return e;
 }
 
 
@@ -1716,7 +1722,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     BOOL fireNotfication = NO;
     NSString const *strOperation;
     NSPasteboard *pboard = [info draggingPasteboard];
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG TreeBranch.acceptDropped:operation:sender");
     NSLog(@"treeBranch %@, accept drop", self);
     DebugPBoard(pboard);
     NSArray *files = [pboard readObjectsForClasses:[NSArray arrayWithObjects:[NSURL class], nil] options:nil];
@@ -1777,20 +1783,84 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 @end
 
 
-@implementation ItemEnumerator
+@implementation NodeEnumerator
 
--(instancetype) initWithParent:(TreeBranch*)parentA {
-    self->index = 0;
-    self->parent = parentA;
+-(instancetype) initWithParent:(TreeBranch*)parent {
+    self->_index = 0;
+    self->_parent = parent;
     return self;
 }
 
 -(id) nextObject {
-    if (index < [self->parent numberOfItemsInNode]) {
-        return [self->parent itemAtIndex:index++];
+    if (_index < [self->_parent numberOfItemsInNode]) {
+        return [self->_parent itemAtIndex:_index++];
     }
     return nil;
 }
 
+@end
+
+@implementation BranchEnumerator
+
+-(instancetype) initWithParent:(TreeBranch *)parent {
+    self = [super initWithParent:parent];
+    _level = 0;
+    _maxLevel = 0;
+    _indexes = nil;
+    _useGroups = NO;
+    _curTree = parent;
+    return self;
+}
+
+-(void) setLevel:(NSUInteger)level {
+    if (_indexes != nil) free(_indexes);
+    _maxLevel = level;
+    
+    if (level != 0) {
+        // allocates and initializes memory for counters
+        _indexes = malloc(level*sizeof(NSUInteger));
+        for (NSUInteger i=0; i < level; i++)
+            _indexes[i] = 0;
+    }
+}
+
+-(id) nextObject {
+    TreeItem *answer = nil;
+    while (1) {
+        if (_indexes[_level] < _curTree.numberOfItemsInNode) {
+            answer = [_curTree itemAtIndex:_indexes[_level]];
+            if ([answer hasChildren]) {
+                if (_level+1 < _maxLevel) { // Will trace that branch
+                    _level++;
+                    _indexes[_level] = 0; // Reset the pointer
+                }
+                else { // Moves to the next
+                    _indexes[_level] = _indexes[_level] + 1;
+                    break; // Return the branch if it is the limot
+                }
+            }
+            else {
+                _indexes[_level] = _indexes[_level] + 1;
+                break; // Returns it 
+            }
+        }
+        else {
+            // It will go up the hierarchy
+            if (_level > 0) {
+                _level--;
+                _curTree = _parent; // Starts from root
+                for (int i=0; i < _level; i++) {
+                    answer = [_curTree itemAtIndex:_indexes[i]];
+                    if ([answer hasChildren]==NO)
+                        break; // Need to stop if it isn't a tree. This isn't supposed to happen
+                }
+                _indexes[_level] = _indexes[_level] + 1;
+            }
+            else // If it can't it stops the iteration
+                return nil;
+        }
+    }
+    return answer;
+}
 
 @end

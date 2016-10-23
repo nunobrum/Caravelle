@@ -18,15 +18,12 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 
 // notification for indicating file system content has been received
 //NSString *kReceivedContentNotification = @"ReceivedContentNotification";
-#define SECTION_BUFFER_INCREASE 20
+
 
 
 @interface IconViewController () {
     NSMutableIndexSet *extendedSelection;
     FileCollectionViewItem* menuTarget;
-    NSUInteger* sectionIndexes;
-    NSUInteger sectionIndexesSize;
-    NSUInteger sectionCount;
     NSCollectionViewFlowLayout *flowLayout;
 }
 
@@ -37,8 +34,6 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 
 - (void) initController {
     [super initController];
-    self->sectionIndexesSize = SECTION_BUFFER_INCREASE; // Initial size, later it can grow
-    self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
     //NSNib *IconItemNib = [[NSNib alloc] initWithNibNamed:@"IconViewItem" bundle:nil];
     //[self->_collectionView registerNib:IconItemNib forItemWithIdentifier:ICON_VIEW_FILE];
     //[self->_collectionView setDataSource:self];
@@ -71,75 +66,12 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 #pragma mark CollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(NSCollectionView *)collectionView {
-    NSUInteger idx = 0;
-    TreeItem *theFile;
-    self->sectionCount = 0;
-    
-    while (idx < self->_displayedItems.count) {
-        theFile = self->_displayedItems[idx];
-        if (theFile.isGroup) {
-            self->sectionIndexes[self->sectionCount++] = idx;
-            // This will scale up the number of groups if needed.
-            if (self->sectionCount >= self->sectionIndexesSize) {
-                self->sectionIndexesSize += SECTION_BUFFER_INCREASE;
-                free(self->sectionIndexes);
-                self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
-                // and restart the process
-                // TODO: use a temp buffer to copy the previous results instead of restarting process
-                idx = 0;
-                self->sectionCount = 0;
-            }
-            else
-                idx++;
-        }
-        else
-            idx++;
-    }
-    self->sectionIndexes[self->sectionCount++] = self->_displayedItems.count;
-    return self->sectionCount;
+    return [self sectionCount];
 }
 
--(NSUInteger) linearIndexForIndexPath:(NSIndexPath*) indexPath {
-    if (indexPath.section == 0) {
-        return indexPath.item;
-    }
-    else if (indexPath.section < self->sectionCount) {
-        return self->sectionIndexes[indexPath.section-1] + indexPath.item;
-    }
-    else {
-        NSAssert(NO,@"IconViewController.linearIndexForIndexPath: - Error! section number greater than expected");
-        return 0;
-    }
-}
-
--(NSIndexPath*) indexPathForLinearIndex:(NSUInteger) linearIndex {
-    NSUInteger section = 0;
-    NSUInteger item;
-    while (linearIndex >= self->sectionIndexes[section]) {
-        section++;
-        if (section > self->sectionCount) {
-            NSAssert(NO,@"IconViewController.indexPathForLinearIndex: - Error! section number greater than expected");
-            return nil;
-        }
-    }
-    if (section==0) {
-        item = linearIndex;
-    }
-    else {
-        item = linearIndex-self->sectionIndexes[section-1];
-    }
-    return [NSIndexPath indexPathForItem:item inSection:section];
-}
 
 - (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    if (section == 0)
-        return (self->sectionIndexes[0]);
-    else if (section < self->sectionCount)
-        return (self->sectionIndexes[section]- self->sectionIndexes[section-1]);
-    else {
-        NSAssert(NO,@"ERROR in collectionView:numberOfItemsInSection:section - Exceeded buffer size");
-        return 0; // This is an error
-    }
+    return [self itemCountAtSection:section];
 }
 
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath {
@@ -147,7 +79,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     NSAssert(icon!=nil,@"ERROR! IconViewController.collectionView:itemForRepresentedObjectAtIndexPath: Icon View Not Found!");
     TreeItem *theFile;
 
-    theFile = self->_displayedItems[[self linearIndexForIndexPath:indexPath]];
+    theFile = [self itemAtIndexPath:indexPath];
     
     icon.representedObject = theFile; // Store the file for later usage.
     
@@ -231,23 +163,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 
 -(void) setSelectionByHashes:(NSArray *)hashes {
     if (hashes!=nil && [hashes count]>0) {
-        NSMutableSet<NSIndexPath*> *selectIndexPaths = [[NSMutableSet alloc] initWithCapacity:hashes.count];
-        NSUInteger section=0, nItem=0;
-        NSUInteger idx=0;
-        for (id item in self->_displayedItems ) {
-            if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]]) {
-                // Advance to the good section
-                while (idx >= self->sectionIndexes[section])
-                    section++;
-                if (section==0)
-                    nItem = idx;
-                else
-                    nItem = idx - self->sectionIndexes[section-1];
-                NSIndexPath *indexPath = [NSIndexPath indexPathForItem:nItem inSection:section];
-                [selectIndexPaths addObject:indexPath];
-            }
-            idx++;
-        }
+        NSSet<NSIndexPath*> *selectIndexPaths = [self indexPathsWithHashes:hashes];
         self.collectionView.selectionIndexPaths = selectIndexPaths;
     }
 }
@@ -268,7 +184,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 -(void) refresh {
     [self startBusyAnimationsDelayed];
     // Refreshing the collection
-    [self itemsToDisplay];
+    [self collectItems];
     [self stopBusyAnimations];
     [self.collectionView reloadData];
     [self.collectionView setNeedsDisplay:YES];
@@ -290,13 +206,11 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
         //FileCollectionViewItem *icon = [[self collectionView] iconWithItem:object];
         //[icon.view setNeedsDisplay:YES];
          //[self refreshKeepingSelections];
-        NSInteger idx = [self->_displayedItems indexOfObject:object];
-        if (idx != NSNotFound) {
-            NSIndexPath *indexPath = [self indexPathForLinearIndex:idx];
-            if (indexPath != nil) {
-                NSSet <NSIndexPath*> *indexPaths = [NSSet setWithObject:indexPath];
-                [self.collectionView reloadItemsAtIndexPaths:indexPaths];
-            }
+        NSIndexPath *indexPath = [self indexPathOfItem: object];
+        if (indexPath != nil) {
+            NSSet <NSIndexPath*> *indexPaths = [NSSet setWithObject:indexPath];
+            [self.collectionView reloadItemsAtIndexPaths:indexPaths];
+            
         }
     }
 }
@@ -305,8 +219,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     NSMutableArray *answer = [NSMutableArray arrayWithCapacity:self.collectionView.selectionIndexPaths.count];
     
     for (NSIndexPath *indexPath in self.collectionView.selectionIndexPaths) {
-        NSUInteger idx = [self linearIndexForIndexPath:indexPath];
-        [answer addObject:self->_displayedItems[idx] ];
+        [answer addObject:[self itemAtIndexPath: indexPath] ];
     }
     return answer;
 }
@@ -340,7 +253,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 -(TreeItem*) getLastClickedItem {
     if ([self.collectionView lastClicked] != nil) {
         TreeItem *item = [[self.collectionView lastClicked] representedObject];
-        if ([self->_displayedItems containsObject:item]) {
+        if ([self indexOfTableItem:item]!=NSNotFound) {
             // Returns the current selected item
             return item;
         }
@@ -353,7 +266,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 - (BOOL)collectionView:(NSCollectionView *)collectionView
  canDragItemsAtIndexes:(NSIndexSet *)indexes
              withEvent:(NSEvent *)event {
-    NSArray *items = [self->_displayedItems objectsAtIndexes:indexes];
+    NSArray *items = [self itemsAtTableIndexes:indexes];
 
     // Block if there is a read-only file
     for (TreeItem *item in items) {
@@ -375,7 +288,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     else if (*proposedDropOperation == NSCollectionViewDropOn) {
 
         @try { // If the row is not valid, it will assume the tree node being displayed.
-            self->_validatedDropDestination = [self->_displayedItems objectAtIndex:*proposedDropIndex];
+            self->_validatedDropDestination = [self itemAtTableIndex:*proposedDropIndex];
         }
         @catch (NSException *exception) {
             self->_validatedDropDestination = self.currentNode;
@@ -442,7 +355,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
    writeItemsAtIndexes:(NSIndexSet *)indexes
           toPasteboard:(NSPasteboard *)pasteboard {
 
-    NSArray *items = [self->_displayedItems objectsAtIndexes:indexes];
+    NSArray *items = [self itemsAtTableIndexes:indexes];
     return writeItemsToPasteboard(items, pasteboard, supportedPasteboardTypes());
 }
 
@@ -504,7 +417,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
             // TODO:1.4 implement here the option for rename in window
             if ([itemsSelected count] == 1) {
                 // if only one object selected
-                TreeItem *firstItem = self->_displayedItems[[itemsSelected firstIndex]];
+                TreeItem *firstItem = [self itemAtTableIndex:[itemsSelected firstIndex]];
                 [self startEditItemName:firstItem];
             }
             else {
@@ -537,7 +450,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
         }
         NSIndexSet *indexset = [self.collectionView selectionIndexes];
         [indexset enumerateIndexesUsingBlock:^(NSUInteger index, BOOL * stop) {
-            TreeItem* item = [self.itemsToDisplay objectAtIndex:index];
+            TreeItem* item = [self itemAtTableIndex: index];
             [item toggleTag:tagTreeItemMarked];
             if ([self->extendedSelection containsIndex:index])
                 [self->extendedSelection removeIndex:index];
@@ -552,9 +465,8 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
 
 
 -(BOOL) startEditItemName:(TreeItem*)item  {
-    NSInteger index = [self->_displayedItems indexOfObject:item];
-    if (index != NSNotFound) {
-        NSIndexPath *itemPath = [self indexPathForLinearIndex:index];
+    NSIndexPath *itemPath = [self indexPathOfItem: item];
+    if (itemPath != nil) {
         NSCollectionViewItem *icon = [self.collectionView itemAtIndexPath:itemPath];
         NSAssert(icon.representedObject == item, @"ERROR in IconViewController.startEditItemName: Didn't find the correct item");
         // Obtain the NSTextField from the view
@@ -569,6 +481,12 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
     NSIndexPath *insertIndexPath;
 
     if ([selection count]>0) {
+        // TODO:!!!!! Is only working with one object
+        NSAssert([selection count]==1,@"IconViewController.insertItem: - Alert!: Received more than one item. Code is taking a random object to proceed.");
+        insertIndexPath = [selection anyObject];
+        [self insertedItem:item atIndexPath:insertIndexPath];
+    }
+    else {
         // Will insert a row on the bottom of the selection.
         // Find the last one
         NSUInteger __block lastSection=0, lastItem=0;
@@ -583,13 +501,7 @@ namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropURL
         }];
         lastItem++;
         insertIndexPath = [NSIndexPath indexPathForItem:lastItem inSection:lastSection];
-        NSUInteger linearIndex = [self linearIndexForIndexPath:insertIndexPath];
-        [self->_displayedItems insertObject:item atIndex:linearIndex];
-    }
-    else {
-        [self->_displayedItems addObject:item];
-        insertIndexPath = [self indexPathForLinearIndex:self->_displayedItems.count-1];
-        
+        [self insertedItem:item atTableRow:-1]; // At the last position
     }
     NSSet<NSIndexPath*> *insertIndexPathSet = [NSSet setWithCollectionViewIndexPath:insertIndexPath];
     [self.collectionView insertItemsAtIndexPaths:insertIndexPathSet];

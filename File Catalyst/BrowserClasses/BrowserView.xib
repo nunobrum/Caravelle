@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <capability name="box content view" minToolsVersion="7.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BrowserController">
@@ -102,20 +103,20 @@
                     </connections>
                 </popUpButton>
                 <splitView dividerStyle="thin" vertical="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BA4-h9-PGe">
-                    <rect key="frame" x="1" y="1" width="428" height="534"/>
+                    <rect key="frame" x="1" y="1" width="428" height="502"/>
                     <subviews>
                         <customView horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" id="sH6-n1-nWT">
-                            <rect key="frame" x="0.0" y="0.0" width="428" height="534"/>
+                            <rect key="frame" x="0.0" y="0.0" width="428" height="502"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
                                 <scrollView horizontalHuggingPriority="200" verticalHuggingPriority="200" horizontalCompressionResistancePriority="600" verticalCompressionResistancePriority="600" autohidesScrollers="YES" horizontalLineScroll="36" horizontalPageScroll="10" verticalLineScroll="36" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UOw-FQ-tmZ">
-                                    <rect key="frame" x="1" y="0.0" width="426" height="534"/>
+                                    <rect key="frame" x="1" y="0.0" width="426" height="502"/>
                                     <clipView key="contentView" horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" id="Y6z-1n-4Bv">
-                                        <rect key="frame" x="1" y="0.0" width="424" height="533"/>
+                                        <rect key="frame" x="1" y="0.0" width="424" height="501"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <subviews>
                                             <outlineView horizontalCompressionResistancePriority="500" verticalCompressionResistancePriority="500" allowsExpansionToolTips="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="34" rowSizeStyle="automatic" headerView="Jmn-sp-QjP" viewBased="YES" indentationPerLevel="16" autoresizesOutlineColumn="YES" outlineTableColumn="y9F-Gr-UZs" id="wsk-IH-oFI" customClass="BrowserOutlineView">
-                                                <rect key="frame" x="0.0" y="0.0" width="424" height="510"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="424" height="478"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <size key="intercellSpacing" width="3" height="2"/>
                                                 <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -234,7 +235,6 @@
                                                 </connections>
                                             </outlineView>
                                         </subviews>
-                                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </clipView>
                                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="gMX-NQ-xJW">
                                         <autoresizingMask key="autoresizingMask"/>
@@ -247,8 +247,8 @@
                                         <autoresizingMask key="autoresizingMask"/>
                                     </tableHeaderView>
                                 </scrollView>
-                                <progressIndicator horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
-                                    <rect key="frame" x="198" y="251" width="32" height="32"/>
+                                <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
+                                    <rect key="frame" x="198" y="235" width="32" height="32"/>
                                 </progressIndicator>
                             </subviews>
                             <constraints>
@@ -298,7 +298,7 @@
                         <action selector="optionsSwitchSelect:" target="-2" id="2X9-ep-gXl"/>
                     </connections>
                 </segmentedControl>
-                <popUpButton hidden="YES" toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5">
+                <popUpButton toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5" userLabel="GroupingPopUp">
                     <rect key="frame" x="199" y="566" width="54" height="26"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" id="cCu-Xv-3GO">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -313,7 +313,7 @@
                         </menu>
                     </popUpButtonCell>
                 </popUpButton>
-                <popUpButton hidden="YES" toolTip="Add or Remove Columns" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYl-r6-ME0">
+                <popUpButton toolTip="Add or Remove Columns" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pYl-r6-ME0" userLabel="ColumnsPopUp">
                     <rect key="frame" x="143" y="566" width="54" height="26"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" imagePosition="only" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" pullsDown="YES" id="1mz-BD-L0f">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -328,6 +328,45 @@
                         </menu>
                     </popUpButtonCell>
                 </popUpButton>
+                <box boxType="custom" cornerRadius="4" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="8LJ-IG-RdT" userLabel="DrillBox">
+                    <rect key="frame" x="1" y="506" width="428" height="32"/>
+                    <view key="contentView" id="UfS-MT-P6h">
+                        <rect key="frame" x="1" y="1" width="426" height="30"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tokenField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uIo-73-Uh1">
+                                <rect key="frame" x="63" y="4" width="355" height="22"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <tokenFieldCell key="cell" selectable="YES" editable="YES" borderStyle="bezel" alignment="left" drawsBackground="YES" allowsEditingTextAttributes="YES" id="EH9-km-Yfd">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </tokenFieldCell>
+                            </tokenField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Xj-Va-Fy1">
+                                <rect key="frame" x="8" y="4" width="34" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Xfb-mK-xD6">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="self.drillLevel" id="xrK-ST-SAe"/>
+                                </connections>
+                            </textField>
+                            <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ofk-ij-VBB">
+                                <rect key="frame" x="39" y="1" width="19" height="27"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="XGA-bv-8Qv"/>
+                                <connections>
+                                    <binding destination="-2" name="value" keyPath="self.drillLevel" id="QtS-Hi-kca"/>
+                                </connections>
+                            </stepper>
+                        </subviews>
+                    </view>
+                    <color key="fillColor" name="selectedTextBackgroundColor" catalog="System" colorSpace="catalog"/>
+                </box>
             </subviews>
             <constraints>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="H1P-9o-Im5" secondAttribute="trailing" constant="12" id="19N-mw-SGL"/>
@@ -335,15 +374,15 @@
                 <constraint firstItem="olD-ez-fNy" firstAttribute="leading" secondItem="Wu7-Ak-lRK" secondAttribute="trailing" constant="8" id="2Dh-eW-haS"/>
                 <constraint firstItem="pYl-r6-ME0" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" constant="-0.5" id="ALL-5m-YhR"/>
                 <constraint firstItem="pYl-r6-ME0" firstAttribute="leading" secondItem="olD-ez-fNy" secondAttribute="trailing" constant="8" id="AUu-aF-HG0"/>
-                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="5Fc-gb-5JC" secondAttribute="bottom" constant="6" id="CrY-vp-fN5"/>
                 <constraint firstAttribute="trailing" secondItem="BA4-h9-PGe" secondAttribute="trailing" constant="1" id="Db9-BV-be0"/>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="top" secondItem="VMb-R6-UcF" secondAttribute="top" constant="10" id="GvC-9a-P9h"/>
-                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="olD-ez-fNy" secondAttribute="bottom" constant="34" id="JWU-fX-kJa"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="top" secondItem="Wu7-Ak-lRK" secondAttribute="bottom" constant="8" id="KSl-dA-qma"/>
                 <constraint firstItem="olD-ez-fNy" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" id="MTY-Xf-mzC"/>
-                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="tKW-QN-AmC" secondAttribute="bottom" constant="8" id="Saq-V9-NkH"/>
+                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="8LJ-IG-RdT" secondAttribute="bottom" constant="3" id="TVg-Wb-y1z"/>
+                <constraint firstItem="BA4-h9-PGe" firstAttribute="top" secondItem="VMb-R6-UcF" secondAttribute="top" constant="97" id="Wbz-vZ-Scv"/>
                 <constraint firstItem="Wu7-Ak-lRK" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="Wyv-PX-EZG"/>
                 <constraint firstAttribute="trailing" secondItem="Lo2-4t-2Jl" secondAttribute="trailing" constant="12" id="h4m-2Z-PXg"/>
+                <constraint firstItem="8LJ-IG-RdT" firstAttribute="top" secondItem="VMb-R6-UcF" secondAttribute="top" constant="62" id="hWA-Cb-Vdy"/>
                 <constraint firstItem="tKW-QN-AmC" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="8" id="hzk-jj-vBn"/>
                 <constraint firstAttribute="bottom" secondItem="BA4-h9-PGe" secondAttribute="bottom" constant="1" id="iS4-PA-gdW"/>
                 <constraint firstItem="H1P-9o-Im5" firstAttribute="leading" secondItem="pYl-r6-ME0" secondAttribute="trailing" constant="8" id="kZU-v9-SeL"/>
@@ -351,7 +390,9 @@
                 <constraint firstItem="5Fc-gb-5JC" firstAttribute="leading" secondItem="tKW-QN-AmC" secondAttribute="trailing" constant="8" id="mPY-Iu-fbN"/>
                 <constraint firstItem="Lo2-4t-2Jl" firstAttribute="centerY" secondItem="Wu7-Ak-lRK" secondAttribute="centerY" id="mb8-ET-djf"/>
                 <constraint firstItem="H1P-9o-Im5" firstAttribute="centerY" secondItem="Lo2-4t-2Jl" secondAttribute="centerY" id="oOn-CT-Pwj"/>
+                <constraint firstAttribute="trailing" secondItem="8LJ-IG-RdT" secondAttribute="trailing" constant="1" id="pvK-MS-NNH"/>
                 <constraint firstAttribute="trailing" secondItem="5Fc-gb-5JC" secondAttribute="trailing" constant="12" id="sVa-ZO-XHS"/>
+                <constraint firstItem="8LJ-IG-RdT" firstAttribute="leading" secondItem="VMb-R6-UcF" secondAttribute="leading" constant="1" id="vcL-62-xHs"/>
             </constraints>
         </customView>
         <menu title="ContextualMenu" showsStateColumn="NO" id="q8e-qr-VOA" userLabel="fileContextMenu">
@@ -366,11 +407,11 @@
         <image name="Columns" width="15" height="16"/>
         <image name="GenericFolderIcon" width="512" height="512"/>
         <image name="GrouppingOSX" width="15" height="16"/>
-        <image name="IconTreeView20" width="20" height="20"/>
+        <image name="IconTreeView20" width="32" height="32"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
         <image name="NSPathTemplate" width="16" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="12"/>
-        <image name="Tornado" width="16" height="16"/>
+        <image name="Tornado" width="32" height="32"/>
     </resources>
 </document>

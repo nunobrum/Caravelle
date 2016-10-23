@@ -286,7 +286,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(id)item {
     TreeItem * ret;
-    if (item==nil || [item isKindOfClass:[NSMutableArray class]])
+    if (item==nil || [item isKindOfClass:[TreeCollection class]])
         ret = [_baseDirectories branchAtIndex:index];
     else {
         ret = [item branchAtIndex:index];
@@ -301,7 +301,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item {
     BOOL answer=NO;
-    if ([item isKindOfClass:[NSMutableArray class]]) /* If it is the BaseArray */
+    if ([item isKindOfClass:[TreeCollection class]]) /* If it is the BaseArray */
         answer = ([item count] > 1)  ? YES : NO;
     else
         answer = ([(TreeItem*)item isExpandable]);

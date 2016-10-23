@@ -10,6 +10,8 @@
 #import "PasteboardUtils.h"
 #import "CustomTableHeaderView.h"
 #import "DummyBranch.h"
+#import "CatalogBranch.h"
+#import "myValueTransformers.h"
 
 EnumContextualMenuItemTags viewMenuFiles[] = {
     menuInformation,
@@ -52,9 +54,14 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     menuEnd
 };
 
+#define SECTION_BUFFER_INCREASE 20
+
 @interface NodeViewController () {
     TreeBranch *_currentNode;
     NSMutableArray *_observedVisibleItems;
+    NSUInteger* sectionIndexes;
+    NSUInteger sectionIndexesSize;
+    NSUInteger sectionCount;
 }
 
 @end
@@ -104,6 +111,8 @@ EnumContextualMenuItemTags viewMenuRight[] = {
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
     
+    self->sectionIndexesSize = SECTION_BUFFER_INCREASE; // Initial size, later it can grow
+    self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
 
 }
 
@@ -379,7 +388,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     [self addColumn:identifier]; // This function is already removing if it already exists
 }
 
--(NSMutableArray*) itemsToDisplay {
+-(void) collectItems_old {
     NSMutableArray *tableData = nil;
     /* Always uses the self.currentNode property to manage the Table View */
     // Get the depth configuration
@@ -482,8 +491,191 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         }
     }
     self->_displayedItems = tableData;
-    return tableData;
 }
+
+-(void) collectItems {
+    
+    // Get the depth configuration
+    NSInteger iDepth = 1; //NSIntegerMax;
+    
+    
+    if ([self.currentNode isFolder]){
+        BranchEnumerator *nodes = [self.currentNode itemsInBranchEnumeratorTillDepth:iDepth];
+        TreeItem *item;
+        CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:nil parent:nil];
+        //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
+        //[catalog setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
+        [catalog setCatalogKey:@"date_modified"];
+        [catalog setValueTransformer:DateToYearTransformer()];
+        while (item = [nodes nextObject]) {
+            [catalog addTreeItem:item];
+        }
+        self->_displayedItems = catalog.itemsInNode;
+        return;
+    }
+
+    self->_displayedItems = nil;
+}
+
+#pragma mark - table enumerator selectors
+
+- (TreeItem*) itemAtTableIndex:(NSUInteger)index {
+    return self->_displayedItems[index];
+}
+
+- (NSArray*) itemsAtTableIndexes:(NSIndexSet *)indexSet {
+    return [self->_displayedItems objectsAtIndexes:indexSet];
+}
+
+- (NSUInteger) tableIndexCount {
+    return self->_displayedItems.count;
+}
+
+-(NSInteger) indexOfTableItem:(TreeItem *)item {
+    return [self->_displayedItems indexOfObject:item];
+}
+
+-(NSIndexSet*) indexesWithHashes:(NSArray *)hashes {
+    NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+        //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
+        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
+            return YES;
+        else
+            return NO;
+    }];
+    return indexes;
+}
+
+-(void) insertedItem:(id)item atTableRow:(NSInteger)row {
+    if (row < 0) { // will append
+        [self->_displayedItems addObject:item];
+    }
+    else {
+        [self->_displayedItems insertObject:item atIndex:row];
+    }
+}
+
+
+-(NSUInteger) linearIndexForIndexPath:(NSIndexPath*) indexPath {
+    if (indexPath.section == 0) {
+        return indexPath.item;
+    }
+    else if (indexPath.section < self->sectionCount) {
+        // Adding one because the section itself needs to be discounted
+        return self->sectionIndexes[indexPath.section-1] + indexPath.item + 1;
+    }
+    else {
+        NSAssert(NO,@"IconViewController.linearIndexForIndexPath: - Error! section number greater than expected");
+        return 0;
+    }
+}
+
+-(NSIndexPath*) indexPathForLinearIndex:(NSUInteger) linearIndex {
+    NSUInteger section = 0;
+    NSUInteger item;
+    while (linearIndex >= self->sectionIndexes[section]) {
+        section++;
+        if (section > self->sectionCount) {
+            NSAssert(NO,@"IconViewController.indexPathForLinearIndex: - Error! section number greater than expected");
+            return nil;
+        }
+    }
+    if (section==0) {
+        item = linearIndex;
+    }
+    else {
+        // Subtracting one because of the group needs to be discounted
+        item = linearIndex-self->sectionIndexes[section-1] - 1;
+    }
+    return [NSIndexPath indexPathForItem:item inSection:section];
+}
+
+#pragma mark - collection enumerator selectors
+
+- (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath {
+    return self->_displayedItems[[self linearIndexForIndexPath:indexPath]];
+}
+
+- (NSIndexPath*) indexPathOfItem:(TreeItem*) item {
+    return nil; // TODO:!!!!!! Implement this
+}
+
+- (NSUInteger) sectionCount {
+    NSUInteger idx = 0;
+    TreeItem *theFile;
+    self->sectionCount = 0;
+    
+    while (idx < self->_displayedItems.count) {
+        theFile = self->_displayedItems[idx];
+        if (theFile.isGroup) {
+            self->sectionIndexes[self->sectionCount++] = idx;
+            // This will scale up the number of groups if needed.
+            if (self->sectionCount >= self->sectionIndexesSize) {
+                self->sectionIndexesSize += SECTION_BUFFER_INCREASE;
+                free(self->sectionIndexes);
+                self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
+                // and restart the process
+                // TODO: use a temp buffer to copy the previous results instead of restarting process
+                idx = 0;
+                self->sectionCount = 0;
+            }
+            else
+                idx++;
+        }
+        else
+            idx++;
+    }
+    self->sectionIndexes[self->sectionCount++] = idx;
+    return self->sectionCount;
+}
+
+- (NSUInteger) itemCountAtSection:(NSUInteger)section {
+    if (section == 0) {
+        if (self->sectionIndexes[0]==0) {
+            // This is a grouping
+            return self->sectionIndexes[1] - 1;
+        }
+        else {
+            return (self->sectionIndexes[0]);
+        }
+    }
+    else if (section < self->sectionCount) {
+        // Subtracting one because of the group discount
+        return (self->sectionIndexes[section+1]- self->sectionIndexes[section]-1);
+    }
+    else {
+        NSAssert(NO,@"ERROR in collectionView:numberOfItemsInSection:section - Exceeded buffer size");
+        return 0; // This is an error
+    }
+}
+
+-(NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray *)hashes {
+    NSMutableSet<NSIndexPath*> *selectIndexPaths = [[NSMutableSet alloc] initWithCapacity:hashes.count];
+    NSUInteger section=0, nItem=0;
+    NSUInteger idx=0;
+    for (id item in self->_displayedItems ) {
+        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]]) {
+            // Advance to the good section
+            while (idx >= self->sectionIndexes[section])
+                section++;
+            if (section==0)
+                nItem = idx;
+            else
+                nItem = idx - self->sectionIndexes[section-1];
+            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:nItem inSection:section];
+            [selectIndexPaths addObject:indexPath];
+        }
+        idx++;
+    }
+    return selectIndexPaths;
+}
+
+- (void) insertedItem:(id)item atIndexPath:(NSIndexPath *)indexPath {
+    NSUInteger linearIndex = [self linearIndexForIndexPath:indexPath];
+    [self->_displayedItems insertObject:item atIndex:linearIndex];
+}
+
+#pragma mark - sort Descriptor selectors
 
 - (void) removeSortOnField:(NSString*)field {
     for (NSSortDescriptor<MySortDescriptorProtocol> *i in self.sortAndGroupDescriptors) {

@@ -10,7 +10,7 @@
 
 #import "searchTree.h"
 
-@interface CatalogBranch : searchTree
+@interface CatalogBranch : filterBranch
 
 @property NSString *catalogKey;
 @property NSValueTransformer *valueTransformer;

@@ -40,6 +40,8 @@ extern NSString *kViewChanged_FlatView;
 @property (strong) IBOutlet NSPopUpButton *myGroupingPopDpwnButton;
 @property (strong) IBOutlet NSPopUpButton *myColumnsPopDpwnButton;
 
+@property (strong) NSNumber *drillLevel;
+
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 
 

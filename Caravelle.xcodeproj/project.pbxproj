@@ -68,6 +68,7 @@
 		3CF8466819EB30D2008C691E /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
+		BC03EB721DA44D1900BDB92D /* ArraySubset.m in Sources */ = {isa = PBXBuildFile; fileRef = BC03EB711DA44D1900BDB92D /* ArraySubset.m */; };
 		BC07EFAF1BDAA1EF00071193 /* DuplicateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */; };
 		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
@@ -354,6 +355,8 @@
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FileUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FileUtils.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		BC03EB701DA44D1900BDB92D /* ArraySubset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArraySubset.h; path = TreeClasses/ArraySubset.h; sourceTree = "<group>"; };
+		BC03EB711DA44D1900BDB92D /* ArraySubset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArraySubset.m; path = TreeClasses/ArraySubset.m; sourceTree = "<group>"; };
 		BC07EFAD1BDAA1EF00071193 /* DuplicateGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateGrouping.h; path = BrowserClasses/Groupings/DuplicateGrouping.h; sourceTree = "<group>"; };
 		BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateGrouping.m; path = BrowserClasses/Groupings/DuplicateGrouping.m; sourceTree = "<group>"; };
 		BC08C9AA1B764B9F00D12486 /* DummyBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyBranch.h; sourceTree = "<group>"; };
@@ -533,6 +536,8 @@
 				BC523DD61B594B7C0030C97A /* NumberGrouping.m */,
 				BC07EFAD1BDAA1EF00071193 /* DuplicateGrouping.h */,
 				BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */,
+				BC03EB701DA44D1900BDB92D /* ArraySubset.h */,
+				BC03EB711DA44D1900BDB92D /* ArraySubset.m */,
 			);
 			name = Groupings;
 			sourceTree = "<group>";
@@ -1196,6 +1201,7 @@
 				BCEB37291BA940AD00B1DAA9 /* NativeEnumerated.c in Sources */,
 				BCEB37301BA940AD00B1DAA9 /* per_support.c in Sources */,
 				BCEB37271BA940AD00B1DAA9 /* der_encoder.c in Sources */,
+				BC03EB721DA44D1900BDB92D /* ArraySubset.m in Sources */,
 				BCEB37251BA940AD00B1DAA9 /* constr_TYPE.c in Sources */,
 				BCEB37201BA940AD00B1DAA9 /* ber_tlv_length.c in Sources */,
 				BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */,

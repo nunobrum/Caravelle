@@ -42,8 +42,9 @@
     TreeItem   *_validatedDropDestination;
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
-    NSMutableArray *_displayedItems;
     NSString * _twinName;
+    @private
+    NSMutableArray *_displayedItems;
 }
 
 @property (readwrite, weak) id<BrowserParentProtocol> parentController;
@@ -76,7 +77,24 @@
 - (void) unregisterDraggedTypes;
 - (NSView*) containerView;
 
-- (NSMutableArray*) itemsToDisplay;
+#pragma mark - Data handling Selectors
+- (void) collectItems;
+// Table View helper selectors
+- (TreeItem*) itemAtTableIndex:(NSUInteger)index;
+- (NSArray*) itemsAtTableIndexes:(NSIndexSet*) indexSet;
+- (NSUInteger) tableIndexCount;
+- (NSInteger) indexOfTableItem:(TreeItem*) item;
+- (NSIndexSet*) indexesWithHashes:(NSArray*) hashes;
+- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
+
+// Collection View helper selectors
+- (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath;
+- (NSUInteger) sectionCount;
+- (NSUInteger) itemCountAtSection:(NSUInteger) section;
+- (NSIndexPath*) indexPathOfItem:(TreeItem*) item;
+- (NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray*) hashes;
+- (void) insertedItem:(id)item atIndexPath:(NSIndexPath*) indexPath;
+
 - (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
 - (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
 - (void) removeSortOnField:(NSString*)key;
