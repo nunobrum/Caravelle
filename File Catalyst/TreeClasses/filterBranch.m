@@ -58,6 +58,13 @@
     return @"Search Folder";
 }
 
+-(NSString*) location {
+    if (self->_filter) 
+        return self->_filter.predicateFormat;
+    else
+        return self.name;
+}
+
 -(void) setParent:(TreeBranch *)parent {
     self->_parent = parent;
     // TODO:2.0 see if this is needed [self setUrl:getURL(parent)]; // This is needed for compatibility with other methods

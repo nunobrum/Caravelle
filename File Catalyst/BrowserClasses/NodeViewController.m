@@ -59,9 +59,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 @interface NodeViewController () {
     TreeBranch *_currentNode;
     NSMutableArray *_observedVisibleItems;
-    NSUInteger* sectionIndexes;
-    NSUInteger sectionIndexesSize;
-    NSUInteger sectionCount;
 }
 
 @end
@@ -111,9 +108,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
                                                options:NSKeyValueObservingOptionNew
                                                context:NULL];
     
-    self->sectionIndexesSize = SECTION_BUFFER_INCREASE; // Initial size, later it can grow
-    self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
-
 }
 
 - (void)dealloc {
@@ -139,7 +133,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     [self unobserveItem:self.currentNode];
 
     self->_currentNode = branch;
-    [self->_displayedItems removeAllObjects];
     if (branch!=nil) {
         [self observeItem:self.currentNode];
         [branch refresh];
@@ -490,73 +483,104 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             }
         }
     }
-    self->_displayedItems = tableData;
+    //self->_displayedItems = tableData;
 }
 
 -(void) collectItems {
     
     // Get the depth configuration
-    NSInteger iDepth = 1; //NSIntegerMax;
-    
     
     if ([self.currentNode isFolder]){
-        BranchEnumerator *nodes = [self.currentNode itemsInBranchEnumeratorTillDepth:iDepth];
-        TreeItem *item;
-        CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:nil parent:nil];
-        //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
-        //[catalog setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
-        [catalog setCatalogKey:@"date_modified"];
-        [catalog setValueTransformer:DateToYearTransformer()];
-        while (item = [nodes nextObject]) {
-            [catalog addTreeItem:item];
+        
+        if (_depth <= 10) {
+            if (self.foldersInTable==YES) {
+                _treeViewer = [[TreeViewer alloc] initWithRoot:self.currentNode andDepth: _depth];
+            }
+            else {//if (self.foldersInTable==NO) {
+                //NSAssert(NO, @"Implemetation Missing");
+                _treeViewer = [[TreeViewer alloc] initWithRoot:self.currentNode andDepth: _depth];
+            }
         }
-        self->_displayedItems = catalog.itemsInNode;
-        return;
+        else {
+            BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithRoot:self.currentNode andDepth: _depth-10];
+            TreeItem *item;
+            CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:nil parent:nil];
+            //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
+            //[catalog setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
+            [catalog setCatalogKey:@"date_modified"];
+            [catalog setValueTransformer:DateToYearTransformer()];
+            while ((item = [nodes nextObject])!=nil) {
+                [catalog addTreeItem:item];
+            }
+            _treeViewer = [[TreeViewer alloc] initWithRoot:catalog andDepth: _depth];
+        }
     }
+    else {
+        //self->_displayedItems = nil;
+        _treeViewer = nil;
+    }
+}
 
-    self->_displayedItems = nil;
+-(void) setDepth:(NSInteger)depth {
+    self->_depth = depth;
 }
 
 #pragma mark - table enumerator selectors
 
 - (TreeItem*) itemAtTableIndex:(NSUInteger)index {
-    return self->_displayedItems[index];
+    return [self->_treeViewer itemAtIndex:index];
 }
 
 - (NSArray*) itemsAtTableIndexes:(NSIndexSet *)indexSet {
-    return [self->_displayedItems objectsAtIndexes:indexSet];
+    NSMutableArray *answer = [NSMutableArray array];
+    [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+        [answer addObject:[self->_treeViewer itemAtIndex:idx]];
+    }];
+    return answer;
+}
+
+- (BOOL) itemAtTableisGroup {
+    return [self->_treeViewer isGroup];
+}
+
+-(NSString*) groupTitle {
+    return [self->_treeViewer groupTitle];
 }
 
 - (NSUInteger) tableIndexCount {
-    return self->_displayedItems.count;
+    return [self->_treeViewer count];
 }
 
 -(NSInteger) indexOfTableItem:(TreeItem *)item {
-    return [self->_displayedItems indexOfObject:item];
+    assert(false); // TODO:!!! Implement this
+    return 0;
 }
 
 -(NSIndexSet*) indexesWithHashes:(NSArray *)hashes {
-    NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+    assert(false); //TODO:!!! Implement this
+    /*NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
         //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
         if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
             return YES;
         else
             return NO;
     }];
-    return indexes;
+    return indexes;*/
+    return nil;
 }
 
 -(void) insertedItem:(id)item atTableRow:(NSInteger)row {
-    if (row < 0) { // will append
+    assert(false); //TODO:!!! Implement this
+    /*if (row < 0) { // will append
         [self->_displayedItems addObject:item];
     }
     else {
         [self->_displayedItems insertObject:item atIndex:row];
-    }
+    }*/
 }
 
 
--(NSUInteger) linearIndexForIndexPath:(NSIndexPath*) indexPath {
+/*-(NSUInteger) linearIndexForIndexPath:(NSIndexPath*) indexPath {
     if (indexPath.section == 0) {
         return indexPath.item;
     }
@@ -589,90 +613,57 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     }
     return [NSIndexPath indexPathForItem:item inSection:section];
 }
-
+*/
 #pragma mark - collection enumerator selectors
 
 - (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath {
-    return self->_displayedItems[[self linearIndexForIndexPath:indexPath]];
+    return [_treeViewer itemAtIndexPath:indexPath];
 }
 
 - (NSIndexPath*) indexPathOfItem:(TreeItem*) item {
-    return nil; // TODO:!!!!!! Implement this
+    assert(false); //TODO:!!! Implement this
+    return nil;
 }
 
 - (NSUInteger) sectionCount {
-    NSUInteger idx = 0;
-    TreeItem *theFile;
-    self->sectionCount = 0;
-    
-    while (idx < self->_displayedItems.count) {
-        theFile = self->_displayedItems[idx];
-        if (theFile.isGroup) {
-            self->sectionIndexes[self->sectionCount++] = idx;
-            // This will scale up the number of groups if needed.
-            if (self->sectionCount >= self->sectionIndexesSize) {
-                self->sectionIndexesSize += SECTION_BUFFER_INCREASE;
-                free(self->sectionIndexes);
-                self->sectionIndexes = malloc(sizeof(NSUInteger)*(self->sectionIndexesSize));
-                // and restart the process
-                // TODO: use a temp buffer to copy the previous results instead of restarting process
-                idx = 0;
-                self->sectionCount = 0;
-            }
-            else
-                idx++;
-        }
-        else
-            idx++;
+    if (_depth <=1)
+        return 1;
+    else {
+        return _treeViewer.groupCount;
     }
-    self->sectionIndexes[self->sectionCount++] = idx;
-    return self->sectionCount;
 }
 
 - (NSUInteger) itemCountAtSection:(NSUInteger)section {
-    if (section == 0) {
-        if (self->sectionIndexes[0]==0) {
-            // This is a grouping
-            return self->sectionIndexes[1] - 1;
-        }
-        else {
-            return (self->sectionIndexes[0]);
-        }
-    }
-    else if (section < self->sectionCount) {
-        // Subtracting one because of the group discount
-        return (self->sectionIndexes[section+1]- self->sectionIndexes[section]-1);
-    }
-    else {
-        NSAssert(NO,@"ERROR in collectionView:numberOfItemsInSection:section - Exceeded buffer size");
-        return 0; // This is an error
-    }
+    return [_treeViewer itemCountAtSection:section];
 }
 
 -(NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray *)hashes {
-    NSMutableSet<NSIndexPath*> *selectIndexPaths = [[NSMutableSet alloc] initWithCapacity:hashes.count];
-    NSUInteger section=0, nItem=0;
-    NSUInteger idx=0;
-    for (id item in self->_displayedItems ) {
-        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]]) {
-            // Advance to the good section
-            while (idx >= self->sectionIndexes[section])
-                section++;
-            if (section==0)
-                nItem = idx;
-            else
-                nItem = idx - self->sectionIndexes[section-1];
-            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:nItem inSection:section];
-            [selectIndexPaths addObject:indexPath];
-        }
-        idx++;
-    }
-    return selectIndexPaths;
+//    NSMutableSet<NSIndexPath*> *selectIndexPaths = [[NSMutableSet alloc] initWithCapacity:hashes.count];
+//    NSUInteger section=0, nItem=0;
+//    NSUInteger idx=0;
+//    for (id item in self->_displayedItems ) {
+//        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]]) {
+//            // Advance to the good section
+//            while (idx >= self->sectionIndexes[section])
+//                section++;
+//            if (section==0)
+//                nItem = idx;
+//            else
+//                nItem = idx - self->sectionIndexes[section-1];
+//            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:nItem inSection:section];
+//            [selectIndexPaths addObject:indexPath];
+//        }
+//        idx++;
+//    }
+//    return selectIndexPaths;
+    assert(false); //TODO:!!! Implement this
+    return nil;
 }
 
 - (void) insertedItem:(id)item atIndexPath:(NSIndexPath *)indexPath {
-    NSUInteger linearIndex = [self linearIndexForIndexPath:indexPath];
-    [self->_displayedItems insertObject:item atIndex:linearIndex];
+//    NSUInteger linearIndex = [self linearIndexForIndexPath:indexPath];
+//    [self->_displayedItems insertObject:item atIndex:linearIndex];
+    assert(false); //TODO:!!! Implement this
 }
 
 #pragma mark - sort Descriptor selectors

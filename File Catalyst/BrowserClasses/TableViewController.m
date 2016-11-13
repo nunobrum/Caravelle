@@ -99,7 +99,7 @@
 
 
 - (NSView *)tableView:(NSTableView *)aTableView viewForTableColumn:(NSTableColumn *)aTableColumn row:(NSInteger)rowIndex {
-    id objectValue = [self itemAtTableIndex:rowIndex];
+    TreeItem *objectValue = [self itemAtTableIndex:rowIndex];
     // In IB the tableColumn has the identifier set to the same string as the keys in our dictionary
     
     
@@ -111,10 +111,11 @@
     NSTableCellView *cellView = nil;
 
     TreeItem* theFile = objectValue;
-    if (theFile.isGroup) {
+    
+    if (self.itemAtTableisGroup) {
         // this is a group Row
         cellView = [aTableView makeViewWithIdentifier:ROW_GROUP owner:self];
-        [cellView.textField setStringValue:[objectValue title]];
+        [cellView.textField setStringValue:self.groupTitle];
         [cellView setObjectValue:objectValue];
         
     }
@@ -217,8 +218,8 @@
 
 // We want to make "group rows" for the folders
 - (BOOL)tableView:(NSTableView *)tableView isGroupRow:(NSInteger)row {
-    TreeItem* objectValue = [self itemAtTableIndex:row];
-    return [objectValue isGroup];
+    [self itemAtTableIndex:row];
+    return [self itemAtTableisGroup];
 }
 
 // This function makes sure that the group headers are not selected

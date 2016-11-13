@@ -14,7 +14,7 @@
 #include "Definitions.h"
 
 
-
+#define DISTANCE_FROM_SPLITVIEW_TO_TOP 62
 
 extern NSString *kViewChanged_TreeCollapsed;
 extern NSString *kViewChanged_FlatView;
@@ -40,14 +40,14 @@ extern NSString *kViewChanged_FlatView;
 @property (strong) IBOutlet NSPopUpButton *myGroupingPopDpwnButton;
 @property (strong) IBOutlet NSPopUpButton *myColumnsPopDpwnButton;
 
-@property (strong) NSNumber *drillLevel;
-
 @property (strong) IBOutlet NSProgressIndicator *myOutlineProgressIndicator;
 
 
 @property (strong) IBOutlet NSSplitView *mySplitView;
 @property (strong) IBOutlet NSSegmentedControl *viewOptionsSwitches;
 @property (strong) IBOutlet NSSegmentedControl *mruBackForwardControl;
+@property (strong) IBOutlet NSBox *drillBox;
+@property (strong) IBOutlet NSLayoutConstraint *splitViewToTopConstraint;
 
 // This controller is used to select groupings
 
@@ -59,6 +59,8 @@ extern NSString *kViewChanged_FlatView;
 @property NSString *viewName;
 @property NSMutableDictionary *preferences;
 @property TreeCollection *baseDirectories;
+
+@property NSString *drillLevel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil;
 
@@ -93,6 +95,9 @@ extern NSString *kViewChanged_FlatView;
 
 - (IBAction) mruBackForwardAction:(id)sender;
 - (IBAction)filenameDidChange:(id)sender;
+
+- (IBAction)depthChanged:(id)sender;
+
 /*
  * Notifications Received 
  */

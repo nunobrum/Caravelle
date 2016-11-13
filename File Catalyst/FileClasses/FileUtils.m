@@ -143,10 +143,6 @@ NSURL *getURL(id object) {
     return nil;
 }
 
-//NSString *getPath(id object) {
-//    // TODO:!!!! Optimise this
-//    return [getURL(object) path];
-//}
 
 BOOL eraseFile(NSURL*url, NSError *error) {
     BOOL answer = [[NSFileManager defaultManager] removeItemAtPath:[url path] error:&error];

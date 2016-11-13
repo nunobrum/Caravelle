@@ -81,7 +81,7 @@
 // This way of operation avoid having to compare each found duplicate with the existing
 // collecting set.
 -(FileCollection*) duplicatesInPath:(NSString*) path dCounter:(NSUInteger)dCount {
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG duplicatesInPath:dCounter");
     FileCollection *newCollection = [[FileCollection new] init];
     NSArray *pathComponents = [path pathComponents];
     for (TreeLeaf *finfo in fileArray) {
@@ -110,7 +110,7 @@
 // This selector returns all the "brothers" of the duplicate files in a given path
 // See duplicatesInPath:dCounter for more information on the operation.
 -(FileCollection*) duplicatesOfPath:(NSString*) path dCounter:(NSUInteger)dCount {
-    NSLog(@"DEBUG THIS");
+    NSLog(@"DEBUG duplicatesOfPath:dCounter");
     FileCollection *newCollection = [[FileCollection new] init];
     NSArray *pathComponents = [path pathComponents];
     for (TreeLeaf *finfo in fileArray) {

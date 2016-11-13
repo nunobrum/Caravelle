@@ -17,6 +17,7 @@
 #import "IconViewController.h"
 #import "FileAttributesController.h"
 #import "PasteboardUtils.h"
+#import "TreeEnumerator.h"
 
 
 const NSUInteger maxItemsInBrowserPopMenu = 7;
@@ -980,14 +981,24 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                                   self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
                                   nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+            // Show the Drill View
+            [self.drillBox setHidden: NO];
+            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP + self.drillBox.bounds.size.height;
+            [self.splitViewToTopConstraint setConstant:distance];
         }
         else {
             // refreshes the view
             [self.detailedViewController refreshKeepingSelections];
+        
+            // Hide the Drill View
+            [self.drillBox setHidden:YES];
+            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP;
+            [self.splitViewToTopConstraint setConstant:distance];
         }
         // Send notificationViewChanged for the FlatView
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
+        [self.view setNeedsDisplay:YES];
         
     }
     else
@@ -1750,7 +1761,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
     //NSLog(@"Debug selectFolderByItem");
     if (_baseDirectories!=nil && [_baseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
-        NSEnumerator *enumerator = [_baseDirectories itemsInNodeEnumerator];
+        BranchEnumerator *enumerator = [[BranchEnumerator alloc] initWithRoot:_baseDirectories andDepth: 1];
+
         TreeBranch* root;
         while (root = [enumerator nextObject]) {
             if ([root relationTo:treeNode] != pathIsParent){ // Search for Root Node
@@ -1871,6 +1883,11 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
 
     }
+}
+
+- (IBAction)depthChanged:(id)sender {
+    [self.detailedViewController setDepth:self.drillLevel.integerValue];
+    [self refresh];
 }
 
 

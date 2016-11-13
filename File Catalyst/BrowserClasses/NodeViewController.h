@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Definitions.h"
 #import "TreeBranch.h"
+#import "TreeViewer.h"
 #import "NodeSortDescriptor.h"
 
 
@@ -43,8 +44,10 @@
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
     NSString * _twinName;
+    TreeViewer *_treeViewer;
     @private
-    NSMutableArray *_displayedItems;
+    //NSMutableArray *_displayedItems;
+    NSInteger _depth;
 }
 
 @property (readwrite, weak) id<BrowserParentProtocol> parentController;
@@ -79,9 +82,13 @@
 
 #pragma mark - Data handling Selectors
 - (void) collectItems;
+- (void) setDepth:(NSInteger) depth;
+
 // Table View helper selectors
 - (TreeItem*) itemAtTableIndex:(NSUInteger)index;
 - (NSArray*) itemsAtTableIndexes:(NSIndexSet*) indexSet;
+- (BOOL) itemAtTableisGroup;
+- (NSString*) groupTitle;
 - (NSUInteger) tableIndexCount;
 - (NSInteger) indexOfTableItem:(TreeItem*) item;
 - (NSIndexSet*) indexesWithHashes:(NSArray*) hashes;

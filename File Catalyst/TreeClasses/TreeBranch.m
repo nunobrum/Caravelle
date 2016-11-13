@@ -1238,6 +1238,24 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return total;
 }
 
+// This returns the number of branches in a branch
+// this function is recursive to a given depth
+-(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth {
+    NSInteger total=0;
+    if (depth>0) {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if ([item isFolder]) {
+                total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
+            }
+            else
+                total++;
+        }
+    }
+    }
+    return total;
+}
+
 /* Returns if the node is expandable
  Note that if the _children is not populated it is assumed that the
  node is expandable. It is preferable to assume as yes and later correct. */
@@ -1251,16 +1269,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     if ((self->_children!=nil) && ([self numberOfItemsInNode]!=0))
         return YES;
     return NO;
-}
-
--(NodeEnumerator*) itemsInNodeEnumerator {
-    return [[NodeEnumerator alloc] initWithParent:self];
-}
-
--(BranchEnumerator*) itemsInBranchEnumeratorTillDepth:(NSInteger)depth {
-    BranchEnumerator *e = [[BranchEnumerator alloc] initWithParent:self];
-    [e setLevel:depth];
-    return e;
 }
 
 
@@ -1778,89 +1786,6 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 -(NSString*) debugDescription {
     return [NSString stringWithFormat: @"|%@|(%ld files)", super.debugDescription, [self->_children count]];
-}
-
-@end
-
-
-@implementation NodeEnumerator
-
--(instancetype) initWithParent:(TreeBranch*)parent {
-    self->_index = 0;
-    self->_parent = parent;
-    return self;
-}
-
--(id) nextObject {
-    if (_index < [self->_parent numberOfItemsInNode]) {
-        return [self->_parent itemAtIndex:_index++];
-    }
-    return nil;
-}
-
-@end
-
-@implementation BranchEnumerator
-
--(instancetype) initWithParent:(TreeBranch *)parent {
-    self = [super initWithParent:parent];
-    _level = 0;
-    _maxLevel = 0;
-    _indexes = nil;
-    _useGroups = NO;
-    _curTree = parent;
-    return self;
-}
-
--(void) setLevel:(NSUInteger)level {
-    if (_indexes != nil) free(_indexes);
-    _maxLevel = level;
-    
-    if (level != 0) {
-        // allocates and initializes memory for counters
-        _indexes = malloc(level*sizeof(NSUInteger));
-        for (NSUInteger i=0; i < level; i++)
-            _indexes[i] = 0;
-    }
-}
-
--(id) nextObject {
-    TreeItem *answer = nil;
-    while (1) {
-        if (_indexes[_level] < _curTree.numberOfItemsInNode) {
-            answer = [_curTree itemAtIndex:_indexes[_level]];
-            if ([answer hasChildren]) {
-                if (_level+1 < _maxLevel) { // Will trace that branch
-                    _level++;
-                    _indexes[_level] = 0; // Reset the pointer
-                }
-                else { // Moves to the next
-                    _indexes[_level] = _indexes[_level] + 1;
-                    break; // Return the branch if it is the limot
-                }
-            }
-            else {
-                _indexes[_level] = _indexes[_level] + 1;
-                break; // Returns it 
-            }
-        }
-        else {
-            // It will go up the hierarchy
-            if (_level > 0) {
-                _level--;
-                _curTree = _parent; // Starts from root
-                for (int i=0; i < _level; i++) {
-                    answer = [_curTree itemAtIndex:_indexes[i]];
-                    if ([answer hasChildren]==NO)
-                        break; // Need to stop if it isn't a tree. This isn't supposed to happen
-                }
-                _indexes[_level] = _indexes[_level] + 1;
-            }
-            else // If it can't it stops the iteration
-                return nil;
-        }
-    }
-    return answer;
 }
 
 @end

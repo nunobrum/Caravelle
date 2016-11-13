@@ -17,8 +17,6 @@ extern NSString *const kvoTreeBranchPropertySize;
 extern NSString* commonPathFromItems(NSArray* itemArray);
 //extern NSArray* treesContaining(NSArray* treeItems);
 
-@class NodeEnumerator;
-@class BranchEnumerator;
 
 @interface TreeBranch : TreeItem <TreeProtocol> {
 
@@ -39,6 +37,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(NSInteger) numberOfItemsInNode;
 
 -(NSInteger) numberOfLeafsInBranch;
+-(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth;
 
 //-(NSInteger) numberOfFileDuplicatesInBranch;
 
@@ -56,9 +55,6 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(NSMutableArray*) leafsInNode;
 -(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) branchesInNode;
-
--(NodeEnumerator*) itemsInNodeEnumerator;
--(BranchEnumerator*) itemsInBranchEnumeratorTillDepth:(NSInteger)depth;
 
 
 -(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate*)filter;
@@ -134,24 +130,4 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 @end
 
 
-@interface NodeEnumerator : NSEnumerator {
-    NSUInteger _index;
-    TreeBranch *_parent;
-}
--(instancetype) initWithParent:(TreeBranch*)parent;
 
-@end
-
-@interface BranchEnumerator : NodeEnumerator {
-    NSUInteger _level;
-    NSInteger *_indexes;
-    NSUInteger _maxLevel;
-    BOOL _useGroups;
-    TreeBranch *_curTree;
-}
-@property BOOL useGroups;
-
--(void) setLevel:(NSUInteger) level;
-
-
-@end

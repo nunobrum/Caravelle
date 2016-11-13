@@ -85,6 +85,9 @@
 		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
 		BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */; };
 		BC581BB91D91C64900B66C0E /* FileCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */; };
+		BC69D07B1DD8A41A00CF4D9C /* TreeViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = BC69D07A1DD8A41A00CF4D9C /* TreeViewer.m */; };
+		BC69D07D1DD8A69000CF4D9C /* TreeViewer2.m in Sources */ = {isa = PBXBuildFile; fileRef = BC69D07C1DD8A69000CF4D9C /* TreeViewer2.m */; };
+		BC69D0811DD90A2400CF4D9C /* TreeEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = BC69D0801DD90A2400CF4D9C /* TreeEnumerator.m */; };
 		BC6C2AA61B682572009FD1D8 /* StartupScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */; };
 		BC6C2AAB1B690DFC009FD1D8 /* StartupScreenController.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */; };
 		BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = BC6C2AAD1B697095009FD1D8 /* DuplicateModeStartWindow.m */; };
@@ -386,6 +389,12 @@
 		BC581BB51D91C64900B66C0E /* FileCollectionViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCollectionViewItem.h; path = BrowserClasses/FileCollectionViewItem.h; sourceTree = "<group>"; };
 		BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileCollectionViewItem.m; path = BrowserClasses/FileCollectionViewItem.m; sourceTree = "<group>"; };
 		BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileCollectionViewItem.xib; path = BrowserClasses/FileCollectionViewItem.xib; sourceTree = "<group>"; };
+		BC69D0791DD8A41A00CF4D9C /* TreeViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeViewer.h; sourceTree = "<group>"; };
+		BC69D07A1DD8A41A00CF4D9C /* TreeViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeViewer.m; sourceTree = "<group>"; };
+		BC69D07C1DD8A69000CF4D9C /* TreeViewer2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeViewer2.m; sourceTree = "<group>"; };
+		BC69D07E1DD8A6BD00CF4D9C /* TreeViewer2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeViewer2.h; sourceTree = "<group>"; };
+		BC69D07F1DD909B900CF4D9C /* TreeEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeEnumerator.h; sourceTree = "<group>"; };
+		BC69D0801DD90A2400CF4D9C /* TreeEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeEnumerator.m; sourceTree = "<group>"; };
 		BC6C2AA51B682572009FD1D8 /* StartupScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = StartupScreen.xib; sourceTree = "<group>"; };
 		BC6C2AA91B690DFC009FD1D8 /* StartupScreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartupScreenController.h; sourceTree = "<group>"; };
 		BC6C2AAA1B690DFC009FD1D8 /* StartupScreenController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StartupScreenController.m; sourceTree = "<group>"; };
@@ -756,6 +765,12 @@
 		3CF32B9919FCEDF800B14A85 /* Branches */ = {
 			isa = PBXGroup;
 			children = (
+				BC69D0791DD8A41A00CF4D9C /* TreeViewer.h */,
+				BC69D07A1DD8A41A00CF4D9C /* TreeViewer.m */,
+				BC69D07E1DD8A6BD00CF4D9C /* TreeViewer2.h */,
+				BC69D07C1DD8A69000CF4D9C /* TreeViewer2.m */,
+				BC69D07F1DD909B900CF4D9C /* TreeEnumerator.h */,
+				BC69D0801DD90A2400CF4D9C /* TreeEnumerator.m */,
 				BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */,
 				BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */,
 				3C29463318F9B86A002B633C /* TreeBranch.h */,
@@ -1200,6 +1215,7 @@
 				3C980EB01A1CDF8500F70DCB /* FileSystemMonitoring.m in Sources */,
 				BCEB37291BA940AD00B1DAA9 /* NativeEnumerated.c in Sources */,
 				BCEB37301BA940AD00B1DAA9 /* per_support.c in Sources */,
+				BC69D07D1DD8A69000CF4D9C /* TreeViewer2.m in Sources */,
 				BCEB37271BA940AD00B1DAA9 /* der_encoder.c in Sources */,
 				BC03EB721DA44D1900BDB92D /* ArraySubset.m in Sources */,
 				BCEB37251BA940AD00B1DAA9 /* constr_TYPE.c in Sources */,
@@ -1223,6 +1239,7 @@
 				BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */,
 				BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */,
 				3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */,
+				BC69D0811DD90A2400CF4D9C /* TreeEnumerator.m in Sources */,
 				BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */,
 				3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */,
 				BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */,
@@ -1242,6 +1259,7 @@
 				3CA7DFC219B5FE9D00600F41 /* AppOperation.m in Sources */,
 				BC27BFE71B5C13F9001AE181 /* CalcFolderSizes.m in Sources */,
 				BCEB372B1BA940AD00B1DAA9 /* OCTET_STRING.c in Sources */,
+				BC69D07B1DD8A41A00CF4D9C /* TreeViewer.m in Sources */,
 				BCEB371E1BA940AD00B1DAA9 /* asn_SET_OF.c in Sources */,
 				BC2197101D97CCB3008D8FEC /* FileTextField.m in Sources */,
 				3C717C09198D5B200025E28A /* BrowserController.m in Sources */,

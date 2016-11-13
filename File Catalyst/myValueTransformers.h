@@ -24,6 +24,10 @@
 
 @end
 
+@interface StringToIntegerTransformer : NSValueTransformer
+
+@end
+
 @interface DuplicateIDToStringTransformer : NSValueTransformer
 
 @end
