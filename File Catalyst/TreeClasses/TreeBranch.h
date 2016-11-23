@@ -18,7 +18,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 //extern NSArray* treesContaining(NSArray* treeItems);
 
 
-@interface TreeBranch : TreeItem <TreeProtocol> {
+@interface TreeBranch : TreeItem <TreeProtocol, NSFastEnumeration> {
 
 @protected
     NSMutableArray *_children;
@@ -48,6 +48,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(long long) sizeOfNode;
 
+-(NSMutableArray*) children; // Read only access to the children
 //-(FileCollection*) filesInNode;
 //-(FileCollection*) filesInBranch;
 -(NSMutableArray*) itemsInNode;

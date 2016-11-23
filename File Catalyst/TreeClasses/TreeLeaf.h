@@ -8,11 +8,8 @@
 
 #import "TreeItem.h"
 
-@interface TreeLeaf : TreeItem <TreeProtocol> {
-    NSMutableDictionary *_store;
-}
+@interface TreeLeaf : TreeItem <TreeProtocol> 
 
--(TreeLeaf*) initWithURL:(NSURL*)url parent:(id)parent;
 
 /*
  * Dupplicate Support

@@ -12,6 +12,7 @@
 #import "DummyBranch.h"
 #import "CatalogBranch.h"
 #import "myValueTransformers.h"
+#import "TreeEnumerator.h"
 
 EnumContextualMenuItemTags viewMenuFiles[] = {
     menuInformation,
@@ -494,15 +495,43 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         
         if (_depth <= 10) {
             if (self.foldersInTable==YES) {
-                _treeViewer = [[TreeViewer alloc] initWithRoot:self.currentNode andDepth: _depth];
+                _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:self.currentNode depth: _depth];
             }
             else {//if (self.foldersInTable==NO) {
                 //NSAssert(NO, @"Implemetation Missing");
-                _treeViewer = [[TreeViewer alloc] initWithRoot:self.currentNode andDepth: _depth];
+                _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:self.currentNode depth: _depth];
+            }
+            if (_filterText!=nil && [_filterText length]!=0) {
+                NSPredicate *predicate;
+                NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
+                if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
+                    // TODO:1.5 Tokenize the filter field to make inteligent searches
+                    // TODO:1.5 find Titles and replace for selectors.
+                    @try {
+                        predicate = [NSPredicate predicateWithFormat:self.filterText];
+                    }
+                    @catch (NSException *exception) {
+                        predicate = nil;
+                    }
+                    /*@finally {}*/
+                }
+                else {
+                    NSString *attributeName  = @"name";
+                    NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
+                    NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
+                    
+                    if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
+                        predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
+                                       attributeName, self.filterText];
+                    else
+                        predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
+                                       attributeName, self.filterText];
+                }
+                //[_treeViewer setFilter:predicate];
             }
         }
         else {
-            BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithRoot:self.currentNode andDepth: _depth-10];
+            BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithParent:self.currentNode andDepth: _depth-10];
             TreeItem *item;
             CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:nil parent:nil];
             //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
@@ -512,7 +541,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             while ((item = [nodes nextObject])!=nil) {
                 [catalog addTreeItem:item];
             }
-            _treeViewer = [[TreeViewer alloc] initWithRoot:catalog andDepth: _depth];
+            _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:catalog depth: _depth];
         }
     }
     else {

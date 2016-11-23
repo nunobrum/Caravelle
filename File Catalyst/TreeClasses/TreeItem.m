@@ -69,19 +69,20 @@
     return (_tag & tagTreeSelectProtect)==0;
 }
 
--(TreeItem*) initWithURL:(NSURL*)url parent:(id)parent {
+-(instancetype) initWithURL:(NSURL*)url parent:(id)parent {
     self = [super init];
     if (self) {
         self->_url = nil;
         self->_tag = 0;
         self->_parent = parent;
         self.nameCache = nil;
+        self->_store = nil;
         [self setUrl:url];
     }
     return self;
 }
 
--(TreeItem*) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
+-(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent {
     NSString *path = [mdItem valueForAttribute:(id)kMDItemPath];
     return [self initWithURL: [NSURL fileURLWithPath:path] parent:parent];
  }
@@ -89,6 +90,8 @@
 -(void) deinit {
     [self setTag:tagTreeItemRelease];
 }
+
+
 
 
 +(id) treeItemForURL:(NSURL *)url parent:(id)parent {
@@ -159,6 +162,30 @@
 
 -(void) purgeURLCacheResources {
     [self->_url removeAllCachedResourceValues];
+}
+
+/*
+ * Storage Support
+ */
+
+-(void) addToStore:(NSDictionary*) dict {
+    if (self->_store==nil)
+        self->_store = [[NSMutableDictionary alloc] init];
+    
+    [self->_store addEntriesFromDictionary: dict];
+}
+
+-(void) removeFromStore:(NSArray<NSString*>*)keys {
+    if (self->_store!=nil && keys != nil)
+        [self->_store removeObjectsForKeys:keys];
+}
+
+-(id) objectWithKey:(NSString*) key {
+    return [self->_store objectForKey:key];
+}
+
+-(void) store:(id)object withKey:(NSString*)key {
+    [self->_store setObject:object forKey:key];
 }
 
 -(void) setTag:(TreeItemTagEnum)tag {

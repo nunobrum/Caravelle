@@ -17,14 +17,6 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 
 @implementation TreeLeaf
 
--(TreeLeaf*) initWithURL:(NSURL*)url parent:(id)parent {
-    self = [super initWithURL:url parent:parent];
-    if (self) {
-        self->_store = nil;
-    }
-    return self;
-}
-
 -(void) deinit {
     [self removeFromDuplicateRing];
     [self->_store removeAllObjects];
@@ -40,16 +32,7 @@ const NSString *keyDuplicateInfo = @"TStoreDuplicateKey";
 -(BOOL) removeItem {
     return [super removeItem];
 }
-/*
- * Storage Support
- */
 
--(void) addToStore:(NSDictionary*) dict {
-    if (self->_store==nil)
-        self->_store = [[NSMutableDictionary alloc] init];
-    
-    [self->_store addEntriesFromDictionary: dict];
-}
 
 
 // Copy and paste support

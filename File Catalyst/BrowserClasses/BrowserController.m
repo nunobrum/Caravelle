@@ -1761,7 +1761,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 -(BOOL) selectFolderByItem:(TreeItem*) treeNode {
     //NSLog(@"Debug selectFolderByItem");
     if (_baseDirectories!=nil && [_baseDirectories numberOfItemsInNode]>=1 && treeNode!=nil) {
-        BranchEnumerator *enumerator = [[BranchEnumerator alloc] initWithRoot:_baseDirectories andDepth: 1];
+        BranchEnumerator *enumerator = [[BranchEnumerator alloc] initWithParent:_baseDirectories andDepth: 1];
 
         TreeBranch* root;
         while (root = [enumerator nextObject]) {

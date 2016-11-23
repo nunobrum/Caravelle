@@ -57,6 +57,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
     NSURL           *_url;
     TreeItemTagEnum _tag;
     TreeBranch __weak *_parent; /* Declaring the parent as weak will solve the problem of doubled linked objects */
+    NSMutableDictionary *_store;
 }
 
 @property (weak) TreeBranch           *parent;
@@ -71,6 +72,11 @@ typedef NS_ENUM(NSInteger, ItemType) {
 +(id)treeItemForURL:(NSURL *)url parent:(id)parent;
 +(id)treeItemForMDItem:(NSMetadataItem *)mdItem parent:(id)parent;
 - (TreeItem*) root;
+
+-(void) addToStore:(NSDictionary*) dict;
+-(void) removeFromStore:(NSArray<NSString*>*)keys;
+-(id) objectWithKey:(NSString*) key;
+-(void) store:(id)object withKey:(NSString*)key;
 
 -(void) notifyChange;
 

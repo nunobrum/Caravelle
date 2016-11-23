@@ -1256,6 +1256,12 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return total;
 }
 
+-(NSUInteger) countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
+    return [self.children countByEnumeratingWithState:state
+                                              objects:buffer
+                                                count:len];
+}
+
 /* Returns if the node is expandable
  Note that if the _children is not populated it is assumed that the
  node is expandable. It is preferable to assume as yes and later correct. */
