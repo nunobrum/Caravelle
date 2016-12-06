@@ -38,6 +38,7 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(NSInteger) numberOfLeafsInBranch;
 -(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth;
+-(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSInteger) depth;
 
 //-(NSInteger) numberOfFileDuplicatesInBranch;
 

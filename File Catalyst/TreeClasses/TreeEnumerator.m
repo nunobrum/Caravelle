@@ -76,6 +76,21 @@
     return objCount;
 }
 
+-(NSInteger) count {
+    if (self->_parent == nil || self->_parent.children == nil)
+        return 0;
+    if (self->_filter) {
+        NSInteger __block count = 0;
+        [self->_parent.children enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            if ([self->_filter evaluateWithObject:obj])
+                count++;
+        }];
+        return count;
+    }
+    else {
+        return [self->_parent.children count];
+    }
+}
 
 @end
 
@@ -92,11 +107,13 @@
         // Start get all the multiples of till multiplicity is 0
         for (NSUInteger x= self->_itemIndex + 1 ; x < self->_parent.children.count; x++) {
             TreeItem *ref = [self->_parent itemAtIndex:x];
-            NSComparisonResult test = [self->_item.name compare:ref.name options:NSNumericSearch];
+            NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
             if (test == NSOrderedSame) {
                 // Stopping here
                 self->_multiplicity--;
                 self->_itemIndex = x;
+                self->_item = ref;
+                break;
             }
         }
     }
@@ -110,7 +127,7 @@
             self->_itemIndex = 0;
             self->_nextItem = nil; //Always initialize it to nil
             for (TreeItem* ref in self->_parent) {
-                NSComparisonResult test = [self->_item.name compare:ref.name options:NSNumericSearch];
+                NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
                 // NSNumericSearch makes the proper order 8,9,10,11 instead if 10,11,8,9
                 if (test==NSOrderedDescending) {
                     self->_nextItem = self->_item;
@@ -128,7 +145,7 @@
                         self->_nextItemIndex = x;
                     }
                     else {
-                        NSComparisonResult test = [self->_nextItem.name compare:ref.name options:NSNumericSearch];
+                        NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
                         if (test == NSOrderedDescending) {
                             self->_nextItem = ref;
                             self->_nextItemIndex = x;
@@ -145,7 +162,7 @@
             self->_nextItem = nil; //Always initialize it to nil
             if (self->_item != nil) { // Bypass the loop and returning nil will stop the loop.
                 for (TreeItem* ref in self->_parent) {
-                    NSComparisonResult test = [self->_item.name compare:ref.name options:NSNumericSearch];
+                    NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
                     // NSNumericSearch makes the proper order 8,9,10,11 instead if 10,11,8,9
                     if (test == NSOrderedSame) {
                         self->_multiplicity ++;
@@ -156,7 +173,7 @@
                             self->_nextItemIndex = x;
                         }
                         else {
-                            NSComparisonResult test = [self->_nextItem.name compare:ref.name options:NSNumericSearch];
+                            NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
                             if (test == NSOrderedDescending) {
                                 self->_nextItem = ref;
                                 self->_nextItemIndex = x;

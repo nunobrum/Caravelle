@@ -18,6 +18,7 @@
 
 -(instancetype) initWithParent:(TreeBranch*)parent;
 -(void) setFilter:(NSPredicate*) filter;
+-(NSInteger) count;
 
 @end
 

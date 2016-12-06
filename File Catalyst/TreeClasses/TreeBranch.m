@@ -1238,20 +1238,59 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return total;
 }
 
-// This returns the number of branches in a branch
+// This returns the number of leafs in a branch
+// this function is recursive to a given depth
+-(NSInteger) numberOLeafsInBranchTillDepth:(NSInteger) depth {
+    NSInteger total=0;
+    if (depth > 0) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item isFolder]) {
+                    total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
+                }
+                else
+                    total++;
+            }
+        }
+    }
+    return total;
+}
+
+
+// This returns the number of items in a branch
 // this function is recursive to a given depth
 -(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth {
     NSInteger total=0;
-    if (depth>0) {
+    if (depth > 0) {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
             if ([item isFolder]) {
-                total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
+                total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1] + 1;
             }
             else
                 total++;
         }
     }
+    }
+    return total;
+}
+
+// This returns the number of branches in a branch
+// this function is recursive to a given depth
+-(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSInteger) depth {
+    NSInteger total=0;
+    if (depth > 0) {
+        @synchronized(self) {
+            for (TreeItem *item in self->_children) {
+                if ([item isFolder]) {
+                    total += [(TreeBranch*)item numberOItemsWithPredicate:filter tillDepth:depth-1];
+                }
+                else {
+                    if (filter==nil || [filter evaluateWithObject:item]==YES)
+                        total++;
+                }
+            }
+        }
     }
     return total;
 }
@@ -1362,6 +1401,9 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
+    if (depth==0) {
+        return;
+    }
     @synchronized(self) {
         if (filter!=nil) {
             [collector addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];

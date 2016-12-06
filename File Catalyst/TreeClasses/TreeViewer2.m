@@ -11,129 +11,179 @@
 @implementation TreeViewer2
 
 
--(instancetype) initWithRoot:(TreeBranch*)parent andDepth:(NSUInteger)depth {
-    self->_indexes = malloc(depth*sizeof(NSUInteger));
+-(instancetype) initWithID:(NSString*)ID viewing:(TreeBranch*)parent depth:(NSUInteger)depth {
+    self->_iterators = [NSMutableArray arrayWithCapacity:depth];
     self->_maxLevel = depth;
-    self->_level = 0;
     self->_root = parent;
-    self->_curTree = parent;
-    for (int i =0 ; i < depth ; i++)
-        self->_indexes[i] = 0; // Resets the pointers.
+    self->_ID = ID;
+    self->_item = nil;
+    // Default sortDescriptor
+    self->sort = [NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
+    [self reset];
+    
     return self;
 }
 
+-(void) reset {
+    self->_currIndex = -1;
+    self->_level = 0;
+    self->_curTree = self->_root;
+    self->_item = self->_root;
+    [self->_iterators removeAllObjects];
+    se = [[SortedEnumerator alloc] initWithParent:_root sort:sort];
+}
+
+-(void) setSortDescriptor:(NSSortDescriptor *)sortDesc {
+    self->sort = sortDesc;
+}
+
 -(NSUInteger) count {
-    //return [_root numberOItemsInBranchTillDepth:_maxLevel];
-    NSUInteger level=0;
-    NSUInteger * idxs = malloc(_maxLevel*sizeof(NSUInteger));
-    TreeBranch *curBranch  = self->_root;
-    TreeItem *item;
-    NSUInteger answer=0;
-    
-    for (int i =0 ; i < _maxLevel ; i++)
-        idxs[i] = 0; // Resets the pointers.
-    
-    
-    while (1) {
-        if (idxs[level] < curBranch.numberOfItemsInNode) {
-            item = [curBranch itemAtIndex:idxs[level]];
-            while ([item hasChildren] && (level+1 < _maxLevel)) {
-                // Will trace that branch
-                level++;
-                idxs[level] = 0; // Reset the pointer
-                curBranch = (TreeBranch*)item;
-                item = [curBranch itemAtIndex:idxs[level]];
-            }
-            idxs[level] = idxs[level] + 1;
-            answer++;
-        }
-        else {
-            // It will go up the hierarchy
-            if (level > 0) {
-                idxs[level] = 0;
-                level--;
-                idxs[level] = idxs[level] + 1;
-                curBranch = curBranch.parent;
-                if (curBranch == nil)  {// If no link to parent, will have to navigate to it from root.
-                    TreeItem *cursor = self->_root;
-                    NSInteger level1 = 0;
-                    while (level1 <= level && [cursor hasChildren]) {
-                        curBranch = (TreeBranch*)cursor;
-                        cursor = [curBranch itemAtIndex:_indexes[level1++]];
-                    }
-                }
-            }
-            else // If it can't it stops the iteration
-                break;
-        }
-    }
+    NSUInteger answer = 0;
+    answer = [self->_root numberOItemsInBranchTillDepth: self->_maxLevel];
     return answer;
 }
 
--(TreeItem*) currObject {
-    TreeItem *cursor = self->_root;
-    NSInteger level = 0;
-    while ([cursor isFolder]) {
-        _curTree = (TreeBranch*) cursor;
-        if (level >= _level )
-            break;
-        cursor = [_curTree itemAtIndex:_indexes[level++]];
-    }
-    return cursor;
+-(TreeItem*) selectedItem {
+    return self->_item;
 }
 
--(TreeItem*) forward:(NSInteger) count {
+-(TreeItem*) seek:(NSInteger) index {
+    NSInteger count = index - _currIndex;
     if (count < 0) {
         // If negative will restart from 0
         count = _currIndex + count;
-        _level = 0;
-        for (int i =0 ; i < _maxLevel ; i++)
-            self->_indexes[i] = 0; // Resets the pointers.
-        _curTree = self->_root;
-        _currIndex = 0;
+        [self reset];
+        count  = 1;
     }
-    TreeItem *item ;
+    //else
+    //    se = _iterators[_level];
     
-    while (1) {
-        if (_indexes[_level] < _curTree.numberOfItemsInNode) {
-            item = [_curTree itemAtIndex:_indexes[_level]];
-            while ([item hasChildren] && (_level+1 < _maxLevel)) {
-                // Will trace that branch
+    while (count) {
+        _item = [se nextObject];
+        if (_item) {
+            if ([_item hasChildren] && (_level+1 < _maxLevel)) {
+                // Will register it's section and index number
+#ifdef USE_STORE
+                NSString *storeKey = [self.ID stringByAppendingString:ITEM_INDEX];
+                [_item store:[NSNumber numberWithUnsignedInteger:_currIndex] withKey:storeKey];
+                storeKey = [self.ID stringByAppendingString:SECTION_INDEX];
+                [_item store:[NSNumber numberWithUnsignedInteger:_sectionIndex] withKey:storeKey];
+#endif
+                // Will trace that branch, but first store the current one
+                [_iterators setObject:se atIndexedSubscript:_level];
                 _level++;
-                _indexes[_level] = 0; // Reset the pointer
-                _curTree = (TreeBranch*) item;
-                item = [_curTree itemAtIndex:_indexes[_level]];
+                se = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort];
             }
-            if (count == 0) break;
             count--;
-            _indexes[_level] = _indexes[_level] + 1;
             _currIndex++;
         }
         else {
             // It will go up the hierarchy
             if (_level > 0) {
-                _indexes[_level] = 0;
                 _level--;
-                _indexes[_level] = _indexes[_level] + 1;
-                _curTree = _curTree.parent;
-                if (_curTree == nil) {// If no link to parent, will have to navigate to it from root.
-                    TreeItem *cursor = self->_root;
-                    NSInteger level1 = 0;
-                    while (level1 <= _level && [cursor hasChildren]) {
-                        _curTree = (TreeBranch*)cursor;
-                        cursor = [_curTree itemAtIndex:_indexes[level1++]];}
-                }
+                se = _iterators[_level];
             }
             else // If it can't it stops the iteration
                 return nil;
         }
     }
-    return item;
+    return _item;
+}
+
+-(TreeItem*) nextObject {
+    return [self seek:_currIndex+1];
 }
 
 -(TreeItem*) itemAtIndex:(NSUInteger)index {
-    return [self forward:index - _currIndex];
+    return [self seek:index];
 }
 
+-(NSUInteger) sectionCount {
+    NSUInteger answer;
+    NSPredicate *onlySections = [NSPredicate predicateWithFormat:@"self.hasChildren"];
+    answer = [self->_root numberOItemsWithPredicate:onlySections tillDepth:self->_maxLevel];
+    return answer;
+}
+
+-(TreeBranch*) sectionNumber:(NSUInteger) section {
+    if(section == 0)
+        return self->_root;
+    
+#ifdef USE_STORE
+    NSString *sectionIndexKey = [self.ID stringByAppendingString:SECTION_INDEX];
+    NSString *sectionCountKey = [self.ID stringByAppendingString:SECTION_COUNT];
+    while (tb = [fe nextObject]) {
+        NSUInteger tbSection = [[tb objectWithKey:sectionIndexKey] unsignedIntegerValue];
+        if (tbSection >= section) {
+            NSUInteger tbSectionCount = [[tb objectWithKey:sectionCountKey] unsignedIntegerValue];
+            if (section < (tbSection+tbSectionCount)) {
+                if (tbSectionCount == 1) { //  condition assures there are no further iterations to make
+                    return tb;
+                }
+                fe = [[FilterEnumerator alloc] initWithParent:tb];
+            }
+        }
+        if ([tb.hasChildren])
+            }
+#else
+    FilterEnumerator *fe = [[FilterEnumerator alloc] initWithParent:self->_root];
+    NSPredicate *filter = [NSPredicate predicateWithFormat:@"self.hasChildren"];
+    [fe setFilter:filter];
+    TreeBranch *tb;
+    NSInteger level = 0;
+    NSUInteger count = 0;
+    NSMutableArray *iterators = [NSMutableArray arrayWithCapacity:self->_maxLevel];
+    
+    while (count < section) {
+        tb = [fe nextObject];
+        if (tb) {
+            if (level+1 < _maxLevel) {
+                // Will register it's section and index number
+                [iterators setObject:fe atIndexedSubscript:level];
+                // Will trace that branch
+                level++;
+                fe = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort];
+            }
+            count++;
+        }
+        else {
+            // It will go up the hierarchy
+            if (_level > 0) {
+                _level--;
+                fe = iterators[level];
+            }
+            else // If it can't it stops the iteration
+                return nil;
+        }
+    }
+#endif
+    return tb;
+}
+
+-(TreeItem*) itemAtIndexPath:(NSIndexPath *)indexPath {
+    TreeBranch *sec = [self sectionNumber: indexPath.section];
+    return [sec itemAtIndex:indexPath.item];
+}
+
+-(BOOL) isGroup {
+    return ((_level+1) < _maxLevel);
+}
+
+-(NSString*) groupTitle {
+    TreeBranch *cBranch ;
+    NSInteger level1 = 0;
+    NSString *answer = [NSString stringWithFormat:@"%lu",(unsigned long)self->_level];
+    while (level1 < _level ) {
+        cBranch = self->_iterators[level1].parent;
+        answer = [answer stringByAppendingString:[NSString stringWithFormat:@"|%@",cBranch.name]];
+        level1++;
+    }
+    return answer;
+}
+
+
+-(NSUInteger) itemCountAtSection:(NSUInteger)section {
+    return [[self sectionNumber:section] numberOfItemsInNode];
+}
 @end
 
