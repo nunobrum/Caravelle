@@ -24,4 +24,9 @@
 
 -(BOOL) startEditInIcon:(FileCollectionViewItem*) icon;
 
+-(id) objectValueAtIndexPath:(NSIndexPath*)indexPath;
+-(NSMutableArray *) objectsAtIndexPathSet:(NSSet<NSIndexPath*>*)indexPathSet;
+-(NSIndexPath*) indexPathForRepresentedObject:(id)representedObject;
+-(NSSet <NSIndexPath*> *) indexPathsWithHashes:(NSArray*) hashes;
+
 @end

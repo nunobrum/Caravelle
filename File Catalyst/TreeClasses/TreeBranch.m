@@ -816,7 +816,7 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 }
 
 -(TreeItem*) _nearestItemWithPathComponents:(NSArray*) pComp {
-    NSLog(@"DEBUG;TreeBranch._huntPathComponents:(%@)", pComp);
+    //NSLog(@"DEBUG;TreeBranch._huntPathComponents:(%@)", pComp);
     
     NSArray *cpself = [self pathComponents];
     
@@ -1185,19 +1185,19 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 #pragma mark - number of elements
 
--(NSInteger) numberOfLeafsInNode {
-    NSInteger total=0;
-    @synchronized(self) {
-        if (self->_children!=nil) {
-            for (TreeItem *item in self->_children) {
-                if ([item isLeaf]) {
-                    total++;
-                }
-            }
-        }
-    }
-    return total;
-}
+//-(NSInteger) numberOfLeafsInNode {
+//    NSInteger total=0;
+//    @synchronized(self) {
+//        if (self->_children!=nil) {
+//            for (TreeItem *item in self->_children) {
+//                if ([item isLeaf]) {
+//                    total++;
+//                }
+//            }
+//        }
+//    }
+//    return total;
+//}
 
 -(NSInteger) numberOfBranchesInNode {
     NSInteger total=0;
@@ -1240,61 +1240,57 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 // This returns the number of leafs in a branch
 // this function is recursive to a given depth
--(NSInteger) numberOLeafsInBranchTillDepth:(NSInteger) depth {
-    NSInteger total=0;
-    if (depth > 0) {
-        @synchronized(self) {
-            for (TreeItem *item in self->_children) {
-                if ([item isFolder]) {
-                    total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
-                }
-                else
-                    total++;
-            }
-        }
-    }
-    return total;
-}
+//-(NSInteger) numberOLeafsInBranchTillDepth:(NSInteger) depth {
+//    NSInteger total=0;
+//    if (depth > 0) {
+//        @synchronized(self) {
+//            for (TreeItem *item in self->_children) {
+//                if ([item isFolder]) {
+//                    total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
+//                }
+//                else
+//                    total++;
+//            }
+//        }
+//    }
+//    return total;
+//}
 
 
 // This returns the number of items in a branch
 // this function is recursive to a given depth
--(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth {
+-(NSInteger) numberOItemsInBranchTillDepth:(NSUInteger) depth {
     NSInteger total=0;
-    if (depth > 0) {
     @synchronized(self) {
         for (TreeItem *item in self->_children) {
-            if ([item isFolder]) {
-                total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1] + 1;
+            if ([item isFolder] && depth > 0) {
+                total += [(TreeBranch*)item numberOItemsInBranchTillDepth:depth-1];
             }
-            else
-                total++;
+            total++;
         }
-    }
     }
     return total;
 }
 
 // This returns the number of branches in a branch
 // this function is recursive to a given depth
--(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSInteger) depth {
+-(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth {
     NSInteger total=0;
-    if (depth > 0) {
-        @synchronized(self) {
-            for (TreeItem *item in self->_children) {
-                if ([item isFolder]) {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            if (filter==nil || [filter evaluateWithObject:item]==YES)
+            {
+                if ([item isFolder] && depth > 0) {
                     total += [(TreeBranch*)item numberOItemsWithPredicate:filter tillDepth:depth-1];
                 }
-                else {
-                    if (filter==nil || [filter evaluateWithObject:item]==YES)
-                        total++;
-                }
+                total++;
             }
         }
     }
     return total;
 }
 
+// This makes the TreeBranch enumeratable, by passing the Fast Enumerating method to the children array
 -(NSUInteger) countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
     return [self.children countByEnumeratingWithState:state
                                               objects:buffer
@@ -1388,22 +1384,19 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     return NULL;
 }
 
--(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate *)filter {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        if (filter==nil)
-            [answer addObjectsFromArray:self->_children];
-        else
-            [answer addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];
-        return answer;
-    }
-    return NULL;
-}
+//-(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate *)filter {
+//    @synchronized(self) {
+//        NSMutableArray *answer = [[NSMutableArray new] init];
+//        if (filter==nil)
+//            [answer addObjectsFromArray:self->_children];
+//        else
+//            [answer addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];
+//        return answer;
+//    }
+//    return NULL;
+//}
 
--(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
-    if (depth==0) {
-        return;
-    }
+-(void) harvestItemsInBranch:(NSMutableArray*)collector depth:(NSUInteger)depth filter:(NSPredicate*)filter {
     @synchronized(self) {
         if (filter!=nil) {
             [collector addObjectsFromArray:[self->_children filteredArrayUsingPredicate:filter]];
@@ -1411,77 +1404,88 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         else {
             [collector addObjectsFromArray: self->_children];
         }
-        if (depth > 1) {
+        if (depth > 0) {
             for (TreeItem *item in self->_children) {
                 if ([item isFolder]) {
-                    [(TreeBranch*)item _harvestItemsInBranch: collector depth:depth-1 filter:filter];
+                    [(TreeBranch*)item harvestItemsInBranch: collector depth:depth-1 filter:filter];
                 }
             }
         }
     }
 }
--(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth {
-    NSMutableArray *answer = [[NSMutableArray new] init];
-    [self _harvestItemsInBranch:answer depth:depth filter:nil];
-    return answer;
+
+-(void) harvestItemsInBranch:(NSMutableArray*)collector
+                       depth:(NSUInteger)depth
+                   withBlock:(BOOL(^)(TreeItem* item, NSUInteger level))filter {
+    @synchronized(self) {
+        for (TreeItem *item in self->_children) {
+            BOOL test = filter(item, depth);
+            if (test) [collector addObject:item];
+            if ([item isFolder] && depth > 0) {
+                [(TreeBranch*)item harvestItemsInBranch: collector
+                                                  depth:depth-1
+                                              withBlock:filter];
+            }
+        }
+    }
 }
 
 -(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
     NSMutableArray *answer = [[NSMutableArray new] init];
-    [self _harvestItemsInBranch:answer depth:depth  filter:filter];
+    [self harvestItemsInBranch:answer depth:depth  filter:filter];
     return answer;
 }
 
--(NSMutableArray*) leafsInNode {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        for (TreeItem *item in self->_children) {
-            if ([item isLeaf]) {
-                [answer addObject:item];
-            }
-        }
-        return answer;
-    }
-    return nil;
-}
+//-(NSMutableArray*) leafsInNode {
+//    @synchronized(self) {
+//        NSMutableArray *answer = [[NSMutableArray new] init];
+//        for (TreeItem *item in self->_children) {
+//            if ([item isLeaf]) {
+//                [answer addObject:item];
+//            }
+//        }
+//        return answer;
+//    }
+//    return nil;
+//}
 
--(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate *)filter {
-    @synchronized(self) {
-        NSMutableArray *answer = [[NSMutableArray new] init];
-        for (TreeItem *item in self->_children) {
-            if ([item isLeaf] && (filter==nil || [filter evaluateWithObject:item])) {
-                [answer addObject:item];
-            }
-        }
-        return answer;
-    }
-    return nil;
-}
+//-(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate *)filter {
+//    @synchronized(self) {
+//        NSMutableArray *answer = [[NSMutableArray new] init];
+//        for (TreeItem *item in self->_children) {
+//            if ([item isLeaf] && (filter==nil || [filter evaluateWithObject:item])) {
+//                [answer addObject:item];
+//            }
+//        }
+//        return answer;
+//    }
+//    return nil;
+//}
 
--(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
-    if (depth ==0) return;
-    @synchronized(self) {
-        for (TreeItem *item in self->_children) {
-            if ([item isFolder] && ((TreeBranch*)item)->_children !=nil) {
-                [(TreeBranch*)item _harvestLeafsInBranch: collector depth:depth-1 filter:filter];
-            }
-            else if (filter==nil || [filter evaluateWithObject:item]) {
-                [collector addObject:item];
-            }
-        }
-    }
-}
--(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth {
-    NSMutableArray *answer = [[NSMutableArray new] init];
-    [self _harvestLeafsInBranch: answer depth:depth filter:nil];
-    return answer;
-}
+//-(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter {
+//    if (depth ==0) return;
+//    @synchronized(self) {
+//        for (TreeItem *item in self->_children) {
+//            if ([item isFolder] && ((TreeBranch*)item)->_children !=nil) {
+//                [(TreeBranch*)item _harvestLeafsInBranch: collector depth:depth-1 filter:filter];
+//            }
+//            else if (filter==nil || [filter evaluateWithObject:item]) {
+//                [collector addObject:item];
+//            }
+//        }
+//    }
+//}
+//-(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth {
+//    NSMutableArray *answer = [[NSMutableArray new] init];
+//    [self _harvestLeafsInBranch: answer depth:depth filter:nil];
+//    return answer;
+//}
 
--(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
-    NSMutableArray *answer = [[NSMutableArray new] init];
-    [self _harvestLeafsInBranch: answer depth:depth filter:filter];
-    return answer;
-}
+//-(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth {
+//    NSMutableArray *answer = [[NSMutableArray new] init];
+//    [self _harvestLeafsInBranch: answer depth:depth filter:filter];
+//    return answer;
+//}
 
 -(NSMutableArray*) branchesInNode {
     @synchronized(self) {

@@ -206,6 +206,9 @@
 		BCADC24E1B426AC100245F1D /* DuplicateInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC24D1B426AC100245F1D /* DuplicateInformation.m */; };
 		BCB550401C35725B00A0A883 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BCB5503F1C35725B00A0A883 /* StoreKit.framework */; };
 		BCDCA49C1BDAE47D00D7D09C /* TreeCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */; };
+		BCDEBF671E13AA9C00224061 /* CollectionHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BCDEBF661E13AA9C00224061 /* CollectionHeaderView.xib */; };
+		BCDEBF6A1E13ABC600224061 /* CollectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDEBF691E13ABC600224061 /* CollectionHeaderView.m */; };
+		BCDEBF6D1E142BEB00224061 /* CollectionViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDEBF6C1E142BEB00224061 /* CollectionViewer.m */; };
 		BCEA2CEA1C358C23006D4645 /* libssl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BCEA2CE91C358C23006D4645 /* libssl.tbd */; };
 		BCEA2CEC1C358C3B006D4645 /* libcrypto.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = BCEA2CEB1C358C3B006D4645 /* libcrypto.tbd */; };
 		BCEB371D1BA940AD00B1DAA9 /* asn_codecs_prim.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36EA1BA940AD00B1DAA9 /* asn_codecs_prim.c */; };
@@ -423,6 +426,11 @@
 		BCB5503F1C35725B00A0A883 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeCollection.m; sourceTree = "<group>"; };
 		BCDCA49B1BDAE47D00D7D09C /* TreeCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeCollection.h; sourceTree = "<group>"; };
+		BCDEBF661E13AA9C00224061 /* CollectionHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CollectionHeaderView.xib; path = BrowserClasses/CollectionHeaderView.xib; sourceTree = "<group>"; };
+		BCDEBF681E13ABC600224061 /* CollectionHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollectionHeaderView.h; path = BrowserClasses/CollectionHeaderView.h; sourceTree = "<group>"; };
+		BCDEBF691E13ABC600224061 /* CollectionHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CollectionHeaderView.m; path = BrowserClasses/CollectionHeaderView.m; sourceTree = "<group>"; };
+		BCDEBF6B1E142BEB00224061 /* CollectionViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollectionViewer.h; sourceTree = "<group>"; };
+		BCDEBF6C1E142BEB00224061 /* CollectionViewer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CollectionViewer.m; sourceTree = "<group>"; };
 		BCEA2CE91C358C23006D4645 /* libssl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libssl.tbd; path = usr/lib/libssl.tbd; sourceTree = SDKROOT; };
 		BCEA2CEB1C358C3B006D4645 /* libcrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcrypto.tbd; path = usr/lib/libcrypto.tbd; sourceTree = SDKROOT; };
 		BCEB36E61BA8ACFF00B1DAA9 /* libheimdal-asn1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libheimdal-asn1.dylib"; path = "usr/lib/libheimdal-asn1.dylib"; sourceTree = SDKROOT; };
@@ -479,6 +487,7 @@
 		BCEB371B1BA940AD00B1DAA9 /* xer_support.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xer_support.c; path = ASN1C/xer_support.c; sourceTree = "<group>"; };
 		BCEB371C1BA940AD00B1DAA9 /* xer_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xer_support.h; path = ASN1C/xer_support.h; sourceTree = "<group>"; };
 		BCEF551F1C72673700E415FE /* AppleIncRootCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = AppleIncRootCertificate.cer; sourceTree = "<group>"; };
+		BCF018841E14F904006944A9 /* DataSourceProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataSourceProtocol.h; path = BrowserClasses/DataSourceProtocol.h; sourceTree = "<group>"; };
 		BCF1AF801C42810000E47E2C /* DuplicateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateDelegate.h; path = Duplicates/DuplicateDelegate.h; sourceTree = "<group>"; };
 		BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateDelegate.m; path = Duplicates/DuplicateDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -741,6 +750,9 @@
 				3CEB61E31ACFB03900E09A85 /* IconView.xib */,
 				3CEB61E41ACFB03900E09A85 /* IconViewController.h */,
 				3CEB61E51ACFB03900E09A85 /* IconViewController.m */,
+				BCDEBF661E13AA9C00224061 /* CollectionHeaderView.xib */,
+				BCDEBF681E13ABC600224061 /* CollectionHeaderView.h */,
+				BCDEBF691E13ABC600224061 /* CollectionHeaderView.m */,
 				3CFBF5BC1AD953FC00185505 /* BrowserIconView.h */,
 				3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */,
 				BC581BB51D91C64900B66C0E /* FileCollectionViewItem.h */,
@@ -769,6 +781,8 @@
 				BC69D07A1DD8A41A00CF4D9C /* TreeViewer.m */,
 				BC69D07E1DD8A6BD00CF4D9C /* TreeViewer2.h */,
 				BC69D07C1DD8A69000CF4D9C /* TreeViewer2.m */,
+				BCDEBF6B1E142BEB00224061 /* CollectionViewer.h */,
+				BCDEBF6C1E142BEB00224061 /* CollectionViewer.m */,
 				BC69D07F1DD909B900CF4D9C /* TreeEnumerator.h */,
 				BC69D0801DD90A2400CF4D9C /* TreeEnumerator.m */,
 				BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */,
@@ -811,6 +825,7 @@
 				3C29464218F9B87C002B633C /* FolderCellView.m */,
 				3C29464818F9B87C002B633C /* ImagePreviewCell.h */,
 				3C29464318F9B87C002B633C /* ImagePreviewCell.m */,
+				BCF018841E14F904006944A9 /* DataSourceProtocol.h */,
 				3CEB61ED1ACFD09D00E09A85 /* NodeViewController.h */,
 				3CEB61EE1ACFD09D00E09A85 /* NodeViewController.m */,
 				3CF5DA871A5F269E00786D64 /* BrowserOutlineView.h */,
@@ -1110,6 +1125,7 @@
 				3CEA675318F87C2F0080C4FC /* Credits.rtf in Resources */,
 				BCADC2421B3BE10E00245F1D /* PrivateFolderBadgeIcon.icns in Resources */,
 				3CEB61E61ACFB03900E09A85 /* IconView.xib in Resources */,
+				BCDEBF671E13AA9C00224061 /* CollectionHeaderView.xib in Resources */,
 				3CF5B6C31ABF76630065E543 /* GenericFolderIcon.icns in Resources */,
 				BCEF55201C72673700E415FE /* AppleIncRootCertificate.cer in Resources */,
 				3C84EFE91A0CDDC300ED6392 /* AvailableColumns.plist in Resources */,
@@ -1231,6 +1247,7 @@
 				BCEB371D1BA940AD00B1DAA9 /* asn_codecs_prim.c in Sources */,
 				3CF8466519EB21FC008C691E /* searchTree.m in Sources */,
 				BCEB37341BA940AD00B1DAA9 /* xer_support.c in Sources */,
+				BCDEBF6D1E142BEB00224061 /* CollectionViewer.m in Sources */,
 				BC6C2AAF1B697095009FD1D8 /* DuplicateModeStartWindow.m in Sources */,
 				3CEB61EC1ACFCE7400E09A85 /* TableViewController.m in Sources */,
 				BCEB372A1BA940AD00B1DAA9 /* NativeInteger.c in Sources */,
@@ -1243,6 +1260,7 @@
 				BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */,
 				3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */,
 				BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */,
+				BCDEBF6A1E13ABC600224061 /* CollectionHeaderView.m in Sources */,
 				BCEB37221BA940AD00B1DAA9 /* BIT_STRING.c in Sources */,
 				BC6F02D41C712A8C0090BF9A /* SideBarObject.m in Sources */,
 				3CF32B9819FCED7700B14A85 /* CatalogBranch.m in Sources */,

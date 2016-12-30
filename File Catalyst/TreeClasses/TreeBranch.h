@@ -32,39 +32,32 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
 
 
--(NSInteger) numberOfLeafsInNode;
 -(NSInteger) numberOfBranchesInNode;
 -(NSInteger) numberOfItemsInNode;
 
 -(NSInteger) numberOfLeafsInBranch;
--(NSInteger) numberOItemsInBranchTillDepth:(NSInteger) depth;
--(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSInteger) depth;
+-(NSInteger) numberOItemsInBranchTillDepth:(NSUInteger) depth;
+-(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;
 
-//-(NSInteger) numberOfFileDuplicatesInBranch;
 
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
--(TreeLeaf*) leafAtIndex:(NSUInteger)index;
 -(NSInteger) indexOfItem:(TreeItem*)item;
 -(TreeItem*) itemAtIndex:(NSUInteger)index;
 
--(long long) sizeOfNode;
 
 -(NSMutableArray*) children; // Read only access to the children
-//-(FileCollection*) filesInNode;
-//-(FileCollection*) filesInBranch;
 -(NSMutableArray*) itemsInNode;
--(NSMutableArray*) itemsInBranchTillDepth:(NSInteger)depth;
--(NSMutableArray*) leafsInNode;
--(NSMutableArray*) leafsInBranchTillDepth:(NSInteger)depth;
 -(NSMutableArray*) branchesInNode;
 
 
--(NSMutableArray*) itemsInNodeWithPredicate:(NSPredicate*)filter;
--(NSMutableArray*) leafsInNodeWithPredicate:(NSPredicate*)filter;
+-(void) harvestItemsInBranch:(NSMutableArray*)collector depth:(NSUInteger)depth filter:(NSPredicate*)filter;
 -(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
--(NSMutableArray*) leafsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
+-(void) harvestItemsInBranch:(NSMutableArray*)collector
+                       depth:(NSUInteger)depth
+                   withBlock:(BOOL(^)(TreeItem* item, NSUInteger level))filter;
 
 // Duplicate Support
+//-(NSInteger) numberOfFileDuplicatesInBranch;
 //-(NSInteger)       numberOfDuplicatesInNode;
 //-(NSInteger)       numberOfDuplicatesInBranch;
 //-(NSInteger)       numberOfBranchesWithDuplicatesInNode;
@@ -104,9 +97,6 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(void) requestFlatForView:(id)view;
 
 -(void) notifyDidChangeTreeBranchPropertyChildren;
-
-// Private Method
-//-(void) _harvestItemsInBranch:(NSMutableArray*)collector;
 
 /*
  * Item Manipulation methods

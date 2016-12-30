@@ -10,8 +10,8 @@
 
 @interface TreeBranch( PrivateMethods )
 
--(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
--(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
+//-(void) _harvestItemsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
+//-(void) _harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSInteger)depth filter:(NSPredicate*)filter;
 
 -(void) _performSelectorInUndeveloppedBranches:(SEL)selector; // Used for branch expansion
 //-(void) _performSelector:(SEL)selector inItemsWithPredicate:(NSPredicate*)predicte; // Used for tree expansion

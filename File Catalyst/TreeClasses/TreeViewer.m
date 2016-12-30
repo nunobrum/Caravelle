@@ -8,31 +8,22 @@
 
 #import "TreeViewer.h"
 
-//#define USE_STORE YES
-
-#ifdef USE_STORE
-#define ITEM_COUNT    @"ItemCount"
-#define SECTION_COUNT @"SectionCount"
-#define ITEM_INDEX    @"ItemIndex"
-#define SECTION_INDEX @"SectionIndex"
-#endif
 
 @implementation TreeViewer
 
-
--(instancetype) initWithID:(NSString*)ID viewing:(TreeBranch*)parent depth:(NSUInteger)depth {
+-(instancetype) initWithParent:(TreeBranch *)parent depth:(NSUInteger)depth {
     self->_iterators = [NSMutableArray arrayWithCapacity:depth];
     self->_maxLevel = depth;
     self->_root = parent;
-    self->_ID = ID;
     self->_item = nil;
     // Default sortDescriptor
     self->sort = [NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
-    [self reset];
-    
+    self->_currIndex = NSIntegerMax; // This will trigger a reset at the first seek
+    self->_needsRefresh = YES;
     return self;
 }
 
+#pragma mark - TreeViewerProtocol
 -(void) reset {
     self->_currIndex = -1;
     self->_level = 0;
@@ -40,11 +31,55 @@
     self->_curTree = self->_root;
     self->_item = self->_root;
     [self->_iterators removeAllObjects];
-    se = [[SortedEnumerator alloc] initWithParent:_root sort:sort];
+    se = [[SortedEnumerator alloc] initWithParent:self->_root sort:self->sort];
+}
+
+-(BOOL) needsRefresh {
+    return self->_needsRefresh;
+}
+
+-(void) setParent:(TreeBranch *)parent {
+    if (parent != self->_root) {
+        self->_root = parent;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(TreeBranch*) parent {
+    return self->_root;
+}
+
+-(void) setDepth:(NSInteger)depth {
+    if (depth != self->_maxLevel) {
+        self->_maxLevel = depth;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSInteger) depth {
+    return self->_maxLevel;
 }
 
 -(void) setSortDescriptor:(NSSortDescriptor *)sortDesc {
-    self->sort = sortDesc;
+    if (sortDesc != self->sort)  {
+        self->sort = sortDesc;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSSortDescriptor*) sortDescriptor {
+    return self->sort;
+}
+
+-(void) setFilter:(NSPredicate *)filter {
+    if (filter != self->_filter)  {
+        self->_filter = filter;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSPredicate*) filter {
+    return self->_filter;
 }
 
 -(NSUInteger) count {
@@ -53,17 +88,12 @@
     return answer;
 }
 
--(TreeItem*) selectedItem {
-    return self->_item;
-}
-
 -(TreeItem*) seek:(NSInteger) index {
     NSInteger count = index - _currIndex;
     if (count < 0) {
         // If negative will restart from 0
-        count = _currIndex + count;
         [self reset];
-        count  = 1;
+        count  = index + 1;
     }
     //else
     //    se = _iterators[_level];
@@ -72,13 +102,6 @@
         _item = [se nextObject];
         if (_item) {
             if ([_item hasChildren] && (_level+1 < _maxLevel)) {
-                // Will register it's section and index number
-#ifdef USE_STORE
-                NSString *storeKey = [self.ID stringByAppendingString:ITEM_INDEX];
-                [_item store:[NSNumber numberWithUnsignedInteger:_currIndex] withKey:storeKey];
-                storeKey = [self.ID stringByAppendingString:SECTION_INDEX];
-                [_item store:[NSNumber numberWithUnsignedInteger:_sectionIndex] withKey:storeKey];
-#endif
                 // Will trace that branch, but first store the current one
                 [_iterators setObject:se atIndexedSubscript:_level];
                 _level++;
@@ -111,74 +134,9 @@
     return [self seek:index];
 }
 
--(NSUInteger) sectionCount {
-    NSUInteger answer;
-    NSPredicate *onlySections = [NSPredicate predicateWithFormat:@"self.hasChildren"];
-    answer = [self->_root numberOItemsWithPredicate:onlySections tillDepth:self->_maxLevel];
-    return answer;
-}
 
--(TreeBranch*) sectionNumber:(NSUInteger) section {
-    if(section == 0)
-        return self->_root;
-
-#ifdef USE_STORE
-    NSString *sectionIndexKey = [self.ID stringByAppendingString:SECTION_INDEX];
-    NSString *sectionCountKey = [self.ID stringByAppendingString:SECTION_COUNT];
-    while (tb = [fe nextObject]) {
-        NSUInteger tbSection = [[tb objectWithKey:sectionIndexKey] unsignedIntegerValue];
-        if (tbSection >= section) {
-            NSUInteger tbSectionCount = [[tb objectWithKey:sectionCountKey] unsignedIntegerValue];
-            if (section < (tbSection+tbSectionCount)) {
-                if (tbSectionCount == 1) { //  condition assures there are no further iterations to make
-                    return tb;
-                }
-                fe = [[FilterEnumerator alloc] initWithParent:tb];
-            }
-        }
-        if ([tb.hasChildren])
-    }
-#else
-    FilterEnumerator *fe = [[FilterEnumerator alloc] initWithParent:self->_root];
-    NSPredicate *filter = [NSPredicate predicateWithFormat:@"self.hasChildren"];
-    [fe setFilter:filter];
-    TreeBranch *tb;
-    NSInteger level = 0;
-    NSUInteger count = 0;
-    NSMutableArray *iterators = [NSMutableArray arrayWithCapacity:self->_maxLevel];
-    
-    while (count < section) {
-        tb = [fe nextObject];
-        if (tb) {
-            if (level+1 < _maxLevel) {
-                // Will register it's section and index number
-                [iterators setObject:fe atIndexedSubscript:level];
-                // Will trace that branch
-                level++;
-                fe = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort];
-            }
-            count++;
-        }
-        else {
-            // It will go up the hierarchy
-            if (_level > 0) {
-                _level--;
-                fe = iterators[level];
-            }
-            else // If it can't it stops the iteration
-                return nil;
-        }
-    }
-#endif
-    return tb;
-}
-
--(TreeItem*) itemAtIndexPath:(NSIndexPath *)indexPath {
-    TreeBranch *sec = [self sectionNumber: indexPath.section];
-    return [sec itemAtIndex:indexPath.item];
-}
-
--(BOOL) isGroup {
+-(BOOL) isGroup:(NSUInteger)index {
+    [self seek:index];
     return self->_isGroup;
 }
 
@@ -195,9 +153,26 @@
     return answer;
 }
 
+//-(NSMutableArray <TreeItem*> *) itemsAtIndexes:(NSIndexSet *)indexes {
+//    NSMutableArray <TreeItem*> *answer = [NSMutableArray arrayWithCapacity:indexes.count];
+//    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+//        TreeItem *ti = [self seek:idx];
+//        [answer addObject:ti];
+//    }];
+//    return answer;
+//}
 
--(NSUInteger) itemCountAtSection:(NSUInteger)section {
-    return [[self sectionNumber:section] numberOfItemsInNode];
-}
+//-(NSIndexSet*) indexesWithHashes:(NSArray *)hashes {
+//    assert(false); //TODO:!!! Implement this
+//    /*NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+//     //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
+//     if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
+//     return YES;
+//     else
+//     return NO;
+//     }];
+//     return indexes;*/
+//    return nil;
+//}
 
 @end

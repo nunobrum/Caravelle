@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DataSourceProtocol.h"
 #import "TreeBranch.h"
 #import "TreeEnumerator.h"
 
-@interface CollectionViewer : NSObject  {
+@interface CollectionViewer : NSObject <TreeViewerProtocol>  {
     
     // This class will enumerate all leafs and branches of the Tree
     NSInteger _currIndex;
@@ -24,10 +25,16 @@
     
     NSMutableArray *_sections;
     NSSortDescriptor *sort;
+    NSPredicate *_filter;
+    BOOL _needsRefresh;
 }
+-(instancetype) initWithParent:(TreeBranch *)parent depth:(NSUInteger)depth;
 
 -(NSInteger) sectionCount;
 -(TreeBranch*) sectionNumber:(NSInteger)number;
+-(NSInteger) itemCountAtSection:(NSInteger)section;
+-(TreeItem*) itemAtIndexPath:(NSIndexPath *)indexPath;
+-(NSString*) groupTitle;
 
 
 @end

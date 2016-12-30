@@ -32,6 +32,45 @@
         return nil;
 }
 
+-(id) objectValueAtIndexPath:(NSIndexPath*)indexPath {
+    id item = [self itemAtIndexPath:indexPath];
+    NSAssert([item isKindOfClass:[FileCollectionViewItem class]],@"Expected FileCollectionViewItem class");
+    return [(FileCollectionViewItem*)item representedObject];
+}
+
+-(NSMutableArray *) objectsAtIndexPathSet:(NSSet<NSIndexPath*>*)indexPathSet {
+    NSMutableArray *answer;
+    answer = [NSMutableArray arrayWithCapacity:indexPathSet.count];
+    [indexPathSet enumerateObjectsUsingBlock:^(NSIndexPath * _Nonnull obj, BOOL * _Nonnull stop) {
+        id reprObj = [self objectValueAtIndexPath:obj];
+        [answer addObject:reprObj];
+    }];
+    return answer;
+}
+
+-(NSIndexPath*) indexPathForRepresentedObject:(id)representedObject {
+    for (FileCollectionViewItem* item in self.content) {
+        if ([item.representedObject isEqualTo:representedObject]) {
+            return [self indexPathForItem:item];
+        }
+    }
+    return nil;
+}
+
+-(NSSet <NSIndexPath*> *) indexPathsWithHashes:(NSArray*) hashes {
+    NSMutableSet <NSIndexPath*> *answer;
+    answer = [[NSMutableSet alloc] initWithCapacity:hashes.count];
+    
+    for (FileCollectionViewItem* item in self.content) {
+        id hash = [item.representedObject hashObject];
+        if ([hashes containsObject:hash]) {
+            NSIndexPath *indexPath = [self indexPathForItem:item];
+            [answer addObject:indexPath];
+        }
+    }
+    return answer;
+}
+
 -(FileCollectionViewItem*) lastClicked {
     return self->_lastClicked;
 }

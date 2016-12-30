@@ -19,6 +19,17 @@
     return self;
 }
 
+-(instancetype) initWithParent:(TreeBranch *)parent filter:(NSPredicate *)filter {
+    self->_index = 0;
+    self->_parent = parent;
+    self->_filter = filter;
+    return self;
+}
+
+-(void) reset {
+    self->_index = 0;
+}
+
 -(id) nextObject {
     if (_index < [self->_parent numberOfItemsInNode]) {
         if (self->_filter) {
@@ -36,6 +47,7 @@
 }
 
 -(NSUInteger) countByEnumeratingWithState:(NSFastEnumerationState *)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len {
+    static unsigned long dummy_variable_just_to_make_it_work;
     // plan of action: extra[0] will contain pointer to node
     // that contains next object to iterate
     // because extra[0] is a long, this involves ugly casting
@@ -44,7 +56,7 @@
         // state 0 means it's the first call, so get things set up
         // we won't try to detect mutations, so make mutationsPtr
         // point somewhere that's guaranteed not to change
-        state->mutationsPtr = 0;
+        state->mutationsPtr = (unsigned long *)&dummy_variable_just_to_make_it_work; // Just to hold something
         
         // set up extra[0] to point to the head to start in the right place
         state->extra[0] = 0;
@@ -99,7 +111,20 @@
 -(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor*) sort {
     self = [super initWithParent:parent];
     self->_sort = sort;
+    [self reset];
     return self;
+}
+
+-(instancetype) initWithParent:(TreeBranch *)parent sort:(NSSortDescriptor *)sort filter:(NSPredicate *)filter {
+    self = [super initWithParent:parent filter:filter];
+    self->_sort = sort;
+    [self reset];
+    return self;
+}
+
+-(void) reset {
+    [super reset];
+    self->_item = nil; // Only this will initialize all others
 }
 
 -(TreeItem*) nextObject {
@@ -120,13 +145,22 @@
     else {
         NSUInteger x=0;
         if (self->_item == nil) {
-            self->_item = self->_parent.children[0];
             self->_multiplicity = -1; // This trick avoids a more complicated checking.
                                       // We know that the first object will be set match the first object
                                       // on the iteration below, so we start with -1.
             self->_itemIndex = 0;
             self->_nextItem = nil; //Always initialize it to nil
-            for (TreeItem* ref in self->_parent) {
+            id<NSFastEnumeration> iterator;
+            if (self->_filter==nil) {
+                iterator = self->_parent.children;
+                self->_item = self->_parent.children[0];
+            }
+            else {
+                iterator = [[FilterEnumerator alloc] initWithParent:self->_parent];
+                [(FilterEnumerator*)iterator setFilter:self->_filter];
+                self->_item = [(FilterEnumerator*)iterator nextObject];
+            }
+            for (TreeItem* ref in iterator) {
                 NSComparisonResult test = [self->_sort compareObject:self->_item toObject:ref];
                 // NSNumericSearch makes the proper order 8,9,10,11 instead if 10,11,8,9
                 if (test==NSOrderedDescending) {
@@ -260,5 +294,5 @@
 }
 
 @end
- 
+
 

@@ -62,13 +62,6 @@
         _item = [se nextObject];
         if (_item) {
             if ([_item hasChildren] && (_level+1 < _maxLevel)) {
-                // Will register it's section and index number
-#ifdef USE_STORE
-                NSString *storeKey = [self.ID stringByAppendingString:ITEM_INDEX];
-                [_item store:[NSNumber numberWithUnsignedInteger:_currIndex] withKey:storeKey];
-                storeKey = [self.ID stringByAppendingString:SECTION_INDEX];
-                [_item store:[NSNumber numberWithUnsignedInteger:_sectionIndex] withKey:storeKey];
-#endif
                 // Will trace that branch, but first store the current one
                 [_iterators setObject:se atIndexedSubscript:_level];
                 _level++;
@@ -98,73 +91,6 @@
     return [self seek:index];
 }
 
--(NSUInteger) sectionCount {
-    NSUInteger answer;
-    NSPredicate *onlySections = [NSPredicate predicateWithFormat:@"self.hasChildren"];
-    answer = [self->_root numberOItemsWithPredicate:onlySections tillDepth:self->_maxLevel];
-    return answer;
-}
-
--(TreeBranch*) sectionNumber:(NSUInteger) section {
-    if(section == 0)
-        return self->_root;
-    
-#ifdef USE_STORE
-    NSString *sectionIndexKey = [self.ID stringByAppendingString:SECTION_INDEX];
-    NSString *sectionCountKey = [self.ID stringByAppendingString:SECTION_COUNT];
-    while (tb = [fe nextObject]) {
-        NSUInteger tbSection = [[tb objectWithKey:sectionIndexKey] unsignedIntegerValue];
-        if (tbSection >= section) {
-            NSUInteger tbSectionCount = [[tb objectWithKey:sectionCountKey] unsignedIntegerValue];
-            if (section < (tbSection+tbSectionCount)) {
-                if (tbSectionCount == 1) { //  condition assures there are no further iterations to make
-                    return tb;
-                }
-                fe = [[FilterEnumerator alloc] initWithParent:tb];
-            }
-        }
-        if ([tb.hasChildren])
-            }
-#else
-    FilterEnumerator *fe = [[FilterEnumerator alloc] initWithParent:self->_root];
-    NSPredicate *filter = [NSPredicate predicateWithFormat:@"self.hasChildren"];
-    [fe setFilter:filter];
-    TreeBranch *tb;
-    NSInteger level = 0;
-    NSUInteger count = 0;
-    NSMutableArray *iterators = [NSMutableArray arrayWithCapacity:self->_maxLevel];
-    
-    while (count < section) {
-        tb = [fe nextObject];
-        if (tb) {
-            if (level+1 < _maxLevel) {
-                // Will register it's section and index number
-                [iterators setObject:fe atIndexedSubscript:level];
-                // Will trace that branch
-                level++;
-                fe = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort];
-            }
-            count++;
-        }
-        else {
-            // It will go up the hierarchy
-            if (_level > 0) {
-                _level--;
-                fe = iterators[level];
-            }
-            else // If it can't it stops the iteration
-                return nil;
-        }
-    }
-#endif
-    return tb;
-}
-
--(TreeItem*) itemAtIndexPath:(NSIndexPath *)indexPath {
-    TreeBranch *sec = [self sectionNumber: indexPath.section];
-    return [sec itemAtIndex:indexPath.item];
-}
-
 -(BOOL) isGroup {
     return ((_level+1) < _maxLevel);
 }
@@ -181,9 +107,5 @@
     return answer;
 }
 
-
--(NSUInteger) itemCountAtSection:(NSUInteger)section {
-    return [[self sectionNumber:section] numberOfItemsInNode];
-}
 @end
 

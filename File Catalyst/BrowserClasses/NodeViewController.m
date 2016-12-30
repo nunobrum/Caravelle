@@ -136,6 +136,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     self->_currentNode = branch;
     if (branch!=nil) {
         [self observeItem:self.currentNode];
+        [self->dataViewer setParent:branch];
         [branch refresh];
     }
 }
@@ -143,6 +144,19 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 - (TreeBranch*) currentNode {
     return self->_currentNode;
 }
+
+-(void) setFilter:(NSPredicate *)filter {
+    NSAssert(NO, @"NodeViewController.setFilter: This method should be overrrided"); // TODO:!!!!! Implement this
+}
+
+-(void) setSortDescriptor:(NSSortDescriptor *)sort {
+    NSAssert(NO, @"NodeViewController.setSortDescriptor: This method should be overrrided"); // TODO:!!!!! Implement this
+}
+
+-(void) setDepth:(NSInteger)depth {
+    NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided"); // TODO:!!!!! Implement this
+}
+
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:kvoTreeBranchPropertyChildren]) {
@@ -382,124 +396,127 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     [self addColumn:identifier]; // This function is already removing if it already exists
 }
 
--(void) collectItems_old {
-    NSMutableArray *tableData = nil;
-    /* Always uses the self.currentNode property to manage the Table View */
-    // Get the depth configuration
-    NSInteger iDepth = NSIntegerMax;
-    //NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
-
-    if ([self.currentNode isFolder]){
-        /* if the filter is empty, doesn't filter anything */
-        if (_filterText!=nil && [_filterText length]!=0) {
-            NSPredicate *predicate;
-            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
-            if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
-                // TODO:1.5 Tokenize the filter field to make inteligent searches
-                // TODO:1.5 find Titles and replace for selectors.
-                @try {
-                    predicate = [NSPredicate predicateWithFormat:self.filterText];
-                }
-                @catch (NSException *exception) {
-                    predicate = nil;
-                }
-                /*@finally {}*/
-            }
-            else {
-                
-                NSString *attributeName  = @"name";
-                NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
-                NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
-                
-                if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
-                    predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
-                                   attributeName, self.filterText];
-                else
-                    predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
-                                   attributeName, self.filterText];
-            }
-            
-            if (self.filesInSubdirsDisplayed==YES) {
-                tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
-            }
-            
-        }
-        else {
-            if (self.filesInSubdirsDisplayed==YES) {
-                tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
-                tableData = [self.currentNode itemsInNode];
-            }
-            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
-                tableData = [self.currentNode leafsInNode];
-            }
-        }
-        
-        if (self.foldersInTable==YES) {
-            // Adding the Folders First Sort
-            // TODO: This is silly to be done all the time, but at leat it assures that its not
-            // overriden by other sorts. Find another way to do this
-            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_FOLDERS_FIRST]) {
-                [self makeSortOnFieldID:SORT_FOLDERS_FIRST_FIELD_ID ascending:YES grouping:NO];
-            }
-            else
-                [self removeSortOnField:SORT_FOLDERS_FIRST_FIELD_ID];
-        }
-        
-        // Sort Data
-        if ((self.sortAndGroupDescriptors!=nil) && ([self.sortAndGroupDescriptors count] > 0)) {
-            NSArray *sortedArray = [tableData sortedArrayUsingDescriptors:self.sortAndGroupDescriptors];
-            tableData = [NSMutableArray arrayWithArray:sortedArray];
-
-            // Insert Groupings if needed
-            if ([(NodeSortDescriptor*)[self.sortAndGroupDescriptors firstObject] isGrouping]) {
-                // Since the sort groupings are always the first elements on the table
-                // it sufices to test the first element to know if a grouping is needed
-
-                // Need to restart all the descriptors
-                for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
-                    if ([sortDesc isGrouping])
-                        [sortDesc reset];
-                    else
-                        break;
-                }
-                [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
-            }
-        }
-        
-        // Adding the parent directory as .. if requested
-        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] &&
-            self.foldersInTable==YES) {
-            DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
-            if (dummyParent != nil) {
-                [dummyParent setTag:tagTreeItemReadOnly];
-                [tableData insertObject:dummyParent atIndex:0];
-            }
-        }
-    }
-    //self->_displayedItems = tableData;
-}
+//-(void) collectItems_old {
+//    NSMutableArray *tableData = nil;
+//    /* Always uses the self.currentNode property to manage the Table View */
+//    // Get the depth configuration
+//    NSInteger iDepth = NSIntegerMax;
+//    //NSLog(@"NodeViewController.itemsToDisplay view:%@ URL:%@",self->_viewName, self.currentNode.url);
+//
+//    if ([self.currentNode isFolder]){
+//        /* if the filter is empty, doesn't filter anything */
+//        if (_filterText!=nil && [_filterText length]!=0) {
+//            NSPredicate *predicate;
+//            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
+//            if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
+//                // TODO:1.5 Tokenize the filter field to make inteligent searches
+//                // TODO:1.5 find Titles and replace for selectors.
+//                @try {
+//                    predicate = [NSPredicate predicateWithFormat:self.filterText];
+//                }
+//                @catch (NSException *exception) {
+//                    predicate = nil;
+//                }
+//                /*@finally {}*/
+//            }
+//            else {
+//                
+//                NSString *attributeName  = @"name";
+//                NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
+//                NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
+//                
+//                if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
+//                    predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
+//                                   attributeName, self.filterText];
+//                else
+//                    predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
+//                                   attributeName, self.filterText];
+//            }
+//            
+//            if (self.filesInSubdirsDisplayed==YES) {
+//                tableData = [self.currentNode leafsInBranchWithPredicate:predicate depth:iDepth];
+//            }
+//            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+//                tableData = [self.currentNode itemsInNodeWithPredicate:predicate];
+//            }
+//            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+//                tableData = [self.currentNode leafsInNodeWithPredicate:predicate];
+//            }
+//            
+//        }
+//        else {
+//            if (self.filesInSubdirsDisplayed==YES) {
+//                tableData = [self.currentNode leafsInBranchTillDepth:iDepth];
+//            }
+//            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==YES) {
+//                tableData = [self.currentNode itemsInNode];
+//            }
+//            else if (self.filesInSubdirsDisplayed==NO && self.foldersInTable==NO) {
+//                tableData = [self.currentNode leafsInNode];
+//            }
+//        }
+//        
+//        if (self.foldersInTable==YES) {
+//            // Adding the Folders First Sort
+//            // TODO: This is silly to be done all the time, but at leat it assures that its not
+//            // overriden by other sorts. Find another way to do this
+//            if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_FOLDERS_FIRST]) {
+//                [self makeSortOnFieldID:SORT_FOLDERS_FIRST_FIELD_ID ascending:YES grouping:NO];
+//            }
+//            else
+//                [self removeSortOnField:SORT_FOLDERS_FIRST_FIELD_ID];
+//        }
+//        
+//        // Sort Data
+//        if ((self.sortAndGroupDescriptors!=nil) && ([self.sortAndGroupDescriptors count] > 0)) {
+//            NSArray *sortedArray = [tableData sortedArrayUsingDescriptors:self.sortAndGroupDescriptors];
+//            tableData = [NSMutableArray arrayWithArray:sortedArray];
+//
+//            // Insert Groupings if needed
+//            if ([(NodeSortDescriptor*)[self.sortAndGroupDescriptors firstObject] isGrouping]) {
+//                // Since the sort groupings are always the first elements on the table
+//                // it sufices to test the first element to know if a grouping is needed
+//
+//                // Need to restart all the descriptors
+//                for (NodeSortDescriptor *sortDesc in self.sortAndGroupDescriptors) {
+//                    if ([sortDesc isGrouping])
+//                        [sortDesc reset];
+//                    else
+//                        break;
+//                }
+//                [self insertGroups:tableData start:0 stop:[tableData count] descriptorIndex:0];
+//            }
+//        }
+//        
+//        // Adding the parent directory as .. if requested
+//        if ([[NSUserDefaults standardUserDefaults] boolForKey:USER_DEF_DISPLAY_PARENT_DIRECTORY] &&
+//            self.foldersInTable==YES) {
+//            DummyBranch *dummyParent = [DummyBranch parentFor:self.currentNode]; 
+//            if (dummyParent != nil) {
+//                [dummyParent setTag:tagTreeItemReadOnly];
+//                [tableData insertObject:dummyParent atIndex:0];
+//            }
+//        }
+//    }
+//    //self->_displayedItems = tableData;
+//}
 
 -(void) collectItems {
-    
+    NSInteger _depth = [self->dataViewer depth];
     // Get the depth configuration
     
     if ([self.currentNode isFolder]){
         
         if (_depth <= 10) {
             if (self.foldersInTable==YES) {
-                _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:self.currentNode depth: _depth];
+                [self setDepth:_depth];
             }
             else {//if (self.foldersInTable==NO) {
-                //NSAssert(NO, @"Implemetation Missing");
-                _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:self.currentNode depth: _depth];
+                NSAssert(NO, @"Implemetation Missing");
+            }
+            if (_depth > 0) {
+                // If the depth is bigger than 0 then the folders are displayed in last
+                [self setSortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:YES]];
             }
             if (_filterText!=nil && [_filterText length]!=0) {
                 NSPredicate *predicate;
@@ -541,61 +558,11 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             while ((item = [nodes nextObject])!=nil) {
                 [catalog addTreeItem:item];
             }
-            _treeViewer = [[TreeViewer alloc] initWithID:self.viewName viewing:catalog depth: _depth];
+            //[self setDepth:_depth]; Maybe this is not needed TODO:!!!! Verify this
+            [self setCurrentNode:catalog];
         }
+        
     }
-    else {
-        //self->_displayedItems = nil;
-        _treeViewer = nil;
-    }
-}
-
--(void) setDepth:(NSInteger)depth {
-    self->_depth = depth;
-}
-
-#pragma mark - table enumerator selectors
-
-- (TreeItem*) itemAtTableIndex:(NSUInteger)index {
-    return [self->_treeViewer itemAtIndex:index];
-}
-
-- (NSArray*) itemsAtTableIndexes:(NSIndexSet *)indexSet {
-    NSMutableArray *answer = [NSMutableArray array];
-    [indexSet enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
-        [answer addObject:[self->_treeViewer itemAtIndex:idx]];
-    }];
-    return answer;
-}
-
-- (BOOL) itemAtTableisGroup {
-    return [self->_treeViewer isGroup];
-}
-
--(NSString*) groupTitle {
-    return [self->_treeViewer groupTitle];
-}
-
-- (NSUInteger) tableIndexCount {
-    return [self->_treeViewer count];
-}
-
--(NSInteger) indexOfTableItem:(TreeItem *)item {
-    assert(false); // TODO:!!! Implement this
-    return 0;
-}
-
--(NSIndexSet*) indexesWithHashes:(NSArray *)hashes {
-    assert(false); //TODO:!!! Implement this
-    /*NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
-        //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
-        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
-            return YES;
-        else
-            return NO;
-    }];
-    return indexes;*/
-    return nil;
 }
 
 -(void) insertedItem:(id)item atTableRow:(NSInteger)row {
@@ -608,92 +575,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     }*/
 }
 
-
-/*-(NSUInteger) linearIndexForIndexPath:(NSIndexPath*) indexPath {
-    if (indexPath.section == 0) {
-        return indexPath.item;
-    }
-    else if (indexPath.section < self->sectionCount) {
-        // Adding one because the section itself needs to be discounted
-        return self->sectionIndexes[indexPath.section-1] + indexPath.item + 1;
-    }
-    else {
-        NSAssert(NO,@"IconViewController.linearIndexForIndexPath: - Error! section number greater than expected");
-        return 0;
-    }
-}
-
--(NSIndexPath*) indexPathForLinearIndex:(NSUInteger) linearIndex {
-    NSUInteger section = 0;
-    NSUInteger item;
-    while (linearIndex >= self->sectionIndexes[section]) {
-        section++;
-        if (section > self->sectionCount) {
-            NSAssert(NO,@"IconViewController.indexPathForLinearIndex: - Error! section number greater than expected");
-            return nil;
-        }
-    }
-    if (section==0) {
-        item = linearIndex;
-    }
-    else {
-        // Subtracting one because of the group needs to be discounted
-        item = linearIndex-self->sectionIndexes[section-1] - 1;
-    }
-    return [NSIndexPath indexPathForItem:item inSection:section];
-}
-*/
-#pragma mark - collection enumerator selectors
-
-- (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath {
-    return [_treeViewer itemAtIndexPath:indexPath];
-}
-
-- (NSIndexPath*) indexPathOfItem:(TreeItem*) item {
-    assert(false); //TODO:!!! Implement this
-    return nil;
-}
-
-- (NSUInteger) sectionCount {
-    if (_depth <=1)
-        return 1;
-    else {
-        return _treeViewer.groupCount;
-    }
-}
-
-- (NSUInteger) itemCountAtSection:(NSUInteger)section {
-    return [_treeViewer itemCountAtSection:section];
-}
-
--(NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray *)hashes {
-//    NSMutableSet<NSIndexPath*> *selectIndexPaths = [[NSMutableSet alloc] initWithCapacity:hashes.count];
-//    NSUInteger section=0, nItem=0;
-//    NSUInteger idx=0;
-//    for (id item in self->_displayedItems ) {
-//        if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[(TreeItem*)item hashObject]]) {
-//            // Advance to the good section
-//            while (idx >= self->sectionIndexes[section])
-//                section++;
-//            if (section==0)
-//                nItem = idx;
-//            else
-//                nItem = idx - self->sectionIndexes[section-1];
-//            NSIndexPath *indexPath = [NSIndexPath indexPathForItem:nItem inSection:section];
-//            [selectIndexPaths addObject:indexPath];
-//        }
-//        idx++;
-//    }
-//    return selectIndexPaths;
-    assert(false); //TODO:!!! Implement this
-    return nil;
-}
-
-- (void) insertedItem:(id)item atIndexPath:(NSIndexPath *)indexPath {
-//    NSUInteger linearIndex = [self linearIndexForIndexPath:indexPath];
-//    [self->_displayedItems insertObject:item atIndex:linearIndex];
-    assert(false); //TODO:!!! Implement this
-}
 
 #pragma mark - sort Descriptor selectors
 

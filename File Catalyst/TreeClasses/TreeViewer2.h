@@ -14,7 +14,6 @@
     // This class will enumerate all leafs and branches of the Tree
     NSInteger _level;
     NSInteger _currIndex;
-    NSInteger _sectionIndex;
     NSMutableArray <SortedEnumerator*> *_iterators;
     SortedEnumerator *se;
     NSUInteger _maxLevel;
@@ -37,12 +36,4 @@
 -(NSString*) groupTitle;
 -(TreeItem*) selectedItem;
 
-//
--(NSUInteger) sectionCount;
--(NSUInteger) itemCountAtSection:(NSUInteger)section;
--(TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath;
 @end
-
-
-
-

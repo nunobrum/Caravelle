@@ -17,8 +17,11 @@
 @property (readonly) TreeBranch* parent;
 
 -(instancetype) initWithParent:(TreeBranch*)parent;
+-(instancetype) initWithParent:(TreeBranch*)parent filter:(NSPredicate*)filter;
+
 -(void) setFilter:(NSPredicate*) filter;
 -(NSInteger) count;
+-(void) reset;
 
 @end
 
@@ -29,6 +32,8 @@
     NSInteger _itemIndex, _nextItemIndex, _multiplicity;
 }
 -(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor*) sort;
+-(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor *)sort filter:(NSPredicate*)filter;
+
 -(void) setSort:(NSSortDescriptor*) sort;
 
 @end
@@ -45,19 +50,19 @@
 
 @end
 
-
-// This will make the enumeration without returning branches, only leafs.
-@interface BranchEnumerator2 : NSObject {
-    NSUInteger _level;
-    NSInteger *_indexes;
-    NSUInteger _maxLevel;
-    TreeBranch *_curTree;
-    TreeBranch *_parent;
-}
-
--(instancetype) initWithParent:(TreeBranch*)parent andDepth:(NSUInteger)depth;
--(id) nextObject;
-@end
+//
+//// This will make the enumeration without returning branches, only leafs.
+//@interface BranchEnumerator2 : NSObject {
+//    NSUInteger _level;
+//    NSInteger *_indexes;
+//    NSUInteger _maxLevel;
+//    TreeBranch *_curTree;
+//    TreeBranch *_parent;
+//}
+//
+//-(instancetype) initWithParent:(TreeBranch*)parent andDepth:(NSUInteger)depth;
+//-(id) nextObject;
+//@end
 
 
 

@@ -9,8 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import "Definitions.h"
 #import "TreeBranch.h"
-#import "TreeViewer.h"
 #import "NodeSortDescriptor.h"
+#import "DataSourceProtocol.h"
 
 
 
@@ -44,10 +44,9 @@
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
     NSString * _twinName;
-    TreeViewer *_treeViewer;
-    @private
+    NSObject <TreeViewerProtocol> *dataViewer;
+    //@private
     //NSMutableArray *_displayedItems;
-    NSInteger _depth;
 }
 
 @property (readwrite, weak) id<BrowserParentProtocol> parentController;
@@ -83,24 +82,19 @@
 #pragma mark - Data handling Selectors
 - (void) collectItems;
 - (void) setDepth:(NSInteger) depth;
+- (void) setFilter:(NSPredicate*)filter;
+- (void) setSortDescriptor:(NSSortDescriptor*) sort;
 
-// Table View helper selectors
-- (TreeItem*) itemAtTableIndex:(NSUInteger)index;
-- (NSArray*) itemsAtTableIndexes:(NSIndexSet*) indexSet;
-- (BOOL) itemAtTableisGroup;
-- (NSString*) groupTitle;
-- (NSUInteger) tableIndexCount;
-- (NSInteger) indexOfTableItem:(TreeItem*) item;
-- (NSIndexSet*) indexesWithHashes:(NSArray*) hashes;
-- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
+
+//- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
 
 // Collection View helper selectors
-- (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath;
-- (NSUInteger) sectionCount;
-- (NSUInteger) itemCountAtSection:(NSUInteger) section;
-- (NSIndexPath*) indexPathOfItem:(TreeItem*) item;
-- (NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray*) hashes;
-- (void) insertedItem:(id)item atIndexPath:(NSIndexPath*) indexPath;
+//- (TreeItem*) itemAtIndexPath:(NSIndexPath*)indexPath;
+//- (NSUInteger) sectionCount;
+//- (NSUInteger) itemCountAtSection:(NSUInteger) section;
+//- (NSIndexPath*) indexPathOfItem:(TreeItem*) item;
+//- (NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray*) hashes;
+//- (void) insertedItem:(id)item atIndexPath:(NSIndexPath*) indexPath;
 
 - (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
 - (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
