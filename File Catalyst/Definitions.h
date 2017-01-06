@@ -148,7 +148,7 @@ extern const CFStringRef kTreeItemDropUTI;
 
 
 #define BROWSER_VIEW_OPTION_TREE_ENABLE  0
-#define BROWSER_VIEW_OPTION_FLAT_SUBDIRS 1
+//#define BROWSER_VIEW_OPTION_FLAT_SUBDIRS 1
 
 // Animation delay Time in seconds
 #define ANIMATION_DELAY 0.5 // set to 500ms of delay

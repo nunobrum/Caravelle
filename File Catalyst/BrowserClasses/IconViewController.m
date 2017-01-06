@@ -42,23 +42,22 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 }
 
 -(void) viewDidLoad {
-    //const float singleSectionInset = 10.0;
-    const float doubleSectionInset = 30.0;
+    const float sectionInsetHeight = 10.0;
     // 1
     self->flowLayout = [[NSCollectionViewFlowLayout alloc] init];
     NSSize IconSize;
     IconSize.width = 64.0;
-    IconSize.height = 94.0;
+    IconSize.height = 64.0;
     self->flowLayout.itemSize = IconSize;
     
     NSEdgeInsets sectionInset;
-    sectionInset.bottom = doubleSectionInset;
-    sectionInset.top = doubleSectionInset;
+    sectionInset.bottom = sectionInsetHeight;
+    sectionInset.top = sectionInsetHeight;
     sectionInset.left = 20.0;
     sectionInset.right = 20.0;
     self->flowLayout.sectionInset = sectionInset;
-    self->flowLayout.minimumInteritemSpacing = 20.0;
-    self->flowLayout.minimumLineSpacing = 20.0;
+    self->flowLayout.minimumInteritemSpacing = 10.0;
+    self->flowLayout.minimumLineSpacing = 10.0;
     [self.collectionView setCollectionViewLayout: flowLayout];
     // 2
     self.view.wantsLayer = YES;
@@ -113,7 +112,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 -(NSView*) collectionView:(NSCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     CollectionHeaderView *view = [collectionView makeSupplementaryViewOfKind:NSCollectionElementKindSectionHeader withIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
     NSAssert(view != nil, @"IconViewController.collectionView:viewForSupplementaryElementOfKind:atIndexPath: Didn't received the View");
-    [view.sectionTitle setStringValue:[self.currentViewer groupTitle]];
+    [view.sectionTitle setStringValue:[self.currentViewer titleForGroup:indexPath.section]];
     return view;
 }
 
@@ -141,7 +140,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 //- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section;
 //- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section;
 - (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
-    NSSize headerSize = {.width = 1000, .height = 40 };
+    NSSize headerSize = {.width = 1000, .height = 24 };
     return self.currentViewer.sectionCount > 1 ? headerSize : NSZeroSize;
 }
 

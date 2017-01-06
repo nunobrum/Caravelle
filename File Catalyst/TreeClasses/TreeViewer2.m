@@ -8,52 +8,99 @@
 
 #import "TreeViewer2.h"
 
+
 @implementation TreeViewer2
 
-
--(instancetype) initWithID:(NSString*)ID viewing:(TreeBranch*)parent depth:(NSUInteger)depth {
+-(instancetype) initWithParent:(TreeBranch *)parent depth:(NSUInteger)depth {
     self->_iterators = [NSMutableArray arrayWithCapacity:depth];
     self->_maxLevel = depth;
     self->_root = parent;
-    self->_ID = ID;
     self->_item = nil;
     // Default sortDescriptor
     self->sort = [NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
-    [self reset];
-    
+    self->_currIndex = NSIntegerMax; // This will trigger a reset at the first seek
+    self->_needsRefresh = YES;
     return self;
 }
 
+#pragma mark - TreeViewerProtocol
 -(void) reset {
     self->_currIndex = -1;
     self->_level = 0;
+    self->_isGroup = NO;
     self->_curTree = self->_root;
     self->_item = self->_root;
     [self->_iterators removeAllObjects];
-    se = [[SortedEnumerator alloc] initWithParent:_root sort:sort];
+    se = [[SortedEnumerator alloc] initWithParent:self->_root sort:self->sort filter:self->_filter];
+}
+
+-(BOOL) needsRefresh {
+    return self->_needsRefresh;
+}
+
+-(void) setParent:(TreeBranch *)parent {
+    if (parent != self->_root) {
+        self->_root = parent;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(TreeBranch*) parent {
+    return self->_root;
+}
+
+-(void) setDepth:(NSInteger)depth {
+    if (depth != self->_maxLevel) {
+        if (depth > 0) {
+            // TODO:!!!! Change with the multiple-sorts is are working.
+            // If the depth is bigger than 0 then the folders are displayed in last
+            [self setSortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:YES]];
+        }
+        self->_maxLevel = depth;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSInteger) depth {
+    return self->_maxLevel;
 }
 
 -(void) setSortDescriptor:(NSSortDescriptor *)sortDesc {
-    self->sort = sortDesc;
+    // TODO:!!!!! This has to be changed to support multiple sorts.
+    if (sortDesc != self->sort)  {
+        self->sort = sortDesc;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSSortDescriptor*) sortDescriptor {
+    return self->sort;
+}
+
+-(void) setFilter:(NSPredicate *)filter {
+    if (filter != self->_filter)  {
+        self->_filter = filter;
+        self->_needsRefresh = YES;
+    }
+}
+
+-(NSPredicate*) filter {
+    return self->_filter;
 }
 
 -(NSUInteger) count {
     NSUInteger answer = 0;
-    answer = [self->_root numberOItemsInBranchTillDepth: self->_maxLevel];
+    answer = [self->_root numberOfItemsWithPredicate:self->_filter tillDepth: self->_maxLevel];
+    self->_needsRefresh = NO;
     return answer;
-}
-
--(TreeItem*) selectedItem {
-    return self->_item;
 }
 
 -(TreeItem*) seek:(NSInteger) index {
     NSInteger count = index - _currIndex;
     if (count < 0) {
         // If negative will restart from 0
-        count = _currIndex + count;
         [self reset];
-        count  = 1;
+        count  = index + 1;
     }
     //else
     //    se = _iterators[_level];
@@ -65,8 +112,11 @@
                 // Will trace that branch, but first store the current one
                 [_iterators setObject:se atIndexedSubscript:_level];
                 _level++;
-                se = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort];
+                se = [[SortedEnumerator alloc] initWithParent:(TreeBranch*)_item sort:sort filter:self->_filter];
+                self->_isGroup = YES;
             }
+            else
+                self->_isGroup = NO;
             count--;
             _currIndex++;
         }
@@ -91,8 +141,10 @@
     return [self seek:index];
 }
 
--(BOOL) isGroup {
-    return ((_level+1) < _maxLevel);
+
+-(BOOL) isGroup:(NSUInteger)index {
+    [self seek:index];
+    return self->_isGroup;
 }
 
 -(NSString*) groupTitle {
@@ -101,11 +153,33 @@
     NSString *answer = [NSString stringWithFormat:@"%lu",(unsigned long)self->_level];
     while (level1 < _level ) {
         cBranch = self->_iterators[level1].parent;
-        answer = [answer stringByAppendingString:[NSString stringWithFormat:@"|%@",cBranch.name]];
+        answer = [answer stringByAppendingString:[NSString stringWithFormat:@"/%@",cBranch.name]];
         level1++;
     }
+    answer = [answer stringByAppendingString:[NSString stringWithFormat:@"/%@",se.parent.name]];
     return answer;
 }
 
-@end
+//-(NSMutableArray <TreeItem*> *) itemsAtIndexes:(NSIndexSet *)indexes {
+//    NSMutableArray <TreeItem*> *answer = [NSMutableArray arrayWithCapacity:indexes.count];
+//    [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
+//        TreeItem *ti = [self seek:idx];
+//        [answer addObject:ti];
+//    }];
+//    return answer;
+//}
 
+//-(NSIndexSet*) indexesWithHashes:(NSArray *)hashes {
+//    assert(false); //TODO:!!! Implement this
+//    /*NSIndexSet *indexes = [self->_displayedItems indexesOfObjectsPassingTest:^(id item, NSUInteger index, BOOL *stop){
+//     //NSLog(@"setTableViewSelectedURLs %@ %lu", [item path], index);
+//     if ([item isKindOfClass:[TreeItem class]] && [hashes containsObject:[item hashObject]])
+//     return YES;
+//     else
+//     return NO;
+//     }];
+//     return indexes;*/
+//    return nil;
+//}
+
+@end

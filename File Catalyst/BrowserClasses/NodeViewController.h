@@ -12,8 +12,6 @@
 #import "NodeSortDescriptor.h"
 #import "DataSourceProtocol.h"
 
-
-
 @protocol NodeViewProtocol <NSObject, MYViewProtocol>
 
 -(void) reloadItem:(id) object;
@@ -55,7 +53,8 @@
 @property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
-@property (readwrite, strong) NSMutableArray *sortAndGroupDescriptors;
+@property (readwrite, strong) NSMutableArray <NodeSortDescriptor*> *sortDescriptors;
+@property (readwrite, strong) NSMutableArray <NodeSortDescriptor*> *groupDescriptors;
 @property NSString *viewName;
 
 - (void) initController;
@@ -97,8 +96,10 @@
 //- (void) insertedItem:(id)item atIndexPath:(NSIndexPath*) indexPath;
 
 - (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
-- (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending grouping:(BOOL)grouping;
+- (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending;
 - (void) removeSortOnField:(NSString*)key;
+
+- (void) makeGroupingOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending;
 - (void) removeGroupings;
 
 -(NSArray*) getSelectedItemsHash;

@@ -8,13 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
-#import "BaseGrouping.h"
-
 #define SORT_FOLDERS_FIRST_FIELD_ID @"FoldersFirst"
 
 @protocol MySortDescriptorProtocol <NSObject>
 
--(BOOL) isGrouping;
 -(NSString*) field;
 
 @end
@@ -29,20 +26,10 @@
 
 
 @interface NodeSortDescriptor : NSSortDescriptor<MySortDescriptorProtocol> {
-    BOOL _grouping;
     NSString *_field;
-    BaseGrouping *_groupObject;
 }
 
--(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending grouping:(BOOL)grouping;
-
-//-(void) setGrouping:(BOOL)grouping using:(NSString*)groupID ;
--(void) copyGroupObject:(NSSortDescriptor*) other;
--(BaseGrouping*) groupOpject;
--(BOOL) isGrouping;
--(NSArray*) groupItemsForObject:(id)object;
--(NSArray*) flushGroups;
--(void) reset;
+-(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending;
 -(NSString*) field;
 
 @end

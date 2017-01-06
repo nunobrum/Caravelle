@@ -130,13 +130,10 @@
     }
     else {
         
-        
-
         if ([identifier isEqualToString:COL_FILENAME]) {
             // We pass us as the owner so we can setup target/actions into this main controller object
             cellView = [aTableView makeViewWithIdentifier:COL_FILENAME owner:self];
-            [cellView setObjectValue:objectValue];
-
+            
             // If it's a new file, then assume a default ICON
             
             // Then setup properties on the cellView based on the column
@@ -213,7 +210,9 @@
         
 
     }
-    
+    // All Columns will have the ObjectValue pointer defined.
+    [cellView setObjectValue:objectValue];
+
     // other cases are not considered here. returning Nil
     return cellView;
 }
@@ -282,7 +281,7 @@
         [inTableView setIndicatorImage:[NSImage imageNamed:@"NSDescendingSortIndicator"] inTableColumn:tableColumn];
         ascending = NO;
     }
-    [self makeSortOnFieldID:[tableColumn identifier] ascending:ascending grouping:[currentDesc isGrouping]];
+    [self makeSortOnFieldID:[tableColumn identifier] ascending:ascending];
     [self refreshKeepingSelections];
 }
 
@@ -324,7 +323,7 @@
             // Get the column
             NSTableColumn *colToGroup = [[[self myTableView] tableColumns] objectAtIndex:colHeaderClicked];
             // Remove it from Columns : [[self myTableView] removeTableColumn:colToGroup];
-            [self makeSortOnFieldID:[colToGroup identifier] ascending:YES grouping:YES];
+            [self makeGroupingOnFieldID:[colToGroup identifier] ascending:YES];
         }
         [self refreshKeepingSelections];
     }
@@ -341,7 +340,7 @@
     }
     
     // Cancel all sorts
-    [self.sortAndGroupDescriptors removeAllObjects];
+    [self.sortDescriptors removeAllObjects];
     
     // Cycling throgh the columns to set
     for (NSString *colID in columns) {
@@ -586,12 +585,12 @@
 
 -(NSMutableArray <TreeItem*> *) itemsAtIndexes:(NSIndexSet*)indexes {
     NSMutableArray <TreeItem*> *answer = [NSMutableArray arrayWithCapacity:indexes.count];
-    NSLog(@"DEBUG THIS"); // TODO:!!!! Debug this
     [indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL * _Nonnull stop) {
         id repObject = [self objectValueAtRow:idx];
         if ([repObject isKindOfClass:[TreeItem class]]) {
             [answer addObject:repObject];
         }
+        *stop = NO;
     }];
     return answer;
 }

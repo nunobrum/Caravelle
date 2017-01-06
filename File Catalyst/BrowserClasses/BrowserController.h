@@ -28,6 +28,7 @@ extern NSString *kViewChanged_FlatView;
     EnumBrowserViewMode _viewMode;
     EnumBrowserViewType _viewType;
     NSString * _twinName;
+    NSInteger drillDepth;
 }
 
 @property (strong) IBOutlet NSSearchField *myFilterText;

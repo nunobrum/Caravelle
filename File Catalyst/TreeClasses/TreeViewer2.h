@@ -8,9 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "TreeBranch.h"
+#import "DataSourceProtocol.h"
 #import "TreeEnumerator.h"
 
-@interface TreeViewer2 : NSObject {
+@interface TreeViewer2 : NSObject <TreeViewerProtocol> {
+    
     // This class will enumerate all leafs and branches of the Tree
     NSInteger _level;
     NSInteger _currIndex;
@@ -20,20 +22,19 @@
     TreeBranch *_curTree;
     TreeBranch *_root;
     TreeItem *_item;
+    BOOL _isGroup;
+    BOOL _needsRefresh;
     NSSortDescriptor *sort;
+    NSPredicate *_filter;
 }
-@property (readonly) NSString *ID;
 
--(instancetype) initWithID:(NSString*)ID viewing:(TreeBranch*)parent depth:(NSUInteger)depth;
--(void) reset;
--(void) setSortDescriptor:(NSSortDescriptor*) sortDesc;
+-(instancetype) initWithParent:(TreeBranch*)parent depth:(NSUInteger)depth;
 
 -(NSUInteger) count;
 -(TreeItem*) itemAtIndex:(NSUInteger)index;
 -(TreeItem*) nextObject;
 
--(BOOL) isGroup;
+-(BOOL) isGroup:(NSUInteger)index;
 -(NSString*) groupTitle;
--(TreeItem*) selectedItem;
 
 @end

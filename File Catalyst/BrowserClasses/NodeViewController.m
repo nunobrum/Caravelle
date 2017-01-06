@@ -96,7 +96,8 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     self->_foldersInTable = YES;
     self->_currentNode = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
-    self.sortAndGroupDescriptors = nil;
+    self.sortDescriptors = nil;
+    self.groupDescriptors = nil;
     [self startBusyAnimations];
     
     [[NSUserDefaults standardUserDefaults] addObserver:self
@@ -146,15 +147,15 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 }
 
 -(void) setFilter:(NSPredicate *)filter {
-    NSAssert(NO, @"NodeViewController.setFilter: This method should be overrrided"); // TODO:!!!!! Implement this
+    NSAssert(NO, @"NodeViewController.setFilter: This method should be overrrided");
 }
 
 -(void) setSortDescriptor:(NSSortDescriptor *)sort {
-    NSAssert(NO, @"NodeViewController.setSortDescriptor: This method should be overrrided"); // TODO:!!!!! Implement this
+    NSAssert(NO, @"NodeViewController.setSortDescriptor: This method should be overrrided");
 }
 
 -(void) setDepth:(NSInteger)depth {
-    NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided"); // TODO:!!!!! Implement this
+    NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided");
 }
 
 
@@ -313,44 +314,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     return lastFocus;
 }
 
--(NSInteger) insertGroups:(NSMutableArray*)items start:(NSUInteger)start stop:(NSUInteger)stop descriptorIndex:(NSUInteger)descIndex {
-    // Verify in no more descriptors to process
-    NSInteger inserted = 0;
-    if (descIndex < [self.sortAndGroupDescriptors count]) {
-        NodeSortDescriptor *sortDesc = [self.sortAndGroupDescriptors objectAtIndex:descIndex];
-
-        if (sortDesc.isGrouping) { // Grouping is needed for this descriptor
-            NSUInteger i = start;
-            NSArray *groups = nil;
-            while (i < (stop+inserted)) {
-                groups = [sortDesc groupItemsForObject: items[i]];
-                if (groups!=nil) {
-                    for (GroupItem *GI in groups) {
-                        [items insertObject:GI atIndex:i - GI.nElements];
-                        i++;
-                        //NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
-                        //NSLog(@"Inserted %@ at %ld, nElements %ld", GI.title, i - GI.nElements - nInserted, GI.nElements);
-                        inserted += 1; // + nInserted;
-                        //i += nInserted;
-                    }
-                }
-                i++;
-            }
-            groups = [sortDesc flushGroups];
-            if (groups!=nil) {
-                i--; // Needs to be in the last position
-                for (GroupItem *GI in groups) {
-                    [items insertObject:GI atIndex:i - GI.nElements];
-                    i++;
-                    //NSInteger nInserted = [self insertGroups:items start:i - GI.nElements stop:i descriptorIndex:descIndex+1];
-                    inserted += 1 ;// + nInserted;
-                    //i += nInserted;
-                }
-            }
-        }
-    }
-    return inserted;
-}
 
 -(IBAction) menuGroupingSelector:(id) sender {
     //NSLog(@"NodeViewController.menuGroupingSelector %@",[sender title]);
@@ -377,8 +340,12 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         {
             ascending = NO;
         }
+        
+        [self makeGroupingOnFieldID:identifier ascending:ascending];
     }
-    [self makeSortOnFieldID:identifier ascending:ascending grouping:activate_grouping];
+    else {
+        [self removeGroupings];
+    }
     [self refreshKeepingSelections];
 }
 
@@ -506,18 +473,15 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     // Get the depth configuration
     
     if ([self.currentNode isFolder]){
+        NSMutableArray *filters = [NSMutableArray array];
+        [self setDepth:_depth];
         
         if (_depth <= 10) {
-            if (self.foldersInTable==YES) {
-                [self setDepth:_depth];
+            if (self.foldersInTable==NO) {
+                NSPredicate *noFolders = [NSPredicate predicateWithFormat:@"SELF.isFolder==NO"];
+                [filters addObject:noFolders];
             }
-            else {//if (self.foldersInTable==NO) {
-                NSAssert(NO, @"Implemetation Missing");
-            }
-            if (_depth > 0) {
-                // If the depth is bigger than 0 then the folders are displayed in last
-                [self setSortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:YES]];
-            }
+            
             if (_filterText!=nil && [_filterText length]!=0) {
                 NSPredicate *predicate;
                 NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
@@ -544,7 +508,15 @@ EnumContextualMenuItemTags viewMenuRight[] = {
                         predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
                                        attributeName, self.filterText];
                 }
-                //[_treeViewer setFilter:predicate];
+                if (predicate != nil)
+                    [filters addObject:predicate];
+            }
+            if (filters.count  == 0) {
+                [self setFilter:nil];
+            }
+            else {
+                NSCompoundPredicate *allFilters = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
+                [self setFilter: allFilters];
             }
         }
         else {
@@ -558,7 +530,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             while ((item = [nodes nextObject])!=nil) {
                 [catalog addTreeItem:item];
             }
-            //[self setDepth:_depth]; Maybe this is not needed TODO:!!!! Verify this
             [self setCurrentNode:catalog];
         }
         
@@ -579,9 +550,9 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 #pragma mark - sort Descriptor selectors
 
 - (void) removeSortOnField:(NSString*)field {
-    for (NSSortDescriptor<MySortDescriptorProtocol> *i in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor<MySortDescriptorProtocol> *i in self.sortDescriptors) {
         if ([i.field isEqualToString:field] ) {
-            [self.sortAndGroupDescriptors removeObject:i];
+            [self.sortDescriptors removeObject:i];
             return;
         }
     }
@@ -589,7 +560,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 
 -(NSSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID {
     NSString * key = keyForFieldID(fieldID);
-    for (NSSortDescriptor* desc in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor* desc in self.sortDescriptors) {
         if ([desc.key isEqualToString:key]) {
             return desc;
         }
@@ -598,53 +569,37 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 }
 
 
-- (void) makeSortOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending grouping:(BOOL)grouping {
-    if (self.sortAndGroupDescriptors==nil) {
-        self.sortAndGroupDescriptors = [NSMutableArray arrayWithCapacity:1];
+- (void) makeSortOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending {
+    if (self.sortDescriptors==nil) {
+        self.sortDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
 
     NSSortDescriptor<MySortDescriptorProtocol> *sortDesc;
     if ([fieldID isEqualToString:SORT_FOLDERS_FIRST_FIELD_ID])
         sortDesc = [[FoldersFirstSortDescriptor alloc] init];
     else
-        sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending grouping:grouping];
+        sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending];
 
     // Removes the key if it was already existing in the remaining of the array
     [self removeSortOnField:fieldID];
+    [self.sortDescriptors insertObject:sortDesc atIndex:0];
+    [self->dataViewer setSortDescriptor:self.sortDescriptors[0]];
+}
 
-    NSInteger i=0;
-    if (grouping==NO) {
-        // Will insert after the first non grouping descriptor
-        while (i < [self.sortAndGroupDescriptors count]) {
-            if (![(id<MySortDescriptorProtocol>)self.sortAndGroupDescriptors[i] isGrouping])
-                break;
-            i++;
-        }
+- (void) makeGroupingOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending {
+    if (self.groupDescriptors==nil) {
+        self.groupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
-    else {
-        // First Remove all  groupings
-        while ([self.sortAndGroupDescriptors count]!=0) {
-            if ([(id<MySortDescriptorProtocol>)self.sortAndGroupDescriptors[i] isGrouping])
-                [self.sortAndGroupDescriptors removeObjectAtIndex:0];
-            else
-                break;
-        }
-        // i = 0 => will insert on the first element of the array
-    }
-    [self.sortAndGroupDescriptors insertObject:sortDesc atIndex:i];
+    
+    NSSortDescriptor<MySortDescriptorProtocol> *sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending];
+    
+    // Removes All previous groupings TODO:1.4 Make possible to have multiple groupings
+    [self removeGroupings];
+    [self.sortDescriptors insertObject:sortDesc atIndex:0];
 }
 
 -(void) removeGroupings {
-    NSUInteger i = 0;
-    while (i < [self.sortAndGroupDescriptors count]) {
-        NSSortDescriptor<MySortDescriptorProtocol> *sortDesc = [self.sortAndGroupDescriptors objectAtIndex:i];
-        if ([sortDesc isGrouping] ) {
-            [self.sortAndGroupDescriptors removeObjectAtIndex:i];
-        }
-        else {
-            i++;
-        }
-    }
+    [self.groupDescriptors removeAllObjects];
 }
 
 -(NSArray*) getSelectedItemsHash {
@@ -698,29 +653,46 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 -(void) loadPreferencesFrom:(NSDictionary*) preferences {
     // Needs to be called from subclasses
     NSArray *sortElements = [preferences objectForKey:USER_DEF_SORT_KEYS];
-    [self.sortAndGroupDescriptors removeAllObjects];
+    [self.sortDescriptors removeAllObjects];
     for (NSDictionary *dict in sortElements) {
         NSString *field = [dict objectForKey:@"field"];
         BOOL ascending = [[dict objectForKey:@"ascending"] boolValue];
         BOOL grouping  = [[dict objectForKey:@"grouping"] boolValue];
-        NodeSortDescriptor *desc = [[NodeSortDescriptor alloc] initWithField:field ascending:ascending grouping:grouping];
+        NodeSortDescriptor *desc = [[NodeSortDescriptor alloc] initWithField:field ascending:ascending];
         //NSLog(@"Loading preferences: Field:%@ ascending:%d grouping:%d", field, ascending, grouping);
-        [self.sortAndGroupDescriptors addObject:desc];
+        if (grouping == NO) {
+            [self.sortDescriptors addObject:desc];
+        }
+        else {
+            [self.groupDescriptors addObject:desc];
+        }
     }
 }
 
 -(void) savePreferences:(NSMutableDictionary*)preferences {
     // Needs to be called from subclasses
-    NSMutableArray *sortElements = [[NSMutableArray alloc] initWithCapacity:[self.sortAndGroupDescriptors count]];
+    NSMutableArray *sortElements = [[NSMutableArray alloc] initWithCapacity:[self.sortDescriptors count]];
     
-    for (NSSortDescriptor<MySortDescriptorProtocol>* desc in self.sortAndGroupDescriptors) {
+    for (NSSortDescriptor<MySortDescriptorProtocol>* desc in self.sortDescriptors) {
         //NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
         if ([desc.field isKindOfClass:[NodeSortDescriptor class]]) {
             // This assures that the FoldersFirst sort descriptor is not saved
             [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:
                                      desc.field, @"field",
                                      [NSNumber numberWithBool:desc.ascending], @"ascending",
-                                     [NSNumber numberWithBool:desc.isGrouping], @"grouping",
+                                     @0, @"grouping",
+                                     nil]];
+        }
+    }
+
+    for (NSSortDescriptor<MySortDescriptorProtocol>* desc in self.groupDescriptors) {
+        //NSLog(@"Saving preferences: Field:%@ ascending:%d grouping:%d", desc.field, desc.ascending, desc.isGrouping);
+        if ([desc.field isKindOfClass:[NodeSortDescriptor class]]) {
+            // This assures that the FoldersFirst sort descriptor is not saved
+            [sortElements addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+                                     desc.field, @"field",
+                                     [NSNumber numberWithBool:desc.ascending], @"ascending",
+                                     @1, @"grouping",
                                      nil]];
         }
     }

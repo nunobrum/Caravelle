@@ -276,6 +276,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(id)item {
+    // This instruction assures that in a refresh the correct drill markings are consistent with the box settings
+    self->drillDepth = [self.drillLevel integerValue];
+    
     if(item==nil) {
         return [_baseDirectories numberOfBranchesInNode];
     }
@@ -353,7 +356,28 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
             // Display the directory name followed by the number of files inside
             NSImage *icon =  [item image];
-            [[cellView imageView] setImage:icon];
+            // If drill is enable, add a small tornado to it.
+            if (self->drillDepth > 0) {
+                TreeBranch * r = [_baseDirectories getRootWithNode:item];
+                NSInteger depth = item.pathLevel - r.pathLevel;
+                if (depth <= self->drillDepth) {
+                    NSSize imageSize= [icon size];
+                    //TreeItemTagEnum tags = [self tag];
+                    NSImage *image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+                        [icon drawInRect:dstRect];
+                        
+                        // Then will apply an overlay
+                        [[NSImage imageNamed:@"Tornado"] drawInRect:dstRect];
+                        return YES;
+                    }];
+                    [[cellView imageView] setImage:image];
+                }
+                else
+                    [[cellView imageView] setImage:icon];
+            }
+            else {
+                [[cellView imageView] setImage:icon];
+            }
             [[cellView textField] setStringValue:[item name]];
 
             if ([item hasTags:tagTreeItemDropped]) {
@@ -607,9 +631,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             
             id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
             if (grouping) {
-                NSIndexSet *idx = [self.detailedViewController.sortAndGroupDescriptors indexesOfObjectsPassingTest:
+                NSIndexSet *idx = [self.detailedViewController.groupDescriptors indexesOfObjectsPassingTest:
                                    ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                                       BOOL OK = [(NodeSortDescriptor*)obj isGrouping] && [[(NodeSortDescriptor*)obj field] isEqualToString:fieldID];
+                                       BOOL OK = [[(NodeSortDescriptor*)obj field] isEqualToString:fieldID];
                                        *stop = OK;
                                        return OK;
                                    }];
@@ -937,8 +961,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     if (flatView) {
         foldersDisplayed = NO;
         // In no groupings defined, use COL_LOCATION
-        if (NO == [(NodeSortDescriptor*)[self.detailedViewController.sortAndGroupDescriptors firstObject] isGrouping]) {
-            [self.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        if (NO == [self.detailedViewController.groupDescriptors count]  == 0) {
+            [self.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
         }
     }
     else {
@@ -946,11 +970,13 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         
         // if COL_LOCATION grouping, cancel
         [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
+        [self.detailedViewController setDepth:0];
+        self.drillLevel = @"0";
     }
     
     [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
     [self.detailedViewController setDisplayFilesInSubdirs:flatView];
-    [self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
+    //[self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
 }
 
 -(BOOL) flatView {
@@ -968,39 +994,39 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         
         [self adjustViewSelectionAfterTreeViewChange];
     }
-    else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
-        [self setFlatView:isSelected];
-        if (isSelected) { // If it is activated, it suffices the order the expansion.
-                          // The refresh will be triggered by the KVO reload
-            [self.detailedViewController startBusyAnimationsDelayed];
-            // Send notification for App Delegate to execute this task
-            // For feedback reasons it has to be done in appOperations
-            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                                  opFlatOperation, kDFOOperationKey,
-                                  self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
-                                  self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
-                                  nil];
-            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
-            // Show the Drill View
-            [self.drillBox setHidden: NO];
-            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP + self.drillBox.bounds.size.height;
-            [self.splitViewToTopConstraint setConstant:distance];
-        }
-        else {
-            // refreshes the view
-            [self.detailedViewController refreshKeepingSelections];
-        
-            // Hide the Drill View
-            [self.drillBox setHidden:YES];
-            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP;
-            [self.splitViewToTopConstraint setConstant:distance];
-        }
-        // Send notificationViewChanged for the FlatView
-        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
-        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
-        [self.view setNeedsDisplay:YES];
-        
-    }
+//    else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
+//        [self setFlatView:isSelected];
+//        if (isSelected) { // If it is activated, it suffices the order the expansion.
+//                          // The refresh will be triggered by the KVO reload
+//            [self.detailedViewController startBusyAnimationsDelayed];
+//            // Send notification for App Delegate to execute this task
+//            // For feedback reasons it has to be done in appOperations
+//            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                  opFlatOperation, kDFOOperationKey,
+//                                  self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
+//                                  self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
+//                                  nil];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
+//            // Show the Drill View
+//            [self.drillBox setHidden: NO];
+//            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP + self.drillBox.bounds.size.height;
+//            [self.splitViewToTopConstraint setConstant:distance];
+//        }
+//        else {
+//            // refreshes the view
+//            [self.detailedViewController refreshKeepingSelections];
+//        
+//            // Hide the Drill View
+//            [self.drillBox setHidden:YES];
+//            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP;
+//            [self.splitViewToTopConstraint setConstant:distance];
+//        }
+//        // Send notificationViewChanged for the FlatView
+//        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
+//        [self.view setNeedsDisplay:YES];
+//        
+//    }
     else
         NSAssert(NO, @"Invalid Segment Number");
 }
@@ -1131,6 +1157,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 #pragma mark - KVO Methods
 
 - (void) reloadItem:(id)object {
+    // This instruction assures that in a refresh the correct drill markings are consistent with the box settings
+    self->drillDepth = [self.drillLevel integerValue];
+
     //NSLog(@"Reloading %@", [object path]);
     NSInteger row = [_myOutlineView rowForItem:object];
     if (row >= 0 && row != -1) {
@@ -1475,9 +1504,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     }
     // Update Current View Type Preference
     [self.preferences setObject:[NSNumber numberWithInteger:viewType] forKey:USER_DEF_PANEL_VIEW_TYPE];
-    [self.detailedViewController setDisplayFilesInSubdirs:
-     [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS]
-     ];
+    //[self.detailedViewController setDisplayFilesInSubdirs:
+    // [self.viewOptionsSwitches isSelectedForSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS]
+    // ];
     [self.detailedViewController setCurrentNode:_treeNodeSelected];
     [self.detailedViewController refresh];
     
@@ -1886,7 +1915,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 - (IBAction)depthChanged:(id)sender {
-    [self.detailedViewController setDepth:self.drillLevel.integerValue];
+    self->drillDepth = [(NSTextField*)sender integerValue];
+    [self.detailedViewController setDepth:self->drillDepth];
     [self refresh];
 }
 

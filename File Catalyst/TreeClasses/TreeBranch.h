@@ -32,12 +32,14 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(instancetype) initWithMDItem:(NSMetadataItem*)mdItem parent:(id)parent;
 
 
--(NSInteger) numberOfBranchesInNode;
--(NSInteger) numberOfItemsInNode;
+-(NSUInteger) numberOfBranchesInNode;
+-(NSUInteger) numberOfItemsInNode;
 
--(NSInteger) numberOfLeafsInBranch;
--(NSInteger) numberOItemsInBranchTillDepth:(NSUInteger) depth;
--(NSInteger) numberOItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;
+-(NSUInteger) numberOfLeafsInBranch;
+//-(NSUInteger) numberOItemsInBranchTillDepth:(NSUInteger) depth;
+-(NSUInteger) numberOfItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;
+-(NSUInteger) numberOfLeafsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;
+
 
 
 -(TreeBranch*) branchAtIndex:(NSUInteger)index;
@@ -51,7 +53,11 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 
 -(void) harvestItemsInBranch:(NSMutableArray*)collector depth:(NSUInteger)depth filter:(NSPredicate*)filter;
--(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
+
+-(void) harvestLeafsInBranch:(NSMutableArray*)collector depth:(NSUInteger)depth filter:(NSPredicate*)filter;
+
+
+//-(NSMutableArray*) itemsInBranchWithPredicate:(NSPredicate*)filter depth:(NSInteger)depth;
 -(void) harvestItemsInBranch:(NSMutableArray*)collector
                        depth:(NSUInteger)depth
                    withBlock:(BOOL(^)(TreeItem* item, NSUInteger level))filter;

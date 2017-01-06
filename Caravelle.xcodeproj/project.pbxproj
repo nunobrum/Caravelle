@@ -8,10 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		3C0238E91AE02A310023CE42 /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
-		3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */; };
-		3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */; };
-		3C15E93E1AF3D13C006DF095 /* SizeGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */; };
-		3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9401AF3E2AF006DF095 /* DateGrouping.m */; };
 		3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */; };
 		3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
 		3C20FCC819CB7FAE00826246 /* Automator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C20FCC719CB7FAE00826246 /* Automator.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
@@ -68,8 +64,6 @@
 		3CF8466819EB30D2008C691E /* filterBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF8466719EB30D2008C691E /* filterBranch.m */; };
 		3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		3CFD4D561998E16C0074F08B /* FileUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFD4D551998E16C0074F08B /* FileUtils.m */; };
-		BC03EB721DA44D1900BDB92D /* ArraySubset.m in Sources */ = {isa = PBXBuildFile; fileRef = BC03EB711DA44D1900BDB92D /* ArraySubset.m */; };
-		BC07EFAF1BDAA1EF00071193 /* DuplicateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */; };
 		BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC08C9AE1B79535C00D12486 /* payplugins.plist in Resources */ = {isa = PBXBuildFile; fileRef = BC08C9AD1B79535C00D12486 /* payplugins.plist */; };
 		BC0EBE5C1BA3087A00837EDE /* Receipts.m in Sources */ = {isa = PBXBuildFile; fileRef = BC0EBE5B1BA3087A00837EDE /* Receipts.m */; };
@@ -82,7 +76,6 @@
 		BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BC33F2AA1CDE36B500EBDD8F /* OperationManager.m */; };
 		BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */; };
 		BC3FFB581C77F64A003FB6F5 /* RecentlyUsedArray.m in Sources */ = {isa = PBXBuildFile; fileRef = BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */; };
-		BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
 		BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */; };
 		BC581BB91D91C64900B66C0E /* FileCollectionViewItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */; };
 		BC69D07B1DD8A41A00CF4D9C /* TreeViewer.m in Sources */ = {isa = PBXBuildFile; fileRef = BC69D07A1DD8A41A00CF4D9C /* TreeViewer.m */; };
@@ -103,14 +96,12 @@
 		BC9568AC1C484F9C00DAB21A /* myValueTransformers.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1ED36819FD7AA4009D5151 /* myValueTransformers.m */; };
 		BC9568AD1C484F9C00DAB21A /* TreeItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463A18F9B86A002B633C /* TreeItem.m */; };
 		BC9568AE1C484F9C00DAB21A /* CustomTableHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE61A06C99400ED6392 /* CustomTableHeaderView.m */; };
-		BC9568AF1C484F9C00DAB21A /* DuplicateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */; };
 		BC9568B01C484F9C00DAB21A /* TreeRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463818F9B86A002B633C /* TreeRoot.m */; };
 		BC9568B11C484F9C00DAB21A /* FolderCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464218F9B87C002B633C /* FolderCellView.m */; };
 		BC9568B21C484F9C00DAB21A /* ber_tlv_tag.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F51BA940AD00B1DAA9 /* ber_tlv_tag.c */; };
 		BC9568B31C484F9C00DAB21A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA675518F87C2F0080C4FC /* AppDelegate.m */; };
 		BC9568B41C484F9C00DAB21A /* TreePackage.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C87646D1B13764E001B79BD /* TreePackage.m */; };
 		BC9568B51C484F9C00DAB21A /* TreeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CD788A819D52DEE0042E8B9 /* TreeManager.m */; };
-		BC9568B61C484F9C00DAB21A /* DateGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9401AF3E2AF006DF095 /* DateGrouping.m */; };
 		BC9568B71C484F9C00DAB21A /* BrowserIconView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */; };
 		BC9568B81C484F9C00DAB21A /* per_encoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370F1BA940AD00B1DAA9 /* per_encoder.c */; };
 		BC9568B91C484F9C00DAB21A /* per_opentype.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB37111BA940AD00B1DAA9 /* per_opentype.c */; };
@@ -118,7 +109,6 @@
 		BC9568BB1C484F9C00DAB21A /* ber_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F11BA940AD00B1DAA9 /* ber_decoder.c */; };
 		BC9568BC1C484F9C00DAB21A /* constr_SET_OF.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36FB1BA940AD00B1DAA9 /* constr_SET_OF.c */; };
 		BC9568BD1C484F9C00DAB21A /* TreeLeaf.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29463618F9B86A002B633C /* TreeLeaf.m */; };
-		BC9568BE1C484F9C00DAB21A /* NumberGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = BC523DD61B594B7C0030C97A /* NumberGrouping.m */; };
 		BC9568BF1C484F9C00DAB21A /* TreeCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCDCA49A1BDAE47D00D7D09C /* TreeCollection.m */; };
 		BC9568C01C484F9C00DAB21A /* NodeSortDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */; };
 		BC9568C11C484F9C00DAB21A /* FileAttributesController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C84EFE11A05254A00ED6392 /* FileAttributesController.m */; };
@@ -145,8 +135,6 @@
 		BC9568D71C484F9C00DAB21A /* FileExistsChoice.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF17D221A18C9E50082A9B0 /* FileExistsChoice.m */; };
 		BC9568D81C484F9C00DAB21A /* ByteCounterUtils.c in Sources */ = {isa = PBXBuildFile; fileRef = 3CDD42F61AF60C0C0018D24D /* ByteCounterUtils.c */; };
 		BC9568D91C484F9C00DAB21A /* FileCollection.m in Sources */ = {isa = PBXBuildFile; fileRef = BCADC2471B3DB39B00245F1D /* FileCollection.m */; };
-		BC9568DA1C484F9C00DAB21A /* StringGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */; };
-		BC9568DB1C484F9C00DAB21A /* BaseGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */; };
 		BC9568DC1C484F9C00DAB21A /* BIT_STRING.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB36F71BA940AD00B1DAA9 /* BIT_STRING.c */; };
 		BC9568DD1C484F9C00DAB21A /* CatalogBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CF32B9719FCED7700B14A85 /* CatalogBranch.m */; };
 		BC9568DE1C484F9C00DAB21A /* PasteboardUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C0238E81AE02A310023CE42 /* PasteboardUtils.m */; };
@@ -168,7 +156,6 @@
 		BC9568EF1C484F9C00DAB21A /* DummyBranch.m in Sources */ = {isa = PBXBuildFile; fileRef = BC08C9AB1B764B9F00D12486 /* DummyBranch.m */; };
 		BC9568F01C484F9C00DAB21A /* DuplicateDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */; };
 		BC9568F11C484F9C00DAB21A /* ImagePreviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C29464318F9B87C002B633C /* ImagePreviewCell.m */; };
-		BC9568F21C484F9C00DAB21A /* SizeGrouping.m in Sources */ = {isa = PBXBuildFile; fileRef = 3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */; };
 		BC9568F31C484F9C00DAB21A /* per_decoder.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB370D1BA940AD00B1DAA9 /* per_decoder.c */; };
 		BC9568F41C484F9C00DAB21A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 3CEA674E18F87C2F0080C4FC /* main.m */; };
 		BC9568F51C484F9C00DAB21A /* ExpandFolders.m in Sources */ = {isa = PBXBuildFile; fileRef = BC27BFE91B5C46BC001AE181 /* ExpandFolders.m */; };
@@ -252,14 +239,6 @@
 /* Begin PBXFileReference section */
 		3C0238E81AE02A310023CE42 /* PasteboardUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PasteboardUtils.m; path = BrowserClasses/PasteboardUtils.m; sourceTree = "<group>"; };
 		3C0238EA1AE02AC20023CE42 /* PasteboardUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PasteboardUtils.h; path = BrowserClasses/PasteboardUtils.h; sourceTree = "<group>"; };
-		3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseGrouping.h; path = BrowserClasses/Groupings/BaseGrouping.h; sourceTree = "<group>"; };
-		3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseGrouping.m; path = BrowserClasses/Groupings/BaseGrouping.m; sourceTree = "<group>"; };
-		3C15E9391AF3D0A6006DF095 /* StringGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringGrouping.h; path = BrowserClasses/Groupings/StringGrouping.h; sourceTree = "<group>"; };
-		3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = StringGrouping.m; path = BrowserClasses/Groupings/StringGrouping.m; sourceTree = "<group>"; };
-		3C15E93C1AF3D13C006DF095 /* SizeGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SizeGrouping.h; path = BrowserClasses/Groupings/SizeGrouping.h; sourceTree = "<group>"; };
-		3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SizeGrouping.m; path = BrowserClasses/Groupings/SizeGrouping.m; sourceTree = "<group>"; };
-		3C15E93F1AF3E2AF006DF095 /* DateGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateGrouping.h; path = BrowserClasses/Groupings/DateGrouping.h; sourceTree = "<group>"; };
-		3C15E9401AF3E2AF006DF095 /* DateGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DateGrouping.m; path = BrowserClasses/Groupings/DateGrouping.m; sourceTree = "<group>"; };
 		3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeSortDescriptor.h; path = BrowserClasses/Groupings/NodeSortDescriptor.h; sourceTree = "<group>"; };
 		3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NodeSortDescriptor.m; path = BrowserClasses/Groupings/NodeSortDescriptor.m; sourceTree = "<group>"; };
 		3C1ED36719FD7AA4009D5151 /* myValueTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = myValueTransformers.h; sourceTree = "<group>"; };
@@ -361,10 +340,6 @@
 		3CFBF5BD1AD953FC00185505 /* BrowserIconView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserIconView.m; path = BrowserClasses/BrowserIconView.m; sourceTree = "<group>"; };
 		3CFD4D541998E16C0074F08B /* FileUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FileUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3CFD4D551998E16C0074F08B /* FileUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FileUtils.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		BC03EB701DA44D1900BDB92D /* ArraySubset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArraySubset.h; path = TreeClasses/ArraySubset.h; sourceTree = "<group>"; };
-		BC03EB711DA44D1900BDB92D /* ArraySubset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ArraySubset.m; path = TreeClasses/ArraySubset.m; sourceTree = "<group>"; };
-		BC07EFAD1BDAA1EF00071193 /* DuplicateGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateGrouping.h; path = BrowserClasses/Groupings/DuplicateGrouping.h; sourceTree = "<group>"; };
-		BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateGrouping.m; path = BrowserClasses/Groupings/DuplicateGrouping.m; sourceTree = "<group>"; };
 		BC08C9AA1B764B9F00D12486 /* DummyBranch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyBranch.h; sourceTree = "<group>"; };
 		BC08C9AB1B764B9F00D12486 /* DummyBranch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = DummyBranch.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		BC08C9AD1B79535C00D12486 /* payplugins.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = payplugins.plist; sourceTree = "<group>"; };
@@ -387,8 +362,6 @@
 		BC3FFB541C77E645003FB6F5 /* MYFIFOArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MYFIFOArray.m; path = "File Catalyst/SideBar/MYFIFOArray.m"; sourceTree = SOURCE_ROOT; };
 		BC3FFB561C77F64A003FB6F5 /* RecentlyUsedArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyUsedArray.h; path = "File Catalyst/SideBar/RecentlyUsedArray.h"; sourceTree = SOURCE_ROOT; };
 		BC3FFB571C77F64A003FB6F5 /* RecentlyUsedArray.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RecentlyUsedArray.m; path = "File Catalyst/SideBar/RecentlyUsedArray.m"; sourceTree = SOURCE_ROOT; };
-		BC523DD51B594B7C0030C97A /* NumberGrouping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NumberGrouping.h; path = BrowserClasses/Groupings/NumberGrouping.h; sourceTree = "<group>"; };
-		BC523DD61B594B7C0030C97A /* NumberGrouping.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NumberGrouping.m; path = BrowserClasses/Groupings/NumberGrouping.m; sourceTree = "<group>"; };
 		BC581BB51D91C64900B66C0E /* FileCollectionViewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCollectionViewItem.h; path = BrowserClasses/FileCollectionViewItem.h; sourceTree = "<group>"; };
 		BC581BB61D91C64900B66C0E /* FileCollectionViewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FileCollectionViewItem.m; path = BrowserClasses/FileCollectionViewItem.m; sourceTree = "<group>"; };
 		BC581BB71D91C64900B66C0E /* FileCollectionViewItem.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = FileCollectionViewItem.xib; path = BrowserClasses/FileCollectionViewItem.xib; sourceTree = "<group>"; };
@@ -539,27 +512,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3C15E9351AF3CFA5006DF095 /* Groupings */ = {
-			isa = PBXGroup;
-			children = (
-				3C15E9361AF3CFF1006DF095 /* BaseGrouping.h */,
-				3C15E9371AF3CFF1006DF095 /* BaseGrouping.m */,
-				3C15E9391AF3D0A6006DF095 /* StringGrouping.h */,
-				3C15E93A1AF3D0A6006DF095 /* StringGrouping.m */,
-				3C15E93C1AF3D13C006DF095 /* SizeGrouping.h */,
-				3C15E93D1AF3D13C006DF095 /* SizeGrouping.m */,
-				3C15E93F1AF3E2AF006DF095 /* DateGrouping.h */,
-				3C15E9401AF3E2AF006DF095 /* DateGrouping.m */,
-				BC523DD51B594B7C0030C97A /* NumberGrouping.h */,
-				BC523DD61B594B7C0030C97A /* NumberGrouping.m */,
-				BC07EFAD1BDAA1EF00071193 /* DuplicateGrouping.h */,
-				BC07EFAE1BDAA1EF00071193 /* DuplicateGrouping.m */,
-				BC03EB701DA44D1900BDB92D /* ArraySubset.h */,
-				BC03EB711DA44D1900BDB92D /* ArraySubset.m */,
-			);
-			name = Groupings;
-			sourceTree = "<group>";
-		};
 		3C29463118F9B81C002B633C /* FileClasses */ = {
 			isa = PBXGroup;
 			children = (
@@ -834,7 +786,6 @@
 				3C0238E81AE02A310023CE42 /* PasteboardUtils.m */,
 				3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */,
 				3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */,
-				3C15E9351AF3CFA5006DF095 /* Groupings */,
 				3CEB61F11AD293C300E09A85 /* Icon View */,
 				3CEB61F01ACFD53C00E09A85 /* TableView */,
 				3CEB61F21AD293F500E09A85 /* AttributesPanel */,
@@ -1205,7 +1156,6 @@
 				3C1ED36919FD7AA4009D5151 /* myValueTransformers.m in Sources */,
 				3C29463E18F9B86A002B633C /* TreeItem.m in Sources */,
 				3C84EFE71A06C99400ED6392 /* CustomTableHeaderView.m in Sources */,
-				BC07EFAF1BDAA1EF00071193 /* DuplicateGrouping.m in Sources */,
 				3C29463D18F9B86A002B633C /* TreeRoot.m in Sources */,
 				3C29464B18F9B87C002B633C /* FolderCellView.m in Sources */,
 				BCEB37211BA940AD00B1DAA9 /* ber_tlv_tag.c in Sources */,
@@ -1213,7 +1163,6 @@
 				3C87646E1B13764E001B79BD /* TreePackage.m in Sources */,
 				BC3FFB551C77E645003FB6F5 /* MYFIFOArray.m in Sources */,
 				3CD788A919D52DEE0042E8B9 /* TreeManager.m in Sources */,
-				3C15E9411AF3E2AF006DF095 /* DateGrouping.m in Sources */,
 				3CFBF5BE1AD953FC00185505 /* BrowserIconView.m in Sources */,
 				BCEB372E1BA940AD00B1DAA9 /* per_encoder.c in Sources */,
 				BCEB372F1BA940AD00B1DAA9 /* per_opentype.c in Sources */,
@@ -1222,7 +1171,6 @@
 				BCEB371F1BA940AD00B1DAA9 /* ber_decoder.c in Sources */,
 				BCEB37241BA940AD00B1DAA9 /* constr_SET_OF.c in Sources */,
 				3C29463C18F9B86A002B633C /* TreeLeaf.m in Sources */,
-				BC523DD71B594B7C0030C97A /* NumberGrouping.m in Sources */,
 				BCDCA49C1BDAE47D00D7D09C /* TreeCollection.m in Sources */,
 				3C1CF6551AE963020089B6E4 /* NodeSortDescriptor.m in Sources */,
 				3C84EFE31A05254A00ED6392 /* FileAttributesController.m in Sources */,
@@ -1233,7 +1181,6 @@
 				BCEB37301BA940AD00B1DAA9 /* per_support.c in Sources */,
 				BC69D07D1DD8A69000CF4D9C /* TreeViewer2.m in Sources */,
 				BCEB37271BA940AD00B1DAA9 /* der_encoder.c in Sources */,
-				BC03EB721DA44D1900BDB92D /* ArraySubset.m in Sources */,
 				BCEB37251BA940AD00B1DAA9 /* constr_TYPE.c in Sources */,
 				BCEB37201BA940AD00B1DAA9 /* ber_tlv_length.c in Sources */,
 				BC581BB81D91C64900B66C0E /* FileCollectionViewItem.m in Sources */,
@@ -1255,10 +1202,8 @@
 				3CDD42F81AF60C0C0018D24D /* ByteCounterUtils.c in Sources */,
 				BCADC2481B3DB39B00245F1D /* FileCollection.m in Sources */,
 				BC2728CE1C68ECC2001EAA0E /* SidebarTableCellView.m in Sources */,
-				3C15E93B1AF3D0A6006DF095 /* StringGrouping.m in Sources */,
 				BC69D0811DD90A2400CF4D9C /* TreeEnumerator.m in Sources */,
 				BC2728CC1C68ECC2001EAA0E /* MainSideBarController.m in Sources */,
-				3C15E9381AF3CFF1006DF095 /* BaseGrouping.m in Sources */,
 				BC33F2AB1CDE36B500EBDD8F /* OperationManager.m in Sources */,
 				BCDEBF6A1E13ABC600224061 /* CollectionHeaderView.m in Sources */,
 				BCEB37221BA940AD00B1DAA9 /* BIT_STRING.c in Sources */,
@@ -1285,7 +1230,6 @@
 				BC08C9AC1B764B9F00D12486 /* DummyBranch.m in Sources */,
 				BCF1AF821C42810000E47E2C /* DuplicateDelegate.m in Sources */,
 				3C29464C18F9B87C002B633C /* ImagePreviewCell.m in Sources */,
-				3C15E93E1AF3D13C006DF095 /* SizeGrouping.m in Sources */,
 				BCEB372D1BA940AD00B1DAA9 /* per_decoder.c in Sources */,
 				3CEA674F18F87C2F0080C4FC /* main.m in Sources */,
 				BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */,
@@ -1328,14 +1272,12 @@
 				BC9568AC1C484F9C00DAB21A /* myValueTransformers.m in Sources */,
 				BC9568AD1C484F9C00DAB21A /* TreeItem.m in Sources */,
 				BC9568AE1C484F9C00DAB21A /* CustomTableHeaderView.m in Sources */,
-				BC9568AF1C484F9C00DAB21A /* DuplicateGrouping.m in Sources */,
 				BC9568B01C484F9C00DAB21A /* TreeRoot.m in Sources */,
 				BC9568B11C484F9C00DAB21A /* FolderCellView.m in Sources */,
 				BC9568B21C484F9C00DAB21A /* ber_tlv_tag.c in Sources */,
 				BC9568B31C484F9C00DAB21A /* AppDelegate.m in Sources */,
 				BC9568B41C484F9C00DAB21A /* TreePackage.m in Sources */,
 				BC9568B51C484F9C00DAB21A /* TreeManager.m in Sources */,
-				BC9568B61C484F9C00DAB21A /* DateGrouping.m in Sources */,
 				BC9568B71C484F9C00DAB21A /* BrowserIconView.m in Sources */,
 				BC9568B81C484F9C00DAB21A /* per_encoder.c in Sources */,
 				BC9568B91C484F9C00DAB21A /* per_opentype.c in Sources */,
@@ -1343,7 +1285,6 @@
 				BC9568BB1C484F9C00DAB21A /* ber_decoder.c in Sources */,
 				BC9568BC1C484F9C00DAB21A /* constr_SET_OF.c in Sources */,
 				BC9568BD1C484F9C00DAB21A /* TreeLeaf.m in Sources */,
-				BC9568BE1C484F9C00DAB21A /* NumberGrouping.m in Sources */,
 				BC9568BF1C484F9C00DAB21A /* TreeCollection.m in Sources */,
 				BC9568C01C484F9C00DAB21A /* NodeSortDescriptor.m in Sources */,
 				BC9568C11C484F9C00DAB21A /* FileAttributesController.m in Sources */,
@@ -1370,8 +1311,6 @@
 				BC9568D71C484F9C00DAB21A /* FileExistsChoice.m in Sources */,
 				BC9568D81C484F9C00DAB21A /* ByteCounterUtils.c in Sources */,
 				BC9568D91C484F9C00DAB21A /* FileCollection.m in Sources */,
-				BC9568DA1C484F9C00DAB21A /* StringGrouping.m in Sources */,
-				BC9568DB1C484F9C00DAB21A /* BaseGrouping.m in Sources */,
 				BC9568DC1C484F9C00DAB21A /* BIT_STRING.c in Sources */,
 				BC9568DD1C484F9C00DAB21A /* CatalogBranch.m in Sources */,
 				BC9568DE1C484F9C00DAB21A /* PasteboardUtils.m in Sources */,
@@ -1393,7 +1332,6 @@
 				BC9568EF1C484F9C00DAB21A /* DummyBranch.m in Sources */,
 				BC9568F01C484F9C00DAB21A /* DuplicateDelegate.m in Sources */,
 				BC9568F11C484F9C00DAB21A /* ImagePreviewCell.m in Sources */,
-				BC9568F21C484F9C00DAB21A /* SizeGrouping.m in Sources */,
 				BC9568F31C484F9C00DAB21A /* per_decoder.c in Sources */,
 				BC9568F41C484F9C00DAB21A /* main.m in Sources */,
 				BC9568F51C484F9C00DAB21A /* ExpandFolders.m in Sources */,

@@ -1070,7 +1070,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                         // TODO:1.4 This should be retrieved from the default settings
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
-                        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
+                        [myLeftView.detailedViewController makeGroupingOnFieldID:@"COL_DUP_GROUP" ascending:YES];
                         [myLeftView addTreeRoot:duplicateController.unifiedDuplicatesRoot];
                         [myLeftView selectFirstRoot];
                         
@@ -1082,7 +1082,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
                         // Group by Location
-                        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES grouping:NO];
+                        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_NAME" ascending:YES];
                         [myLeftView setRoots:duplicateController.rootsWithDuplicates.roots];
                         [myLeftView selectFirstRoot]; // This has to be done at the end since it triggers the statusUpdate:
                     }
@@ -1853,7 +1853,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
         // Group by Location
-        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_DUP_GROUP" ascending:YES grouping:YES];
+        [myLeftView.detailedViewController makeGroupingOnFieldID:@"COL_DUP_GROUP" ascending:YES];
         // ___________________________
         // Setting the duplicate Files
         // ---------------------------
@@ -1876,7 +1876,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         // TODO:1.3.3 This should be retrieved from Default Settings
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
-        [myLeftView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        [myLeftView.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
         
         [myRightView setViewMode:BViewDuplicateMode];
         [myRightView setViewType:BViewTypeTable];
@@ -1886,7 +1886,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         [myRightView setFlatView:YES];
         [myRightView.detailedViewController setupColumns:dupColumns];
         // Group by Location
-        [myRightView.detailedViewController makeSortOnFieldID:@"COL_LOCATION" ascending:YES grouping:YES];
+        [myRightView.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
         // Activate the Flat View
         
         // ___________________________

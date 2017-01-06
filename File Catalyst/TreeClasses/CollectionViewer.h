@@ -34,7 +34,7 @@
 -(TreeBranch*) sectionNumber:(NSInteger)number;
 -(NSInteger) itemCountAtSection:(NSInteger)section;
 -(TreeItem*) itemAtIndexPath:(NSIndexPath *)indexPath;
--(NSString*) groupTitle;
+-(NSString*) titleForGroup:(NSInteger)section;
 
 
 @end

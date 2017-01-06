@@ -16,11 +16,11 @@
     self->_root = parent;
     self->_item = nil;
     // Default sortDescriptor
-    self->sort = [NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
+    self->sort = nil; //[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
     self->_currIndex = NSNotFound; // This will trigger a reset at the first seek
     self->_currSection = NSNotFound;
     self->_sections = nil;
-    self->_needsRefresh = YES;
+    self->_needsRefresh = (parent != nil); // Only generate a refresh if the receiving branch is not zero.
     return self;
 }
 
@@ -94,12 +94,22 @@
         [self->_sections addObject:self->_root];
         // Then adding the remaining sections.
         if (self->_maxLevel > 0) {
+            NSMutableArray <TreeBranch*> *childSections = [[NSMutableArray alloc] init];
             NSPredicate *onlySections = [NSPredicate predicateWithFormat:@"SELF.hasChildren==YES"];
-            [self->_root harvestItemsInBranch:self->_sections
+            [self->_root harvestItemsInBranch:childSections
                                         depth:self->_maxLevel-1 // Subtracting one because the depth of one,
              //corresponds to only capturing secions of the current level.
                                        filter:onlySections];
+            
+            // Finally the sections that will appear empty should be removed.
+            for (TreeBranch *child in childSections) {
+                NSInteger count = [child numberOfItemsWithPredicate:self->_filter tillDepth:0];
+                if (count != 0) {
+                    [self->_sections addObject:child];
+                }
+            }
         }
+        self->_currSection = NSNotFound; // This is needed so that the iterator gets updated.
         self->_needsRefresh = NO;
     }
     return [self->_sections count];
@@ -107,7 +117,7 @@
 
 -(NSInteger) itemCountAtSection:(NSInteger)section {
     TreeBranch *sec = [self sectionNumber:section];
-    NSInteger count = [sec numberOItemsWithPredicate:self->_filter tillDepth:0];
+    NSInteger count = [sec numberOfItemsWithPredicate:self->_filter tillDepth:0];
     return count;
 }
 
@@ -120,7 +130,7 @@
     if (self->_currSection != indexPath.section) {
         self->_currIndex = NSNotFound;
         self->_currSection = indexPath.section;
-        self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort];
+        self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:self->_filter];
     }
     // Now will check if the we are located at the right element
     if (self->_currIndex != indexPath.item) {
@@ -128,17 +138,22 @@
             [self->se reset];
             // Advances to the right position
             self->_currIndex = 0;
+            self->_item = [self->se nextObject];
         }
-        while (self->_currIndex++ < indexPath.item) {
-            [self->se nextObject];
+        while (self->_currIndex < indexPath.item) {
+            self->_item = [self->se nextObject];
+            if (self->_item == nil)
+                break;
+            self->_currIndex++;
         }
     }
-    return [sec itemAtIndex:indexPath.item];
+    //NSLog(@"index: %ld item:%@",(long)indexPath.item, self->_item );
+    return self->_item;
 }
 
--(NSString*) groupTitle {
-    TreeBranch *section = [self sectionNumber:self->_currSection];
-    NSString *answer = [section path];
+-(NSString*) titleForGroup:(NSInteger)section {
+    TreeBranch *STB = [self sectionNumber:section];
+    NSString *answer = [STB path];
     return answer;
 }
 

@@ -492,17 +492,18 @@ TreeManager *appTreeManager;
     url_allowed = url;
 #endif
     if (url_allowed) {
-        enumPathCompare comp = url_relation(url_allowed, url);
-        if (comp!=pathIsChild && comp != pathIsSame) {
-            // NSAlert telling that the program will proceed with this new URL
-            NSAlert *info = [[NSAlert alloc] init];
-            [info setMessageText:@"Proceeding with indicated Folder"];
-            [info addButtonWithTitle:@"OK"];
-            [info setInformativeText:@"The Opened Folder is different from requested"];
-            [info setAlertStyle:NSInformationalAlertStyle];
-            [info runModal];
-             
-        }
+//        Removed by complain of Ian Blackey
+//        enumPathCompare comp = url_relation(url_allowed, url);
+//        if (comp!=pathIsChild && comp != pathIsSame) {
+//            // NSAlert telling that the program will proceed with this new URL
+//            NSAlert *info = [[NSAlert alloc] init];
+//            [info setMessageText:@"Proceeding with indicated Folder"];
+//            [info addButtonWithTitle:@"OK"];
+//            [info setInformativeText:@"The Opened Folder is different from requested"];
+//            [info setAlertStyle:NSInformationalAlertStyle];
+//            [info runModal];
+//             
+//        }
         answer = [TreeItem treeItemForURL:url_allowed parent:nil];
         [answer setTag:tagTreeItemDirty + tagTreeAuthorized]; // Forcing its update and setting the authorization flag
     }
