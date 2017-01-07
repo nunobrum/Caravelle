@@ -23,7 +23,8 @@
     numberOfFiles = 0;
     NSMutableArray *undeveloppedFolders = [[NSMutableArray alloc] init];
     TreeBranch *itemToFlat = [_taskInfo objectForKey:kDFODestinationKey];
-    [itemToFlat harverstUndeveloppedFolders: undeveloppedFolders];
+    NSInteger depth = [[_taskInfo objectForKey:kDFODepthKey] integerValue];
+    [itemToFlat harverstUndeveloppedFolders: undeveloppedFolders tillDepth:depth];
     
     [itemToFlat willChangeValueForKey:kvoTreeBranchPropertyChildren];  // This will inform the observer about change
     

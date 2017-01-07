@@ -100,7 +100,9 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 -(void) calculateSize;
 -(void) setSizes:(long long)files allocated:(long long)allocated total:(long long)total totalAllocated:(long long) totalallocated;
 -(void) sizeCalculationCancelled;
--(void) requestFlatForView:(id)view;
+
+-(void) requestFlatForView:(id)view tillDepth:(NSInteger)depth ;
+-(void) harverstUndeveloppedFolders:(NSMutableArray*)collector tillDepth:(NSInteger) depth;
 
 -(void) notifyDidChangeTreeBranchPropertyChildren;
 

@@ -92,7 +92,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 }
 
 - (void) initController {
-    self->_extendToSubdirectories = NO;
     self->_foldersInTable = YES;
     self->_currentNode = nil;
     self->_observedVisibleItems = [[NSMutableArray new] init];
@@ -156,6 +155,10 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 
 -(void) setDepth:(NSInteger)depth {
     NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided");
+}
+
+-(NSInteger) depth {
+    return self->dataViewer.depth;
 }
 
 

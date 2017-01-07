@@ -27,6 +27,9 @@ extern NSString *kDFOFromViewKey;
 /* Used for the Duplicate Find Options */
 extern NSString *kOptionsKey;
 
+/* Used for the Flat Operation */
+extern NSString *kDFODepthKey;
+
 /* Used for the Operations */
 extern NSString const *opOpenOperation;
 extern NSString const *opCopyOperation;

@@ -49,7 +49,7 @@
     return NO;
 }
 
--(BOOL) canAndNeedsFlat {
+-(BOOL) canBeFlat {
     return NO;
 }
 

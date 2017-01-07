@@ -733,36 +733,43 @@ NSString* commonPathFromItems(NSArray* itemArray) {
 
 #pragma mark - Flat Operation
 
--(BOOL) _hasUndeveloppedFolders {
-    
+/* This selector searches for TreeBranches which children have not yet been initialized.
+ While doing so, it will return a negative number 
+ */
+-(NSInteger) _hasUndeveloppedFoldersTillDepth:(NSInteger) depth {
     if (self->_children!= nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                if ([item isFolder]) {
-                    if ([(TreeBranch*)item _hasUndeveloppedFolders])
-                        return YES;
+                if ([item isFolder] && depth > 0) {
+                    NSInteger answer = [(TreeBranch*)item _hasUndeveloppedFoldersTillDepth:depth-1];
+                    if (answer < 0)
+                        return answer;
                 }
             }
         }
     }
     else {
-        return YES;
+        return -depth;
     }
-    return NO;
+    return depth;
 }
 
 
--(BOOL) canAndNeedsFlat {
-    return [self _hasUndeveloppedFolders];
+-(BOOL) needsFlatScan:(NSInteger)depth {
+    return [self _hasUndeveloppedFoldersTillDepth:depth] < 0;
 }
 
--(void) harverstUndeveloppedFolders:(NSMutableArray*)collector {
+-(BOOL) canBeFlat {
+    return YES;
+}
+
+-(void) harverstUndeveloppedFolders:(NSMutableArray*)collector tillDepth:(NSInteger) depth {
     
     if (self->_children!= nil) {
         @synchronized(self) {
             for (TreeItem *item in self->_children) {
-                if ([item isFolder]) {
-                    [(TreeBranch*)item harverstUndeveloppedFolders:collector];
+                if ([item isFolder] && depth > 0) {
+                    [(TreeBranch*)item harverstUndeveloppedFolders:collector tillDepth:depth-1];
                 }
             }
         }
@@ -772,14 +779,18 @@ NSString* commonPathFromItems(NSArray* itemArray) {
     }
 }
 
--(void) requestFlatForView:(id)view {
-    // Send notification to request Expansion
-    NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-                          opFlatOperation, kDFOOperationKey,
-                          view, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
-                          self, kDFODestinationKey, // This has to be placed in last because it can be nil
-                          nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:view userInfo:info];
+-(void) requestFlatForView:(id)view tillDepth:(NSInteger)depth {
+    NSInteger needsFlat = [self _hasUndeveloppedFoldersTillDepth:depth];
+    if (needsFlat < 0) {
+        // Send notification to request Expansion
+        NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
+                              opFlatOperation, kDFOOperationKey,
+                              view, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
+                              self, kDFODestinationKey, // This has to be placed in last because it can be nil
+                              [NSNumber numberWithInteger:depth], kDFODepthKey,
+                              nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:view userInfo:info];
+    }
 }
 
 

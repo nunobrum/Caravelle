@@ -101,7 +101,7 @@
     return [super needsRefresh];
 }
 
--(BOOL) canAndNeedsFlat {
+-(BOOL) canBeFlat {
     return NO;
 }
 

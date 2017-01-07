@@ -50,7 +50,6 @@
 @property (readwrite, weak) id<BrowserParentProtocol> parentController;
 @property (readwrite, strong) NSString *filterText;
 
-@property (getter = filesInSubdirsDisplayed, setter = setDisplayFilesInSubdirs:) BOOL extendToSubdirectories;
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
 @property (readwrite, strong) NSMutableArray <NodeSortDescriptor*> *sortDescriptors;
@@ -83,7 +82,7 @@
 - (void) setDepth:(NSInteger) depth;
 - (void) setFilter:(NSPredicate*)filter;
 - (void) setSortDescriptor:(NSSortDescriptor*) sort;
-
+- (NSInteger) depth;
 
 //- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
 

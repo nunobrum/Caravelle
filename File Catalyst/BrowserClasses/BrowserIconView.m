@@ -34,7 +34,8 @@
 
 -(id) objectValueAtIndexPath:(NSIndexPath*)indexPath {
     id item = [self itemAtIndexPath:indexPath];
-    NSAssert([item isKindOfClass:[FileCollectionViewItem class]],@"Expected FileCollectionViewItem class");
+    if (NO == [item isKindOfClass:[FileCollectionViewItem class]])
+        NSAssert(NO,@"Expected FileCollectionViewItem class");
     return [(FileCollectionViewItem*)item representedObject];
 }
 

@@ -152,7 +152,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(BOOL) isGroup;
 -(BOOL) hasChildren; // has physical children but does not display as folders.
 -(BOOL) isSelectable;
--(BOOL) canAndNeedsFlat;
+-(BOOL) canBeFlat;
 
 
 // Tree Integration

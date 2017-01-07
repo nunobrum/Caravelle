@@ -97,7 +97,7 @@
 }
 // TODO:1.3 Add a badge to the dummy icon. Actually need to understand what happened with XCODE 7.2. Icons seem to already come with a badge.
 
--(BOOL) canAndNeedsFlat {
+-(BOOL) canBeFlat {
     return NO;
 }
 

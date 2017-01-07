@@ -1490,7 +1490,7 @@
 					"$(inherited)",
 					"/usr/local/src/openssl-1.1.0",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";
@@ -1522,7 +1522,7 @@
 					"$(inherited)",
 					"/usr/local/src/openssl-1.1.0",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.cascode.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = Caravelle;
 				PROVISIONING_PROFILE = "";

@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="15G1004" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IconViewController">
@@ -27,14 +28,14 @@
             <subviews>
                 <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
                     <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
-                    <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" id="0CJ-Gt-kCE">
+                    <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" drawsBackground="NO" id="0CJ-Gt-kCE">
                         <rect key="frame" x="1" y="1" width="431" height="532"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView identifier="BrowserIconView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
                                 <rect key="frame" x="0.0" y="0.0" width="431" height="532"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="WT0-iZ-NAB">
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="u7v-IO-FTa">
                                     <size key="itemSize" width="50" height="50"/>
                                 </collectionViewFlowLayout>
                                 <color key="primaryBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

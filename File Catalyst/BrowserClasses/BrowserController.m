@@ -501,7 +501,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 #pragma mark - Browser Parent Protocol
 -(void) selectionDidChangeOn:(id)object {
-    if (object==self.detailedViewController && self.detailedViewController.filesInSubdirsDisplayed) {
+    if (object==self.detailedViewController && (self.depth != 0)) {
         NSArray *itemsSelected = [object getSelectedItems];
         if ([itemsSelected count]==1) {
             // will change the path bar
@@ -755,8 +755,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             node = [branch parent];
         }
         // if the flat view is set, if outside of the current node, launch an expand Tree
-        if (self.flatView && [node relationTo:_treeNodeSelected]==pathIsParent && [node canAndNeedsFlat]) {
-            [node requestFlatForView:self];
+        if (self.depth!=0 && [node relationTo:_treeNodeSelected]==pathIsParent && [node canBeFlat]) {
+            [node requestFlatForView:self tillDepth:self.depth];
         }
     
         [self setPathBarToItem:node];
@@ -956,9 +956,9 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     return [self->_mySplitView isSubviewCollapsed:firstView];
 }
 
--(void) setFlatView:(BOOL) flatView {
+-(void) setDepth:(NSInteger) depth {
     BOOL foldersDisplayed;
-    if (flatView) {
+    if (depth != 0) {
         foldersDisplayed = NO;
         // In no groupings defined, use COL_LOCATION
         if (NO == [self.detailedViewController.groupDescriptors count]  == 0) {
@@ -970,17 +970,16 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         
         // if COL_LOCATION grouping, cancel
         [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
-        [self.detailedViewController setDepth:0];
-        self.drillLevel = @"0";
     }
     
     [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
-    [self.detailedViewController setDisplayFilesInSubdirs:flatView];
+    [self.detailedViewController setDepth:depth];
+    self.drillLevel = [NSString stringWithFormat:@"%ld", (long)depth];
     //[self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
 }
 
--(BOOL) flatView {
-    return self.detailedViewController.filesInSubdirsDisplayed;
+-(BOOL) depth {
+    return self.detailedViewController.depth;
 }
 
 - (IBAction)optionsSwitchSelect:(id)sender {
@@ -994,39 +993,6 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
         
         [self adjustViewSelectionAfterTreeViewChange];
     }
-//    else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
-//        [self setFlatView:isSelected];
-//        if (isSelected) { // If it is activated, it suffices the order the expansion.
-//                          // The refresh will be triggered by the KVO reload
-//            [self.detailedViewController startBusyAnimationsDelayed];
-//            // Send notification for App Delegate to execute this task
-//            // For feedback reasons it has to be done in appOperations
-//            NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                  opFlatOperation, kDFOOperationKey,
-//                                  self, kDFOFromViewKey, // The view is sent because the operation can take longer and selected view can change
-//                                  self.detailedViewController.currentNode, kDFODestinationKey, // This has to be placed in last because it can be nil
-//                                  nil];
-//            [[NSNotificationCenter defaultCenter] postNotificationName:notificationDoFileOperation object:self userInfo:info];
-//            // Show the Drill View
-//            [self.drillBox setHidden: NO];
-//            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP + self.drillBox.bounds.size.height;
-//            [self.splitViewToTopConstraint setConstant:distance];
-//        }
-//        else {
-//            // refreshes the view
-//            [self.detailedViewController refreshKeepingSelections];
-//        
-//            // Hide the Drill View
-//            [self.drillBox setHidden:YES];
-//            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP;
-//            [self.splitViewToTopConstraint setConstant:distance];
-//        }
-//        // Send notificationViewChanged for the FlatView
-//        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
-//        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
-//        [self.view setNeedsDisplay:YES];
-//        
-//    }
     else
         NSAssert(NO, @"Invalid Segment Number");
 }
@@ -1631,7 +1597,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 -(void) setRoots:(NSArray*) rootDirectories {
     [self removeAll];
-    [self setFlatView:NO]; // Cancels Flat View to avoid problems
+    [self setDepth:0]; // Cancels Flat View to avoid problems
     for (TreeItem* root in rootDirectories) {
         [_baseDirectories addTreeItem:root];
     }
@@ -1916,6 +1882,36 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 - (IBAction)depthChanged:(id)sender {
     self->drillDepth = [(NSTextField*)sender integerValue];
+    //    else if (selectedSegment==BROWSER_VIEW_OPTION_FLAT_SUBDIRS) {
+    //        [self setFlatView:isSelected];
+    //        if (isSelected) { // If it is activated, it suffices the order the expansion.
+    //                          // The refresh will be triggered by the KVO reload
+                [self.detailedViewController startBusyAnimationsDelayed];
+                // Send notification for App Delegate to execute this task
+                // For feedback reasons it has to be done in appOperations
+    [self.detailedViewController.currentNode requestFlatForView:self tillDepth:self->drillDepth];
+    
+    //            // Show the Drill View
+    //            [self.drillBox setHidden: NO];
+    //            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP + self.drillBox.bounds.size.height;
+    //            [self.splitViewToTopConstraint setConstant:distance];
+    //        }
+    //        else {
+    //            // refreshes the view
+    //            [self.detailedViewController refreshKeepingSelections];
+    //
+    //            // Hide the Drill View
+    //            [self.drillBox setHidden:YES];
+    //            CGFloat distance = DISTANCE_FROM_SPLITVIEW_TO_TOP;
+    //            [self.splitViewToTopConstraint setConstant:distance];
+    //        }
+    //        // Send notificationViewChanged for the FlatView
+    //        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:kViewChanged_FlatView forKey:kViewChangedWhatKey];
+    //        [[NSNotificationCenter defaultCenter] postNotificationName:notificationViewChanged object:self userInfo: userInfo];
+    //        [self.view setNeedsDisplay:YES];
+    //        
+    //    }
+
     [self.detailedViewController setDepth:self->drillDepth];
     [self refresh];
 }
