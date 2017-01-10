@@ -80,6 +80,15 @@
     return self->_filter;
 }
 
+-(NSInteger) countForSection:(TreeBranch*) section {
+    NSInteger count;
+    NSInteger childLevel = [section degreeToAncester:self->_root];
+    if (self->_maxLevel == childLevel)
+        count = [section numberOfItemsWithPredicate:self->_filter tillDepth:0];
+    else
+        count = [section numberOfLeafsWithPredicate:self->_filter tillDepth:0];
+    return count;
+}
 
 -(NSUInteger) count {
     if (self->_sections == nil || self->_needsRefresh == YES) {
@@ -99,7 +108,7 @@
         // Always start by the current directory
         
         [self->_sections addObject:self->_root];
-        NSUInteger count = [self->_root numberOfItemsWithPredicate:self->_filter tillDepth:0];
+        NSUInteger count = [self countForSection:self->_root];
         [self->_sectionIndexes addIndex:count];
         
         // Then adding the remaining sections.
@@ -112,7 +121,7 @@
              //corresponds to only capturing secions of the current level.
                                        filter:onlySections];
             for (TreeBranch* section in childSections) {
-                NSInteger itemsInSection = [section numberOfItemsWithPredicate:self->_filter tillDepth:0];
+                NSInteger itemsInSection = [self countForSection:section];
                 if (itemsInSection != 0) { // Only adds non empty sections
                     count += itemsInSection + 1; // Adding the row for the header itself.
                     [self->_sectionIndexes addIndex:count];
@@ -165,8 +174,17 @@
             self->_currRange.length = stop - self->_currRange.location;
         }
         TreeBranch *sec = self->_sections[section];
-        self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:self->_filter];
-        //self->se = [[FilterEnumerator alloc] initWithParent:sec filter:self->_filter];
+        NSInteger childLevel = [sec degreeToAncester:self->_root];
+        if (childLevel == self->_maxLevel) {
+            self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:self->_filter];
+        }
+        else {
+            NSPredicate *noSections = [NSPredicate predicateWithFormat:@"SELF.hasChildren==NO"];
+            NSArray <NSPredicate*>* filters = [[NSArray alloc] initWithObjects:noSections, self->_filter, nil];
+            NSCompoundPredicate *newFilter = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
+            self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:newFilter];
+        }
+        
         self->_currIndex = self->_currRange.location;
         if (self->_maxLevel > 0) {
             self->_item = self->_sections[self->_currSection];
@@ -199,8 +217,8 @@
             }
         }
     }
-    if (self->_item == nil)
-        NSLog(@"index: %ld item:%@",(long)index, self->_item );
+    //if (self->_item == nil)
+    //    NSLog(@"index: %ld item:%@",(long)index, self->_item );
     return self->_item;
 }
 
