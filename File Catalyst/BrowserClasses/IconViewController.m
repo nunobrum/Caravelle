@@ -91,11 +91,13 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 
     theFile = [self.currentViewer itemAtIndexPath:indexPath];
     
+    NSAssert(theFile != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil File");
+    
     icon.representedObject = theFile; // Store the file for later usage.
     
     [icon.imageView setImage: theFile.image];
     // an alternative: icon.imageView.image = theFile.image;
-    
+    NSAssert(theFile.name != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil File Name");
     [icon.textField setStringValue: theFile.name];
     
     // If it's a new file, then assume a default ICON
@@ -112,7 +114,9 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 -(NSView*) collectionView:(NSCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     CollectionHeaderView *view = [collectionView makeSupplementaryViewOfKind:NSCollectionElementKindSectionHeader withIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
     NSAssert(view != nil, @"IconViewController.collectionView:viewForSupplementaryElementOfKind:atIndexPath: Didn't received the View");
-    [view.sectionTitle setStringValue:[self.currentViewer titleForGroup:indexPath.section]];
+    NSString *sectionTitle = [self.currentViewer titleForGroup:indexPath.section];
+    NSAssert(sectionTitle != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil Section Name Name");
+    [view.sectionTitle setStringValue:sectionTitle];
     return view;
 }
 
@@ -275,7 +279,9 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     NSMutableArray *answer = [NSMutableArray arrayWithCapacity:self.collectionView.selectionIndexPaths.count];
     
     for (NSIndexPath *indexPath in self.collectionView.selectionIndexPaths) {
-        [answer addObject:[self.collectionView objectValueAtIndexPath: indexPath]];
+        id obj = [self.collectionView objectValueAtIndexPath: indexPath];
+        if (obj != nil)
+            [answer addObject:obj];
     }
     return answer;
 }

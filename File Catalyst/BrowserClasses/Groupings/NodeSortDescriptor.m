@@ -57,6 +57,14 @@
     return self->_field;
 }
 
+-(NSString*) grouping {
+    return [[columnInfo() objectForKey:self->_field] objectForKey:COL_GROUPING_KEY];
+}
+
+-(NSValueTransformer*) transformer {
+    return transformerForField(self->_field);
+}
+
 @end
 
 

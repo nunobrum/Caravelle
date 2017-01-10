@@ -34,8 +34,8 @@ extern NSString* commonPathFromItems(NSArray* itemArray);
 
 -(NSUInteger) numberOfBranchesInNode;
 -(NSUInteger) numberOfItemsInNode;
-
 -(NSUInteger) numberOfLeafsInBranch;
+
 //-(NSUInteger) numberOItemsInBranchTillDepth:(NSUInteger) depth;
 -(NSUInteger) numberOfItemsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;
 -(NSUInteger) numberOfLeafsWithPredicate:(NSPredicate*)filter tillDepth:(NSUInteger) depth;

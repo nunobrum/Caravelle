@@ -72,6 +72,10 @@
     // filters on the contents of a parent.
 }
 
+-(NSString*) path {
+    return @"This is a test to see if I found the problem";
+}
+
 
 #pragma mark Tree Access
 /*

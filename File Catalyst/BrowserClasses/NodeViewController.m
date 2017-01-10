@@ -157,10 +157,14 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided");
 }
 
--(NSInteger) depth {
-    return self->dataViewer.depth;
+
+-(void) setDrillDepth:(NSInteger)depth {
+    self->_drillDepth = depth;
 }
 
+-(NSInteger) drillDepth {
+    return self->_drillDepth;
+}
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     if ([keyPath isEqualToString:kvoTreeBranchPropertyChildren]) {
@@ -334,7 +338,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     }
     BOOL ascending = NO; // Just initialize with something
     if (activate_grouping) {
-        NodeSortDescriptor *currentDesc = [self sortDescriptorForFieldID: identifier];
+        NodeSortDescriptor *currentDesc = [self sortDescriptorForFieldID: identifier]; // Uses the same key as the sort
         if (currentDesc==nil || [currentDesc ascending]==NO)
         {
             ascending = YES;
@@ -472,69 +476,78 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 //}
 
 -(void) collectItems {
-    NSInteger _depth = [self->dataViewer depth];
+
     // Get the depth configuration
     
     if ([self.currentNode isFolder]){
         NSMutableArray *filters = [NSMutableArray array];
-        [self setDepth:_depth];
+        NSCompoundPredicate *allFilters = nil;
         
-        if (_depth <= 10) {
-            if (self.foldersInTable==NO) {
-                NSPredicate *noFolders = [NSPredicate predicateWithFormat:@"SELF.isFolder==NO"];
-                [filters addObject:noFolders];
-            }
-            
-            if (_filterText!=nil && [_filterText length]!=0) {
-                NSPredicate *predicate;
-                NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
-                if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
-                    // TODO:1.5 Tokenize the filter field to make inteligent searches
-                    // TODO:1.5 find Titles and replace for selectors.
-                    @try {
-                        predicate = [NSPredicate predicateWithFormat:self.filterText];
-                    }
-                    @catch (NSException *exception) {
-                        predicate = nil;
-                    }
-                    /*@finally {}*/
+        if (self.foldersInTable==NO) {
+            NSPredicate *noFolders = [NSPredicate predicateWithFormat:@"SELF.isFolder==NO"];
+            [filters addObject:noFolders];
+        }
+        
+        if (_filterText!=nil && [_filterText length]!=0) {
+            NSPredicate *predicate;
+            NSCharacterSet *specialCharacters = [NSCharacterSet characterSetWithCharactersInString:@"=~|&<>"];
+            if ([self.filterText rangeOfCharacterFromSet:specialCharacters].location!=NSNotFound) {
+                // TODO:1.5 Tokenize the filter field to make inteligent searches
+                // TODO:1.5 find Titles and replace for selectors.
+                @try {
+                    predicate = [NSPredicate predicateWithFormat:self.filterText];
                 }
-                else {
-                    NSString *attributeName  = @"name";
-                    NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
-                    NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
-                    
-                    if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
-                        predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
-                                       attributeName, self.filterText];
-                    else
-                        predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
-                                       attributeName, self.filterText];
+                @catch (NSException *exception) {
+                    predicate = nil;
                 }
-                if (predicate != nil)
-                    [filters addObject:predicate];
-            }
-            if (filters.count  == 0) {
-                [self setFilter:nil];
+                /*@finally {}*/
             }
             else {
-                NSCompoundPredicate *allFilters = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
-                [self setFilter: allFilters];
+                NSString *attributeName  = @"name";
+                NSCharacterSet *wildcards = [NSCharacterSet characterSetWithCharactersInString:@"?*"];
+                NSRange wildcardsPresent = [self.filterText rangeOfCharacterFromSet:wildcards];
+                
+                if (wildcardsPresent.location == NSNotFound)  // Wildcard not presents
+                    predicate   = [NSPredicate predicateWithFormat:@"%K contains[cd] %@",
+                                   attributeName, self.filterText];
+                else
+                    predicate   = [NSPredicate predicateWithFormat:@"%K like[cd] %@",
+                                   attributeName, self.filterText];
             }
+            if (predicate != nil)
+                [filters addObject:predicate];
+        }
+        if (filters.count  != 0) {
+            allFilters = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
+        }
+        
+        [self setFilter: allFilters];
+        if ([self.groupDescriptors count]==0) {
+            [self setDepth:_drillDepth]; // This will be executed by the overrided method on this class children
         }
         else {
-            BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithParent:self.currentNode andDepth: _depth-10];
+            BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithParent:self.currentNode andDepth: _drillDepth];
             TreeItem *item;
-            CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:nil parent:nil];
+            CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:self.currentNode.url parent:nil];
             //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
             //[catalog setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
-            [catalog setCatalogKey:@"date_modified"];
-            [catalog setValueTransformer:DateToYearTransformer()];
-            while ((item = [nodes nextObject])!=nil) {
-                [catalog addTreeItem:item];
+            [catalog setCatalogKey:self.groupDescriptors[0].key]; // This is only working for a first level grouping.
+            [catalog setValueTransformer:self.groupDescriptors[0].transformer];
+            if (allFilters == nil) {
+                while ((item = [nodes nextObject])!=nil) {
+                    [catalog addTreeItem:item];
+                }
+            }
+            else {
+                while ((item = [nodes nextObject])!=nil) {
+                    if ([allFilters evaluateWithObject:item])
+                        [catalog addTreeItem:item];
+                }
             }
             [self setCurrentNode:catalog];
+            [self setDepth:self.groupDescriptors.count]; // This will be executed by the overrided method on this class children
         }
+        
         
     }
 }
@@ -594,11 +607,11 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         self.groupDescriptors = [NSMutableArray arrayWithCapacity:1];
     }
     
-    NSSortDescriptor<MySortDescriptorProtocol> *sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending];
+    NodeSortDescriptor *sortDesc = [[NodeSortDescriptor alloc] initWithField:fieldID ascending:ascending];
     
     // Removes All previous groupings TODO:1.4 Make possible to have multiple groupings
     [self removeGroupings];
-    [self.sortDescriptors insertObject:sortDesc atIndex:0];
+    [self.groupDescriptors insertObject:sortDesc atIndex:0];
 }
 
 -(void) removeGroupings {

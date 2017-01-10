@@ -80,6 +80,16 @@
 }
 
 
+-(NSInteger) countForSection:(TreeBranch*) section {
+    NSInteger count;
+    NSInteger childLevel = [section degreeToAncester:self->_root];
+    if (self->_maxLevel == childLevel)
+        count = [section numberOfItemsWithPredicate:self->_filter tillDepth:0];
+    else
+        count = [section numberOfLeafsWithPredicate:self->_filter tillDepth:0];
+    return count;
+}
+
 -(NSInteger) sectionCount {
     if (self->_sections == nil || self->_needsRefresh == YES) {
         if (self->_sections == nil)
@@ -103,7 +113,7 @@
             
             // Finally the sections that will appear empty should be removed.
             for (TreeBranch *child in childSections) {
-                NSInteger count = [child numberOfItemsWithPredicate:self->_filter tillDepth:0];
+                NSInteger count = [self countForSection:child];
                 if (count != 0) {
                     [self->_sections addObject:child];
                 }
@@ -117,7 +127,7 @@
 
 -(NSInteger) itemCountAtSection:(NSInteger)section {
     TreeBranch *sec = [self sectionNumber:section];
-    NSInteger count = [sec numberOfItemsWithPredicate:self->_filter tillDepth:0];
+    NSInteger count = [self countForSection:sec];
     return count;
 }
 
@@ -130,7 +140,16 @@
     if (self->_currSection != indexPath.section) {
         self->_currIndex = NSNotFound;
         self->_currSection = indexPath.section;
-        self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:self->_filter];
+        NSInteger childLevel = [sec degreeToAncester:self->_root];
+        if (childLevel == self->_maxLevel) {
+            self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:self->_filter];
+        }
+        else {
+            NSPredicate *noSections = [NSPredicate predicateWithFormat:@"SELF.hasChildren==NO"];
+            NSArray <NSPredicate*>* filters = [[NSArray alloc] initWithObjects:noSections, self->_filter, nil];
+            NSCompoundPredicate *newFilter = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
+            self->se = [[SortedEnumerator alloc] initWithParent:sec sort:self->sort filter:newFilter];
+        }
     }
     // Now will check if the we are located at the right element
     if (self->_currIndex != indexPath.item) {
@@ -147,7 +166,7 @@
             self->_currIndex++;
         }
     }
-    //NSLog(@"index: %ld item:%@",(long)indexPath.item, self->_item );
+    //NSLog(@"s:%ld,i: %ld item:%@",(long)indexPath.section, (long)indexPath.item, self->_item );
     return self->_item;
 }
 

@@ -34,8 +34,14 @@
 
 -(id) objectValueAtIndexPath:(NSIndexPath*)indexPath {
     id item = [self itemAtIndexPath:indexPath];
-    if (NO == [item isKindOfClass:[FileCollectionViewItem class]])
-        NSAssert(NO,@"Expected FileCollectionViewItem class");
+    if (item == nil) {
+        NSLog(@"BrowserIconView.objectValueAtIndexPath: nil Object at indexPath (%ld,%ld) ", indexPath.section, indexPath.item);
+        return nil;
+    }
+    if (NO == [item isKindOfClass:[FileCollectionViewItem class]]) {
+        NSLog(@"BrowserIconView.objectValueAtIndexPath: Unexpected object Received");
+        NSAssert(NO,@"BrowserIconView.objectValueAtIndexPath: Expected FileCollectionViewItem class");
+    }
     return [(FileCollectionViewItem*)item representedObject];
 }
 

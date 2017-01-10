@@ -43,6 +43,7 @@
     NSMutableIndexSet *extendedSelection;
     NSString * _twinName;
     NSObject <TreeViewerProtocol> *dataViewer;
+    NSInteger _drillDepth;
     //@private
     //NSMutableArray *_displayedItems;
 }
@@ -80,9 +81,10 @@
 #pragma mark - Data handling Selectors
 - (void) collectItems;
 - (void) setDepth:(NSInteger) depth;
+- (void) setDrillDepth:(NSInteger) depth;
 - (void) setFilter:(NSPredicate*)filter;
 - (void) setSortDescriptor:(NSSortDescriptor*) sort;
-- (NSInteger) depth;
+- (NSInteger) drillDepth;
 
 //- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
 

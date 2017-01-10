@@ -23,12 +23,14 @@
                 branchName = [self.valueTransformer transformedValue:branchName];
             }
             @catch (NSException *exception) {
-                NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch with this name");
-                // then not adds it to itself. Can also create an "others" branch.
-                return [super addTreeItem:treeItem];
+                branchName = nil;
             }
         }
-
+        if (branchName == nil) {
+            NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch with this name");
+            // then not adds it to itself. TODO:1.5 Can also create an "others" branch.
+            return [super addTreeItem:treeItem];
+        }
         // Will try to find if already exists
         filterBranch *fb = (filterBranch*)[self childWithName:branchName class:[filterBranch class]];
         if (fb==nil) {

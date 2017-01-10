@@ -501,7 +501,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 #pragma mark - Browser Parent Protocol
 -(void) selectionDidChangeOn:(id)object {
-    if (object==self.detailedViewController && (self.depth != 0)) {
+    if (object==self.detailedViewController && (self.drillDepth != 0)) {
         NSArray *itemsSelected = [object getSelectedItems];
         if ([itemsSelected count]==1) {
             // will change the path bar
@@ -755,8 +755,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             node = [branch parent];
         }
         // if the flat view is set, if outside of the current node, launch an expand Tree
-        if (self.depth!=0 && [node relationTo:_treeNodeSelected]==pathIsParent && [node canBeFlat]) {
-            [node requestFlatForView:self tillDepth:self.depth];
+        if (self.drillDepth!=0 && [node relationTo:_treeNodeSelected]==pathIsParent && [node canBeFlat]) {
+            [node requestFlatForView:self tillDepth:self.drillDepth];
         }
     
         [self setPathBarToItem:node];
@@ -956,7 +956,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     return [self->_mySplitView isSubviewCollapsed:firstView];
 }
 
--(void) setDepth:(NSInteger) depth {
+-(void) setDrillDepth:(NSInteger) depth {
     BOOL foldersDisplayed;
     if (depth != 0) {
         foldersDisplayed = NO;
@@ -973,13 +973,13 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     }
     
     [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
-    [self.detailedViewController setDepth:depth];
+    [self.detailedViewController setDrillDepth:depth];
     self.drillLevel = [NSString stringWithFormat:@"%ld", (long)depth];
     //[self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
 }
 
--(BOOL) depth {
-    return self.detailedViewController.depth;
+-(BOOL) drillDepth {
+    return self.detailedViewController.drillDepth;
 }
 
 - (IBAction)optionsSwitchSelect:(id)sender {
@@ -1415,6 +1415,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 didLoadPreferences = NO;
             }
             newController = tableViewController;
+            //[self.myGroupingPopDpwnButton setEnabled:YES];
+            [self.myColumnsPopDpwnButton  setEnabled:YES];  // Disables the column menu
             break;
         case BViewTypeBrowser:
             break;
@@ -1427,6 +1429,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                 didLoadPreferences = NO;
             }
             newController = iconViewController;
+            //[self.myGroupingPopDpwnButton setHidden:YES];
+            [self.myColumnsPopDpwnButton  setEnabled:NO]; // Enables the Columns chooser menu
             break;
         default:
             break;
@@ -1597,7 +1601,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 -(void) setRoots:(NSArray*) rootDirectories {
     [self removeAll];
-    [self setDepth:0]; // Cancels Flat View to avoid problems
+    [self setDrillDepth:0]; // Cancels Flat View to avoid problems
     for (TreeItem* root in rootDirectories) {
         [_baseDirectories addTreeItem:root];
     }
@@ -1912,7 +1916,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     //        
     //    }
 
-    [self.detailedViewController setDepth:self->drillDepth];
+    [self.detailedViewController setDrillDepth:self->drillDepth];
     [self refresh];
 }
 

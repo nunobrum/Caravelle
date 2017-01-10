@@ -159,6 +159,7 @@ typedef NS_ENUM(NSInteger, ItemType) {
 -(NSArray*) pathComponents;
 -(NSInteger) pathLevel;
 -(TreeBranch*) parentAtLevel:(NSInteger)level;
+-(NSInteger) degreeToAncester:(TreeBranch*)ancester;
 -(enumPathCompare) relationTo:(TreeItem*)other;
 
 // Menu support

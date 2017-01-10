@@ -31,6 +31,8 @@
 
 -(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending;
 -(NSString*) field;
+-(NSString*) grouping;
+-(NSValueTransformer*) transformer;
 
 @end
 

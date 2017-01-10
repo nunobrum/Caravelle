@@ -544,6 +544,19 @@
     }
 }
 
+/* This function returns the ancester degree to a parent.
+ If the answer is negative, then it means that the anscester was not found. */
+-(NSInteger) degreeToAncester:(TreeBranch*)ancester {
+    NSInteger answer = 0;
+    TreeItem *cursor = self;
+    do {
+        if (cursor == ancester )
+            return answer;
+        answer++;
+        cursor = cursor->_parent;
+    } while (cursor);
+    return -answer;
+}
 
 -(enumPathCompare) relationTo:(TreeItem *)other {
     return pathCompRelation(self.pathComponents, other.pathComponents);

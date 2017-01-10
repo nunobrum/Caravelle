@@ -26,8 +26,10 @@ extern NSArray* sortedColumnNames();
 extern NSString* keyForFieldID(NSString* FieldID);
 
 extern id fieldOnItem(id object, NSString *colID);
-extern NSString *transformerOnField(id field, NSString *colID);
-extern NSString *stringOnField(id object, NSString* colID);
+extern NSValueTransformer *transformerForField(NSString *fieldID);
+
+//extern NSString *transformerOnField(id field, NSString *colID);
+//#extern NSString *stringOnField(id object, NSString* colID);
 extern NSDictionary *compareForField(id source, id dest, NSString *colKey, BOOL exclude_equals);
 
 @interface CustomTableHeaderView : NSTableHeaderView {

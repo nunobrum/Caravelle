@@ -435,7 +435,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
     [(BrowserController*)view setViewType:BViewTypeVoid];
     
     [(BrowserController*)view loadPreferences];
-    [(BrowserController*)view setDepth:0];
+    [(BrowserController*)view setDrillDepth:0];
     
     [(BrowserController*)view setRoots: [NSArray arrayWithObject:item]];
     [(BrowserController*)view selectFirstRoot]; // This calls a refresh
@@ -1067,7 +1067,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                     [myLeftView refresh];
                     if ([myLeftView treeViewCollapsed]) {
                         // Activate the Flat View
-                        [myLeftView setDepth:NSIntegerMax];
+                        [myLeftView setDrillDepth:NSIntegerMax];
                         // TODO:1.4 This should be retrieved from the default settings
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
@@ -1079,7 +1079,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
                     else {
                         
                         // Deactivate the Flat View
-                        [myLeftView setDepth:0];
+                        [myLeftView setDrillDepth:0];
                         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
                         [myLeftView.detailedViewController setupColumns:dupColumns];
                         // Group by Location
@@ -1849,7 +1849,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         [myLeftView setViewType:BViewTypeTable];
         [myLeftView setTreeViewCollapsed:YES];
         // Activate the Flat View
-        [myLeftView setDepth:NSIntegerMax];
+        [myLeftView setDrillDepth:NSIntegerMax];
         // TODO:1.3.3 This should be retrieved from Default Settings
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_PATH", @"COL_SIZE", @"COL_DATE_MODIFIED", nil];
         [myLeftView.detailedViewController setupColumns:dupColumns];
@@ -1872,7 +1872,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         // Activate the Tree View on the Left
         [myLeftView setTreeViewCollapsed:NO];
         // Make the FlatView and Group by Location
-        [myLeftView setDepth:NSIntegerMax];
+        [myLeftView setDrillDepth:NSIntegerMax];
         
         // TODO:1.3.3 This should be retrieved from Default Settings
         NSArray *dupColumns = [NSArray arrayWithObjects:@"COL_DUP_GROUP", @"COL_NAME", @"COL_SIZE", nil];
@@ -1884,7 +1884,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         // Deactivate the Tree View on the Left
         [myRightView setTreeViewCollapsed:YES]; // This is the default.
         
-        [myRightView setDepth:NSIntegerMax];
+        [myRightView setDrillDepth:NSIntegerMax];
         [myRightView.detailedViewController setupColumns:dupColumns];
         // Group by Location
         [myRightView.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
@@ -2479,7 +2479,7 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         else if ([operation isEqualTo:opFlatOperation]) {
             // Cancel the Flat View
             BrowserController *selView = [info objectForKey:kDFOFromViewKey];
-            [selView setDepth:0];
+            [selView setDrillDepth:0];
             [selView refresh];
         }
         else {

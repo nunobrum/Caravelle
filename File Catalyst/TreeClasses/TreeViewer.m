@@ -194,7 +194,7 @@
             self->_item = [self->se nextObject];
             self->_currIndex++;
             if (self->_item == nil) {
-                NSLog(@"foi aqui que correu mal, acho eu index: %ld",(long)index);
+                //NSLog(@"foi aqui que correu mal, acho eu index: %ld",(long)index);
                 break;
             }
         }

@@ -126,8 +126,8 @@ extern NSString *kViewChanged_FlatView;
 
 -(void) setTreeViewCollapsed:(BOOL) collapsed;
 -(BOOL) treeViewCollapsed;
--(void) setDepth:(NSInteger) depth;
--(BOOL) depth;
+-(void) setDrillDepth:(NSInteger) depth;
+-(BOOL) drillDepth;
 
 -(TreeBranch*) treeNodeSelected;
 -(void) setCurrentNode:(TreeBranch*) branch;

@@ -54,6 +54,14 @@ id fieldOnItem(id object, NSString *fieldID) {
     return prop;
 }
 
+NSValueTransformer *transformerForField(NSString *fieldID) {
+    NSString *trans_name = [[columnInfo() objectForKey:fieldID] objectForKey:COL_TRANS_KEY];
+    if (trans_name) {
+        return [NSValueTransformer valueTransformerForName:trans_name];
+    }
+    return nil;
+}
+
 NSString *transformerOnField(id field, NSString *fieldID) {
     NSString *trans_name = [[columnInfo() objectForKey:fieldID] objectForKey:COL_TRANS_KEY];
     if (trans_name) {
