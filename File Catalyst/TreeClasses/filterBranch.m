@@ -73,7 +73,8 @@
 }
 
 -(NSString*) path {
-    return @"This is a test to see if I found the problem";
+    NSString *answer = [NSString stringWithFormat:@"%@/{%@}", [self->_parent path], self.name];
+    return answer;
 }
 
 

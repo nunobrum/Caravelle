@@ -528,7 +528,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
         else {
             BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithParent:self.currentNode andDepth: _drillDepth];
             TreeItem *item;
-            CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:self.currentNode.url parent:nil];
+            CatalogBranch *catalog = [[CatalogBranch alloc] initWithURL:self.currentNode.url parent:self.currentNode.parent];
             //[st setUrl:url]; // Setting the url since the init doesn't. This is a workaround for the time being
             //[catalog setFilter:[NSPredicate predicateWithFormat:@"SELF.itemType==ItemTypeBranch"]];
             [catalog setCatalogKey:self.groupDescriptors[0].key]; // This is only working for a first level grouping.
@@ -544,7 +544,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
                         [catalog addTreeItem:item];
                 }
             }
-            [self setCurrentNode:catalog];
+            [self->dataViewer setParent:catalog];
             [self setDepth:self.groupDescriptors.count]; // This will be executed by the overrided method on this class children
         }
         

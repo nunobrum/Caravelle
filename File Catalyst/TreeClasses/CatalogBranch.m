@@ -27,7 +27,7 @@
             }
         }
         if (branchName == nil) {
-            NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch with this name");
+            NSLog(@"CatalogBranch.addTreeItem: - Cant create a branch for this Item %@ value (%@)", treeItem, [treeItem valueForKey:self.catalogKey]);
             // then not adds it to itself. TODO:1.5 Can also create an "others" branch.
             return [super addTreeItem:treeItem];
         }
@@ -50,6 +50,11 @@
         }
     }
     return NO;
+}
+
+-(NSString*) path {
+    // This is the same as the original function
+    return _url.path;
 }
 
 @end
