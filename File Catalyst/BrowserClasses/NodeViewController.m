@@ -94,9 +94,9 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 - (void) initController {
     self->_foldersInTable = YES;
     self->_currentNode = nil;
-    self->_observedVisibleItems = [[NSMutableArray new] init];
-    self.sortDescriptors = nil;
-    self.groupDescriptors = nil;
+    self->_observedVisibleItems = [[NSMutableArray alloc] init];
+    self.sortDescriptors =  [[NSMutableArray alloc] initWithCapacity:5];
+    self.groupDescriptors = [[NSMutableArray alloc] initWithCapacity:5];
     [self startBusyAnimations];
     
     [[NSUserDefaults standardUserDefaults] addObserver:self
@@ -209,6 +209,8 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 #pragma mark - Menu Support 
 
 // Make a Full programatic menu
+// This selector is being called from the BrowserController as a delegate for the @"Contextual Menu"
+// This is why we are not checking for the menu title. ([[menu title] isEqualToString:@"ContextualMenu"])
 -(void) menuNeedsUpdate:(NSMenu*) menu {
     //NSLog(@"NodeViewController.menuNeedsUpdate");
     // tries a contextual excluding the click in blank space

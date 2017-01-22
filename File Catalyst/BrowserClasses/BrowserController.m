@@ -587,11 +587,27 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 
 -(void) menuNeedsUpdate:(NSMenu *)menu {
     //menu = [[NSMenu alloc] initWithTitle:@"Groupings Menu"];
+    BOOL menuNeedsCreation = NO;
+    if (menu.numberOfItems == 1) {
+        menuNeedsCreation = YES; // The menu is empty
+        [[menu itemAtIndex:0] setTag:applicationMode]; // Avoids repeating the creation of the menu
+    }
+    else {
+        NSMenuItem *firstItem = [menu itemAtIndex:0];
+        if (   (firstItem.target != self.detailedViewController) // viewController Changed
+            || (firstItem.tag != applicationMode)) { // Application Mode Changed
+            menuNeedsCreation = YES;
+            
+            [menu removeAllItems];
+            [menu addItem:firstItem]; // Restores the
+            [firstItem setTag:applicationMode];
+        }
+    }
     // Check if menu was updated
     if ([[menu title] isEqualToString:@"GroupingMenu"]) {
         
-        if ([[menu itemArray] count]==1) {
-            int tagCount = 0;
+        if (menuNeedsCreation) {
+            //int tagCount = 0;
             for (NSString *colID in sortedColumnNames() ) {
                 NSDictionary *colInfo = [columnInfo() objectForKey:colID];
                 
@@ -609,7 +625,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                     NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuGroupingSelector:) keyEquivalent:@""];
                     [menuItem setEnabled:YES];
                     [menuItem setState:NSOffState];
-                    [menuItem setTag:tagCount++];
+                    //[menuItem setTag:tagCount++];
                     //[menuItem setAction:@selector(menuGroupingSelector:)];
                     [menuItem setTarget:self.detailedViewController];
                     [menu addItem:menuItem];
@@ -650,8 +666,8 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
     else if ([[menu title] isEqualToString:@"ColumnsMenu"]) {  // Columns Menu
         NSArray *columns = [self.detailedViewController columns];
         
-        if ([[menu itemArray] count]==1) {
-            int tagCount = 0;
+        if (menuNeedsCreation) {
+            // int tagCount = 0;
             
             for (NSString *fieldID in sortedColumnNames() ) {
                 NSDictionary *colInfo = [columnInfo() objectForKey:fieldID];
@@ -668,7 +684,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
                     NSMenuItem *menuItem = [[NSMenuItem alloc] initWithTitle:menuTitle action:@selector(menuColumnSelector:) keyEquivalent:@""];
                     [menuItem setEnabled:YES];
                     [menuItem setState:NSOffState];
-                    [menuItem setTag:tagCount++];
+                    //[menuItem setTag:tagCount++];
                     [menuItem setTarget:self.detailedViewController];
                     [menu addItem:menuItem];
                 
@@ -957,22 +973,23 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void) setDrillDepth:(NSInteger) depth {
-    BOOL foldersDisplayed;
-    if (depth != 0) {
-        foldersDisplayed = NO;
-        // In no groupings defined, use COL_LOCATION
-        if (NO == [self.detailedViewController.groupDescriptors count]  == 0) {
-            [self.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
-        }
-    }
-    else {
-        foldersDisplayed = [self foldersDisplayedMacro];
-        
-        // if COL_LOCATION grouping, cancel
-        [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
-    }
+//    BOOL foldersDisplayed;
+//    if (depth != 0) {
+//        foldersDisplayed = NO;
+//        // In no groupings defined, use COL_LOCATION
+//        if (NO == [self.detailedViewController.groupDescriptors count]  == 0) {
+//            [self.detailedViewController makeGroupingOnFieldID:@"COL_LOCATION" ascending:YES];
+//        }
+//    }
+//    else {
+//        foldersDisplayed = [self foldersDisplayedMacro];
+//        
+//        // if COL_LOCATION grouping, cancel
+//        [self.detailedViewController removeSortOnField:@"COL_LOCATION"];
+//    }
+//
+//    [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
     
-    [self.detailedViewController setFoldersDisplayed:foldersDisplayed];
     [self.detailedViewController setDrillDepth:depth];
     self.drillLevel = [NSString stringWithFormat:@"%ld", (long)depth];
     //[self.viewOptionsSwitches setSelected:flatView forSegment:BROWSER_VIEW_OPTION_FLAT_SUBDIRS];
