@@ -28,6 +28,7 @@
         //NSLog(@"Selecting %@", self.textField.stringValue);
     }
     else if (iconFormat == IconSelectedInactive) {
+        [self.textField setTextColor:[NSColor textColor]];
         [self.textField setBackgroundColor:[NSColor secondarySelectedControlColor]];
     }
     else if (iconFormat == IconInEdition) {
@@ -69,19 +70,6 @@
      }*/
 }
 
-//-(void) setHighlightState:(NSCollectionViewItemHighlightState)highlightState {
-//    switch (highlightState) {
-//        case NSCollectionViewItemHighlightForSelection:
-//            [self formatSelected:IconSelected];
-//            break;
-//        case NSCollectionViewItemHighlightForDeselection:
-//            [self formatSelected:IconNotSelected];
-//            break;
-//        default:
-//            
-//            break;
-//    }
-//}
 
 -(void) setSelected:(BOOL)selected {
     [super setSelected:selected];

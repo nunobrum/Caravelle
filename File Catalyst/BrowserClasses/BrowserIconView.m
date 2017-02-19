@@ -92,7 +92,9 @@
     else {
         if(self.delegate && [self.delegate respondsToSelector:@selector(lastClick:)]) {
             [(IconViewController*)self.delegate lastClick:self];
-            if (self->_lastClicked.isSelected) {
+            if (self->_lastClicked.isSelected &&
+                [[self selectionIndexPaths] count]==1 && // Only one is selected other wise do nothing
+                ([theEvent modifierFlags] & NSCommandKeyMask) == 0 ) { // The Control is not being pushed.
                 [self startEditInIcon:self->_lastClicked];
                 return; // Stop here don't propagete the mouseDown any further
             }
@@ -143,7 +145,7 @@
     // clean the filter
     [[self delegate] performSelector:@selector(cancelOperation:) withObject:self];
     // and pass the cancel operation upwards anyway
-    [super cancelOperation:sender];
+    //[super cancelOperation:sender];
 }
 
 -(BOOL) startEditInIcon:(FileCollectionViewItem*) icon {
