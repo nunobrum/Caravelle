@@ -136,7 +136,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     self->_currentNode = branch;
     if (branch!=nil) {
         [self observeItem:self.currentNode];
-        [self->dataViewer setParent:branch];
+        [[self currentViewer] setParent:branch];
         [branch refresh];
     }
 }
@@ -144,19 +144,6 @@ EnumContextualMenuItemTags viewMenuRight[] = {
 - (TreeBranch*) currentNode {
     return self->_currentNode;
 }
-
--(void) setFilter:(NSPredicate *)filter {
-    NSAssert(NO, @"NodeViewController.setFilter: This method should be overrrided");
-}
-
--(void) setSortDescriptor:(NSSortDescriptor *)sort {
-    NSAssert(NO, @"NodeViewController.setSortDescriptor: This method should be overrrided");
-}
-
--(void) setDepth:(NSInteger)depth {
-    NSAssert(NO, @"NodeViewController.setDepth: This method should be overrrided");
-}
-
 
 -(void) setDrillDepth:(NSInteger)depth {
     self->_drillDepth = depth;
@@ -231,6 +218,10 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             }
         }
     }
+}
+
+-(void) reloadAll {
+    NSAssert(NO, @"NodeViewController.reloadAll: This method needs to be overriden");
 }
 
 -(void) reloadItem:(id)object {
@@ -523,9 +514,9 @@ EnumContextualMenuItemTags viewMenuRight[] = {
             allFilters = [NSCompoundPredicate andPredicateWithSubpredicates:filters];
         }
         
-        [self setFilter: allFilters];
+        [[self currentViewer] setFilter: allFilters];
         if ([self.groupDescriptors count]==0) {
-            [self setDepth:_drillDepth]; // This will be executed by the overrided method on this class children
+            [self.currentViewer setDepth:_drillDepth]; // This will be executed by the overrided method on this class children
         }
         else {
             BranchEnumerator *nodes = [[BranchEnumerator alloc] initWithParent:self.currentNode andDepth: _drillDepth];
@@ -546,12 +537,13 @@ EnumContextualMenuItemTags viewMenuRight[] = {
                         [catalog addTreeItem:item];
                 }
             }
-            [self->dataViewer setParent:catalog];
-            [self setDepth:self.groupDescriptors.count]; // This will be executed by the overrided method on this class children
+            [self.currentViewer setParent:catalog];
+            [self.currentViewer setDepth:self.groupDescriptors.count]; // This will be executed by the overrided method on this class children
         }
         
         
     }
+    [self reloadAll];
 }
 
 -(void) insertedItem:(id)item atTableRow:(NSInteger)row {
@@ -601,7 +593,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     // Removes the key if it was already existing in the remaining of the array
     [self removeSortOnField:fieldID];
     [self.sortDescriptors insertObject:sortDesc atIndex:0];
-    [self->dataViewer setSortDescriptor:self.sortDescriptors[0]];
+    [self.currentViewer setSortDescriptor:self.sortDescriptors[0]];
 }
 
 - (void) makeGroupingOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending {

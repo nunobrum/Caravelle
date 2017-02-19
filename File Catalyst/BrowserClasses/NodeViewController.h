@@ -42,7 +42,6 @@
     NSDragOperation _validatedDropOperation;
     NSMutableIndexSet *extendedSelection;
     NSString * _twinName;
-    NSObject <TreeViewerProtocol> *dataViewer;
     NSInteger _drillDepth;
     //@private
     //NSMutableArray *_displayedItems;
@@ -79,12 +78,11 @@
 - (NSView*) containerView;
 
 #pragma mark - Data handling Selectors
+- (NSObject <TreeViewerProtocol>*) currentViewer;
 - (void) collectItems;
-- (void) setDepth:(NSInteger) depth;
 - (void) setDrillDepth:(NSInteger) depth;
-- (void) setFilter:(NSPredicate*)filter;
-- (void) setSortDescriptor:(NSSortDescriptor*) sort;
 - (NSInteger) drillDepth;
+- (void) reloadAll;
 
 //- (void) insertedItem:(id)item atTableRow:(NSInteger)row;
 

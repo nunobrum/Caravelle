@@ -26,6 +26,7 @@
 -(NSPredicate*) filter;
 
 -(BOOL) needsRefresh;
+-(void) setNeedsRefresh;
 
 @end
 

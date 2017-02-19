@@ -27,6 +27,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     NSMutableSet <NSIndexPath*> *extendedSelection;
     FileCollectionViewItem* menuTarget;
     NSCollectionViewFlowLayout *flowLayout;
+    CollectionViewer *_dataViewer;
 }
 
 @end
@@ -66,22 +67,27 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     
 }
 
--(CollectionViewer*) currentViewer {
-    if (self->dataViewer == nil) {
-        self->dataViewer = [[CollectionViewer alloc] initWithParent:self.currentNode depth:0];
+-(CollectionViewer*) dataViewer {
+    if (self->_dataViewer == nil) {
+        self->_dataViewer = [[CollectionViewer alloc] initWithParent:self.currentNode depth:0];
     }
-    return (CollectionViewer*)self->dataViewer;
+    return self->_dataViewer;
 }
+
+-(NSObject <TreeViewerProtocol>*) currentViewer {
+    return [self dataViewer];
+}
+
 
 #pragma mark CollectionViewDataSource
 
 - (NSInteger)numberOfSectionsInCollectionView:(NSCollectionView *)collectionView {
-    return [self.currentViewer sectionCount];
+    return [self.dataViewer sectionCount];
 }
 
 
 - (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return [self.currentViewer itemCountAtSection:section];
+    return [self.dataViewer itemCountAtSection:section];
 }
 
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath {
@@ -89,7 +95,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     NSAssert(icon!=nil,@"ERROR! IconViewController.collectionView:itemForRepresentedObjectAtIndexPath: Icon View Not Found!");
     TreeItem *theFile;
 
-    theFile = [self.currentViewer itemAtIndexPath:indexPath];
+    theFile = [(CollectionViewer*)self.currentViewer itemAtIndexPath:indexPath];
     
     NSAssert(theFile != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil File");
     
@@ -114,7 +120,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 -(NSView*) collectionView:(NSCollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     CollectionHeaderView *view = [collectionView makeSupplementaryViewOfKind:NSCollectionElementKindSectionHeader withIdentifier:@"CollectionHeaderView" forIndexPath:indexPath];
     NSAssert(view != nil, @"IconViewController.collectionView:viewForSupplementaryElementOfKind:atIndexPath: Didn't received the View");
-    NSString *sectionTitle = [self.currentViewer titleForGroup:indexPath.section];
+    NSString *sectionTitle = [(CollectionViewer*)self.currentViewer titleForGroup:indexPath.section];
     NSAssert(sectionTitle != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil Section Name Name");
     [view.sectionTitle setStringValue:sectionTitle];
     return view;
@@ -127,9 +133,15 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 //    return indexPaths;
 //}
 //
-//- (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths {
-//    NSLog(@"IconViewController.didSelectItemsAtIndexPaths: %@",indexPaths);
-//}
+- (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths {
+    //NSLog(@"IconViewController.didSelectItemsAtIndexPaths: %@",indexPaths);
+    [self.parentController updateFocus:self];
+    [self.parentController selectionDidChangeOn:self]; // Will Trigger the notification to the status bar
+}
+
+- (void)collectionView:(NSCollectionView *)collectionView didDeselectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths {
+    [self.parentController selectionDidChangeOn:self]; // Will Trigger the notification to the status bar
+}
 
 //- (NSSet<NSIndexPath *> *)collectionView:(NSCollectionView *)collectionView shouldChangeItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths toHighlightState:(NSCollectionViewItemHighlightState)highlightState {
 //    NSLog(@"IconViewController.shouldChangeItemsAtIndexPaths:%@ toHighlightState:%li",indexPaths,(long)highlightState);
@@ -145,7 +157,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 //- (CGFloat)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section;
 - (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section {
     NSSize headerSize = {.width = 1000, .height = 24 };
-    return self.currentViewer.sectionCount > 1 ? headerSize : NSZeroSize;
+    return ((CollectionViewer*)self.currentViewer).sectionCount > 1 ? headerSize : NSZeroSize;
 }
 
 //- (NSSize)collectionView:(NSCollectionView *)collectionView layout:(NSCollectionViewLayout*)collectionViewLayout referenceSizeForFooterInSection:(NSInteger)section;
@@ -223,8 +235,7 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     // Refreshing the collection
     [self collectItems];
     [self stopBusyAnimations];
-    [self.collectionView reloadData];
-    [self.collectionView setNeedsDisplay:YES];
+    [self reloadAll];
 }
 
 -(void) refreshKeepingSelections {
@@ -232,7 +243,14 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     // Refreshing the View
     [self refresh];
     // Reselect stored selections
-    [self setSelectionByHashes:selectedOjects];}
+    [self setSelectionByHashes:selectedOjects];
+}
+
+-(void) reloadAll {
+    [self.dataViewer setNeedsRefresh];
+    [self.collectionView reloadData];
+    [self.collectionView setNeedsDisplay:YES];
+}
 
 -(void) reloadItem:(id)object {
     if (object == self.currentNode) {
@@ -249,28 +267,6 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
             [self.collectionView reloadItemsAtIndexPaths:indexPaths];
             
         }
-    }
-}
-
-
--(void) setSortDescriptor:(NSSortDescriptor *)sort {
-    [self.currentViewer setSortDescriptor:sort];
-    if ([self.currentViewer needsRefresh]) {
-        [self.collectionView reloadData];
-    }
-}
-
--(void) setDepth:(NSInteger)depth {
-    [self.currentViewer setDepth:depth];
-    if ([self.currentViewer needsRefresh]) {
-        [self.collectionView reloadData];
-    }
-}
-
--(void) setFilter:(NSPredicate *)filter {
-    [self.currentViewer setFilter:filter];
-    if ([self.currentViewer needsRefresh]) {
-        [self.collectionView reloadData];
     }
 }
 

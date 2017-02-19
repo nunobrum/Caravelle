@@ -21,6 +21,7 @@
     NSIndexSet *_draggedItemsIndexSet;
 #endif
     NSMutableArray *observedTreeItemsForSizeCalculation;
+    TreeViewer *_dataViewer;
 }
 
 -(TreeViewer*) currentViewer;
@@ -71,11 +72,16 @@
     return self->_myTableView;
 }
 
--(TreeViewer*) currentViewer {
-    if (self->dataViewer == nil) {
-        self->dataViewer = [[TreeViewer alloc] initWithParent:self.currentNode depth:0];
+
+-(TreeViewer*) dataViewer {
+    if (self->_dataViewer == nil) {
+        self->_dataViewer = [[TreeViewer alloc] initWithParent:self.currentNode depth:0];
     }
-    return (TreeViewer*)self->dataViewer;
+    return self->_dataViewer;
+}
+
+-(NSObject <TreeViewerProtocol>*) currentViewer {
+    return [self dataViewer];
 }
 
 /*
@@ -702,6 +708,11 @@
     }
 }
 
+- (void) reloadAll {
+    [self.currentViewer setNeedsRefresh];
+    [self.myTableView reloadData];
+}
+
 - (void) setCurrentNode:(TreeBranch*)branch {
     //Unobserve Tree Items that were set for size calculation
     for (TreeItem* item in self->observedTreeItemsForSizeCalculation) {
@@ -727,27 +738,6 @@
     
     [super setCurrentNode:branch];
     [self.myTableView reloadData];
-}
-
--(void) setSortDescriptor:(NSSortDescriptor *)sort {
-    [self.currentViewer setSortDescriptor:sort];
-    if ([self.currentViewer needsRefresh]) {
-        [self.myTableView reloadData];
-    }
-}
-
--(void) setDepth:(NSInteger)depth {
-    [self.currentViewer setDepth:depth];
-    if ([self.currentViewer needsRefresh]) {
-        [self.myTableView reloadData];
-    }
-}
-
--(void) setFilter:(NSPredicate *)filter {
-    [self.currentViewer setFilter:filter];
-    if ([self.currentViewer needsRefresh]) {
-        [self.myTableView reloadData];
-    }
 }
 
 #pragma mark - Drag and Drop Support

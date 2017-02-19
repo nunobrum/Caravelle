@@ -34,6 +34,9 @@
     return self->_needsRefresh;
 }
 
+-(void) setNeedsRefresh {
+    self->_needsRefresh = YES;
+}
 
 -(void) setParent:(TreeBranch *)parent {
     if (parent != self->_root) {
