@@ -510,6 +510,7 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
 -(BOOL) savePreferences {
     //NSLog(@"AppDelegate.savePreferences:");
     if (applicationMode <= ApplicationMode2Views) { // Only records simple Single and Dual Pane Views
+                                                    // TODO:1.4 This will have to be revised
         [[NSUserDefaults standardUserDefaults] setValue:[NSNumber numberWithLong:applicationMode] forKey:USER_DEF_APP_VIEW_MODE];
         NSString *homepath = [myLeftView homePath];
         [[NSUserDefaults standardUserDefaults] setObject:homepath forKey:USER_DEF_LEFT_HOME];
@@ -2658,13 +2659,13 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
         }
         else if ([selectedFiles count] == 1) {
             TreeItem *item = [selectedFiles objectAtIndex:0];
-            long long size = [[item exactSize] longLongValue];
-            NSString *sizeText;
-            if (size != -1) {
-                sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]];
-            }
-            else {
-                sizeText = @"";
+            NSNumber *nsize = [item exactSize];
+            NSString *sizeText = @"";
+            if (nsize != nil) {
+                long long size = [nsize longLongValue];
+                if (size != -1) {
+                    sizeText = [NSString stringWithFormat: @" Size:%@",[NSByteCountFormatter stringFromByteCount:size countStyle:NSByteCountFormatterCountStyleFile]];
+                }
             }
             NSString *type;
             ItemType iType = [item itemType];
