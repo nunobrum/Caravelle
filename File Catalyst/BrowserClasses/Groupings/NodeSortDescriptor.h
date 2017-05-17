@@ -10,22 +10,7 @@
 
 #define SORT_FOLDERS_FIRST_FIELD_ID @"FoldersFirst"
 
-@protocol MySortDescriptorProtocol <NSObject>
-
--(NSString*) field;
-
-@end
-
-// This sort descriptor is only to implement the Folders First
-// The isGrouping is set for compatibility with the NodeSortDescriptor
-@interface FoldersFirstSortDescriptor : NSSortDescriptor<MySortDescriptorProtocol>
-
-
-
-@end
-
-
-@interface NodeSortDescriptor : NSSortDescriptor<MySortDescriptorProtocol> {
+@interface NodeSortDescriptor : NSSortDescriptor {
     NSString *_field;
 }
 
@@ -37,4 +22,10 @@
 @end
 
 
+// This sort descriptor is only to implement the Folders First
+// The isGrouping is set for compatibility with the NodeSortDescriptor
+@interface FoldersFirstSortDescriptor : NodeSortDescriptor
 
+
+
+@end

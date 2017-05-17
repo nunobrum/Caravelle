@@ -224,6 +224,7 @@
 		BCEB37341BA940AD00B1DAA9 /* xer_support.c in Sources */ = {isa = PBXBuildFile; fileRef = BCEB371B1BA940AD00B1DAA9 /* xer_support.c */; };
 		BCEF55201C72673700E415FE /* AppleIncRootCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = BCEF551F1C72673700E415FE /* AppleIncRootCertificate.cer */; };
 		BCF1AF821C42810000E47E2C /* DuplicateDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */; };
+		BCF9022D1E5B8716009B9BF9 /* MySortDescriptors.m in Sources */ = {isa = PBXBuildFile; fileRef = BCF9022C1E5B8716009B9BF9 /* MySortDescriptors.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -463,6 +464,8 @@
 		BCF018841E14F904006944A9 /* DataSourceProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DataSourceProtocol.h; path = BrowserClasses/DataSourceProtocol.h; sourceTree = "<group>"; };
 		BCF1AF801C42810000E47E2C /* DuplicateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DuplicateDelegate.h; path = Duplicates/DuplicateDelegate.h; sourceTree = "<group>"; };
 		BCF1AF811C42810000E47E2C /* DuplicateDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DuplicateDelegate.m; path = Duplicates/DuplicateDelegate.m; sourceTree = "<group>"; };
+		BCF9022B1E5B8716009B9BF9 /* MySortDescriptors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MySortDescriptors.h; path = TreeClasses/MySortDescriptors.h; sourceTree = "<group>"; };
+		BCF9022C1E5B8716009B9BF9 /* MySortDescriptors.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MySortDescriptors.m; path = TreeClasses/MySortDescriptors.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -786,6 +789,8 @@
 				3C0238E81AE02A310023CE42 /* PasteboardUtils.m */,
 				3C1CF6531AE963020089B6E4 /* NodeSortDescriptor.h */,
 				3C1CF6541AE963020089B6E4 /* NodeSortDescriptor.m */,
+				BCF9022B1E5B8716009B9BF9 /* MySortDescriptors.h */,
+				BCF9022C1E5B8716009B9BF9 /* MySortDescriptors.m */,
 				3CEB61F11AD293C300E09A85 /* Icon View */,
 				3CEB61F01ACFD53C00E09A85 /* TableView */,
 				3CEB61F21AD293F500E09A85 /* AttributesPanel */,
@@ -1235,6 +1240,7 @@
 				BC27BFEA1B5C46BC001AE181 /* ExpandFolders.m in Sources */,
 				BCEB37231BA940AD00B1DAA9 /* constr_SEQUENCE.c in Sources */,
 				3CF6C8D919ACA4D100968765 /* DuplicateFindOperation.m in Sources */,
+				BCF9022D1E5B8716009B9BF9 /* MySortDescriptors.m in Sources */,
 				3CA7DFC519B611E100600F41 /* FileOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -27,13 +26,13 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
-                    <rect key="frame" x="0.0" y="0.0" width="433" height="534"/>
+                    <rect key="frame" x="0.0" y="15" width="433" height="519"/>
                     <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" drawsBackground="NO" id="0CJ-Gt-kCE">
-                        <rect key="frame" x="1" y="1" width="431" height="532"/>
+                        <rect key="frame" x="1" y="1" width="431" height="517"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView identifier="BrowserIconView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
-                                <rect key="frame" x="0.0" y="0.0" width="431" height="532"/>
+                                <rect key="frame" x="0.0" y="0.0" width="431" height="517"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="u7v-IO-FTa">
                                     <size key="itemSize" width="50" height="50"/>
@@ -55,23 +54,46 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="6">
-                        <rect key="frame" x="233" y="1" width="16" height="158"/>
+                        <rect key="frame" x="416" y="1" width="16" height="510"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
                 <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="105">
                     <rect key="frame" x="201" y="251" width="32" height="32"/>
                 </progressIndicator>
+                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HiX-W8-6FK">
+                    <rect key="frame" x="327" y="-2" width="108" height="19"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="104" id="9dS-rP-skT"/>
+                    </constraints>
+                    <sliderCell key="cell" state="on" alignment="left" minValue="32" maxValue="300" doubleValue="64" tickMarkPosition="above" sliderType="linear" id="ey4-pN-Je4"/>
+                    <connections>
+                        <binding destination="9rY-MG-DIt" name="value" keyPath="values.IconSizeSetting" id="5Dz-ks-tsY"/>
+                    </connections>
+                </slider>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bp4-aV-noX">
+                    <rect key="frame" x="270" y="0.0" width="59" height="17"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Icon Size" id="8iy-oG-LWD">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
             </subviews>
             <constraints>
                 <constraint firstItem="5" firstAttribute="leading" secondItem="106" secondAttribute="leading" id="107"/>
-                <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" id="108"/>
+                <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="15" id="108"/>
                 <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" id="109"/>
                 <constraint firstItem="5" firstAttribute="top" secondItem="106" secondAttribute="top" id="112"/>
+                <constraint firstAttribute="trailing" secondItem="HiX-W8-6FK" secondAttribute="trailing" id="I1B-Nl-YkO"/>
+                <constraint firstAttribute="bottom" secondItem="bp4-aV-noX" secondAttribute="bottom" id="JK0-oS-Xtw"/>
                 <constraint firstAttribute="centerX" secondItem="105" secondAttribute="centerX" id="SbQ-hS-LvP"/>
                 <constraint firstAttribute="centerY" secondItem="105" secondAttribute="centerY" id="fWA-4O-zKv"/>
+                <constraint firstAttribute="bottom" secondItem="HiX-W8-6FK" secondAttribute="bottom" id="hHP-TN-y3p"/>
+                <constraint firstItem="HiX-W8-6FK" firstAttribute="leading" secondItem="bp4-aV-noX" secondAttribute="trailing" constant="2" id="qQb-wh-8Ge"/>
             </constraints>
-            <point key="canvasLocation" x="430" y="-180"/>
+            <point key="canvasLocation" x="429.5" y="-180"/>
         </customView>
+        <userDefaultsController representsSharedInstance="YES" id="9rY-MG-DIt"/>
     </objects>
 </document>

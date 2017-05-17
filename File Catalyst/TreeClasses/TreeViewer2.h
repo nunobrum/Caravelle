@@ -24,7 +24,7 @@
     TreeItem *_item;
     BOOL _isGroup;
     BOOL _needsRefresh;
-    NSSortDescriptor *sort;
+    MySortDescriptors *sort;
     NSPredicate *_filter;
 }
 

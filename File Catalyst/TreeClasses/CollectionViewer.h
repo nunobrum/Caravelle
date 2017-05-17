@@ -10,6 +10,7 @@
 #import "DataSourceProtocol.h"
 #import "TreeBranch.h"
 #import "TreeEnumerator.h"
+#import "MySortDescriptors.h"
 
 @interface CollectionViewer : NSObject <TreeViewerProtocol>  {
     
@@ -24,7 +25,7 @@
     TreeItem *_item;
     
     NSMutableArray *_sections;
-    NSSortDescriptor *sort;
+    MySortDescriptors *sort;
     NSPredicate *_filter;
     BOOL _needsRefresh;
 }

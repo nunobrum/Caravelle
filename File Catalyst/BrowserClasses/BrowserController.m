@@ -647,13 +647,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
             
             id grouping = [colInfo objectForKey:COL_GROUPING_KEY];
             if (grouping) {
-                NSIndexSet *idx = [self.detailedViewController.groupDescriptors indexesOfObjectsPassingTest:
-                                   ^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-                                       BOOL OK = [[(NodeSortDescriptor*)obj field] isEqualToString:fieldID];
-                                       *stop = OK;
-                                       return OK;
-                                   }];
-                if (idx!=nil && [idx count]!=0) {
+                if ([self.detailedViewController.groupDescriptors hasFieldID:fieldID]) {
                     [[menu itemAtIndex:i] setState:NSOnState];
                 }
                 else {

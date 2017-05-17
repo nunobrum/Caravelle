@@ -26,7 +26,7 @@
     
     NSMutableArray *_sections;
     NSMutableIndexSet *_sectionIndexes;
-    NSSortDescriptor *sort;
+    MySortDescriptors *sort;
     NSPredicate *_filter;
     BOOL _needsRefresh;
 }

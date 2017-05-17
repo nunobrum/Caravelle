@@ -10,11 +10,12 @@
 #define DataSourceProtocol_h
 
 #import "TreeBranch.h"
+#import "MySortDescriptors.h"
 
 @protocol TreeViewerProtocol <NSObject>
 
 -(void) reset;
--(void) setSortDescriptor:(NSSortDescriptor*) sortDesc;
+-(void) setSortDescriptor:(MySortDescriptors*) sortDesc;
 
 -(void) setDepth:(NSInteger)depth;
 -(NSInteger) depth;

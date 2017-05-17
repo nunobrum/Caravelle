@@ -11,6 +11,7 @@
 #import "TreeBranch.h"
 #import "NodeSortDescriptor.h"
 #import "DataSourceProtocol.h"
+#import "MySortDescriptors.h"
 
 @protocol NodeViewProtocol <NSObject, MYViewProtocol>
 
@@ -52,8 +53,8 @@
 
 @property (getter= foldersDisplayed, setter = setFoldersDisplayed:) BOOL foldersInTable;
 
-@property (readwrite, strong) NSMutableArray <NodeSortDescriptor*> *sortDescriptors;
-@property (readwrite, strong) NSMutableArray <NodeSortDescriptor*> *groupDescriptors;
+@property (readwrite, strong) MySortDescriptors *sortDescriptors;
+@property (readwrite, strong) MySortDescriptors *groupDescriptors;
 @property NSString *viewName;
 
 - (void) initController;
@@ -94,10 +95,9 @@
 //- (NSSet<NSIndexPath*>*) indexPathsWithHashes:(NSArray*) hashes;
 //- (void) insertedItem:(id)item atIndexPath:(NSIndexPath*) indexPath;
 
-- (NodeSortDescriptor*) sortDescriptorForFieldID:(NSString*)fieldID;
-- (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending;
-- (void) removeSortOnField:(NSString*)key;
 
+- (void) makeSortOnFieldID:(NSString*)info ascending:(BOOL)ascending;
+- (void) removeSortOnFieldID:(NSString*) fieldID;
 - (void) makeGroupingOnFieldID:(NSString*)fieldID ascending:(BOOL)ascending;
 - (void) removeGroupings;
 

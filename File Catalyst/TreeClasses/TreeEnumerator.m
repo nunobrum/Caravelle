@@ -108,14 +108,14 @@
 
 @implementation SortedEnumerator
 
--(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor*) sort {
+-(instancetype) initWithParent:(TreeBranch*)parent sort:(MySortDescriptors*) sort {
     self = [super initWithParent:parent];
     self->_sort = sort;
     [self reset];
     return self;
 }
 
--(instancetype) initWithParent:(TreeBranch *)parent sort:(NSSortDescriptor *)sort filter:(NSPredicate *)filter {
+-(instancetype) initWithParent:(TreeBranch *)parent sort:(MySortDescriptors *)sort filter:(NSPredicate *)filter {
     self = [super initWithParent:parent filter:filter];
     self->_sort = sort;
     [self reset];
@@ -244,7 +244,7 @@
     self->_filter = filter;
 }
 
--(void) setSort:(NSSortDescriptor *)sort {
+-(void) setSort:(MySortDescriptors *)sort {
     self->_sort = sort;
 }
 
@@ -297,7 +297,7 @@
                 _level--;
                 _curTree = _parent; // Starts from root
                 for (int i=0; i < _level; i++) {
-                    _curTree = [_curTree itemAtIndex:_indexes[i]];
+                    _curTree = (TreeBranch*) [_curTree itemAtIndex:_indexes[i]];
                     if ([_curTree hasChildren]==NO)
                         break; // Need to stop if it isn't a tree. This isn't supposed to happen
                 }
@@ -316,5 +316,3 @@
 }
 
 @end
-
-

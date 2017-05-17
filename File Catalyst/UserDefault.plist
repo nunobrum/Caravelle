@@ -45,6 +45,8 @@
 	<true/>
 	<key>TableAlternateRowBackground</key>
 	<false/>
+	<key>IconSizeSetting</key>
+	<integer>64</integer>
 	<key>MostRecentLocationCount</key>
 	<integer>10</integer>
 	<key>MostRecentLocation</key>

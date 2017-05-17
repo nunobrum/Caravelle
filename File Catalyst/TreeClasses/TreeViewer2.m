@@ -17,7 +17,9 @@
     self->_root = parent;
     self->_item = nil;
     // Default sortDescriptor
-    self->sort = [NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
+    self->sort = [[MySortDescriptors alloc] init];
+    //[self->sort addSortDescriptor:[[FoldersFirstSortDescriptor alloc] init]];
+  
     self->_currIndex = NSIntegerMax; // This will trigger a reset at the first seek
     self->_needsRefresh = YES;
     return self;
@@ -32,6 +34,10 @@
     self->_item = self->_root;
     [self->_iterators removeAllObjects];
     se = [[SortedEnumerator alloc] initWithParent:self->_root sort:self->sort filter:self->_filter];
+}
+
+-(void) setNeedsRefresh {
+    self->_needsRefresh = YES;
 }
 
 -(BOOL) needsRefresh {
@@ -54,7 +60,7 @@
         if (depth > 0) {
             // TODO:!!!! Change with the multiple-sorts is are working.
             // If the depth is bigger than 0 then the folders are displayed in last
-            [self setSortDescriptor:[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:YES]];
+            // Remove this : This is maybe not needed as it is already being set at the initialization [self setSortDescriptor:[MySortDescriptors sortDescriptorWithKey:@"isFolder" ascending:YES]];
         }
         self->_maxLevel = depth;
         self->_needsRefresh = YES;
@@ -65,7 +71,7 @@
     return self->_maxLevel;
 }
 
--(void) setSortDescriptor:(NSSortDescriptor *)sortDesc {
+-(void) setSortDescriptor:(MySortDescriptors *)sortDesc {
     // TODO:!!!!! This has to be changed to support multiple sorts.
     if (sortDesc != self->sort)  {
         self->sort = sortDesc;
@@ -73,7 +79,7 @@
     }
 }
 
--(NSSortDescriptor*) sortDescriptor {
+-(MySortDescriptors*) sortDescriptor {
     return self->sort;
 }
 

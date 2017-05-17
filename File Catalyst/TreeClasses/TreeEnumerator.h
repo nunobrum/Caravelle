@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TreeBranch.h"
+#import "MySortDescriptors.h"
 
 @interface FilterEnumerator : NSEnumerator  {
     NSUInteger _index;
@@ -26,15 +27,15 @@
 @end
 
 @interface SortedEnumerator : FilterEnumerator {
-    NSSortDescriptor *_sort;
+    MySortDescriptors *_sort;
     TreeItem *_item;
     TreeItem *_nextItem;
     NSInteger _itemIndex, _nextItemIndex, _multiplicity;
 }
--(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor*) sort;
--(instancetype) initWithParent:(TreeBranch*)parent sort:(NSSortDescriptor *)sort filter:(NSPredicate*)filter;
+-(instancetype) initWithParent:(TreeBranch*)parent sort:(MySortDescriptors*) sort;
+-(instancetype) initWithParent:(TreeBranch*)parent sort:(MySortDescriptors *)sort filter:(NSPredicate*)filter;
 
--(void) setSort:(NSSortDescriptor*) sort;
+-(void) setSort:(MySortDescriptors*) sort;
 
 @end
 

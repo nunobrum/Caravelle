@@ -16,7 +16,7 @@
     self->_root = parent;
     self->_item = nil;
     // Default sortDescriptor
-    self->sort = nil; //[NSSortDescriptor sortDescriptorWithKey:@"isFolder" ascending:NO];
+    self->sort = nil;
     self->_currRange = NSMakeRange(0, 0); // This will trigger a reset at the first seek
     self->_currSection = NSNotFound;
     self->_sections = nil;
@@ -61,14 +61,14 @@
     return self->_maxLevel;
 }
 
--(void) setSortDescriptor:(NSSortDescriptor *)sortDesc {
+-(void) setSortDescriptor:(MySortDescriptors *)sortDesc {
     if (sortDesc != self->sort)  {
         self->sort = sortDesc;
         self->_needsRefresh = YES;
     }
 }
 
--(NSSortDescriptor*) sortDescriptor {
+-(MySortDescriptors*) sortDescriptor {
     return self->sort;
 }
 

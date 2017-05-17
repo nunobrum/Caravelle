@@ -20,21 +20,6 @@
  */
 
 
-@implementation FoldersFirstSortDescriptor
-// Distribute Alphabet
-
--(instancetype) init {
-    self = [super initWithKey:@"itemType" ascending:YES ];
-    return self;
-}
-
--(NSString*) field {
-    return SORT_FOLDERS_FIRST_FIELD_ID;
-}
-
-@end
-
-
 @implementation NodeSortDescriptor
 
 -(instancetype) initWithField:(NSString *)field ascending:(BOOL)ascending {
@@ -68,3 +53,15 @@
 @end
 
 
+
+
+@implementation FoldersFirstSortDescriptor
+// Distribute Alphabet
+
+-(instancetype) init {
+    self = [super initWithKey:@"itemType" ascending:YES ];
+    self->_field = SORT_FOLDERS_FIRST_FIELD_ID;
+    return self;
+}
+
+@end

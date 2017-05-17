@@ -274,7 +274,7 @@
         }
     }
     [inTableView setHighlightedTableColumn:tableColumn];
-    NodeSortDescriptor *currentDesc = [self sortDescriptorForFieldID:[tableColumn identifier]];
+    NodeSortDescriptor *currentDesc = [self.sortDescriptors sortDescriptorForFieldID:[tableColumn identifier]];
 
     BOOL ascending;
     if (currentDesc==nil || [currentDesc ascending]==NO)
@@ -346,7 +346,7 @@
     }
     
     // Cancel all sorts
-    [self.sortDescriptors removeAllObjects];
+    [self.sortDescriptors removeAll];
     
     // Cycling throgh the columns to set
     for (NSString *colID in columns) {
@@ -447,8 +447,9 @@
     NSInteger row = [[self myTableView] rightClickedRow];
     TreeItem *group = [self.currentViewer itemAtIndex: row];
     if (tag == GROUP_SORT_ASCENDING || tag == GROUP_SORT_DESCENDING ) {
+        NSLog(@"TODO: IMPLEMENT sort change on groupings");
         // TODO:!!!!! implement this correctly
-        // Changing the ascending key. Since that property is read-only, the descriptor needs to be initialized
+        // Changing the ascending key. Since that property is read-only, a new descriptor needs to be initialized
         // Retrieving position of descriptor
         //NSInteger i = [self.sortAndGroupDescriptors indexOfObject:group.descriptor];
         // Creating a new Descriptor from the old one
@@ -461,7 +462,7 @@
     }
     else if (tag == GROUP_SORT_REMOVE ) {
         // removes the descriptor
-        // [self.sortAndGroupDescriptors removeObject:group.descriptor];
+        [self removeGroupings];
     }
     else {
         NSAssert(NO, @"Invalid tag received from group contextual Menu");
