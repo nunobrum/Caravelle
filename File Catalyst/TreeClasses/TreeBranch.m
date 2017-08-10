@@ -628,8 +628,8 @@ NSString* commonPathFromItems(NSArray* itemArray) {
         [self setTag:tagTreeSizeCalcReq];
         CalcFolderSizes * op = [[CalcFolderSizes alloc] init];
         [op setItem:self];
-        [op setQueuePriority:NSOperationQueuePriorityVeryLow];
-        [op setThreadPriority:0.5];
+        //[op setQueuePriority:NSOperationQueuePriorityVeryLow];
+        //[op setQualityOfService:NSQualityOfServiceBackground]; //This is now handled on the
         [lowPriorityQueue addOperation:op];
     }
 }

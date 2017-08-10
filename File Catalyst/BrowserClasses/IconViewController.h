@@ -21,8 +21,13 @@
 
 @property (strong) IBOutlet NSLayoutConstraint *viewWidthConstraint;
 
+// Binded to the slider in the icon View
+@property (weak) IBOutlet NSSlider *iconSizeSlider;
+
+
 - (IBAction) lastClick:(id)sender;
 - (IBAction) lastRightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;
-	
+- (IBAction) sliderChange:(id)sender;
+
 @end

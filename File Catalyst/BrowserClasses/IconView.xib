@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="IconViewController">
             <connections>
                 <outlet property="collectionView" destination="8" id="42"/>
+                <outlet property="iconSizeSlider" destination="HiX-W8-6FK" id="Ntu-Ok-9TF"/>
                 <outlet property="myProgressIndicator" destination="105" id="JbG-Ag-T3z"/>
                 <outlet property="view" destination="106" id="JJf-q5-J0g"/>
                 <outlet property="viewWidthConstraint" destination="j15-94-kuo" id="5Ye-Jh-Ni0"/>
@@ -34,10 +35,9 @@
                             <collectionView identifier="BrowserIconView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
                                 <rect key="frame" x="0.0" y="0.0" width="431" height="517"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumInteritemSpacing="10" minimumLineSpacing="10" id="u7v-IO-FTa">
-                                    <size key="itemSize" width="50" height="50"/>
-                                </collectionViewFlowLayout>
+                                <collectionViewLayout key="collectionViewLayout" id="Gsj-mB-n1Z"/>
                                 <color key="primaryBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                 <connections>
                                     <outlet property="dataSource" destination="-2" id="8lr-5a-tVD"/>
                                     <outlet property="delegate" destination="-2" id="45"/>
@@ -66,9 +66,9 @@
                     <constraints>
                         <constraint firstAttribute="width" constant="104" id="9dS-rP-skT"/>
                     </constraints>
-                    <sliderCell key="cell" state="on" alignment="left" minValue="32" maxValue="300" doubleValue="64" tickMarkPosition="above" sliderType="linear" id="ey4-pN-Je4"/>
+                    <sliderCell key="cell" state="on" alignment="left" minValue="32" maxValue="300" doubleValue="64" tickMarkPosition="below" sliderType="linear" id="ey4-pN-Je4"/>
                     <connections>
-                        <binding destination="9rY-MG-DIt" name="value" keyPath="values.IconSizeSetting" id="5Dz-ks-tsY"/>
+                        <action selector="sliderChange:" target="-2" id="Da5-Do-MK3"/>
                     </connections>
                 </slider>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bp4-aV-noX">
@@ -94,6 +94,5 @@
             </constraints>
             <point key="canvasLocation" x="429.5" y="-180"/>
         </customView>
-        <userDefaultsController representsSharedInstance="YES" id="9rY-MG-DIt"/>
     </objects>
 </document>

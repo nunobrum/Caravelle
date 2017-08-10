@@ -40,6 +40,7 @@
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     [[NSUserDefaults standardUserDefaults] addObserver:self forKeyPath:USER_DEF_TABLE_ALTERNATE_ROW options:NSKeyValueObservingOptionNew context:NULL];
     
 }

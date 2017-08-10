@@ -314,10 +314,8 @@
     return [[_url URLByDeletingLastPathComponent] path];
 }
 
--(NSImage*) image {
+-(NSImage*) _image {
     NSImage *iconImage;
-    NSImage *image;
-    
     // First get the image
     if ([self hasTags:tagTreeItemNew] || self.url==nil) {
         if ([self isFolder])
@@ -328,28 +326,61 @@
     else  {
         iconImage =[[NSWorkspace sharedWorkspace] iconForFile: [_url path]];
     }
-    
-    
+    return iconImage;
+}
+
+-(NSImage*) _badge {
+    // The code below only draw one of the badges in the order the code is presented.
+    // TODO:1.4 Consider making an shifted overlay where all the applicable badges are placed
+    //         in sequence, starting from right to left
+    NSImage *badge = nil;
+    if ([self hasTags:tagTreeItemHidden]) {
+        badge = [NSImage imageNamed:@"PrivateFolderBadgeIcon"];
+    }
+    else if ([self hasTags:tagTreeItemReadOnly]) {
+        badge = [NSImage imageNamed:@"ReadOnlyFolderBadgeIcon"];
+    }
+    else if ([self hasTags:tagTreeItemDropped]) {
+        badge = [NSImage imageNamed:@"DropFolderBadgeIcon"];
+    }
+    return badge;
+}
+
+-(NSImage*) image {
+    NSImage *iconImage;
+    NSImage *image;
+
+    iconImage = [self _image];
     NSSize imageSize= [iconImage size];
     //TreeItemTagEnum tags = [self tag];
     image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
         [iconImage drawInRect:dstRect];
         
-        // Then will apply an overlay
-        // The code below only draw one of the badges in the order the code is presented.
-        // TODO:1.4 Consider making an shifted overlay where all the applicable badges are placed
-        //         in sequence, starting from right to left
-        if ([self hasTags:tagTreeItemHidden]) {
-            [[NSImage imageNamed:@"PrivateFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ private", [self url]);
+        // Check if there is a badge to be added
+        NSImage *badge = [self _badge];
+        // If there is a badge, then will apply an overlay
+        if (badge) {
+            [badge drawInRect:dstRect];
         }
-        else if ([self hasTags:tagTreeItemReadOnly]) {
-            [[NSImage imageNamed:@"ReadOnlyFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ read-only", [self url]);
-        }
-        else if ([self hasTags:tagTreeItemDropped]) {
-            [[NSImage imageNamed:@"DropFolderBadgeIcon"] drawInRect:dstRect];
-            //NSLog(@"%@ dropped", [self url]);
+        return YES;
+    }];
+    return image;
+}
+
+-(NSImage*) imageForSize:(NSSize)size {
+    NSImage *iconImage;
+    NSImage *image;
+    
+    iconImage = [self _image];
+    //TreeItemTagEnum tags = [self tag];
+    image = [NSImage imageWithSize:size flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        [iconImage drawInRect:dstRect];
+        
+        // Check if there is a badge to be added
+        NSImage *badge = [self _badge];
+        // If there is a badge, then will apply an overlay
+        if (badge) {
+            [badge drawInRect:dstRect];
         }
         return YES;
     }];

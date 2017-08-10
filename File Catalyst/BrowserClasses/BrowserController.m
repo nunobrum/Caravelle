@@ -19,7 +19,8 @@
 #import "PasteboardUtils.h"
 #import "TreeEnumerator.h"
 
-
+// Use the myPathPopDownMenu outlet to get the maximum tag number
+// Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
 const NSUInteger maxItemsInBrowserPopMenu = 7;
 const NSUInteger item0InBrowserPopMenu    = 0;
 
@@ -112,6 +113,7 @@ NSString *kViewChanged_FlatView = @"ToggledFlatView";
 }
 
 -(void)viewDidLoad {
+    [super viewDidLoad];
     self->_treeCollapseDetector = [self treeViewCollapsed];
     //NSLog(@"BrowserController.viewDidLoad");
     //[self loadPreferences];

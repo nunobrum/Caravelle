@@ -246,7 +246,7 @@ TreeManager *appTreeManager;
             [itemToRelease removeItem]; // Removes it from its parent
         else { // otherwise its on iArray
             [itemToRelease deinit];
-            [iArray removeObject:itemToRelease]; // In this case BrowserTrees must be updated
+            [iArray removeObject:(TreeBranch*)itemToRelease]; // In this case BrowserTrees must be updated
             [[NSNotificationCenter defaultCenter] postNotificationName:notificationRefreshViews object:self userInfo:nil];
         }
 

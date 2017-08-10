@@ -46,7 +46,7 @@
 //}
 
 
--(NSImage*) image {
+-(NSImage*) _image {
     return [NSImage imageNamed:@"SearchFolder"];
 }
 

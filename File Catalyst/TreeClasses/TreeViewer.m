@@ -233,7 +233,7 @@
     if (self->_maxLevel > 0 && index == 0)
         return YES;
     return [self->_sectionIndexes containsIndex:index] == YES;
-    // TODO:!!!!!! Optimise this, this will be too slow
+    // TODO:!! Optimise this, this will be too slow
 }
 
 -(NSString*) groupTitle {

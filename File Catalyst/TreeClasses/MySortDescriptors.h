@@ -25,6 +25,6 @@
 - (BOOL) hasFieldID:(NSString * _Nonnull) fieldID;
 - (void) removeSortOnField:(NSString * _Nonnull)key;
 
--(NSUInteger) countByEnumeratingWithState:(NSFastEnumerationState * _Null_unspecified)state objects:(id  _Nullable __unsafe_unretained [])buffer count:(NSUInteger)len;
+-(NSUInteger) countByEnumeratingWithState:(NSFastEnumerationState * _Null_unspecified)state objects:(id  _Nullable __unsafe_unretained [_Nonnull])buffer count:(NSUInteger)len;
 
 @end

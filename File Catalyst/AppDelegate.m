@@ -261,9 +261,21 @@ void updateContextualMenu(NSMenu *menu, NSArray *itemsSelected, EnumContextualMe
                 [menu addItem:menuItem];
                 if (tag == menuOpenWith) {
                     // Special situation where the menu is handled here. Because it has to be asked from the item Selected.
-                    // TODO:!!!! Check that all files are identical
+                    
+                    // Check that all files have common open applications
                     TreeItem *firstItem = [itemsSelected firstObject];
-                    NSArray *apps = [firstItem openWithApplications];
+                    
+                    NSMutableArray *apps =
+                        [NSMutableArray arrayWithArray: [firstItem openWithApplications]];
+                    // If more than two files is selected it will reduce to the common open with applications
+                    for (NSInteger i = 1 ; i < itemsSelected.count ; i++) {
+                        TreeItem *item = itemsSelected[i];
+                        NSArray *appsx = [item openWithApplications];
+                        [apps filterUsingPredicate: [NSPredicate predicateWithBlock:^BOOL(id  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable bindings) {
+                            return [appsx containsObject:evaluatedObject];
+                                }]];
+                    }
+                    
                     if (apps != nil && [apps count] > 0) {
                         NSMenu *menu = [[NSMenu alloc] init];
                         for (NSURL *app in apps) {
@@ -274,8 +286,6 @@ void updateContextualMenu(NSMenu *menu, NSArray *itemsSelected, EnumContextualMe
                         [menu setAutoenablesItems:NO]; // Default enables everything
                         [menu setSubmenu:menu forItem:menuItem];
                     }
-                    
-                    
                 }
             }
         }
@@ -396,11 +406,11 @@ EnumApplicationMode applicationModeForSegment(NSUInteger segment) {
         
         // Browser Queue
         // We limit the concurrency to see things easier for demo purposes. The default value NSOperationQueueDefaultMaxConcurrentOperationCount will yield better results, as it will create more threads, as appropriate for your processor
-        [browserQueue setMaxConcurrentOperationCount:2];
-        // Use the myPathPopDownMenu outlet to get the maximum tag number
-        // Now its fixed to a 7 as a constant see maxItemsInBrowserPopMenu
+        [browserQueue setMaxConcurrentOperationCount:NSOperationQueueDefaultMaxConcurrentOperationCount];
+        [browserQueue setQualityOfService:NSOperationQualityOfServiceUserInitiated];
         
         [lowPriorityQueue setMaxConcurrentOperationCount:1];
+        [lowPriorityQueue setQualityOfService:NSOperationQualityOfServiceBackground];
 
 
         appFileManager = [[NSFileManager alloc] init];
@@ -2352,8 +2362,8 @@ extern EnumContextualMenuItemTags viewMenuNoFiles[];
     }
     else if ([operation isEqualTo:opFlatOperation]) {
         ExpandFolders * op = [[ExpandFolders alloc] initWithInfo:[note userInfo]];
-        [op setQueuePriority:NSOperationQueuePriorityNormal];
-        [op setThreadPriority:0.25];
+        //[op setQueuePriority:NSOperationQueuePriorityNormal];
+        //[op setQualityOfService:NSQualityOfServiceBackground]; //This is now handled on the
         [self _startOperationBusyIndication: op];
         putInQueue(op);
     }

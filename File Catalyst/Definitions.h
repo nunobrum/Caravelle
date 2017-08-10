@@ -124,6 +124,8 @@ extern const CFStringRef kTreeItemDropUTI;
 #define USER_DEF_HIDE_FOLDERS_WHEN_TREE @"HideFoldersWhenTreeDisplayed"
 #define USER_DEF_DISPLAY_FOLDERS_FIRST @"DisplayFoldersFirst"
 #define USER_DEF_TABLE_ALTERNATE_ROW @"TableAlternateRowBackground"
+#define USER_DEF_ICON_IMAGE_SIZE_WIDTH_HEIGHT @"IconImageSizeWidthHeight"
+#define USER_DEF_ICON_TEXT_SIZE_WIDTH_HEIGHT @"IconTextSizeWidthHeight"
 
 // App-In products
 #define USER_DEF_APPIN_PRODUCTS @"AppStoreValidProducts"

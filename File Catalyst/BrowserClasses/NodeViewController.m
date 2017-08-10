@@ -246,7 +246,7 @@ EnumContextualMenuItemTags viewMenuRight[] = {
     return nil;
 }
 
-// TODO:!!!!!!! Move this to a C callable function
+// TODO:!! Move this to a C callable function
 - (void) orderOperation:(NSString const*)operation onItems:(NSArray*)orderedItems;
  {
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
