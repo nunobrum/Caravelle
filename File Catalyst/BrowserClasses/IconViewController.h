@@ -22,12 +22,16 @@
 @property (strong) IBOutlet NSLayoutConstraint *viewWidthConstraint;
 
 // Binded to the slider in the icon View
-@property (weak) IBOutlet NSSlider *iconSizeSlider;
+@property (weak) IBOutlet NSSlider *imageSizeSlider;
 
 
 - (IBAction) lastClick:(id)sender;
 - (IBAction) lastRightClick:(id)sender;
 - (IBAction) doubleClick:(id)sender;
-- (IBAction) sliderChange:(id)sender;
+- (IBAction) sizeChange:(id)sender;
+
+
+// Used to transmit the information that the content was resized. The controller needs to know this to adjust controls.
+-(void) subviewResized:(id)sender;
 
 @end

@@ -22,12 +22,26 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 //NSString *kReceivedContentNotification = @"ReceivedContentNotification";
 
 
+NSSize itemSize(NSSize imageSize, NSSize textSize) {
+    NSSize _itemSize;
+    // Get the maximum between the two objects
+    if (imageSize.width > textSize.width)
+        _itemSize.width = imageSize.width;
+    else
+        _itemSize.width = textSize.width;
+    
+    _itemSize.height = imageSize.height + textSize.height;
+    return _itemSize;
+}
 
 @interface IconViewController () {
     NSMutableSet <NSIndexPath*> *extendedSelection;
     FileCollectionViewItem* menuTarget;
     NSCollectionViewFlowLayout *flowLayout;
     CollectionViewer *_dataViewer;
+    NSSize _itemSize;
+    NSSize _textSize;
+    NSSize _imageSize;
 }
 
 @end
@@ -43,13 +57,14 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 }
 
 -(void) viewDidLoad {
+    [super viewDidLoad];
+    
     const float sectionInsetHeight = 10.0;
     // 1
     self->flowLayout = [[NSCollectionViewFlowLayout alloc] init];
-    NSSize IconSize;
-    IconSize.width = 64.0;
-    IconSize.height = 64.0;
-    self->flowLayout.itemSize = IconSize;
+
+    [self updateSizesFromDefaults];
+    self->flowLayout.itemSize = _itemSize;
     
     NSEdgeInsets sectionInset;
     sectionInset.bottom = sectionInsetHeight;
@@ -65,6 +80,20 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
     // 3
     [self.collectionView.layer  setBackgroundColor : (__bridge CGColorRef _Nullable)([NSColor blackColor]) ];
     
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_ICON_IMAGE_SIZE_WIDTH_HEIGHT
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+    [[NSUserDefaults standardUserDefaults] addObserver:self
+                                            forKeyPath:USER_DEF_ICON_TEXT_SIZE_WIDTH_HEIGHT
+                                               options:NSKeyValueObservingOptionNew
+                                               context:NULL];
+    //[self.iconSizeSlider setContinuous:YES]; // Sets the slider to call the action when the mouse is moving.
 }
 
 -(CollectionViewer*) dataViewer {
@@ -93,23 +122,35 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 - (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath {
     FileCollectionViewItem *icon = [collectionView makeItemWithIdentifier:@"FileCollectionViewItem" forIndexPath:indexPath];
     NSAssert(icon!=nil,@"ERROR! IconViewController.collectionView:itemForRepresentedObjectAtIndexPath: Icon View Not Found!");
+    
     TreeItem *theFile;
-
     theFile = [(CollectionViewer*)self.currentViewer itemAtIndexPath:indexPath];
     
     NSAssert(theFile != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil File");
     
     icon.representedObject = theFile; // Store the file for later usage.
     
-    [icon.imageView setImage: theFile.image];
+    NSImage *fImage = [theFile imageForSize:_imageSize];
+    
+    [icon.imageView setImage: fImage];
     // an alternative: icon.imageView.image = theFile.image;
     NSAssert(theFile.name != nil, @"IconViewController.collectionView:itemForRepresentedOjectAtIndexPath: Received nil File Name");
+    if (self->_textSize.height < 34 ) { //Enough for two lines
+        //icon.textField.cell.wraps = NO;
+        icon.textField.cell.lineBreakMode = NSLineBreakByTruncatingMiddle;
+    }
+    else {
+        icon.textField.cell.lineBreakMode = NSLineBreakByWordWrapping;
+        //icon.textField.cell.wraps = YES;
+    }
+    
+    
     [icon.textField setStringValue: theFile.name];
     
     // If it's a new file, then assume a default ICON
     
     // Then setup properties on the cellView based on the column
-    //[icon setToolTip:[theFile hint]]; //TODO:!!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
+    [icon.view setToolTip:[theFile hint]]; //TODO:!!!! Add tool tips lazyly by using view: stringForToolTip: point: userData:
     
     // Setting the color
     [icon.textField setTextColor:[theFile textColor]];
@@ -183,6 +224,62 @@ NSString *ICON_VIEW_FILE = @"FILE_ICON";
 - (IBAction)doubleClick:(id)sender {
     NSArray *itemsSelected = [self getSelectedItems];
     [self orderOperation:opOpenOperation onItems:itemsSelected];
+}
+
+- (IBAction)imageSizeChange:(id)sender {
+    static CGFloat new_value;
+    if (new_value != [sender floatValue]) {
+        NSUInteger modifiers = [NSEvent modifierFlags];
+        
+        new_value = [sender floatValue];
+        
+        // If Shift is pressed scalles only height
+        if ((modifiers & NSShiftKeyMask)==0) {
+            self->_imageSize.width = new_value;
+        }
+        
+        // If Alt is pressed, scales only width
+        if ((modifiers & NSAlternateKeyMask)==0) {
+            self->_imageSize.height = new_value;
+        }
+        self->_itemSize = itemSize(self->_imageSize, self->_textSize);
+        self->flowLayout.itemSize = self->_itemSize;
+        // Now Calls for a refresh
+        [self.collectionView reloadData];
+    }
+}
+
+- (IBAction)sizeChange:(id)sender {
+    NSInteger selectedSegment = [sender selectedSegment];
+
+    NSUInteger modifiers = [NSEvent modifierFlags];
+    CGFloat scaler = ( selectedSegment == 1 ? 1 : -1);
+    
+    if (modifiers & NSAlternateKeyMask) { // Scales the Gaps
+        // If Shift is pressed scalles only line spacing
+        if ((modifiers & NSShiftKeyMask)==0)
+            self->flowLayout.minimumInteritemSpacing += scaler * 5;
+        self->flowLayout.minimumLineSpacing += scaler * 5;
+    }
+    else if (modifiers & NSControlKeyMask) {
+        // TODO:2.0: Scales the Fonts
+    }
+    else {
+        if (modifiers & NSShiftKeyMask) { // Scales the width
+            self->_textSize.width += scaler * 10;
+        }
+        else {
+            // Only scales the width by default
+            self->_textSize.height += scaler * 17;
+            if (self->_textSize.height < 17)
+                self->_textSize.height = 17;
+        }
+        self->_itemSize = itemSize(self->_imageSize, self->_textSize);
+        self->flowLayout.itemSize = self->_itemSize;
+    }
+    
+    // Now Calls for a refresh
+    [self.collectionView reloadData];
 }
 
 
@@ -482,11 +579,10 @@ forDraggedItemsAtIndexPaths:(nonnull NSSet<NSIndexPath *> *)indexPaths {
                 //[NSApp performSelector:@selector(executeRename:) withObject:itemsSelected];
                 // TODO:1.4 implement in future versions
                 // For now just displaying an alert
-                NSAlert *alert = [NSAlert alertWithMessageText:@"Multiple files selected!"
-                                                 defaultButton:@"OK"
-                                               alternateButton:nil
-                                                   otherButton:nil
-                                     informativeTextWithFormat:@"Multi-Rename of files will be enabled in a future version."];
+                NSAlert *alert = [[NSAlert alloc] init];
+                [alert addButtonWithTitle:@"OK"];
+                [alert setMessageText:@"Multiple files selected!"];
+                [alert setInformativeText:@"Multi-Rename of files will be enabled in a future version."];
                 [alert setAlertStyle:NSWarningAlertStyle];
                 [alert beginSheetModalForWindow:self.view.window completionHandler:NULL];
             }
@@ -603,4 +699,66 @@ forDraggedItemsAtIndexPaths:(nonnull NSSet<NSIndexPath *> *)indexPaths {
     }
 }
 */
+
+
+-(void) subviewResized:(id)sender {
+    [self.imageSizeSlider setMaxValue: self.collectionView.visibleRect.size.width - self->flowLayout.sectionInset.left - self->flowLayout.sectionInset.right];
+}
+
+#pragma mark - User Defaults 
+
+-(void) savePreferences:(NSMutableDictionary*) preferences {
+    [super savePreferences:preferences];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:
+     [NSArray arrayWithObjects:
+      [NSNumber numberWithFloat:self->_imageSize.width],
+      [NSNumber numberWithFloat:self->_imageSize.height],
+      nil]
+                                              forKey:USER_DEF_ICON_IMAGE_SIZE_WIDTH_HEIGHT];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:
+     [NSArray arrayWithObjects:
+      [NSNumber numberWithFloat:self->_textSize.width],
+      [NSNumber numberWithFloat:self->_textSize.height],
+      nil]
+                                              forKey:USER_DEF_ICON_TEXT_SIZE_WIDTH_HEIGHT];
+}
+
+
+-(void) updateSizesFromDefaults {
+    // read from UserDefaults
+    NSArray *widthxheight;
+    
+    // read image size
+    widthxheight = [[NSUserDefaults standardUserDefaults] arrayForKey: USER_DEF_ICON_IMAGE_SIZE_WIDTH_HEIGHT ]; // Get size from user defaults
+    _imageSize.width = [widthxheight[0] floatValue];
+    _imageSize.height = [widthxheight[1] floatValue];
+    
+    // read text size
+    widthxheight = [[NSUserDefaults standardUserDefaults] arrayForKey: USER_DEF_ICON_TEXT_SIZE_WIDTH_HEIGHT ]; // Get size from user defaults
+    _textSize.width = [widthxheight[0] floatValue];
+    _textSize.height = [widthxheight[1] floatValue];
+    
+    self->_itemSize = itemSize(self->_imageSize, self->_textSize);
+    self->flowLayout.itemSize = self->_itemSize;
+    
+    self.imageSizeSlider.floatValue = _imageSize.height;
+}
+
+#pragma mark Value Observer
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    
+    //NSLog(@"IconViewController observeValueForKeyPath: %@",keyPath);
+    
+    if ([keyPath isEqualToString:USER_DEF_ICON_IMAGE_SIZE_WIDTH_HEIGHT] ||
+       [keyPath isEqualToString:USER_DEF_ICON_TEXT_SIZE_WIDTH_HEIGHT]) {
+        [self updateSizesFromDefaults];
+        [self.collectionView reloadData];
+    }
+    else {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 @end

@@ -183,4 +183,12 @@
     }
     return[super resignFirstResponder];
 }
+
+#pragma mark - ViewDelegate
+-(void) viewDidEndLiveResize {
+    if(self.delegate && [self.delegate respondsToSelector:@selector(subviewResized:)]) {
+        [(IconViewController*)self.delegate subviewResized:self];
+    }
+    [super viewDidEndLiveResize];
+}
 @end

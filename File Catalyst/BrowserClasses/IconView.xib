@@ -8,7 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="IconViewController">
             <connections>
                 <outlet property="collectionView" destination="8" id="42"/>
-                <outlet property="iconSizeSlider" destination="HiX-W8-6FK" id="Ntu-Ok-9TF"/>
+                <outlet property="imageSizeSlider" destination="t9J-eS-NjH" id="tUH-DQ-EBJ"/>
                 <outlet property="myProgressIndicator" destination="105" id="JbG-Ag-T3z"/>
                 <outlet property="view" destination="106" id="JJf-q5-J0g"/>
                 <outlet property="viewWidthConstraint" destination="j15-94-kuo" id="5Ye-Jh-Ni0"/>
@@ -27,15 +27,15 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5" userLabel="Icon Scroll View">
-                    <rect key="frame" x="0.0" y="15" width="433" height="519"/>
+                    <rect key="frame" x="0.0" y="19" width="433" height="515"/>
                     <clipView key="contentView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" drawsBackground="NO" id="0CJ-Gt-kCE">
-                        <rect key="frame" x="1" y="1" width="431" height="517"/>
+                        <rect key="frame" x="1" y="1" width="431" height="513"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView identifier="BrowserIconView" horizontalCompressionResistancePriority="900" verticalCompressionResistancePriority="900" selectable="YES" allowsMultipleSelection="YES" id="8" customClass="BrowserIconView">
-                                <rect key="frame" x="0.0" y="0.0" width="431" height="517"/>
+                                <rect key="frame" x="0.0" y="0.0" width="431" height="513"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <collectionViewLayout key="collectionViewLayout" id="Gsj-mB-n1Z"/>
+                                <collectionViewLayout key="collectionViewLayout" id="5dh-pi-3GY"/>
                                 <color key="primaryBackgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="secondaryBackgroundColor" name="controlAlternatingRowColor" catalog="System" colorSpace="catalog"/>
                                 <connections>
@@ -54,43 +54,68 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="6">
-                        <rect key="frame" x="416" y="1" width="16" height="510"/>
+                        <rect key="frame" x="416" y="1" width="16" height="508"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
                 <progressIndicator hidden="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="105">
                     <rect key="frame" x="201" y="251" width="32" height="32"/>
                 </progressIndicator>
-                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HiX-W8-6FK">
-                    <rect key="frame" x="327" y="-2" width="108" height="19"/>
+                <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="t9J-eS-NjH">
+                    <rect key="frame" x="313" y="3" width="100" height="13"/>
                     <constraints>
-                        <constraint firstAttribute="width" constant="104" id="9dS-rP-skT"/>
+                        <constraint firstAttribute="width" constant="100" id="dqQ-4D-OsX"/>
                     </constraints>
-                    <sliderCell key="cell" state="on" alignment="left" minValue="32" maxValue="300" doubleValue="64" tickMarkPosition="below" sliderType="linear" id="ey4-pN-Je4"/>
+                    <sliderCell key="cell" controlSize="mini" continuous="YES" state="on" alignment="left" minValue="32" maxValue="1000" doubleValue="64" tickMarkPosition="above" sliderType="linear" id="mfm-nA-nBJ"/>
                     <connections>
-                        <action selector="sliderChange:" target="-2" id="Da5-Do-MK3"/>
+                        <action selector="imageSizeChange:" target="-2" id="L3Y-Qf-shD"/>
                     </connections>
                 </slider>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bp4-aV-noX">
-                    <rect key="frame" x="270" y="0.0" width="59" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Icon Size" id="8iy-oG-LWD">
-                        <font key="font" metaFont="system"/>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSJ-Hq-vID">
+                    <rect key="frame" x="252" y="5" width="55" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Image Size:" usesSingleLineMode="YES" id="ci5-lv-Isb">
+                        <font key="font" metaFont="miniSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9P5-aY-1Xx">
+                    <rect key="frame" x="6" y="5" width="66" height="11"/>
+                    <textFieldCell key="cell" controlSize="mini" sendsActionOnEndEditing="YES" title="Size Controls:" id="GhK-If-Oi7">
+                        <font key="font" metaFont="miniSystem"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2PX-uE-URS">
+                    <rect key="frame" x="77" y="0.0" width="45" height="19"/>
+                    <segmentedCell key="cell" controlSize="mini" borderStyle="border" alignment="left" style="capsule" trackingMode="momentary" id="CdD-hB-79y">
+                        <font key="font" metaFont="miniSystem"/>
+                        <segments>
+                            <segment label="-" width="19"/>
+                            <segment label="+" toolTip="Try Shift, Ctrl or Alt modifier keys." width="19" tag="1"/>
+                        </segments>
+                    </segmentedCell>
+                    <connections>
+                        <action selector="sizeChange:" target="-2" id="BGN-wY-Vjj"/>
+                    </connections>
+                </segmentedControl>
             </subviews>
             <constraints>
                 <constraint firstItem="5" firstAttribute="leading" secondItem="106" secondAttribute="leading" id="107"/>
-                <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="15" id="108"/>
+                <constraint firstAttribute="bottom" secondItem="5" secondAttribute="bottom" constant="19" id="108"/>
                 <constraint firstAttribute="trailing" secondItem="5" secondAttribute="trailing" id="109"/>
                 <constraint firstItem="5" firstAttribute="top" secondItem="106" secondAttribute="top" id="112"/>
-                <constraint firstAttribute="trailing" secondItem="HiX-W8-6FK" secondAttribute="trailing" id="I1B-Nl-YkO"/>
-                <constraint firstAttribute="bottom" secondItem="bp4-aV-noX" secondAttribute="bottom" id="JK0-oS-Xtw"/>
+                <constraint firstItem="2PX-uE-URS" firstAttribute="leading" secondItem="9P5-aY-1Xx" secondAttribute="trailing" constant="8" symbolic="YES" id="4CQ-cG-gY5"/>
+                <constraint firstItem="t9J-eS-NjH" firstAttribute="leading" secondItem="xSJ-Hq-vID" secondAttribute="trailing" constant="8" symbolic="YES" id="4YM-SW-Aoh"/>
+                <constraint firstAttribute="bottom" secondItem="xSJ-Hq-vID" secondAttribute="bottom" constant="5" id="Iwg-Y1-p4C"/>
+                <constraint firstAttribute="bottom" secondItem="2PX-uE-URS" secondAttribute="bottom" constant="2" id="Kmw-yZ-9NP"/>
+                <constraint firstAttribute="bottom" secondItem="t9J-eS-NjH" secondAttribute="bottom" constant="4" id="Qg4-hC-b5h"/>
                 <constraint firstAttribute="centerX" secondItem="105" secondAttribute="centerX" id="SbQ-hS-LvP"/>
+                <constraint firstAttribute="bottom" secondItem="9P5-aY-1Xx" secondAttribute="bottom" constant="5" id="a3r-3U-jc3"/>
+                <constraint firstItem="9P5-aY-1Xx" firstAttribute="leading" secondItem="106" secondAttribute="leading" constant="8" id="cX8-fa-jMe"/>
                 <constraint firstAttribute="centerY" secondItem="105" secondAttribute="centerY" id="fWA-4O-zKv"/>
-                <constraint firstAttribute="bottom" secondItem="HiX-W8-6FK" secondAttribute="bottom" id="hHP-TN-y3p"/>
-                <constraint firstItem="HiX-W8-6FK" firstAttribute="leading" secondItem="bp4-aV-noX" secondAttribute="trailing" constant="2" id="qQb-wh-8Ge"/>
+                <constraint firstAttribute="trailing" secondItem="t9J-eS-NjH" secondAttribute="trailing" constant="20" symbolic="YES" id="tJh-ZB-PFr"/>
             </constraints>
             <point key="canvasLocation" x="429.5" y="-180"/>
         </customView>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -21,15 +21,15 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Hjk-gb-fO0">
-                    <rect key="frame" x="21" y="19" width="80" height="80"/>
+                    <rect key="frame" x="29" y="35" width="64" height="64"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="Hjk-gb-fO0" secondAttribute="height" multiplier="1:1" id="ijy-sh-qG1"/>
                     </constraints>
                     <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="Vsa-0o-qmd"/>
                 </imageView>
                 <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ETv-Ol-yua" customClass="FileTextField">
-                    <rect key="frame" x="0.0" y="0.0" width="121" height="18"/>
-                    <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="This is a very long long file name" placeholderString="" drawsBackground="YES" allowsEditingTextAttributes="YES" id="j43-fm-qXR">
+                    <rect key="frame" x="0.0" y="0.0" width="121" height="34"/>
+                    <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" title="This is a very long long file name" placeholderString="" drawsBackground="YES" allowsEditingTextAttributes="YES" id="j43-fm-qXR">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -40,10 +40,9 @@
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="ETv-Ol-yua" secondAttribute="bottom" id="5Tg-fa-7Je"/>
+                <constraint firstAttribute="bottom" secondItem="ETv-Ol-yua" secondAttribute="bottom" id="DGm-7h-JQv"/>
                 <constraint firstItem="ETv-Ol-yua" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="OjD-iv-83j"/>
                 <constraint firstItem="ETv-Ol-yua" firstAttribute="top" secondItem="Hjk-gb-fO0" secondAttribute="bottom" constant="1" id="Se9-7L-mDm"/>
-                <constraint firstAttribute="bottom" secondItem="Hjk-gb-fO0" secondAttribute="bottom" constant="19" id="VI0-rZ-A0m"/>
                 <constraint firstItem="Hjk-gb-fO0" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="1" id="b8e-rs-hI8"/>
                 <constraint firstItem="Hjk-gb-fO0" firstAttribute="centerX" secondItem="Hz6-mo-xeY" secondAttribute="centerX" id="fOu-HT-frq"/>
                 <constraint firstAttribute="trailing" secondItem="ETv-Ol-yua" secondAttribute="trailing" id="yff-Qv-VYM"/>

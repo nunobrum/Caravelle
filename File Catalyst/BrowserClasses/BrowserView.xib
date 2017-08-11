@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11762"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12121"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -31,7 +31,7 @@
             <rect key="frame" x="0.0" y="0.0" width="430" height="600"/>
             <autoresizingMask key="autoresizingMask"/>
             <subviews>
-                <searchField toolTip="Filter Table Contents" wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
+                <searchField toolTip="Filter Table Contents" wantsLayer="YES" horizontalHuggingPriority="249" verticalHuggingPriority="751" horizontalCompressionResistancePriority="300" placeholderIntrinsicWidth="118" placeholderIntrinsicHeight="22" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Lo2-4t-2Jl">
                     <rect key="frame" x="300" y="568" width="118" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="lessThanOrEqual" constant="150" id="3Va-0l-feg"/>
@@ -141,7 +141,7 @@
                                                                 <rect key="frame" x="1" y="1" width="421" height="34"/>
                                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                                 <subviews>
-                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="zpT-yC-x1m">
+                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zpT-yC-x1m">
                                                                         <rect key="frame" x="35" y="17" width="388" height="17"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="Table View Cell" id="OGl-N1-P83">
                                                                             <font key="font" metaFont="system"/>
@@ -157,7 +157,7 @@
                                                                         </constraints>
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="GenericFolderIcon" id="H7x-uv-PWX"/>
                                                                     </imageView>
-                                                                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="bZf-MO-Pdv">
+                                                                    <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bZf-MO-Pdv">
                                                                         <rect key="frame" x="35" y="2" width="388" height="17"/>
                                                                         <constraints>
                                                                             <constraint firstAttribute="width" priority="42" constant="194" id="hdL-MC-dFz"/>
@@ -196,7 +196,7 @@
                                                                         </constraints>
                                                                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="NSActionTemplate" id="hta-Aw-6Ip"/>
                                                                     </imageView>
-                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
+                                                                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="llY-hV-wS7">
                                                                         <rect key="frame" x="25" y="0.0" width="396" height="17"/>
                                                                         <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" title="Table View Cell" id="Yp9-X4-xh6">
                                                                             <font key="font" metaFont="system"/>
@@ -253,7 +253,7 @@
                                 <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="6Ay-z1-oxB">
                                     <rect key="frame" x="198" y="264" width="32" height="32"/>
                                 </progressIndicator>
-                                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5Xj-Va-Fy1">
+                                <textField verticalHuggingPriority="750" ambiguous="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="5Xj-Va-Fy1">
                                     <rect key="frame" x="33" y="0.0" width="34" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="34" id="f9n-g8-SIn"/>
@@ -268,7 +268,7 @@
                                         <binding destination="-2" name="value" keyPath="self.drillLevel" id="RVw-W2-qUj"/>
                                     </connections>
                                 </textField>
-                                <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ofk-ij-VBB">
+                                <stepper horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ofk-ij-VBB">
                                     <rect key="frame" x="65" y="-3" width="19" height="27"/>
                                     <stepperCell key="cell" continuous="YES" alignment="left" maxValue="100" id="XGA-bv-8Qv"/>
                                     <connections>
@@ -284,7 +284,7 @@
                                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                 </textField>
-                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6wG-wS-3rl">
+                                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6wG-wS-3rl">
                                     <rect key="frame" x="8" y="0.0" width="22" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="22" id="fZ1-Dx-k1g"/>
@@ -346,7 +346,7 @@
                 </segmentedControl>
                 <popUpButton toolTip="Grouping Settings" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H1P-9o-Im5" userLabel="GroupingPopUp">
                     <rect key="frame" x="166" y="566" width="54" height="26"/>
-                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" lineBreakMode="truncatingTail" state="on" borderStyle="border" inset="2" pullsDown="YES" id="cCu-Xv-3GO">
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" scrollable="YES" lineBreakMode="clipping" state="on" borderStyle="border" inset="2" pullsDown="YES" id="cCu-Xv-3GO">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" title="GroupingMenu" id="b4D-Sz-aUO">
@@ -380,7 +380,7 @@
                         <rect key="frame" x="1" y="1" width="426" height="30"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tokenField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="uIo-73-Uh1">
+                            <tokenField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uIo-73-Uh1">
                                 <rect key="frame" x="15" y="4" width="391" height="22"/>
                                 <tokenFieldCell key="cell" selectable="YES" editable="YES" borderStyle="bezel" alignment="left" drawsBackground="YES" allowsEditingTextAttributes="YES" id="EH9-km-Yfd">
                                     <font key="font" metaFont="system"/>
@@ -439,11 +439,11 @@
         <image name="Columns" width="15" height="16"/>
         <image name="GenericFolderIcon" width="512" height="512"/>
         <image name="GrouppingOSX" width="15" height="16"/>
-        <image name="IconTreeView20" width="20" height="20"/>
+        <image name="IconTreeView20" width="32" height="32"/>
         <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSLeftFacingTriangleTemplate" width="9" height="12"/>
         <image name="NSPathTemplate" width="16" height="10"/>
         <image name="NSRightFacingTriangleTemplate" width="9" height="12"/>
-        <image name="Tornado" width="16" height="16"/>
+        <image name="Tornado" width="32" height="32"/>
     </resources>
 </document>
